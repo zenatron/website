@@ -17,6 +17,7 @@ export default {
         primary: 'var(--bg-primary)',
         textLight: 'var(--color-text-light)',
         textMuted: 'var(--color-text-muted)',
+        applegreen: '#8DB600',
       },
     },
   },
