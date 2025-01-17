@@ -22,7 +22,7 @@ export default function Footer() {
           <FaEnvelope />
         </a>
         <a
-          href="https://bsky.app/profile/zenatron.bsky.app"
+          href="https://bsky.app/profile/zenatron.bsky.social"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Bluesky"

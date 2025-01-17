@@ -15,7 +15,7 @@ export default function AboutPage() {
             impactful projects.
           </p>
           <p className="text-lg md:text-xl text-gray-400 leading-relaxed">
-            Beyond coding, I enjoy playing ultimate frisbee, working out, and exploring creative hobbies. 
+            Beyond coding, I enjoy tinkering with computers, working out, and exploring creative hobbies. 
             My goal is to constantly learn, grow, and share my knowledge with others.
           </p>
         </section>

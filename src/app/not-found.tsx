@@ -16,7 +16,7 @@ export default function NotFoundPage() {
         
         {/* Message */}
         <p className="text-lg md:text-xl text-gray-400">
-          Oops! The page you're looking for doesn't exist.
+          Oops! The page you&#39;re looking for doesn&#39;t exist.
         </p>
         
         {/* Call to Action */}

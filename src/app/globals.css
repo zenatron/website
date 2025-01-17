@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Define CSS variables */
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -11,6 +12,11 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --bg-primary: #1e293b; /* Dark blue-gray */
+    --bg-secondary: #334155; /* Medium blue-gray */
+    --bg-accent: #3b82f6; /* Blue for accents */
+    --color-text-light: #e2e8f0; /* Light text */
+    --color-text-muted: #94a3b8; /* Muted text */
   }
 }
 
@@ -20,22 +26,24 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.btn {
-  @apply flex items-center px-4 py-2 rounded-lg text-white font-medium transition-colors;
-}
+@layer components {
+  .btn {
+    @apply flex items-center px-4 py-2 rounded-lg text-white font-medium transition-colors;
+  }
 
-.btn-primary {
-  @apply bg-accent hover:bg-blue-700;
-}
+  .btn-primary {
+    @apply bg-accent hover:bg-blue-700 text-center;
+  }
 
-.btn-secondary {
-  @apply bg-secondary border border-gray-600 hover:bg-gray-600;
-}
+  .btn-secondary {
+    @apply bg-secondary border border-gray-600 hover:bg-gray-600 text-center;
+  }
 
-.btn-small {
-  @apply px-3 py-1 text-sm;
-}
+  .btn-small {
+    @apply px-3 py-1 text-sm text-center;
+  }
 
-.btn-large {
-  @apply px-6 py-3 text-lg;
+  .btn-large {
+    @apply px-6 py-3 text-lg text-center;
+  }
 }

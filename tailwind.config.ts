@@ -12,9 +12,11 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        primary: '#1f2937', // Dark gray background
-        secondary: '#374151', // Lighter gray for cards
-        accent: '#3b82f6', // Accent color for links/buttons
+        accent: 'var(--bg-accent)',
+        secondary: 'var(--bg-secondary)',
+        primary: 'var(--bg-primary)',
+        textLight: 'var(--color-text-light)',
+        textMuted: 'var(--color-text-muted)',
       },
     },
   },
