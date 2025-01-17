@@ -19,3 +19,23 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.btn {
+  @apply flex items-center px-4 py-2 rounded-lg text-white font-medium transition-colors;
+}
+
+.btn-primary {
+  @apply bg-accent hover:bg-blue-700;
+}
+
+.btn-secondary {
+  @apply bg-secondary border border-gray-600 hover:bg-gray-600;
+}
+
+.btn-small {
+  @apply px-3 py-1 text-sm;
+}
+
+.btn-large {
+  @apply px-6 py-3 text-lg;
+}
