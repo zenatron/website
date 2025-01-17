@@ -52,13 +52,13 @@ export default function Header() {
 
       {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center space-x-4">
-        <Link href="/projects" className="btn btn-secondary w-24 flex items-center justify-center">
+        <Link href="/projects" className="btn btn-secondary w-24 h-10 flex items-center justify-center">
           Projects
         </Link>
-        <Link href="/blog" className="btn btn-secondary w-24 flex items-center justify-center">
+        <Link href="/blog" className="btn btn-secondary w-24 h-10 flex items-center justify-center">
           Blog
         </Link>
-        <Link href="/about" className="btn btn-secondary w-24 flex items-center justify-center">
+        <Link href="/about" className="btn btn-secondary w-24 h-10 flex items-center justify-center">
           About
         </Link>
       </nav>

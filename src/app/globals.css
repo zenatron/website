@@ -31,11 +31,11 @@ body {
   }
 
   .btn-primary {
-    @apply bg-accent hover:bg-applegreen text-center;
+    @apply bg-accent hover:bg-gray-600 text-center;
   }
 
   .btn-secondary {
-    @apply bg-secondary border border-gray-600 hover:bg-gray-600 text-center;
+    @apply bg-accent border border-gray-600 hover:bg-gray-600 text-center;
   }
 
   .btn-small {
