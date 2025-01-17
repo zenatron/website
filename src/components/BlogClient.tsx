@@ -4,10 +4,22 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { FaSortAlphaDown, FaSortAlphaUp, FaSortNumericDown, FaSortNumericUp } from 'react-icons/fa';
 
-export default function BlogClient({ posts }: { posts: any[] }) {
-  const [sortBy, setSortBy] = useState('date');
-  const [order, setOrder] = useState('desc');
+// Define the BlogPost type
+export interface BlogPost {
+  slug: string;
+  metadata: {
+    title: string;
+    date: string;
+    excerpt: string;
+  };
+  content: string;
+}
 
+export default function BlogClient({ posts }: { posts: BlogPost[] }) {
+  const [sortBy, setSortBy] = useState<'title' | 'date'>('date');
+  const [order, setOrder] = useState<'asc' | 'desc'>('desc');
+
+  // Sort posts dynamically
   const sortedPosts = [...posts].sort((a, b) => {
     if (sortBy === 'title') {
       return order === 'asc'
@@ -29,7 +41,7 @@ export default function BlogClient({ posts }: { posts: any[] }) {
           {/* Sort By Dropdown */}
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
+            onChange={(e) => setSortBy(e.target.value as 'title' | 'date')}
             className="bg-secondary text-white px-4 py-2 rounded-lg"
           >
             <option value="date">Sort by Date</option>
