@@ -9,10 +9,11 @@ import Link from 'next/link';
 export default async function BlogPostPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  // Fetch the specific post by slug
+  // Await params to handle as a promise
   const { slug } = await params;
+  // Fetch the specific post by slug
   const post = await getPostBySlug(slug);
 
   // Handle 404 case
