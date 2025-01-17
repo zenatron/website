@@ -1,4 +1,4 @@
-import { getAllPosts } from '../../../lib/blog';
+import { getPostBySlug } from '../../../lib/blog';
 import ReactMarkdown from 'react-markdown';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
@@ -7,15 +7,17 @@ import Link from 'next/link';
 
 // Generate static paths for all posts
 export async function generateStaticParams() {
-  const posts = getAllPosts();
+  const posts = await import('../../../lib/blog').then((module) => module.getAllPosts());
   return posts.map((post) => ({ slug: post.slug }));
 }
 
 // Blog post page component
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const posts = getAllPosts();
-  const post = posts.find((p) => p.slug === params.slug);
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  // Fetch the specific post by slug
+  const postParams = await params;
+  const post = await getPostBySlug(postParams.slug);
 
+  // Handle 404 case
   if (!post) {
     return (
       <div className="min-h-screen flex flex-col bg-primary text-white">
