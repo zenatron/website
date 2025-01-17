@@ -1,11 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { BlogPost } from '../components/BlogClient';
+import { BlogPost } from '@/types/types';
 
 const blogDirectory = path.join(process.cwd(), 'src/content/blog');
 
-// Fetch a single post by its slug
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   const filePath = path.join(blogDirectory, `${slug}.md`);
   if (!fs.existsSync(filePath)) return null;
@@ -23,6 +22,7 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
     content,
   };
 }
+
 
 export async function getAllPosts(): Promise<BlogPost[]> {
   const filenames = fs.readdirSync(blogDirectory);

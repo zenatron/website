@@ -3,17 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { FaSortAlphaDown, FaSortAlphaUp, FaSortNumericDown, FaSortNumericUp } from 'react-icons/fa';
-
-// Define the BlogPost type
-export interface BlogPost {
-  slug: string;
-  metadata: {
-    title: string;
-    date: string;
-    excerpt: string;
-  };
-  content: string;
-}
+import { BlogPost } from '@/types/types';
 
 export default function BlogClient({ posts }: { posts: BlogPost[] }) {
   const [sortBy, setSortBy] = useState<'title' | 'date'>('date');

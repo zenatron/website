@@ -1,21 +1,19 @@
-import { getPostBySlug } from '../../../lib/blog';
+import { getPostBySlug } from '../../../lib/blog'; // Utility to fetch a post by slug
 import ReactMarkdown from 'react-markdown';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
 import { FaArrowLeft } from 'react-icons/fa';
 import Link from 'next/link';
 
-// Generate static paths for all posts
-export async function generateStaticParams() {
-  const posts = await import('../../../lib/blog').then((module) => module.getAllPosts());
-  return posts.map((post) => ({ slug: post.slug }));
-}
-
-// Blog post page component
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+// Define the BlogPostPage component
+export default async function BlogPostPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
   // Fetch the specific post by slug
-  const postParams = await params;
-  const post = await getPostBySlug(postParams.slug);
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
 
   // Handle 404 case
   if (!post) {
