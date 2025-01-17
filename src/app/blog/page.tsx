@@ -11,7 +11,6 @@ export default async function BlogPage() {
     <div className="min-h-screen flex flex-col bg-primary text-white">
       <Header />
       <main className="flex-1 px-6 py-10">
-        <h1 className="text-4xl font-bold mb-8">Blog</h1>
         <BlogClient posts={posts} />
       </main>
       <Footer />
