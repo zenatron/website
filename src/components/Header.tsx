@@ -8,7 +8,10 @@ export default function Header() {
 
   return (
     <header className="flex items-center justify-between px-6 py-2 bg-secondary relative">
-      <h1 className="text-xl font-bold">Philip Vishnevsky</h1>
+      {/* Name with Link to Home */}
+      <Link href="/" className="text-xl font-bold text-white hover:text-gray-300">
+        Philip Vishnevsky
+      </Link>
 
       {/* Hamburger Menu Button */}
       <button
