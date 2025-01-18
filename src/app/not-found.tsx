@@ -5,8 +5,11 @@ import { FaRegSadTear } from 'react-icons/fa';
 
 export default function NotFoundPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white">
+    <div className="min-h-screen flex flex-col bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:text-white text-gray-800">
+      {/* Header */}
       <Header />
+
+      {/* Main Content */}
       <main className="flex-1 flex flex-col items-center justify-center text-center px-6 space-y-6">
         {/* Animated 404 Text */}
         <h1 className="text-8xl font-extrabold animate-pulse">404</h1>
@@ -24,6 +27,8 @@ export default function NotFoundPage() {
           Go Back Home
         </Link>
       </main>
+
+      {/* Footer */}
       <Footer />
     </div>
   );

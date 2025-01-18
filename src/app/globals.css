@@ -1,27 +1,34 @@
+/* Global CSS: src/styles/globals.css */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
+  /* Light Mode Colors */
   --background: #ffffff;
   --foreground: #171717;
+  --bg-primary: #f3f4f6; /* Light gray */
+  --bg-secondary: #e5e7eb; /* Medium gray */
+  --accent: #3b82f6; /* Accent color (blue) */
+  --text-light: #171717; /* Text for light mode */
+  --text-muted: #71717a; /* Muted text */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --bg-primary: #1e293b; /* Dark blue-gray */
-    --bg-secondary: #334155; /* Medium blue-gray */
-    --bg-accent: #3b82f6; /* Blue for accents */
-    --color-text-light: #e2e8f0; /* Light text */
-    --color-text-muted: #94a3b8; /* Muted text */
-  }
+.dark {
+  /* Dark Mode Colors */
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --bg-primary: #1e293b; /* Dark blue-gray */
+  --bg-secondary: #334155; /* Medium blue-gray */
+  --accent: #3b82f6; /* Accent color */
+  --text-light: #e2e8f0; /* Text for dark mode */
+  --text-muted: #94a3b8; /* Muted text */
 }
 
 body {
-  color: var(--foreground);
   background: var(--background);
+  color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -31,18 +38,13 @@ body {
   }
 
   .btn-primary {
-    @apply bg-accent hover:bg-gray-600 text-center;
+    background-color: var(--primary);
+    @apply hover:bg-opacity-90 text-center;
   }
 
   .btn-secondary {
-    @apply bg-accent border border-gray-600 hover:bg-gray-600 text-center;
-  }
-
-  .btn-small {
-    @apply px-3 py-1 text-sm text-center;
-  }
-
-  .btn-large {
-    @apply px-6 py-3 text-lg text-center;
+    background-color: var(--accent);
+    border-color: var(--text-muted);
+    @apply hover:bg-opacity-80 text-center;
   }
 }

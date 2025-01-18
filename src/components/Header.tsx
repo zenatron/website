@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import ThemeSwitch from './ThemeSwitch';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -64,6 +65,8 @@ export default function Header() {
         <Link href="/about" className="btn btn-secondary w-24 h-10 flex items-center justify-center">
           About
         </Link>
+        {/* Theme Switch */}
+        <ThemeSwitch />
       </nav>
 
       {/* Mobile Navigation */}
@@ -91,6 +94,8 @@ export default function Header() {
             <Link href="/about" className="btn btn-secondary w-3/4 text-center">
               About
             </Link>
+            {/* Theme Switch */}
+            <ThemeSwitch />
           </nav>
         </>
       )}

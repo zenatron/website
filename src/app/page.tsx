@@ -3,7 +3,7 @@ import Footer from '../components/Footer';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen flex flex-col bg-primary text-white">
+    <div className="min-h-screen flex flex-col bg-primary dark:text-white text-gray-800">
       <Header />
       <main className="flex-1 flex flex-col items-center justify-center text-center px-6">
         <section className="space-y-6 max-w-3xl">

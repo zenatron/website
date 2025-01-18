@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 export default {
-  darkMode: 'class',
+  darkMode: 'class', // Enable dark mode using the `class` strategy
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -12,12 +12,11 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        accent: 'var(--bg-accent)',
-        secondary: 'var(--bg-secondary)',
-        primary: 'var(--bg-primary)',
-        textLight: 'var(--color-text-light)',
-        textMuted: 'var(--color-text-muted)',
-        applegreen: '#8DB600',
+        primary: "var(--bg-primary)",
+        secondary: "var(--bg-secondary)",
+        accent: "var(--accent)",
+        textLight: "var(--text-light)",
+        textMuted: "var(--text-muted)",
       },
     },
   },
