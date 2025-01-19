@@ -5,25 +5,23 @@ import Footer from '../../../components/Footer';
 import { FaArrowLeft } from 'react-icons/fa';
 import Link from 'next/link';
 
-// Define the BlogPostPage component
 export default async function BlogPostPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  // Await params to handle as a promise
   const { slug } = await params;
-  // Fetch the specific post by slug
   const post = await getPostBySlug(slug);
 
-  // Handle 404 case
   if (!post) {
     return (
-      <div className="min-h-screen flex flex-col bg-primary text-white">
+      <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
         <Header />
         <main className="flex-1 flex flex-col items-center justify-center text-center px-6">
           <h1 className="text-6xl font-bold">404</h1>
-          <p className="text-lg mt-4">The post you&#39;re looking for doesn&#39;t exist.</p>
+          <p className="text-lg mt-4 text-muted-text">
+            The post you&#39;re looking for doesn&#39;t exist.
+          </p>
           <Link href="/blog" className="btn btn-primary mt-6">
             Back to Blog
           </Link>
@@ -34,21 +32,22 @@ export default async function BlogPostPage({
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-primary text-white">
+    <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
       <Header />
       <main className="flex-1 px-6 py-10">
-        {/* Back Button */}
         <div className="mb-6">
-          <Link href="/blog" className="inline-flex items-center text-accent hover:text-blue-600 font-medium">
+          <Link
+            href="/blog"
+            className="inline-flex items-center text-accent hover:text-btnPrimaryHover font-medium"
+          >
             <FaArrowLeft className="mr-2 text-lg" />
             Back to Blog
           </Link>
         </div>
 
-        {/* Blog Content */}
-        <article className="prose prose-invert max-w-4xl mx-auto">
+        <article className="prose dark:prose-invert max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold mb-4">{post.metadata.title}</h1>
-          <p className="text-gray-400 mb-8">{post.metadata.date}</p>
+          <p className="text-muted-text mb-8">{post.metadata.date}</p>
           <ReactMarkdown>{post.content}</ReactMarkdown>
         </article>
       </main>

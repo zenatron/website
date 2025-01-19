@@ -5,25 +5,36 @@
 @tailwind utilities;
 
 :root {
-  /* Light Mode Colors */
-  --background: #ffffff;
-  --foreground: #171717;
-  --bg-primary: #f3f4f6; /* Light gray */
-  --bg-secondary: #e5e7eb; /* Medium gray */
-  --accent: #3b82f6; /* Accent color (blue) */
-  --text-light: #171717; /* Text for light mode */
-  --text-muted: #71717a; /* Muted text */
+  /* BG Colors */
+  --color-bg-primary: #f3f4f6;
+  --color-bg-secondary: #e5e7eb;
+  --color-accent: #3b82f6;
+  --color-text-primary: #171717;
+  --color-text-muted: #71717a;
+  /* Shadows */
+  --shadow-soft: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-hard: 0px 6px 8px rgba(0, 0, 0, 0.2);
+  --border-light: #e5e7eb;
+  /* Button Colors */
+  --color-btn-primary: #2563eb; /* Base blue for buttons */
+  --color-btn-primary-hover: #1d4ed8; /* Darker blue for hover */
+  --color-btn-secondary: #3b82f6; /* Secondary blue */
+  --color-btn-secondary-hover: #60a5fa; /* Lighter blue for hover */
+  --color-btn-text: #ffffff; /* Button text */
 }
 
 .dark {
-  /* Dark Mode Colors */
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --bg-primary: #1e293b; /* Dark blue-gray */
-  --bg-secondary: #334155; /* Medium blue-gray */
-  --accent: #3b82f6; /* Accent color */
-  --text-light: #e2e8f0; /* Text for dark mode */
-  --text-muted: #94a3b8; /* Muted text */
+  --color-bg-primary: #1e293b;
+  --color-bg-secondary: #334155;
+  --color-text-primary: #ededed;
+  --color-text-muted: #94a3b8;
+  --border-light: #1f2937;
+  /* Button Colors */
+  --color-btn-primary: #60a5fa; /* Light blue for dark mode buttons */
+  --color-btn-primary-hover: #3b82f6; /* Slightly darker blue for hover */
+  --color-btn-secondary: #2563eb; /* Deeper blue for dark mode */
+  --color-btn-secondary-hover: #1d4ed8; /* Even darker blue for hover */
+  --color-btn-text: #ffffff; /* Button text remains white */
 }
 
 body {
@@ -34,17 +45,33 @@ body {
 
 @layer components {
   .btn {
-    @apply flex items-center px-4 py-2 rounded-lg text-white font-medium transition-colors;
+    @apply flex items-center px-4 py-2 rounded-lg font-medium transition-colors shadow-md; /* Core button styles */
   }
 
   .btn-primary {
-    background-color: var(--primary);
-    @apply hover:bg-opacity-90 text-center;
+    background-color: var(--color-btn-primary);
+    color: var(--color-btn-text);
+    @apply hover:bg-btnPrimaryHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-btnPrimaryHover transition;
   }
 
   .btn-secondary {
-    background-color: var(--accent);
-    border-color: var(--text-muted);
-    @apply hover:bg-opacity-80 text-center;
+    background-color: var(--color-btn-secondary);
+    color: var(--color-btn-text);
+    border: 1px solid var(--color-btn-secondary-hover);
+    @apply hover:bg-btnSecondaryHover hover:border-btnSecondaryHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-btnSecondaryHover transition;
+  }
+
+  .btn-small {
+    @apply px-3 py-1 text-sm;
+  }
+
+  .btn-large {
+    @apply px-6 py-3 text-lg;
+  }
+
+  .btn-disabled {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-muted);
+    @apply opacity-50 cursor-not-allowed;
   }
 }

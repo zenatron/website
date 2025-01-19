@@ -8,15 +8,18 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="flex items-center justify-between px-6 py-2 bg-secondary relative">
+    <header className="flex items-center justify-between px-6 py-2 bg-primary-bg text-primary-text shadow-md">
       {/* Name with Link to Home */}
-      <Link href="/" className="text-xl font-bold text-white hover:text-gray-300">
+      <Link
+        href="/"
+        className="text-xl font-bold hover:text-accent transition-colors"
+      >
         Philip Vishnevsky
       </Link>
 
       {/* Hamburger Menu Button */}
       <button
-        className="md:hidden flex items-center justify-center p-2 text-white hover:text-gray-400"
+        className="md:hidden flex items-center justify-center p-2 text-primary-text hover:text-accent transition-colors"
         onClick={() => setMenuOpen(!menuOpen)}
         aria-label="Toggle Menu"
         aria-expanded={menuOpen}
@@ -56,13 +59,22 @@ export default function Header() {
 
       {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center space-x-4">
-        <Link href="/projects" className="btn btn-secondary w-24 h-10 flex items-center justify-center">
+        <Link
+          href="/projects"
+          className="btn btn-secondary hover:text-accent transition-colors"
+        >
           Projects
         </Link>
-        <Link href="/blog" className="btn btn-secondary w-24 h-10 flex items-center justify-center">
+        <Link
+          href="/blog"
+          className="btn btn-secondary hover:text-accent transition-colors"
+        >
           Blog
         </Link>
-        <Link href="/about" className="btn btn-secondary w-24 h-10 flex items-center justify-center">
+        <Link
+          href="/about"
+          className="btn btn-secondary hover:text-accent transition-colors"
+        >
           About
         </Link>
         {/* Theme Switch */}
@@ -80,18 +92,26 @@ export default function Header() {
 
           {/* Menu */}
           <nav
-            className={`absolute top-14 left-0 w-full bg-secondary flex flex-col items-center space-y-4 py-4 z-20
-            transition-transform transform duration-300 ${
+            className={`absolute top-14 left-0 w-full bg-primary-bg flex flex-col items-center space-y-4 py-4 z-20 transition-transform transform duration-300 ${
               menuOpen ? 'translate-y-0' : '-translate-y-full'
             }`}
           >
-            <Link href="/projects" className="btn btn-secondary w-3/4 text-center">
+            <Link
+              href="/projects"
+              className="btn btn-secondary w-3/4 text-center hover:text-accent transition-colors"
+            >
               Projects
             </Link>
-            <Link href="/blog" className="btn btn-secondary w-3/4 text-center">
+            <Link
+              href="/blog"
+              className="btn btn-secondary w-3/4 text-center hover:text-accent transition-colors"
+            >
               Blog
             </Link>
-            <Link href="/about" className="btn btn-secondary w-3/4 text-center">
+            <Link
+              href="/about"
+              className="btn btn-secondary w-3/4 text-center hover:text-accent transition-colors"
+            >
               About
             </Link>
             {/* Theme Switch */}

@@ -1,43 +1,48 @@
-"use client";
+'use client';
 
 import React, { createContext, useEffect, useState, ReactNode } from 'react';
 
 interface ThemeContextProps {
   theme: string;
-  toggleTheme: () => void;
+  setTheme: (mode: string) => void;
 }
 
 export const ThemeContext = createContext<ThemeContextProps>({
   theme: 'light',
-  toggleTheme: () => {},
+  setTheme: () => {},
 });
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<string>('light');
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
   useEffect(() => {
-    // Check for saved theme in localStorage or system preference
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      setTheme(savedTheme);
-      document.documentElement.classList.add(savedTheme);
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setTheme('dark');
-      document.documentElement.classList.add('dark');
-    }
+    const savedTheme = localStorage.getItem('theme') || 'system';
+    applyTheme(savedTheme);
+    setIsInitialized(true); // Mark theme as initialized
   }, []);
 
-  const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    document.documentElement.classList.remove(theme);
-    document.documentElement.classList.add(newTheme);
-    localStorage.setItem('theme', newTheme);
+  const applyTheme = (mode: string) => {
+    let resolvedTheme = mode;
+
+    if (mode === 'system') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      resolvedTheme = prefersDark ? 'dark' : 'light';
+    }
+
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(resolvedTheme);
+    setTheme(mode);
+    localStorage.setItem('theme', mode);
+  };
+
+  const handleSetTheme = (mode: string) => {
+    applyTheme(mode);
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
+    <ThemeContext.Provider value={{ theme, setTheme: handleSetTheme }}>
+      {isInitialized ? children : null} {/* Render children only when initialized */}
     </ThemeContext.Provider>
   );
 };

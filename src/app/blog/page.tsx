@@ -8,7 +8,7 @@ export default async function BlogPage() {
   const posts = await getAllPosts();
 
   return (
-    <div className="min-h-screen flex flex-col bg-primary text-white">
+    <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
       <Header />
       <main className="flex-1 px-6 py-10">
         <BlogClient posts={posts} />
