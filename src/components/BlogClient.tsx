@@ -31,7 +31,7 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
   });
 
   return (
-    <main className="flex-1 px-6 py-10 bg-primary-bg text-primary-text">
+    <main className="flex-1 px-6 py-6 bg-primary-bg text-primary-text">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-bold">Blog</h1>
         <div className="flex items-center space-x-4">
@@ -48,7 +48,7 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
           {/* Sort Order Button */}
           <button
             onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}
-            className="bg-accent text-btnText px-4 py-2 rounded-lg flex items-center hover:bg-btnPrimaryHover transition"
+            className="bg-accent text-btnText px-4 py-2 rounded-lg flex items-center btn btn-primary hover:bg-btnPrimaryHover transition"
           >
             {sortBy === 'title' ? (
               order === 'asc' ? (

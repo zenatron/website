@@ -61,19 +61,19 @@ export default function Header() {
       <nav className="hidden md:flex items-center space-x-4">
         <Link
           href="/projects"
-          className="btn btn-secondary hover:text-accent transition-colors"
+          className="btn btn-primary hover:text-accent transition-colors"
         >
           Projects
         </Link>
         <Link
           href="/blog"
-          className="btn btn-secondary hover:text-accent transition-colors"
+          className="btn btn-primary hover:text-accent transition-colors"
         >
           Blog
         </Link>
         <Link
           href="/about"
-          className="btn btn-secondary hover:text-accent transition-colors"
+          className="btn btn-primary hover:text-accent transition-colors"
         >
           About
         </Link>
@@ -98,19 +98,19 @@ export default function Header() {
           >
             <Link
               href="/projects"
-              className="btn btn-secondary w-3/4 text-center hover:text-accent transition-colors"
+              className="btn btn-primary w-3/4 text-center hover:text-accent transition-colors"
             >
               Projects
             </Link>
             <Link
               href="/blog"
-              className="btn btn-secondary w-3/4 text-center hover:text-accent transition-colors"
+              className="btn btn-primary w-3/4 text-center hover:text-accent transition-colors"
             >
               Blog
             </Link>
             <Link
               href="/about"
-              className="btn btn-secondary w-3/4 text-center hover:text-accent transition-colors"
+              className="btn btn-primary w-3/4 text-center hover:text-accent transition-colors"
             >
               About
             </Link>

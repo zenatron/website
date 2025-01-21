@@ -16,25 +16,26 @@
   --shadow-hard: 0px 6px 8px rgba(0, 0, 0, 0.2);
   --border-light: #e5e7eb;
   /* Button Colors */
-  --color-btn-primary: #2563eb; /* Base blue for buttons */
-  --color-btn-primary-hover: #1d4ed8; /* Darker blue for hover */
-  --color-btn-secondary: #3b82f6; /* Secondary blue */
-  --color-btn-secondary-hover: #60a5fa; /* Lighter blue for hover */
-  --color-btn-text: #ffffff; /* Button text */
+  --color-btn-primary: #2563eb;
+  --color-btn-primary-hover: #1d4ed8;
+  --color-btn-secondary: #3b82f6;
+  --color-btn-secondary-hover: #60a5fa;
+  --color-btn-text: #ffffff;
 }
 
 .dark {
+  /* DARK BG COLORS */
   --color-bg-primary: #1e293b;
   --color-bg-secondary: #334155;
   --color-text-primary: #ededed;
   --color-text-muted: #94a3b8;
   --border-light: #1f2937;
-  /* Button Colors */
-  --color-btn-primary: #60a5fa; /* Light blue for dark mode buttons */
-  --color-btn-primary-hover: #3b82f6; /* Slightly darker blue for hover */
-  --color-btn-secondary: #2563eb; /* Deeper blue for dark mode */
-  --color-btn-secondary-hover: #1d4ed8; /* Even darker blue for hover */
-  --color-btn-text: #ffffff; /* Button text remains white */
+  /* DARK Button Colors */
+  --color-btn-primary: #60a5fa;
+  --color-btn-primary-hover: #3b82f6;
+  --color-btn-secondary: #2563eb;
+  --color-btn-secondary-hover: #1d4ed8;
+  --color-btn-text: #ffffff;
 }
 
 body {
@@ -45,13 +46,13 @@ body {
 
 @layer components {
   .btn {
-    @apply flex items-center px-4 py-2 rounded-lg font-medium transition-colors shadow-md; /* Core button styles */
+    @apply flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-colors shadow-md;
   }
 
   .btn-primary {
     background-color: var(--color-btn-primary);
     color: var(--color-btn-text);
-    @apply hover:bg-btnPrimaryHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-btnPrimaryHover transition;
+    @apply hover:bg-btnPrimaryHover bg-btnPrimary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-btnPrimaryHover transition;
   }
 
   .btn-secondary {
