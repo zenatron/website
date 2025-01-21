@@ -14,6 +14,66 @@ excerpt: "Test to see how Markdown gets rendered on my site!"
 ### Colored Text Test
 This is <span style="color: red;">red text</span> and <span style="color: blue;">blue text</span>.
 
+### Text Shadows
+This is <span style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">shadowed text</span>.
+
+### Gradient Text
+This is <span style="background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet); -webkit-background-clip: text; color: transparent;">gradient text</span>.
+
+### Highlighted Text
+This is <span style="background-color: yellow;">highlighted text</span>.
+
+### Rotated Text
+This is <span style="display: inline-block; transform: rotate(10deg);">rotated text</span>.
+
+### Text With Borders
+This is <span style="border: 1px solid black; padding: 2px;">text with borders</span>.
+
+### Outlined Text
+This is <span style="color: white; -webkit-text-stroke: 1px black;">outlined text</span>.
+
+### Animated Text
+This is <span style="animation: fadeIn 2s infinite;">animated text</span>.
+
+<style>
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+</style>
+
+### Wavy Strikethrough
+This is <span style="text-decoration: line-through; text-decoration-style: wavy;">wavy strikethrough text</span>.
+
+### Blurred Text
+This is <span style="filter: blur(2px);">blurred text</span>.
+
+### Vertical Text
+This is <span style="writing-mode: vertical-lr; text-orientation: upright;">vertical text</span>.
+
+### Typewriter Text
+<div style="display: inline-block; overflow: hidden; white-space: nowrap; border-right: 2px solid; animation: typing 4s steps(20, end), blink 0.5s step-end infinite;">
+Typewriter effect text
+</div>
+
+<style>
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+@keyframes blink {
+  from, to { border-color: transparent; }
+  50% { border-color: black; }
+}
+</style>
+
+### Glowing Text
+This is <span style="color: white; text-shadow: 0 0 8px #00f, 0 0 16px #00f;">glowing text</span>.
+
+### Super/Subscript
+This is superscript (H<sup>2</sup>O) and subscript (CO<sub>2</sub>).
+
 
 ## Horizontal Rules
 
@@ -22,20 +82,6 @@ ___
 ---
 
 ***
-
-
-## Typographic replacements
-
-Enable typographer option to see result.
-
-(c) (C) (r) (R) (tm) (TM) (p) (P) +-
-
-test.. test... test..... test?..... test!....
-
-!!!!!! ???? ,,  -- ---
-
-"Smartypants, double quotes" and 'single quotes'
-
 
 ## Emphasis
 
@@ -152,91 +198,3 @@ Like links, Images also have a footnote style syntax
 With a reference later in the document defining the URL location:
 
 [id]: https://octodex.github.com/images/dojocat.jpg  "The Dojocat"
-
-
-## Plugins
-
-The killer feature of `markdown-it` is very effective support of
-[syntax plugins](https://www.npmjs.org/browse/keyword/markdown-it-plugin).
-
-
-### [Emojies](https://github.com/markdown-it/markdown-it-emoji)
-
-> Classic markup: :wink: :cry: :laughing: :yum:
->
-> Shortcuts (emoticons): :-) :-( 8-) ;)
-
-see [how to change output](https://github.com/markdown-it/markdown-it-emoji#change-output) with twemoji.
-
-
-### [Subscript](https://github.com/markdown-it/markdown-it-sub) / [Superscript](https://github.com/markdown-it/markdown-it-sup)
-
-- 19^th^
-- H~2~O
-
-
-### [\<ins>](https://github.com/markdown-it/markdown-it-ins)
-
-++Inserted text++
-
-
-### [\<mark>](https://github.com/markdown-it/markdown-it-mark)
-
-==Marked text==
-
-
-### [Footnotes](https://github.com/markdown-it/markdown-it-footnote)
-
-Footnote 1 link[^first].
-
-Footnote 2 link[^second].
-
-Inline footnote^[Text of inline footnote] definition.
-
-Duplicated footnote reference[^second].
-
-[^first]: Footnote **can have markup**
-
-    and multiple paragraphs.
-
-[^second]: Footnote text.
-
-
-### [Definition lists](https://github.com/markdown-it/markdown-it-deflist)
-
-Term 1
-
-:   Definition 1
-with lazy continuation.
-
-Term 2 with *inline markup*
-
-:   Definition 2
-
-        { some code, part of Definition 2 }
-
-    Third paragraph of definition 2.
-
-_Compact style:_
-
-Term 1
-  ~ Definition 1
-
-Term 2
-  ~ Definition 2a
-  ~ Definition 2b
-
-
-### [Abbreviations](https://github.com/markdown-it/markdown-it-abbr)
-
-This is HTML abbreviation example.
-
-It converts "HTML", but keep intact partial entries like "xxxHTMLyyy" and so on.
-
-*[HTML]: Hyper Text Markup Language
-
-### [Custom containers](https://github.com/markdown-it/markdown-it-container)
-
-::: warning
-*here be dragons*
-:::
