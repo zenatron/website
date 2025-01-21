@@ -9,8 +9,6 @@ excerpt: "In this blog post we discuss the data mining pipeline."
 ---
 ### Topic: The Data Mining Pipeline (also called Data Science Pipeline, Data Mining Process, etc.)
 
-Using provided resources and/or those you find on your own, discuss:
-
 1. What is data mining? What are some examples of how data mining can be used?
 	1. [Data mining](https://en.wikipedia.org/wiki/Data_mining) is the process of analyzing large datasets in order to find trends and relationships within data that may not be immediately apparent. For example, a retailer may analyze consumer purchase history to help recommend certain products or predict bestselling items. Another example may be a bank analyzing transaction history to detect fraud.
 2. What are the different steps of the pipeline? Briefly discuss each.
