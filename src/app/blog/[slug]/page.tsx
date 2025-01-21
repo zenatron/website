@@ -1,5 +1,4 @@
 import { getPostBySlug } from '../../../lib/blog'; // Utility to fetch a post by slug
-import ReactMarkdown from 'react-markdown';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
 import { FaArrowLeft } from 'react-icons/fa';
@@ -48,7 +47,10 @@ export default async function BlogPostPage({
         <article className="prose dark:prose-invert max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold mb-4">{post.metadata.title}</h1>
           <p className="text-muted-text mb-8">{post.metadata.date}</p>
-          <ReactMarkdown>{post.content}</ReactMarkdown>
+          {/* Render sanitized HTML */}
+          <div
+            dangerouslySetInnerHTML={{ __html: post.content }}
+          ></div>
         </article>
       </main>
       <Footer />

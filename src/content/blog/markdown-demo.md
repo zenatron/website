@@ -11,6 +11,9 @@ excerpt: "Test to see how Markdown gets rendered on my site!"
 ##### h5 Heading
 ###### h6 Heading
 
+### Colored Text Test
+This is <span style="color: red;">red text</span> and <span style="color: blue;">blue text</span>.
+
 
 ## Horizontal Rules
 
