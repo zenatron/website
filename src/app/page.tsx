@@ -20,7 +20,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
       <Header />
-      <main className="flex-1 flex flex-col items-center justify-center text-center px-6">
+      <main className="flex-1 flex flex-col items-center justify-center text-center px-6 py-6">
         {/* Hero Section */}
         <section className="space-y-6 max-w-3xl animate-fade-in">
           <h2
@@ -41,30 +41,30 @@ export default function HomePage() {
         </section>
 
         {/* Icon Section */}
-        <section className="mt-12 grid gap-8 grid-cols-1 md:grid-cols-3">
+        <section className="mt-12 grid gap-6 sm:gap-8 sm:grid-cols-1 md:grid-cols-3 px-4 sm:px-8 lg:px-0">
           <Link href="/projects">
-            <div className="group flex flex-col items-center p-6 rounded-lg shadow-lg bg-secondary-bg hover:bg-primary-bg transition-all duration-300 transform hover:-translate-y-2">
-              <FaCode className="text-4xl text-accent mb-4 group-hover:animate-bounce" />
-              <h3 className="text-xl font-bold">Projects</h3>
-              <p className="text-muted-text text-sm">
-                Explore my software development projects and case studies.
+            <div className="group flex flex-col items-center p-4 sm:p-6 rounded-lg shadow-lg bg-secondary-bg hover:bg-primary-bg transition-all duration-300 transform hover:-translate-y-2 min-h-[10rem]">
+              <FaCode className="text-3xl sm:text-4xl text-accent mb-3 sm:mb-4 group-hover:animate-bounce" />
+              <h3 className="text-lg sm:text-xl font-bold mb-2">Projects</h3>
+              <p className="text-muted-text text-md text-center">
+                Explore my SWE projects and case studies.
               </p>
             </div>
           </Link>
           <Link href="/blog">
-            <div className="group flex flex-col items-center p-6 rounded-lg shadow-lg bg-secondary-bg hover:bg-primary-bg transition-all duration-300 transform hover:-translate-y-2">
-              <FaBlog className="text-4xl text-accent mb-4 group-hover:animate-bounce" />
-              <h3 className="text-xl font-bold">Blog</h3>
-              <p className="text-muted-text text-sm">
-                Read my thoughts on technology, programming, and more.
+            <div className="group flex flex-col items-center p-4 sm:p-6 rounded-lg shadow-lg bg-secondary-bg hover:bg-primary-bg transition-all duration-300 transform hover:-translate-y-2 min-h-[10rem]">
+              <FaBlog className="text-3xl sm:text-4xl text-accent mb-3 sm:mb-4 group-hover:animate-bounce" />
+              <h3 className="text-lg sm:text-xl font-bold mb-2">Blog</h3>
+              <p className="text-muted-text text-md text-center">
+                Read my thoughts on tech, programming, and more.
               </p>
             </div>
           </Link>
           <Link href="/about">
-            <div className="group flex flex-col items-center p-6 rounded-lg shadow-lg bg-secondary-bg hover:bg-primary-bg transition-all duration-300 transform hover:-translate-y-2">
-              <MdPerson className="text-4xl text-accent mb-4 group-hover:animate-bounce" />
-              <h3 className="text-xl font-bold">About Me</h3>
-              <p className="text-muted-text text-sm">
+            <div className="group flex flex-col items-center p-4 sm:p-6 rounded-lg shadow-lg bg-secondary-bg hover:bg-primary-bg transition-all duration-300 transform hover:-translate-y-2 min-h-[10rem]">
+              <MdPerson className="text-3xl sm:text-4xl text-accent mb-3 sm:mb-4 group-hover:animate-bounce" />
+              <h3 className="text-lg sm:text-xl font-bold mb-2">About Me</h3>
+              <p className="text-muted-text text-md text-center">
                 Learn more about me, my background, and my goals.
               </p>
             </div>
