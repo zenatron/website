@@ -1,0 +1,46 @@
+---
+title: "Week 3 Prep: Problem Definition and Data Understanding"
+date: "2025-01-26"
+excerpt: "In this blog post we define the problem and review a potential dataset."
+---
+**Topic: Problem Definition and Data Understanding (First Steps to Project 1)**
+#datamining 
+## Dataset
+I am interested in working with [this dataset](https://www.kaggle.com/datasets/oktayrdeki/traffic-accidents) on traffic accidents. It has approximately 209,000 rows and 24 columns.
+## Dataset Description (From Kaggle)
+> This dataset contains detailed information on traffic accidents across various regions and time periods. It includes various metrics such as accident date, weather conditions, lighting conditions, crash types, injuries, and vehicle involvement. The data spans multiple locations and accident types, offering a comprehensive view of traffic incidents and their causes.
+## Dataset Columns
+- **crash_date**: The date the accident occurred.
+- **traffic_control_device**: The type of traffic control device involved (e.g., traffic light, sign).
+- **weather_condition**: The weather conditions at the time of the accident.
+- **lighting_condition**: The lighting conditions at the time of the accident.
+- **first_crash_type**: The initial type of the crash (e.g., head-on, rear-end).
+- **trafficway_type**: The type of roadway involved in the accident (e.g., highway, local road).
+- **alignment**: The alignment of the road where the accident occurred (e.g., straight, curved).
+- **roadway_surface_cond**: The condition of the roadway surface (e.g., dry, wet, icy).
+- **road_defect**: Any defects present on the road surface.
+- **crash_type**: The overall type of the crash.
+- **intersection_related_i**: Whether the accident was related to an intersection.
+- **damage**: The extent of the damage caused by the accident.
+- **prim_contributory_cause**: The primary cause contributing to the crash.
+- **num_units**: The number of vehicles involved in the accident.
+- **most_severe_injury**: The most severe injury sustained in the crash.
+- **injuries_total**: The total number of injuries reported.
+- **injuries_fatal**: The number of fatal injuries resulting from the accident.
+- **injuries_incapacitating**: The number of incapacitating injuries.
+- **injuries_non_incapacitating**: The number of non-incapacitating injuries.
+- **injuries_reported_not_evident**: The number of injuries reported but not visibly evident.
+- **injuries_no_indication**: The number of cases with no indication of injury.
+- **crash_hour**: The hour the accident occurred.
+- **crash_day_of_week**: The day of the week the accident occurred.
+- **crash_month**: The month the accident occurred.
+## Problems to Solve / Questions to Answer
+Using this dataset, I aim to answer the following questions:
+- **What conditions cause the most traffic accidents?**
+	- Looking at things like weather, rain conditions, visibility, and road defects can help us figure out what factors are most likely to cause accidents. From this question, we may be able to figure out where safety improvements can make a difference.
+- **What time/day do most traffic accidents occur?**
+	- Analyzing the timing of accidents can help us find out if there are specific days, times, or seasons when they are most common. These patterns can help us extrapolate how the timing of accidents may correlate with higher or lower traffic times.
+- **What sorts of injuries are most common in different types of traffic accidents?**
+	- By connecting the types of accidents to the injuries that most often occur in them, we can find out how various factors affect the severity and types of injuries. The goal here is to uncover insights into how to make driving safer overall.
+## Impact of Questions & Data
+The insights gathered from this dataset could make roads safer by helping us focus on what really causes traffic accidents and how to prevent them, like improving road design, managing traffic better, or raising awareness about risky conditions. However, downsides include increased surveillance, higher insurance rates in "risky" locations, or missing the bigger picture on issues like fair access to safe transportation. The key is using this data in a way that helps everyone, without creating new problems.
