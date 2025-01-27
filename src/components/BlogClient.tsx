@@ -67,20 +67,21 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {sortedPosts.map((post) => (
-          <div
+          <Link
             key={post.slug}
-            className="bg-secondary-bg text-primary-text p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+            href={`/blog/${post.slug}`}
+            className="group bg-secondary-bg text-primary-text p-6 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all transform relative"
           >
-            <h2 className="text-2xl font-bold mb-2">{post.metadata.title}</h2>
-            <p className="text-muted-text text-sm mb-4">{post.metadata.date}</p>
-            <p className="text-muted-text">{post.metadata.excerpt}</p>
-            <Link
-              href={`/blog/${post.slug}`}
-              className="text-accent hover:underline mt-4 block"
-            >
-              Read More →
-            </Link>
-          </div>
+            {/* Spotlight effect */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-accent/10 to-accent/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg pointer-events-none"></div>
+            <div className="relative z-10">
+              <h2 className="text-2xl font-bold mb-2 group-hover:text-accent transition-colors">
+                {post.metadata.title}
+              </h2>
+              <p className="text-muted-text text-sm mb-4">{post.metadata.date}</p>
+              <p className="text-muted-text">{post.metadata.excerpt}</p>
+            </div>
+          </Link>
         ))}
       </div>
     </main>
