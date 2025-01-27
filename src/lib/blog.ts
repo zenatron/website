@@ -35,6 +35,7 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
       excerpt: data.excerpt || '',
     },
     content: convertMarkdownToHtml(content), // Convert and sanitize the content
+    //content: marked(content) as string, // DO NOT SANITIZE CONTENT YET
   };
 }
 
