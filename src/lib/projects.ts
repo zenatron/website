@@ -68,6 +68,7 @@ export async function getAllProjects(): Promise<Project[]> {
     })
     .sort((a, b) => {
       if (a.metadata.date && b.metadata.date) {
+        // Sort in descending order (newest first)
         return new Date(b.metadata.date).getTime() - new Date(a.metadata.date).getTime();
       }
       return 0;

@@ -5,30 +5,36 @@ export default function ProjectClient({ projects }: { projects: Project[] }) {
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-4xl font-bold mb-8">Projects</h1>
-      <div className="grid gap-6">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {projects.map((project) => (
           <Link
-            href={`/projects/${project.slug}`}
             key={project.slug}
-            className="block p-6 rounded-lg bg-primary-bg border border-muted-text/20 
-              hover:border-accent/50 transition-all duration-200
-              shadow-sm hover:shadow-md"
+            href={`/projects/${project.slug}`}
+            className="group bg-secondary-bg p-6 rounded-lg shadow-md 
+              hover:shadow-lg hover:scale-105 transition-all transform relative"
           >
-            <article>
-              <h2 className="text-2xl font-semibold text-primary-text mb-2">
+            {/* Spotlight effect */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent 
+              via-accent/10 to-accent/20 opacity-0 group-hover:opacity-100 
+              transition-opacity rounded-lg pointer-events-none">
+            </div>
+            
+            <div className="relative z-10">
+              <h2 className="text-2xl font-bold mb-2 text-primary-text 
+                group-hover:text-accent transition-colors">
                 {project.metadata.title}
               </h2>
               {project.metadata.date && (
-                <p className="text-muted-text text-sm mb-3">
+                <p className="text-muted-text text-sm mb-4">
                   {new Date(project.metadata.date).toLocaleDateString()}
                 </p>
               )}
               {project.metadata.description && (
-                <p className="text-primary-text/80">
+                <p className="text-muted-text line-clamp-3">
                   {project.metadata.description}
                 </p>
               )}
-            </article>
+            </div>
           </Link>
         ))}
       </div>
