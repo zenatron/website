@@ -4,17 +4,20 @@ import Footer from '../../../components/Footer';
 import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa';
 
+type Props = {
+  params: Promise<{
+    slug: string
+  }>
+}
+
 export async function generateStaticParams() {
   const params = await import('../../../lib/projects').then((mod) => mod.generateStaticParams());
   return params;
 }
 
-export default async function ProjectPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const project = await getProjectBySlug(params.slug);
+export default async function ProjectPage({ params }: Props) {
+  const { slug } = await params;
+  const project = await getProjectBySlug(slug);
 
   if (!project) {
     return (
