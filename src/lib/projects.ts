@@ -11,6 +11,11 @@ export interface ProjectMetadata {
   title: string;
   date?: string;
   description?: string;
+  downloads?: {
+    label: string;
+    filename: string;
+    type: string;
+  }[];
 }
 
 export interface Project {
