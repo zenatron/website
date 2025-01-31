@@ -1,0 +1,17 @@
+{
+  "Python_Exercise": {
+    "title": "Python Exercises",
+    "date": "2024-01-15",
+    "description": "A collection of Python exercises covering basic to advanced concepts"
+  },
+  "Pandas_Numpy_Exercise": {
+    "title": "Pandas & Numpy Exercises",
+    "date": "2024-01-20",
+    "description": "Data manipulation exercises using Pandas and NumPy libraries"
+  },
+  "Project_1_Problem_Definition": {
+    "title": "Project 1: Problem Definition",
+    "date": "2025-01-31",
+    "description": "A detailed problem definition for Project 1, with data visualization"
+  }
+}

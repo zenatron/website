@@ -14,8 +14,7 @@ export default async function ProjectPage({
 }: {
   params: { slug: string };
 }) {
-  const { slug } = params;
-  const project = await getProjectBySlug(slug);
+  const project = await getProjectBySlug(params.slug);
 
   if (!project) {
     return (
@@ -49,29 +48,13 @@ export default async function ProjectPage({
           </Link>
         </div>
 
-        <article 
-          className="prose prose-lg dark:prose-invert max-w-4xl mx-auto
-            prose-headings:text-primary-text
-            prose-p:text-primary-text
-            prose-a:text-accent hover:prose-a:text-btnPrimaryHover
-            prose-strong:text-primary-text
-            prose-code:text-primary-text
-            prose-pre:bg-code-bg
-            prose-pre:text-code-text
-            dark:prose-headings:text-primary-text
-            dark:prose-p:text-primary-text
-            dark:prose-a:text-accent dark:hover:prose-a:text-btnPrimaryHover
-            dark:prose-strong:text-primary-text
-            dark:prose-code:text-primary-text
-            dark:prose-pre:bg-code-bg
-            dark:prose-pre:text-code-text
-            prose-img:rounded-lg
-            prose-img:mx-auto
-            [&>*]:mx-auto [&>*]:max-w-3xl
-            [&>pre]:max-w-4xl
-            [&>img]:max-w-4xl"
-          dangerouslySetInnerHTML={{ __html: project.content }}
-        />
+        <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+          <iframe
+            srcDoc={project.content}
+            className="w-full h-[800px] border-0"
+            title={project.metadata?.title || 'Project Content'}
+          />
+        </div>
       </main>
       <Footer />
     </div>
