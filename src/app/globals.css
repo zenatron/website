@@ -4,38 +4,37 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* BG Colors */
-  --color-bg-primary: #f3f4f6;
-  --color-bg-secondary: #e5e7eb;
-  --color-accent: #3b82f6;
-  --color-text-primary: #171717;
-  --color-text-muted: #71717a;
-  /* Shadows */
-  --shadow-soft: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-hard: 0px 6px 8px rgba(0, 0, 0, 0.2);
-  --border-light: #e5e7eb;
-  /* Button Colors */
-  --color-btn-primary: #2563eb;
-  --color-btn-primary-hover: #1d4ed8;
-  --color-btn-secondary: #3b82f6;
-  --color-btn-secondary-hover: #60a5fa;
-  --color-btn-text: #ffffff;
+@layer base {
+  :root {
+    /* Light theme */
+    --primary-text: #1a1a1a;
+    --primary-bg: #ffffff;
+    --accent: #4a90e2;
+    --btn-primary: #4a90e2;
+    --btn-primary-hover: #357abd;
+    --muted-text: #666666;
+    --code-bg: #f5f5f5;
+    --code-text: #1a1a1a;
+  }
+
+  :root[class~="dark"] {
+    /* Dark theme */
+    --primary-text: #e6e6e6;
+    --primary-bg: #1a1a1a;
+    --accent: #3b82f6;
+    --btn-primary: #3b82f6;
+    --btn-primary-hover: #60a5fa;
+    --muted-text: #a3a3a3;
+    --code-bg: #2d2d2d;
+    --code-text: #e6e6e6;
+  }
 }
 
-.dark {
-  /* DARK BG COLORS */
-  --color-bg-primary: #1e293b;
-  --color-bg-secondary: #334155;
-  --color-text-primary: #ededed;
-  --color-text-muted: #94a3b8;
-  --border-light: #1f2937;
-  /* DARK Button Colors */
-  --color-btn-primary: #60a5fa;
-  --color-btn-primary-hover: #3b82f6;
-  --color-btn-secondary: #2563eb;
-  --color-btn-secondary-hover: #1d4ed8;
-  --color-btn-text: #ffffff;
+/* Add base styles for better dark mode transitions */
+@layer utilities {
+  * {
+    @apply transition-colors duration-200;
+  }
 }
 
 body {

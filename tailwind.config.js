@@ -5,6 +5,7 @@ module.exports = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -13,6 +14,7 @@ module.exports = {
         'accent': 'var(--accent)',
         'btnPrimary': 'var(--btn-primary)',
         'btnPrimaryHover': 'var(--btn-primary-hover)',
+        'muted-text': 'var(--muted-text)',
         'code-bg': 'var(--code-bg)',
         'code-text': 'var(--code-text)',
         // ... any other colors you have
