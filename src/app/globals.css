@@ -33,7 +33,7 @@
 /* Add base styles for better dark mode transitions */
 @layer utilities {
   * {
-    @apply transition-colors duration-200;
+    @apply transition-colors duration-75;
   }
 }
 
@@ -45,20 +45,20 @@ body {
 
 @layer components {
   .btn {
-    @apply flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-colors shadow-md;
+    @apply flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-colors duration-100 shadow-md;
   }
 
   .btn-primary {
     background-color: var(--color-btn-primary);
     color: var(--color-btn-text);
-    @apply hover:bg-btnPrimaryHover bg-btnPrimary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-btnPrimaryHover transition;
+    @apply hover:bg-btnPrimaryHover bg-btnPrimary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-btnPrimaryHover duration-100;
   }
 
   .btn-secondary {
     background-color: var(--color-btn-secondary);
     color: var(--color-btn-text);
     border: 1px solid var(--color-btn-secondary-hover);
-    @apply hover:bg-btnSecondaryHover hover:border-btnSecondaryHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-btnSecondaryHover transition;
+    @apply hover:bg-btnSecondaryHover hover:border-btnSecondaryHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-btnSecondaryHover duration-100;
   }
 
   .btn-small {
