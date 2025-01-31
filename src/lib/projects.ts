@@ -45,7 +45,8 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
       content,
       metadata: metadata[slug] || createDefaultMetadata(slug)
     };
-  } catch (e) {
+  } catch (error) {
+    console.error(`Failed to load project ${slug}:`, error);
     return null;
   }
 }
@@ -53,7 +54,7 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
 export async function getAllProjects(): Promise<Project[]> {
   const files = fs.readdirSync(projectsDirectory);
   
-  const projects = files
+  return files
     .filter(file => file.endsWith('.html'))
     .map(file => {
       const slug = file.replace(/\.html$/, '');
@@ -65,16 +66,7 @@ export async function getAllProjects(): Promise<Project[]> {
         content,
         metadata: metadata[slug] || createDefaultMetadata(slug)
       };
-    })
-    .sort((a, b) => {
-      if (a.metadata.date && b.metadata.date) {
-        // Sort in descending order (newest first)
-        return new Date(b.metadata.date).getTime() - new Date(a.metadata.date).getTime();
-      }
-      return 0;
     });
-
-  return projects;
 }
 
 export async function generateStaticParams() {

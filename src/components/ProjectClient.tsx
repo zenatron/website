@@ -2,6 +2,18 @@ import Link from 'next/link';
 import { Project } from '../lib/projects';
 
 export default function ProjectClient({ projects }: { projects: Project[] }) {
+  // Helper function to format date consistently
+  const formatDate = (dateString: string) => {
+    // Create date in UTC to avoid timezone issues
+    const date = new Date(dateString + 'T00:00:00Z');
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      timeZone: 'UTC'
+    });
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-4xl font-bold mb-8">Projects</h1>
@@ -26,7 +38,7 @@ export default function ProjectClient({ projects }: { projects: Project[] }) {
               </h2>
               {project.metadata.date && (
                 <p className="text-muted-text text-sm mb-4">
-                  {new Date(project.metadata.date).toLocaleDateString()}
+                  {formatDate(project.metadata.date)}
                 </p>
               )}
               {project.metadata.description && (

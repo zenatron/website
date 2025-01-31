@@ -43,7 +43,8 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
         excerpt: data.excerpt || '',
       },
     };
-  } catch (e) {
+  } catch (error) {
+    console.error(`Failed to load blog post ${slug}:`, error);
     return null;
   }
 }
