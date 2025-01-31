@@ -3,30 +3,21 @@ import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
 import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa';
-import DOMPurify from 'dompurify';
-import { JSDOM } from 'jsdom';
-
-const window = new JSDOM('').window;
-const purify = DOMPurify(window);
-
-function sanitizeHtml(html: string): string {
-  return purify.sanitize(html);
-}
 
 export async function generateStaticParams() {
-    const params = await import('../../../lib/projects').then((mod) => mod.generateStaticParams());
-    return params;
-}  
+  const params = await import('../../../lib/projects').then((mod) => mod.generateStaticParams());
+  return params;
+}
 
 export default async function ProjectPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }) {
-  const { slug } = await params;
-  const rawHtml = await getProjectBySlug(slug);
+  const { slug } = params;
+  const project = await getProjectBySlug(slug);
 
-  if (!rawHtml) {
+  if (!project) {
     return (
       <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
         <Header />
@@ -44,9 +35,6 @@ export default async function ProjectPage({
     );
   }
 
-  const sanitizedHtml = sanitizeHtml(rawHtml);
-  //const sanitizedHtml = rawHtml;
-
   return (
     <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
       <Header />
@@ -61,9 +49,28 @@ export default async function ProjectPage({
           </Link>
         </div>
 
-        <article
-          className="prose dark:prose-invert max-w-4xl mx-auto"
-          dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
+        <article 
+          className="prose prose-lg dark:prose-invert max-w-4xl mx-auto
+            prose-headings:text-primary-text
+            prose-p:text-primary-text
+            prose-a:text-accent hover:prose-a:text-btnPrimaryHover
+            prose-strong:text-primary-text
+            prose-code:text-primary-text
+            prose-pre:bg-code-bg
+            prose-pre:text-code-text
+            dark:prose-headings:text-primary-text
+            dark:prose-p:text-primary-text
+            dark:prose-a:text-accent dark:hover:prose-a:text-btnPrimaryHover
+            dark:prose-strong:text-primary-text
+            dark:prose-code:text-primary-text
+            dark:prose-pre:bg-code-bg
+            dark:prose-pre:text-code-text
+            prose-img:rounded-lg
+            prose-img:mx-auto
+            [&>*]:mx-auto [&>*]:max-w-3xl
+            [&>pre]:max-w-4xl
+            [&>img]:max-w-4xl"
+          dangerouslySetInnerHTML={{ __html: project.content }}
         />
       </main>
       <Footer />

@@ -1,16 +1,20 @@
-import { getPostBySlug } from '../../../lib/blog'; // Utility to fetch a post by slug
+import { getBlogPostBySlug } from '../../../lib/blog';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
-import { FaArrowLeft } from 'react-icons/fa';
 import Link from 'next/link';
+import { FaArrowLeft } from 'react-icons/fa';
 
-export default async function BlogPostPage({
+export async function generateStaticParams() {
+  const params = await import('../../../lib/blog').then((mod) => mod.generateStaticParams());
+  return params;
+}
+
+export default async function BlogPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }) {
-  const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const post = await getBlogPostBySlug(params.slug);
 
   if (!post) {
     return (
@@ -19,7 +23,7 @@ export default async function BlogPostPage({
         <main className="flex-1 flex flex-col items-center justify-center text-center px-6">
           <h1 className="text-6xl font-bold">404</h1>
           <p className="text-lg mt-4 text-muted-text">
-            The post you&#39;re looking for doesn&#39;t exist.
+            The blog post you&#39;re looking for doesn&#39;t exist.
           </p>
           <Link href="/blog" className="btn btn-primary mt-6">
             Back to Blog
@@ -44,13 +48,35 @@ export default async function BlogPostPage({
           </Link>
         </div>
 
-        <article className="prose dark:prose-invert max-w-4xl mx-auto">
+        <article className="prose prose-lg dark:prose-invert max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold mb-4">{post.metadata.title}</h1>
-          <p className="text-muted-text mb-8">{post.metadata.date}</p>
-          {/* Render sanitized HTML */}
+          {post.metadata.date && (
+            <p className="text-muted-text mb-6">
+              {new Date(post.metadata.date).toLocaleDateString()}
+            </p>
+          )}
           <div
+            className="prose-headings:text-primary-text
+              prose-p:text-primary-text
+              prose-a:text-accent hover:prose-a:text-btnPrimaryHover
+              prose-strong:text-primary-text
+              prose-code:text-primary-text
+              prose-pre:bg-code-bg
+              prose-pre:text-code-text
+              dark:prose-headings:text-primary-text
+              dark:prose-p:text-primary-text
+              dark:prose-a:text-accent dark:hover:prose-a:text-btnPrimaryHover
+              dark:prose-strong:text-primary-text
+              dark:prose-code:text-primary-text
+              dark:prose-pre:bg-code-bg
+              dark:prose-pre:text-code-text
+              prose-img:rounded-lg
+              prose-img:mx-auto
+              [&>*]:mx-auto [&>*]:max-w-3xl
+              [&>pre]:max-w-4xl
+              [&>img]:max-w-4xl"
             dangerouslySetInnerHTML={{ __html: post.content }}
-          ></div>
+          />
         </article>
       </main>
       <Footer />

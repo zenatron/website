@@ -2,60 +2,82 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import { marked } from 'marked';
-import DOMPurify from 'dompurify'; // Import DOMPurify
-import { JSDOM } from 'jsdom'; // Required for DOMPurify in Node.js
-import { BlogPost } from '@/types/types';
+import DOMPurify from 'dompurify';
+import { JSDOM } from 'jsdom';
 
-// Initialize DOMPurify with a DOM environment (only needed in Node.js)
+// Initialize DOMPurify
 const window = new JSDOM('').window;
 const purify = DOMPurify(window);
 
-// Define the blog directory
 const blogDirectory = path.join(process.cwd(), 'src/content/blog');
 
-// Utility function to convert and sanitize Markdown content
-function convertMarkdownToHtml(markdown: string): string {
-  const rawHtml = marked(markdown); // Convert Markdown to HTML
-  return purify.sanitize(rawHtml as string); // Sanitize the resulting HTML
+export interface BlogMetadata {
+  title: string;
+  date: string;
+  excerpt?: string;
 }
 
-// Fetch a single post by its slug
-export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
-  const filePath = path.join(blogDirectory, `${slug}.md`);
-  if (!fs.existsSync(filePath)) return null;
-
-  const fileContents = fs.readFileSync(filePath, 'utf-8');
-  const { data, content } = matter(fileContents);
-
-  return {
-    slug,
-    metadata: {
-      title: data.title || 'Untitled',
-      date: data.date || '1970-01-01',
-      excerpt: data.excerpt || '',
-    },
-    content: convertMarkdownToHtml(content), // Convert and sanitize the content
-    //content: marked(content) as string, // DO NOT SANITIZE CONTENT YET
-  };
+export interface BlogPost {
+  slug: string;
+  content: string;
+  metadata: BlogMetadata;
 }
 
-// Fetch all posts (for generating paths or displaying lists)
-export async function getAllPosts(): Promise<BlogPost[]> {
-  const filenames = fs.readdirSync(blogDirectory);
+async function convertMarkdownToHtml(markdown: string): Promise<string> {
+  const rawHtml = await marked(markdown);
+  return purify.sanitize(rawHtml);
+}
 
-  return filenames.map((filename) => {
-    const filePath = path.join(blogDirectory, filename);
-    const fileContents = fs.readFileSync(filePath, 'utf-8');
+export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
+  try {
+    const fullPath = path.join(blogDirectory, `${slug}.md`);
+    const fileContents = fs.readFileSync(fullPath, 'utf8');
     const { data, content } = matter(fileContents);
-
+    
     return {
-      slug: filename.replace('.md', ''),
+      slug,
+      content: await convertMarkdownToHtml(content),
       metadata: {
         title: data.title || 'Untitled',
         date: data.date || '1970-01-01',
         excerpt: data.excerpt || '',
       },
-      content: convertMarkdownToHtml(content), // Convert and sanitize the content
     };
-  });
+  } catch (e) {
+    return null;
+  }
+}
+
+export async function getAllBlogPosts(): Promise<BlogPost[]> {
+  const files = fs.readdirSync(blogDirectory);
+  
+  const posts = await Promise.all(files
+    .filter(file => file.endsWith('.md'))
+    .map(async file => {
+      const slug = file.replace(/\.md$/, '');
+      const fullPath = path.join(blogDirectory, file);
+      const fileContents = fs.readFileSync(fullPath, 'utf8');
+      const { data, content } = matter(fileContents);
+      
+      return {
+        slug,
+        content: await convertMarkdownToHtml(content),
+        metadata: {
+          title: data.title || 'Untitled',
+          date: data.date || '1970-01-01',
+          excerpt: data.excerpt || '',
+        },
+      };
+    }));
+
+  return posts.sort((a, b) => new Date(b.metadata.date).getTime() - new Date(a.metadata.date).getTime());
+}
+
+export async function generateStaticParams() {
+  const files = fs.readdirSync(blogDirectory);
+  return files
+    .filter(file => file.endsWith('.md'))
+    .map(file => ({
+      slug: file.replace(/\.md$/, ''),
+    }));
 }

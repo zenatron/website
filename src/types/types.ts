@@ -3,7 +3,7 @@ export interface BlogPost {
     metadata: {
       title: string;
       date: string;
-      excerpt: string;
+      excerpt?: string;
     };
     content: string;
   }
