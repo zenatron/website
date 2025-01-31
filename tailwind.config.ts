@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-export default {
+const config: Config = {
   darkMode: 'class',
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -10,16 +10,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        'primary-bg': 'var(--color-bg-primary)',
-        'secondary-bg': 'var(--color-bg-secondary)',
-        'accent-bg': 'var(--color-accent)',
-        'primary-text': 'var(--color-text-primary)',
-        'muted-text': 'var(--color-text-muted)',
-        btnPrimary: 'var(--color-btn-primary)',
-        btnPrimaryHover: 'var(--color-btn-primary-hover)',
-        btnSecondary: 'var(--color-btn-secondary)',
-        btnSecondaryHover: 'var(--color-btn-secondary-hover)',
-        btnText: 'var(--color-btn-text)',
+        'primary-text': 'var(--primary-text)',
+        'primary-bg': 'var(--primary-bg)',
+        'accent': 'var(--accent)',
+        'btnPrimary': 'var(--btn-primary)',
+        'btnPrimaryHover': 'var(--btn-primary-hover)',
+        'muted-text': 'var(--muted-text)',
+        'code-bg': 'var(--code-bg)',
+        'code-text': 'var(--code-text)',
+        'secondary-bg': 'var(--secondary-bg)',
       },
       boxShadow: {
         soft: 'var(--shadow-soft)',
@@ -31,5 +30,9 @@ export default {
       },
     },
   },
-  plugins: [require('@tailwindcss/typography')],
-} satisfies Config;
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
+}
+
+export default config;

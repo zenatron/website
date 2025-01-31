@@ -9,9 +9,10 @@
     /* Light theme */
     --primary-text: #1a1a1a;
     --primary-bg: #ffffff;
+    --secondary-bg: #f8f9fa;
     --accent: #4a90e2;
-    --btn-primary: #4a90e2;
-    --btn-primary-hover: #357abd;
+    --btn-primary: #3b82f6;
+    --btn-primary-hover: #60a5fa;
     --muted-text: #666666;
     --code-bg: #f5f5f5;
     --code-text: #1a1a1a;
@@ -21,6 +22,7 @@
     /* Dark theme */
     --primary-text: #e6e6e6;
     --primary-bg: #1a1a1a;
+    --secondary-bg: #2d2d2d;
     --accent: #3b82f6;
     --btn-primary: #3b82f6;
     --btn-primary-hover: #60a5fa;
@@ -45,20 +47,28 @@ body {
 
 @layer components {
   .btn {
-    @apply flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-colors duration-100 shadow-md;
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-75 
+    flex items-center gap-2 shadow-sm hover:shadow-md;
   }
 
-  .btn-primary {
-    background-color: var(--color-btn-primary);
-    color: var(--color-btn-text);
-    @apply hover:bg-btnPrimaryHover bg-btnPrimary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-btnPrimaryHover duration-100;
+  .btn.btn-primary {
+    @apply bg-btnPrimary border border-accent border-opacity-20;
+    color: white;
+  }
+
+  .btn.btn-primary:hover {
+    @apply bg-btnPrimaryHover;
+    color: white;
   }
 
   .btn-secondary {
-    background-color: var(--color-btn-secondary);
-    color: var(--color-btn-text);
-    border: 1px solid var(--color-btn-secondary-hover);
-    @apply hover:bg-btnSecondaryHover hover:border-btnSecondaryHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-btnSecondaryHover duration-100;
+    @apply bg-primary-bg text-primary-text border border-accent border-opacity-20
+    hover:border-opacity-40 hover:bg-accent hover:bg-opacity-5;
+  }
+
+  .btn-icon {
+    @apply p-2 rounded-lg transition-all duration-75
+    hover:bg-accent hover:bg-opacity-10;
   }
 
   .btn-small {
@@ -70,9 +80,7 @@ body {
   }
 
   .btn-disabled {
-    background-color: var(--color-bg-secondary);
-    color: var(--color-text-muted);
-    @apply opacity-50 cursor-not-allowed;
+    @apply bg-secondary-bg text-muted-text opacity-50 cursor-not-allowed;
   }
 }
 

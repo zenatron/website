@@ -4,17 +4,20 @@ import Footer from '../../../components/Footer';
 import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa';
 
+type Props = {
+  params: Promise<{
+    slug: string
+  }>
+}
+
 export async function generateStaticParams() {
   const params = await import('../../../lib/blog').then((mod) => mod.generateStaticParams());
   return params;
 }
 
-export default async function BlogPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const post = await getBlogPostBySlug(params.slug);
+export default async function BlogPage({ params }: Props) {
+  const { slug } = await params;
+  const post = await getBlogPostBySlug(slug);
 
   if (!post) {
     return (

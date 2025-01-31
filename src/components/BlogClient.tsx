@@ -39,7 +39,9 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as 'title' | 'date')}
-            className="bg-secondary-bg text-primary-text px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+            className="bg-primary-bg text-primary-text px-4 py-2 rounded-lg border border-accent/20 
+              focus:outline-none focus:ring-2 focus:ring-accent shadow-sm hover:shadow-md 
+              transition-all duration-75"
           >
             <option value="date">Sort by Date</option>
             <option value="title">Sort by Title</option>
@@ -48,18 +50,20 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
           {/* Sort Order Button */}
           <button
             onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}
-            className="bg-accent text-btnText px-4 py-2 rounded-lg flex items-center btn btn-primary hover:bg-btnPrimaryHover transition"
+            className="bg-btnPrimary text-white px-4 py-2 rounded-lg flex items-center 
+              hover:bg-btnPrimaryHover active:bg-accent/80 shadow-sm hover:shadow-md 
+              transition-all duration-75 border border-accent/20"
           >
             {sortBy === 'title' ? (
               order === 'asc' ? (
-                <FaSortAlphaDown className="text-lg" />
+                <FaSortAlphaDown className="text-xl" />
               ) : (
-                <FaSortAlphaUp className="text-lg" />
+                <FaSortAlphaUp className="text-xl" />
               )
             ) : order === 'asc' ? (
-              <FaSortNumericDown className="text-lg" />
+              <FaSortNumericDown className="text-xl" />
             ) : (
-              <FaSortNumericUp className="text-lg" />
+              <FaSortNumericUp className="text-xl" />
             )}
           </button>
         </div>
