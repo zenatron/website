@@ -1,0 +1,24 @@
+---
+title: "Week 5 Prep: Decision Trees"
+date: "2025-02-09"
+excerpt: "In this blog post we will discuss decision trees in more detail."
+---
+#datamining
+ **Topic: Decision Trees**
+## Decision Tree Structure
+Decision trees are structured like a flowchart and have the following components:
+1. Root Node: the starting point that represents the entire dataset (the main node)
+2. Branches: from the root, branches of questions or test conditions. Based on the answer, the branch is followed to one or another. Each branch represents the outcome of the question (for example, true or false)
+3. Internal Nodes: additional decision points further down the tree where more questions are asked. Each internal node splits the data based on a specific feature or condition
+4. Leaf Nodes: these represent the final outcomes or decisions. In a classification tree, a leaf might label the data as belonging to a specific category (like spam vs not spam), or in a regression tree, it might provide a numerical prediction.
+## Decision Tree Function
+A decision tree works in the following way:
+1. Ask a question: at each node, the tree asks a question about one of the features in the data. For example "is the weather sunny?"
+2. Split the data: based on the answer (true/false), the data is divided into groups. This process is repeated at each node.
+3. Reach a decision: when you arrive at a leaf node, the tree provides the final decision or classification.
+## Decision Tree Example
+![](https://images.datacamp.com/image/upload/v1677504957/decision_tree_for_heart_attack_prevention_2140bd762d.png)
+## Project 2 Introduction
+Using [this Car Price dataset](https://www.kaggle.com/datasets/asinow/car-price-dataset), I would like to be able to classify the car into its respective brand based on parameters such as price, year, engine & transmission parameters, and mileage. The goal of this project will be to see if it is possible to determine a vehicle's brand based on such parameters.
+
+The potential impact is that the model could help dealerships, online markets, and analysts to quickly and accurately categorize cars by brand, as well as help predict what car brands commonly have which specs. On the other hand, if the model is biased or not trained on all the data properly, it might generate misleading classifications or oversimplify the complexity of different brands.

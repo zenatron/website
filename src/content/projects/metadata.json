@@ -34,5 +34,17 @@
         "type": "notebook"
       }
     ]
+  },
+  "Scikit_Learn_Exercise": {
+    "title": "Scikit-Learn Exercises",
+    "date": "2025-02-07",
+    "description": "Exercises with Scikit-Learn library",
+    "downloads": [
+      {
+        "label": "Download Notebook",
+        "filename": "Scikit_Learn_Exercise.ipynb",
+        "type": "notebook"
+      }
+    ]
   }
 }
