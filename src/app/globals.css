@@ -98,3 +98,16 @@ body {
 .animate-fade-in {
   animation: fade-in 1s ease-in-out;
 }
+
+/* Add to your existing CSS */
+.math {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  padding: 1rem 0;
+}
+
+.math-display {
+  display: block;
+  text-align: center;
+}

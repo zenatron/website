@@ -5,7 +5,6 @@ excerpt: "In this blog post we will discuss more classification algorithms."
 ---
 #datamining
  **Topic: Classification Algorithms**
- > ⚠️ **Note:** The LaTeX is not rendering in the blog post. It will be fixed soon.
 ## High-Level Overview
 1. Naive Bayes
 	- A probabilistic classifier based on Bayes' Theorem
