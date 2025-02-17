@@ -1,9 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { marked } from 'marked';
+import { marked, Tokens } from 'marked';
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
+import katex from 'katex';
 
 // Initialize DOMPurify
 const window = new JSDOM('').window;
@@ -24,8 +25,75 @@ export interface BlogPost {
 }
 
 async function convertMarkdownToHtml(markdown: string): Promise<string> {
+  marked.use({
+    extensions: [
+      {
+        name: 'math',
+        level: 'block',
+        start(src: string) { return src.match(/\$\$/)?.index; },
+        tokenizer(src: string) {
+          const match = src.match(/^\$\$([\s\S]*?)\$\$/);
+          if (match) {
+            return {
+              type: 'math',
+              raw: match[0],
+              text: match[1].trim(),
+              tokens: []
+            };
+          }
+        },
+        renderer(token: Tokens.Generic) {
+          try {
+            const rendered = katex.renderToString(token.text, {
+              displayMode: true,
+              throwOnError: false
+            });
+            return `<div class="math math-display">${rendered}</div>`;
+          } catch (error) {
+            console.error('KaTeX error:', error);
+            return `<div class="math math-display error">${token.text}</div>`;
+          }
+        }
+      },
+      {
+        name: 'inlineMath',
+        level: 'inline',
+        start(src: string) { 
+          const match = src.match(/(?<!\\)\$/);
+          return match?.index;
+        },
+        tokenizer(src: string) {
+          const match = src.match(/^(?<!\\)\$((?:\\.|[^\$\\])+?)\$/);
+          if (match) {
+            return {
+              type: 'inlineMath',
+              raw: match[0],
+              text: match[1].trim(),
+              tokens: []
+            };
+          }
+        },
+        renderer(token: Tokens.Generic) {
+          try {
+            const rendered = katex.renderToString(token.text!, {
+              displayMode: false,
+              throwOnError: false
+            });
+            return `<span class="math math-inline">${rendered}</span>`;
+          } catch (error) {
+            console.error('KaTeX error:', error);
+            return `<span class="math math-inline error">${token.text}</span>`;
+          }
+        }
+      }
+    ]
+  });
+
   const rawHtml = await marked(markdown);
-  return purify.sanitize(rawHtml);
+  return purify.sanitize(rawHtml, {
+    ADD_TAGS: ['math', 'annotation', 'semantics', 'mrow', 'mn', 'mo', 'mi', 'msup'],
+    ADD_ATTR: ['xmlns', 'xmlns:xlink', 'version', 'space', 'style']
+  });
 }
 
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
