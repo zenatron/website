@@ -61,19 +61,19 @@ export default function Header() {
       <nav className="hidden md:flex items-center space-x-4">
         <Link
           href="/projects"
-          className="btn btn-primary hover:text-accent transition-colors"
+          className="btn-nav"
         >
           Projects
         </Link>
         <Link
           href="/blog"
-          className="btn btn-primary hover:text-accent transition-colors"
+          className="btn-nav"
         >
           Blog
         </Link>
         <Link
           href="/about"
-          className="btn btn-primary hover:text-accent transition-colors"
+          className="btn-nav"
         >
           About
         </Link>
