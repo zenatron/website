@@ -34,9 +34,7 @@
 
 /* Add base styles for better dark mode transitions */
 @layer utilities {
-  * {
-    @apply transition-colors duration-75;
-  }
+  
 }
 
 body {
@@ -47,7 +45,7 @@ body {
 
 @layer components {
   .btn {
-    @apply px-4 py-2 rounded-lg font-medium transition-all duration-75 
+    @apply px-4 py-2 rounded-lg font-medium 
     flex items-center gap-2 shadow-sm hover:shadow-md;
   }
 
@@ -67,7 +65,7 @@ body {
   }
 
   .btn-icon {
-    @apply p-2 rounded-lg transition-all duration-75
+    @apply p-2 rounded-lg
     hover:bg-accent hover:bg-opacity-10;
   }
 
@@ -104,7 +102,6 @@ body {
   animation: fade-in 1s ease-in-out;
 }
 
-/* Add to your existing CSS */
 .math {
   overflow-x: auto;
   overflow-y: hidden;
