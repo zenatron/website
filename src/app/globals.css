@@ -84,9 +84,8 @@ body {
   }
 
   .btn-nav {
-    @apply text-muted-text hover:text-primary-text px-3 py-1.5 rounded-md
-    transition-colors duration-75 text-sm font-medium
-    hover:bg-accent active:bg-accent;
+    @apply text-muted-text px-3 py-1.5 rounded-md text-sm font-medium
+    hover:bg-accent hover:text-primary-text active:bg-accent;
   }
 }
 

@@ -56,7 +56,7 @@ export default async function ProjectPage({ params }: Props) {
           <div className="flex justify-between items-center mb-6">
             <Link
               href="/projects"
-              className="inline-flex items-center text-accent hover:text-btnPrimaryHover font-medium"
+              className="inline-flex items-center btn-nav"
             >
               <FaArrowLeft className="mr-2 text-lg" />
               Back to Projects

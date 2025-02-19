@@ -26,7 +26,7 @@ export default async function BlogPage({ params }: Props) {
         <main className="flex-1 flex flex-col items-center justify-center text-center px-6">
           <h1 className="text-6xl font-bold">404</h1>
           <p className="text-lg mt-4 text-muted-text">
-            The blog post you&#39;re looking for doesn&#39;t exist.
+            {"The blog post you're looking for doesn't exist."}
           </p>
           <Link href="/blog" className="btn btn-primary mt-6">
             Back to Blog
@@ -41,14 +41,16 @@ export default async function BlogPage({ params }: Props) {
     <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
       <Header />
       <main className="flex-1 px-6 py-10">
-        <div className="mb-6">
-          <Link
-            href="/blog"
-            className="inline-flex items-center text-accent hover:text-btnPrimaryHover font-medium"
+        <div className="max-w-4xl mx-auto">
+          <div className="flex justify-between items-center mb-6">
+            <Link
+              href="/blog"
+            className="inline-flex items-center btn-nav"
           >
             <FaArrowLeft className="mr-2 text-lg" />
             Back to Blog
-          </Link>
+            </Link>
+          </div>
         </div>
 
         <article className="prose prose-lg dark:prose-invert max-w-4xl mx-auto">
