@@ -1,10 +1,13 @@
+export interface BlogMetadata {
+  title: string;
+  date: string;
+  excerpt?: string;
+  tags?: string[];
+}
+
 export interface BlogPost {
-    slug: string;
-    metadata: {
-      title: string;
-      date: string;
-      excerpt?: string;
-    };
-    content: string;
-  }
+  slug: string;
+  content: string;
+  metadata: BlogMetadata;
+}
   

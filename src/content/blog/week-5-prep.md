@@ -2,6 +2,7 @@
 title: "Week 5 Prep: Decision Trees"
 date: "2025-02-09"
 excerpt: "In this blog post we will discuss decision trees in more detail."
+tags: ["datamining", "datascience", "machinelearning", "classification", "decisiontrees", "algorithms"]
 ---
 #datamining
  **Topic: Decision Trees**

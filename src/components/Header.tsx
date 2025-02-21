@@ -12,7 +12,7 @@ export default function Header() {
         href="/"
         className="text-xl font-bold hover:text-accent transition-colors"
       >
-        Philip Vishnevsky
+        Phil Vishnevsky
       </Link>
 
       {/* Desktop Navigation */}

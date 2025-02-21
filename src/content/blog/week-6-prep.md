@@ -2,6 +2,7 @@
 title: "Week 6 Prep: Classification"
 date: "2025-02-16"
 excerpt: "In this blog post we will discuss more classification algorithms."
+tags: ["datamining", "datascience", "machinelearning", "classification", "algorithms"]
 ---
 #datamining
  **Topic: Classification Algorithms**

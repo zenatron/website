@@ -2,6 +2,7 @@
 title: "Week 4 Prep: Classification & Decision Trees"
 date: "2025-02-02"
 excerpt: "In this blog post we will discuss a high level overview of some classification algorithms."
+tags: ["datamining", "datascience", "classification", "machinelearning", "algorithms"]
 ---
 #datamining  
  **Topic: Classification and Decision Trees**

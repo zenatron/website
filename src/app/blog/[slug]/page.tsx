@@ -2,7 +2,7 @@ import { getBlogPostBySlug } from '../../../lib/blog';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
 import Link from 'next/link';
-import { FaArrowLeft } from 'react-icons/fa';
+import { FaArrowLeft, FaHashtag } from 'react-icons/fa';
 
 type Props = {
   params: Promise<{
@@ -42,34 +42,42 @@ export default async function BlogPage({ params }: Props) {
       <Header />
       <main className="flex-1 px-6 py-10">
         <div className="max-w-4xl mx-auto">
-          <div className="flex justify-between items-center mb-6">
-            <Link
-              href="/blog"
-            className="inline-flex items-center btn-nav"
+          <Link 
+            href="/blog"
+            className="inline-flex items-center text-accent hover:text-accent/80 mb-8"
           >
-            <FaArrowLeft className="mr-2 text-lg" />
+            <FaArrowLeft className="mr-2" />
             Back to Blog
-            </Link>
-          </div>
-        </div>
+          </Link>
+          
+          <article>
+            <h1 className="text-4xl font-bold mb-4">{post.metadata.title}</h1>
+            
+            <div className="flex flex-wrap items-center gap-4 mb-8 text-muted-text">
+              <time>{new Date(post.metadata.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}</time>
+              
+              {post.metadata.tags && post.metadata.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {post.metadata.tags.map((tag, index) => (
+                    <Link 
+                      key={index}
+                      href={`/blog?tag=${tag}`}
+                      className="tag-bubble"
+                    >
+                      <FaHashtag className="mr-1 text-xs opacity-70" />
+                      {tag}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
 
-        <article className="prose prose-lg dark:prose-invert max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold mb-4">{post.metadata.title}</h1>
-          {post.metadata.date && (
-            <p className="text-muted-text mb-6">
-              {new Date(post.metadata.date).toLocaleDateString()}
-            </p>
-          )}
-          <div
-            className="prose-headings:text-primary-text
-              prose-p:text-primary-text
+            <div className="prose dark:prose-invert 
               prose-a:text-accent hover:prose-a:text-btnPrimaryHover
-              prose-strong:text-primary-text
-              prose-code:text-primary-text
-              prose-pre:bg-code-bg
-              prose-pre:text-code-text
-              dark:prose-headings:text-primary-text
-              dark:prose-p:text-primary-text
               dark:prose-a:text-accent dark:hover:prose-a:text-btnPrimaryHover
               dark:prose-strong:text-primary-text
               dark:prose-code:text-primary-text
@@ -80,9 +88,10 @@ export default async function BlogPage({ params }: Props) {
               [&>*]:mx-auto [&>*]:max-w-3xl
               [&>pre]:max-w-4xl
               [&>img]:max-w-4xl"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
-        </article>
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
+          </article>
+        </div>
       </main>
       <Footer />
     </div>

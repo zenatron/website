@@ -6,6 +6,8 @@ date: "2025-01-21"
 
 excerpt: "In this blog post we discuss the data mining pipeline."
 
+tags: ["datamining", "datascience", "machinelearning"]
+
 ---
 ### Topic: The Data Mining Pipeline (also called Data Science Pipeline, Data Mining Process, etc.)
 

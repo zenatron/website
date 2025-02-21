@@ -16,6 +16,7 @@ export interface BlogMetadata {
   title: string;
   date: string;
   excerpt?: string;
+  tags?: string[];
 }
 
 export interface BlogPost {
@@ -109,6 +110,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
         title: data.title || 'Untitled',
         date: data.date || '1970-01-01',
         excerpt: data.excerpt || '',
+        tags: data.tags || [],
       },
     };
   } catch (error) {
@@ -135,6 +137,7 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
           title: data.title || 'Untitled',
           date: data.date || '1970-01-01',
           excerpt: data.excerpt || '',
+          tags: data.tags || [],
         },
       };
     }));

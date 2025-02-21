@@ -2,6 +2,7 @@
 title: "Markdown Rendering Test"
 date: "2025-01-01"
 excerpt: "Test to see how Markdown gets rendered on my site!"
+tags: ["markdown", "web-dev"]
 ---
 
 # h1 Heading 8-)
