@@ -5,25 +5,13 @@ import { marked, Tokens } from 'marked';
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import katex from 'katex';
+import { BlogPost } from '@/types/types';
 
 // Initialize DOMPurify
 const window = new JSDOM('').window;
 const purify = DOMPurify(window);
 
 const blogDirectory = path.join(process.cwd(), 'src/content/blog');
-
-export interface BlogMetadata {
-  title: string;
-  date: string;
-  excerpt?: string;
-  tags?: string[];
-}
-
-export interface BlogPost {
-  slug: string;
-  content: string;
-  metadata: BlogMetadata;
-}
 
 async function convertMarkdownToHtml(markdown: string): Promise<string> {
   marked.use({

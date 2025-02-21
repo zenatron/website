@@ -1,13 +1,57 @@
-export interface BlogMetadata {
+export type BlogMetadata = {
   title: string;
   date: string;
   excerpt?: string;
   tags?: string[];
 }
 
-export interface BlogPost {
+export type BlogPost = {
   slug: string;
   content: string;
   metadata: BlogMetadata;
 }
-  
+
+export type ProjectTypes = 'data' | 'web' | 'game' | 'other';
+
+export type ProjectMetadata = {
+  title: string;
+  description: string;
+  tags?: string[];
+  type: ProjectTypes;
+  slug?: string;
+  date?: string;
+}
+
+export type ProjectCard = {
+  metadata: ProjectMetadata;
+  links: {
+    github?: string;
+    live?: string;
+  };
+  downloads?: {
+    type: string;
+    filename: string;
+    label: string;
+  }[];
+  featured?: boolean;
+  image?: string | null;
+}
+
+// Add this type for data science projects
+export type DataScienceProject = ProjectCard & {
+  metadata: {
+    type: 'data';
+    slug: string; // Required for DS projects
+  };
+  downloads: {
+    type: 'notebook';
+    filename: string;
+    label: string;
+  }[];
+}
+
+// Add type guard
+export function isDataScienceProject(project: ProjectCard): project is DataScienceProject {
+  return (project.metadata.type === 'data' && 
+    project.downloads?.some(d => d.type === 'notebook')) ?? (false);
+}

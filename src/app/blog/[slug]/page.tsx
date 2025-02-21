@@ -1,6 +1,6 @@
-import { getBlogPostBySlug } from '../../../lib/blog';
-import Header from '../../../components/Header';
-import Footer from '../../../components/Footer';
+import { getBlogPostBySlug } from '@/lib/blog';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { FaArrowLeft, FaHashtag } from 'react-icons/fa';
 
@@ -11,7 +11,7 @@ type Props = {
 }
 
 export async function generateStaticParams() {
-  const params = await import('../../../lib/blog').then((mod) => mod.generateStaticParams());
+  const params = await import('@/lib/blog').then((mod) => mod.generateStaticParams());
   return params;
 }
 
