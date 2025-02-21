@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { Project } from '../lib/projects';
+import { ProjectCard } from '../types/types';
 
-export default function ProjectClient({ projects }: { projects: Project[] }) {
+export default function ProjectClient({ projects }: { projects: ProjectCard[] }) {
   // Helper function to format date consistently
   const formatDate = (dateString: string) => {
     // Create date in UTC to avoid timezone issues
@@ -20,8 +20,8 @@ export default function ProjectClient({ projects }: { projects: Project[] }) {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {projects.map((project) => (
           <Link
-            key={project.slug}
-            href={`/projects/${project.slug}`}
+            key={project.metadata.slug}
+            href={`/projects/${project.metadata.slug}`}
             className="group bg-secondary-bg p-6 rounded-lg shadow-md 
               hover:shadow-lg hover:scale-105 transition-all transform relative"
           >

@@ -3,24 +3,16 @@ import ProjectsHeader from '@/components/ProjectsHeader';
 import { getGithubRepos } from '@/lib/github';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import projectMetadata from '@/content/projects/metadata.json';
-import { Project } from '@/lib/projects';
+import { getAllProjects } from '@/lib/projects';
 
 export default async function ProjectsPage() {
   const githubProjects = await getGithubRepos();
+  const dataProjects = await getAllProjects();
 
-  // Convert metadata.json projects to Project type
-  const jupyterProjects: Project[] = Object.entries(projectMetadata).map(([slug, data]) => ({
-    title: data.title,
-    description: data.description || '',
-    type: 'data',
-    tags: ['jupyter', 'python', 'data-science'],
-    links: {},
-    downloads: data.downloads,
-    slug: slug,
-  }));
+  console.log('Data projects loaded:', dataProjects.length);
+  console.log('GitHub projects loaded:', githubProjects.length);
 
-  const allProjects = [...jupyterProjects, ...githubProjects];
+  const allProjects = [...dataProjects, ...githubProjects];
 
   return (
     <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">

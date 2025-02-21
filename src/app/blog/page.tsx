@@ -1,7 +1,7 @@
-import { getAllBlogPosts } from '../../lib/blog';
-import BlogClient from '../../components/BlogClient';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+import { getAllBlogPosts } from '@/lib/blog';
+import BlogClient from '@/components/BlogClient';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 export default async function BlogPage() {
   // Fetch all blog posts server-side

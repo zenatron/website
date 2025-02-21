@@ -33,15 +33,24 @@ export async function getGithubRepos() {
   
   const reposWithDescriptions = await Promise.all(
     repos
-      .filter((repo: any) => !excludedRepos.includes(repo.name))
-      .map(async (repo: any) => {
+      .filter((repo: { name: string }) => !excludedRepos.includes(repo.name))
+      .map(async (repo: { 
+        name: string;
+        description: string | null;
+        language: string;
+        homepage: string | null;
+        html_url: string;
+        stargazers_count: number;
+      }) => {
         const description = repo.description || await getReadmeDescription(repo.name) || 'No description available';
         
         return {
-          title: repo.name,
-          description,
-          type: 'web',
-          tags: [repo.language].filter(Boolean),
+          metadata: {
+            title: repo.name,
+            description,
+            type: 'web' as const,
+            tags: [repo.language].filter(Boolean),
+          },
           links: {
             live: repo.homepage,
             github: repo.html_url,

@@ -3,6 +3,9 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { FaArrowLeft, FaDownload, FaFileCode, FaFilePdf } from 'react-icons/fa';
+import { isDataScienceProject } from '@/types/types';
+import fs from 'fs';
+import path from 'path';
 
 type Props = {
   params: Promise<{
@@ -23,6 +26,18 @@ function getFileIcon(type: string) {
       return <FaFilePdf className="mr-2" />;
     default:
       return <FaDownload className="mr-2" />;
+  }
+}
+
+// Add this function to read HTML content
+async function getProjectHTML(slug: string): Promise<string> {
+  try {
+    const htmlPath = path.join(process.cwd(), 'src/content/projects', `${slug}.html`);
+    const content = fs.readFileSync(htmlPath, 'utf8');
+    return content;
+  } catch (error) {
+    console.error(`Error reading HTML for ${slug}:`, error);
+    return '<p>Error loading project content</p>';
   }
 }
 
@@ -48,6 +63,57 @@ export default async function ProjectPage({ params }: Props) {
     );
   }
 
+  if (isDataScienceProject(project)) {
+    // Get HTML content for data science project
+    const htmlContent = await getProjectHTML(project.metadata.slug);
+
+    return (
+      <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
+        <Header />
+        <main className="flex-1 px-6 py-10">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex justify-between items-center mb-6">
+              <Link
+                href="/projects"
+                className="inline-flex items-center btn-nav"
+              >
+                <FaArrowLeft className="mr-2 text-lg" />
+                Back to Projects
+              </Link>
+
+              {project.downloads && (
+                <div className="flex gap-4">
+                  {project.downloads.map((download, index) => (
+                    <a
+                      key={index}
+                      href={`/downloads/${download.filename}`}
+                      download
+                      className="btn btn-secondary inline-flex items-center"
+                    >
+                      {getFileIcon(download.type)}
+                      {download.label}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+              <iframe
+                srcDoc={htmlContent}
+                className="w-full h-[800px] border-0"
+                title={project.metadata.title || 'Project Content'}
+              />
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Handle other project types...
+
   return (
     <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
       <Header />
@@ -62,9 +128,9 @@ export default async function ProjectPage({ params }: Props) {
               Back to Projects
             </Link>
 
-            {project.metadata.downloads && (
+            {project.downloads && (
               <div className="flex gap-4">
-                {project.metadata.downloads.map((download, index) => (
+                {project.downloads.map((download, index) => (
                   <a
                     key={index}
                     href={`/downloads/${download.filename}`}
@@ -81,7 +147,7 @@ export default async function ProjectPage({ params }: Props) {
 
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
             <iframe
-              srcDoc={project.content}
+              srcDoc={project.metadata.description}
               className="w-full h-[800px] border-0"
               title={project.metadata?.title || 'Project Content'}
             />
