@@ -18,7 +18,27 @@ export interface ProjectMetadata {
   }[];
 }
 
-export interface Project {
+export type Project = {
+  title: string;
+  description: string;
+  type: 'web' | 'data' | 'game' | 'app';
+  tags: string[];
+  links: {
+    live?: string;
+    github?: string;
+    notebook?: string;
+  };
+  downloads?: {
+    label: string;
+    filename: string;
+    type: string;
+  }[];
+  image?: string;
+  featured?: boolean;
+  slug?: string;
+}
+
+export type LegacyProject = {
   slug: string;
   content: string;
   metadata: ProjectMetadata;
@@ -40,7 +60,7 @@ function createDefaultMetadata(slug: string): ProjectMetadata {
   };
 }
 
-export async function getProjectBySlug(slug: string): Promise<Project | null> {
+export async function getProjectBySlug(slug: string): Promise<LegacyProject | null> {
   try {
     const fullPath = path.join(projectsDirectory, `${slug}.html`);
     const content = fs.readFileSync(fullPath, 'utf8');
@@ -56,7 +76,7 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
   }
 }
 
-export async function getAllProjects(): Promise<Project[]> {
+export async function getAllProjects(): Promise<LegacyProject[]> {
   const files = fs.readdirSync(projectsDirectory);
   
   return files

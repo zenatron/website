@@ -1,6 +1,6 @@
-import { getProjectBySlug } from '../../../lib/projects';
-import Header from '../../../components/Header';
-import Footer from '../../../components/Footer';
+import { getProjectBySlug } from '@/lib/projects';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { FaArrowLeft, FaDownload, FaFileCode, FaFilePdf } from 'react-icons/fa';
 
@@ -11,7 +11,7 @@ type Props = {
 }
 
 export async function generateStaticParams() {
-  const params = await import('../../../lib/projects').then((mod) => mod.generateStaticParams());
+  const params = await import('@/lib/projects').then((mod) => mod.generateStaticParams());
   return params;
 }
 
