@@ -1,6 +1,7 @@
 import { FaGithub, FaEnvelope, FaDice } from 'react-icons/fa';
 import { SiBluesky } from 'react-icons/si';
 import Link from 'next/link';
+import pkg from '../../package.json';
 
 export default function Footer() {
   return (
@@ -40,9 +41,14 @@ export default function Footer() {
           <FaDice />
         </Link>
       </div>
-      <p className="text-sm">
-        © {new Date().getFullYear()} Philip Vishnevsky. All rights reserved.
-      </p>
+      <div className="flex items-center justify-center gap-3">
+        <p className="text-sm">
+          © {new Date().getFullYear()} Philip Vishnevsky. All rights reserved.
+        </p>
+        <span className="tag-bubble text-xs">
+          v{pkg.version}
+        </span>
+      </div>
     </footer>
   );
 }
