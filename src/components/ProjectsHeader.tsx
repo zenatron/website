@@ -10,7 +10,7 @@ export default function ProjectsHeader() {
         animate={{ opacity: 1, y: 0 }}
         className="text-5xl font-bold text-center bg-gradient-to-r from-accent via-purple-500 to-pink-500 text-transparent bg-clip-text p-2"
       >
-        Projects
+        {"Projects"}
       </motion.h1>
       
       <motion.p 
@@ -19,7 +19,7 @@ export default function ProjectsHeader() {
         transition={{ delay: 0.2 }}
         className="text-center text-muted-text text-lg max-w-2xl mx-auto mb-12"
       >
-        A collection of my work across web development, data science, and game development.
+        {"A collection of my work across web dev, data science, and game dev."}
       </motion.p>
     </>
   );

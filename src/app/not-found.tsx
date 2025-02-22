@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import { FaRegSadTear } from 'react-icons/fa';
 
 export default function NotFoundPage() {
@@ -19,12 +19,12 @@ export default function NotFoundPage() {
 
         {/* Message */}
         <p className="text-lg md:text-xl text-muted-text">
-          Oops! The page you&#39;re looking for doesn&#39;t exist.
+          {"Oops! The page you're looking for doesn't exist."}
         </p>
 
         {/* Call to Action */}
         <Link href="/" className="btn btn-primary">
-          Go Back Home
+          {"Go Back Home"}
         </Link>
       </main>
 

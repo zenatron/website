@@ -14,6 +14,9 @@ export default function ProjectCard({ project }: { project: Project }) {
     ? `/projects/${project.metadata.slug}`
     : project.links.github || '#'; // Provide fallback URL
 
+  // Determine if it's an external link
+  const isExternalLink = !isNotebookProject && project.links.github;
+
   const ExternalLinks = () => (
     <div className="flex gap-2 mt-3 border-t border-accent/10 pt-3">
       {project.links.live && (
@@ -37,10 +40,12 @@ export default function ProjectCard({ project }: { project: Project }) {
       className={cardClasses}
     >
         <Link 
-        href={cardLink} 
-        target="_blank"
-        rel="noopener noreferrer"
+        href={cardLink}
         className="group"
+        {...(isExternalLink ? {
+          target: "_blank",
+          rel: "noopener noreferrer"
+        } : {})}
         >
         <div className="flex items-center gap-2 mb-2">
           <h4 className="font-bold group-hover:text-accent">{project.metadata.title}</h4>

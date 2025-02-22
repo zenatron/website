@@ -95,21 +95,21 @@ export default function MobileMenu() {
             className="btn-nav"
             onClick={() => setMenuOpen(false)}
           >
-            Projects
+            {"Projects"}
           </Link>
           <Link
             href="/blog"
             className="btn-nav"
             onClick={() => setMenuOpen(false)}
           >
-            Blog
+            {"Blog"}
           </Link>
           <Link
             href="/about"
             className="btn-nav"
             onClick={() => setMenuOpen(false)}
           >
-            About
+            {"About"}
           </Link>
           {/* Theme Switch */}
           <ThemeSwitch />

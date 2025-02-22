@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ProjectCard } from '../types/types';
+import { ProjectCard } from '@/types/types';
 
 export default function ProjectClient({ projects }: { projects: ProjectCard[] }) {
   // Helper function to format date consistently

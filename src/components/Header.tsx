@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import ThemeSwitch from './ThemeSwitch';
-import MobileMenu from './MobileMenu';
+import ThemeSwitch from '@/components/ThemeSwitch';
+import MobileMenu from '@/components/MobileMenu';
 
 export default function Header() {
   return (
@@ -12,19 +12,19 @@ export default function Header() {
         href="/"
         className="text-xl font-bold hover:text-accent transition-colors"
       >
-        Phil Vishnevsky
+        {"Phil Vishnevsky"}
       </Link>
 
       {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center space-x-4">
         <Link href="/projects" className="btn-nav">
-          Projects
+          {"Projects"}
         </Link>
         <Link href="/blog" className="btn-nav">
-          Blog
+          {"Blog"}
         </Link>
         <Link href="/about" className="btn-nav">
-          About
+          {"About"}
         </Link>
         <ThemeSwitch />
       </nav>

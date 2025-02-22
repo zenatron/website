@@ -89,7 +89,7 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
           animate={{ opacity: 1, y: 0 }}
           className="text-5xl font-bold text-center bg-gradient-to-r from-accent via-purple-500 to-pink-500 text-transparent bg-clip-text p-2"
         >
-          Blog
+          {"Blog"}
         </motion.h1>
         
         <motion.p 
@@ -98,7 +98,7 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
           transition={{ delay: 0.2 }}
           className="text-center text-muted-text text-lg max-w-2xl m-auto"
         >
-          Exploring ideas in technology, programming, and data science
+          {"Exploring ideas in technology, programming, and data science"}
         </motion.p>
       </div>
 
@@ -198,7 +198,7 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
             animate={{ opacity: 1 }}
             className="text-center py-12 text-muted-text"
           >
-            No posts found for the selected filter.
+            {"No posts found for the selected filter."}
           </motion.div>
         ) : (
           sortedPosts.map((post) => (

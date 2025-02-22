@@ -1,6 +1,6 @@
 'use client';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
 import { FiCode, FiCommand } from 'react-icons/fi';
 import { TypeAnimation } from 'react-type-animation';
@@ -26,12 +26,12 @@ export default function AboutPage() {
         >
           <h2 className="text-4xl md:text-6xl font-bold mb-8 relative inline-flex items-center justify-center gap-4">
             <FiCode />
-            About Me
+            {"About Me"}
             <FiCommand />
         </h2>
           <div className="space-y-6">
             <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-              Hi, I&#39;m Philip Vishnevsky, a passionate software developer and tech enthusiast.
+              {"Hi, I'm Philip Vishnevsky, a passionate software developer and tech enthusiast."}
             </p>
             <TypeAnimation
               sequence={[
@@ -46,7 +46,7 @@ export default function AboutPage() {
               className="text-lg md:text-xl text-muted-text leading-relaxed mb-6"
             />
             <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-              Beyond coding, I enjoy tinkering with computers, working out, and exploring creative hobbies. My goal is to constantly learn, grow, and share my knowledge with others.
+              {"Beyond coding, I enjoy tinkering with computers, working out, and exploring creative hobbies. My goal is to constantly learn, grow, and share my knowledge with others."}
             </p>
           </div>
         </motion.div>

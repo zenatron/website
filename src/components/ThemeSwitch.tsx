@@ -1,5 +1,5 @@
 import { useContext, useState, useRef, useEffect } from 'react';
-import { ThemeContext } from '../ThemeContext';
+import { ThemeContext } from '@/contexts/ThemeContext';
 import { FaSun, FaMoon, FaLaptop } from 'react-icons/fa';
 
 const ThemeSwitch = () => {

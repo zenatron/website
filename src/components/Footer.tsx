@@ -17,7 +17,7 @@ export default function Footer() {
           <FaGithub />
         </a>
         <a
-          href="mailto:philvishnevsky@gmail.com"
+          href="mailto:phil@underscore.games"
           aria-label="Email"
           className="text-muted-text hover:text-accent transition-colors text-2xl"
         >

@@ -42,7 +42,7 @@ export default function ProjectsGrid({ projects }: { projects: ProjectCardType[]
           <div>
             <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
               <SiJupyter className="text-accent" />
-              Data Science
+              {"Data Science"}
             </h3>
             <div className="space-y-4">
               {nonGithubProjects.filter(isDataProject).map((project) => (
@@ -55,7 +55,7 @@ export default function ProjectsGrid({ projects }: { projects: ProjectCardType[]
           <div>
             <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
               <FaReact className="text-accent" />
-              Web Development
+              {"Web Development"}
             </h3>
             <div className="space-y-4">
               {nonGithubProjects.filter(p => p.metadata.type === 'web').map((project) => (
@@ -68,7 +68,7 @@ export default function ProjectsGrid({ projects }: { projects: ProjectCardType[]
           <div>
             <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
               <FaUnity className="text-accent" />
-              Game Development
+              {"Game Development"}
             </h3>
             <div className="space-y-4">
               {nonGithubProjects.filter(p => p.metadata.type === 'game').map((project) => (
@@ -84,7 +84,7 @@ export default function ProjectsGrid({ projects }: { projects: ProjectCardType[]
         <section>
           <h2 className="text-3xl font-bold mb-8 flex items-center gap-2">
             <FaGithub className="text-accent" />
-            Open Source Projects
+            {"GitHub Projects"}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {githubProjects.map((project) => (

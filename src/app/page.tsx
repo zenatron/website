@@ -36,7 +36,7 @@ export default function HomePage() {
             Welcome to My Portfolio
           </h2>
           <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-            Showcasing my CS projects, blogs, and more.
+            {"Showcasing my CS projects, blogs, and more."}
           </p>
         </section>
 
@@ -47,7 +47,7 @@ export default function HomePage() {
               <FaCode className="text-3xl sm:text-4xl text-accent mb-3 sm:mb-4 group-hover:animate-bounce" />
               <h3 className="text-lg sm:text-xl font-bold mb-2">Projects</h3>
               <p className="text-muted-text text-md text-center">
-                Explore my SWE projects and case studies.
+                {"Explore my SWE projects and case studies."}
               </p>
             </div>
           </Link>
@@ -56,7 +56,7 @@ export default function HomePage() {
               <FaBlog className="text-3xl sm:text-4xl text-accent mb-3 sm:mb-4 group-hover:animate-bounce" />
               <h3 className="text-lg sm:text-xl font-bold mb-2">Blog</h3>
               <p className="text-muted-text text-md text-center">
-                Read my thoughts on tech, programming, and more.
+                {"Read my thoughts on tech, programming, and more."}
               </p>
             </div>
           </Link>
@@ -65,7 +65,7 @@ export default function HomePage() {
               <MdPerson className="text-3xl sm:text-4xl text-accent mb-3 sm:mb-4 group-hover:animate-bounce" />
               <h3 className="text-lg sm:text-xl font-bold mb-2">About Me</h3>
               <p className="text-muted-text text-md text-center">
-                Learn more about me, my background, and my goals.
+                {"Learn more about me, my background, and my goals."}
               </p>
             </div>
           </Link>
