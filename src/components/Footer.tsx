@@ -1,4 +1,4 @@
-import { FaGithub, FaEnvelope, FaDice } from 'react-icons/fa';
+import { FaGithub, FaEnvelope, FaDice, FaLinkedin } from 'react-icons/fa';
 import { SiBluesky } from 'react-icons/si';
 import Link from 'next/link';
 import pkg from '../../package.json';
@@ -11,7 +11,7 @@ export default function Footer() {
   return (
     <footer className="bg-primary-bg text-muted-text py-6 text-center">
       <div className="flex justify-center items-center space-x-6 mb-4">
-        <a
+        <Link
           href="https://github.com/zenatron"
           target="_blank"
           rel="noopener noreferrer"
@@ -19,15 +19,15 @@ export default function Footer() {
           className="text-muted-text hover:text-accent transition-colors text-2xl"
         >
           <FaGithub />
-        </a>
-        <a
+        </Link>
+        <Link
           href="mailto:phil@underscore.games"
           aria-label="Email"
           className="text-muted-text hover:text-accent transition-colors text-2xl"
         >
           <FaEnvelope />
-        </a>
-        <a
+        </Link>
+        <Link
           href="https://bsky.app/profile/zenatron.bsky.social"
           target="_blank"
           rel="noopener noreferrer"
@@ -35,7 +35,15 @@ export default function Footer() {
           className="text-muted-text hover:text-accent transition-colors text-2xl"
         >
           <SiBluesky />
-        </a>
+        </Link>
+        <Link
+          href="https://www.linkedin.com/in/philipvishnevsky/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-accent transition-colors text-2xl"
+        >
+          <FaLinkedin />
+        </Link>
         <Link 
           href="https://underscore.games"
           target="_blank"
