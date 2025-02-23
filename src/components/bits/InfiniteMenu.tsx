@@ -1343,32 +1343,32 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [] }) => {
           <div
             onClick={handleButtonClick}
             className={`
-          absolute
-          left-1/2
-          z-10
-          w-[60px]
-          h-[60px]
-          grid
-          place-items-center
-          bg-accent
-          border-2
-          rounded-full
-          border-accent/20
-          cursor-pointer
-          hover:bg-accent/90
-          hover:scale-105
-          shadow-lg
-          hover:shadow-accent/20
-          transition-all
-          ease-[cubic-bezier(0.25,0.1,0.25,1.0)]
-          ${
-            isMoving
-              ? "bottom-[-80px] opacity-0 pointer-events-none duration-[100ms] scale-0 -translate-x-1/2"
-              : "bottom-[3.8em] opacity-100 pointer-events-auto duration-[500ms] scale-100 -translate-x-1/2"
-          }
-        `}
+              absolute
+              left-1/2
+              z-10
+              w-[40px]
+              h-[40px]
+              grid
+              place-items-center
+              bg-accent/30
+              border
+              rounded-full
+              border-accent/20
+              cursor-pointer
+              hover:bg-accent/50
+              hover:scale-105
+              shadow-sm
+              hover:shadow-accent/10
+              transition-all
+              ease-[cubic-bezier(0.25,0.1,0.25,1.0)]
+              ${
+                isMoving
+                  ? "bottom-[-80px] opacity-0 pointer-events-none duration-[100ms] scale-0 -translate-x-1/2"
+                  : "bottom-[2em] opacity-80 pointer-events-auto duration-[500ms] scale-100 -translate-x-1/2"
+              }
+            `}
           >
-            <p className="select-none relative text-primary-bg top-[2px] text-[26px]">
+            <p className="select-none relative text-primary-bg/80 top-[1px] text-[18px]">
               &#x2197;
             </p>
           </div>
