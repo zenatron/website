@@ -142,7 +142,7 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
             interpolatedSettingsRef.current[index] = newSettings;
             letterRef.style.fontVariationSettings = newSettings;
         });
-    }, [containerRef, radius, fromFontVariationSettings, parsedSettings]);
+    }, []);
 
     useAnimationFrame(animationCallback);
 
