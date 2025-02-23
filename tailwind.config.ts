@@ -28,6 +28,21 @@ const config: Config = {
         light: 'var(--border-light)',
         dark: 'var(--border-dark)',
       },
+      keyframes: {
+        shine: {
+          '0%': { 'background-position': '100%' },
+          '100%': { 'background-position': '-100%' },
+        },
+        gradient: { 
+          '0%': { 'background-position': '0% 50%' },
+          '50%': { 'background-position': '100% 50%' },
+          '100%': { 'background-position': '0% 50%' },
+        },
+      },
+      animation: {
+        shine: 'shine 5s linear infinite',
+        gradient: 'gradient 8s linear infinite',
+      },
     },
   },
   plugins: [
