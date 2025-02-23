@@ -25,7 +25,7 @@ const LetterGlitch = ({
   >([]);
   const grid = useRef({ columns: 0, rows: 0 });
   const context = useRef<CanvasRenderingContext2D | null>(null);
-  const lastGlitchTime = useRef(Date.now());
+  //const lastGlitchTime = useRef(Date.now());
 
   const fontSize = 16;
   const charWidth = 10;
@@ -148,35 +148,13 @@ const LetterGlitch = ({
     }));
   };
 
-  const resizeCanvas = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const parent = canvas.parentElement;
-    if (!parent) return;
-
-    const dpr = window.devicePixelRatio || 1;
-    const rect = parent.getBoundingClientRect();
-
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-
-    canvas.style.width = `${rect.width}px`;
-    canvas.style.height = `${rect.height}px`;
-
-    if (context.current) {
-      context.current.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
-
-    const { columns, rows } = calculateGrid(rect.width, rect.height);
-    initializeLetters(columns, rows);
-    drawLetters();
-  };
-
   const drawLetters = () => {
-    if (!context.current || letters.current.length === 0) return;
+    if (!context.current || letters.current.length === 0 || !canvasRef.current) return;
     const ctx = context.current;
-    const { width, height } = canvasRef.current!.getBoundingClientRect();
-    ctx.clearRect(0, 0, width, height);
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    
+    ctx.clearRect(0, 0, rect.width, rect.height);
     ctx.font = `${fontSize}px monospace`;
     ctx.textBaseline = "top";
 
@@ -234,61 +212,82 @@ const LetterGlitch = ({
     }
   };
 
-  const animate = () => {
-    const now = Date.now();
-    if (now - lastGlitchTime.current >= glitchSpeed) {
-      updateLetters();
-      drawLetters();
-      lastGlitchTime.current = now;
-    }
-
-    if (smooth) {
-      handleSmoothTransitions();
-    }
-
-    animationRef.current = requestAnimationFrame(animate);
-  };
-
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     context.current = canvas.getContext("2d");
-    resizeCanvas();
-    animate();
+    
+    // Initialize canvas and letters
+    const initCanvas = () => {
+      const parent = canvas.parentElement;
+      if (!parent) return;
 
-    let resizeTimeout: NodeJS.Timeout;
+      const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+      const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+      const dpr = window.devicePixelRatio || 1;
 
+      canvas.width = vw * dpr;
+      canvas.height = vh * dpr;
+      canvas.style.width = `${vw}px`;
+      canvas.style.height = `${vh}px`;
+
+      if (context.current) {
+        context.current.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      const { columns, rows } = calculateGrid(vw, vh);
+      initializeLetters(columns, rows);
+    };
+
+    // Start animation loop
+    const startAnimation = () => {
+      initCanvas();
+      let lastTime = Date.now();
+
+      const loop = () => {
+        const now = Date.now();
+        if (now - lastTime >= glitchSpeed) {
+          updateLetters();
+          drawLetters();
+          lastTime = now;
+        }
+
+        if (smooth) {
+          handleSmoothTransitions();
+        }
+
+        animationRef.current = requestAnimationFrame(loop);
+      };
+
+      loop();
+    };
+
+    startAnimation();
+
+    // Handle resize
     const handleResize = () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        cancelAnimationFrame(animationRef.current as number);
-        resizeCanvas();
-        animate();
-      }, 100);
+      initCanvas();
     };
 
     window.addEventListener("resize", handleResize);
 
     return () => {
-      cancelAnimationFrame(animationRef.current!);
       window.removeEventListener("resize", handleResize);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [glitchSpeed, smooth]);
+  }, [glitchSpeed, smooth]); // Only depend on props that should trigger reinit
 
   return (
     <div className="relative w-full h-full bg-black overflow-hidden">
       <canvas ref={canvasRef} className="block w-full h-full" />
       {outerVignette && (
-        <div
-          className="absolute top-0 left-0 w-full h-full pointer-events-none bg-[radial-gradient(circle,_rgba(0,0,0,0)_60%,_rgba(0,0,0,1)_100%)]"
-        ></div>
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle,_rgba(0,0,0,0)_60%,_rgba(0,0,0,1)_100%)]"></div>
       )}
       {centerVignette && (
-        <div
-          className="absolute top-0 left-0 w-full h-full pointer-events-none bg-[radial-gradient(circle,_rgba(0,0,0,0.8)_0%,_rgba(0,0,0,0)_60%)]"
-        ></div>
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle,_rgba(0,0,0,0.8)_0%,_rgba(0,0,0,0)_60%)]"></div>
       )}
     </div>
   );

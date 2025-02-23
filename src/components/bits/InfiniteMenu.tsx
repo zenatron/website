@@ -327,7 +327,7 @@ class IcosahedronGeometry extends Geometry {
 class DiscGeometry extends Geometry {
   constructor(steps = 4, radius = 1) {
     super();
-    const safeSteps = Math.max(4, steps);
+    //const safeSteps = Math.max(4, steps);
     
     // Create a square instead of a disc
     // Bottom-left vertex

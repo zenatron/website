@@ -16,7 +16,7 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
       <Header />
-      <main className="flex-1 flex flex-col items-center justify-center text-center px-6 relative overflow-hidden">
+      <main className="flex-1 flex flex-col items-center justify-center text-center px-6 py-10 relative overflow-hidden">
         <section className="flex flex-col items-center justify-center text-center animate-fade-in mb-10 z-10">
           <div
             ref={containerRef}
@@ -29,6 +29,7 @@ export default function AboutPage() {
           >
             <GradientText
               animationSpeed={24}
+              transparent={true}
             >
               <VariableProximity
                 label="About"
@@ -60,18 +61,20 @@ export default function AboutPage() {
           transition={{ duration: 0.8 }}
           className="z-10 w-full max-w-4xl space-y-8"
         >
-          <div className="w-[400px] md:w-[600px] mx-auto border border-gray-600/50 rounded-xl overflow-hidden">
-            <section className="w-full h-full relative">
-              <InfiniteMenu items={techItems} />
-            </section>
+          <div className="flex justify-center">
+            <div className="border border-gray-600/50 rounded-xl overflow-hidden w-[400px] md:w-[600px]">
+              <section className="relative">
+                <InfiniteMenu items={techItems} />
+              </section>
+            </div>
           </div>
 
           <section className="space-y-8 max-w-2xl mx-auto">
             <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-              {"Hi, I'm Philip Vishnevsky, a passionate software developer and tech enthusiast. I love exploring cutting-edge technologies and applying them to solve real-world problems."}
+              {"Hey! I'm Phil, a software developer with a knack for building interesting things. I love testing out new technologies and finding creative ways to solve problems - especially when it involves graphics programming or game development."}
             </p>
             <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-              {"Beyond coding, I enjoy tinkering with computers, working out, and exploring creative hobbies. My goal is to constantly learn, grow, and share my knowledge with others."}
+              {"When I'm not coding, you'll find me tinkering with my homelab, playing indie games, or working on my next game. I'm always excited to learn new things and share what I discover along the way."}
             </p>
           </section>
         </motion.div>

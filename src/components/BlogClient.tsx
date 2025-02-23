@@ -99,6 +99,7 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
       >
         <GradientText
           animationSpeed={24}
+          transparent={true}
         >
           <VariableProximity
             label="Blog"

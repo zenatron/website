@@ -6,6 +6,7 @@ interface GradientTextProps {
     colors?: string[];
     animationSpeed?: number;
     showBorder?: boolean;
+    transparent?: boolean;
 }
 
 export default function GradientText({
@@ -14,6 +15,7 @@ export default function GradientText({
     colors = ["#ffaa40", "#9c40ff", "#ffaa40"],
     animationSpeed = 8,
     showBorder = false,
+    transparent = false,
 }: GradientTextProps) {
     const gradientStyle = {
         backgroundImage: `linear-gradient(to right, ${colors.join(", ")})`,
@@ -22,7 +24,7 @@ export default function GradientText({
 
     return (
         <div
-            className={`relative mx-auto inline-block backdrop-blur transition-shadow duration-500 cursor-pointer ${className}`}
+            className={`relative mx-auto inline-block ${transparent ? 'bg-transparent' : 'backdrop-blur'} transition-shadow duration-500 cursor-pointer ${className}`}
         >
             {showBorder && (
                 <div
@@ -33,7 +35,7 @@ export default function GradientText({
                     }}
                 >
                     <div
-                        className="absolute inset-0 bg-black rounded-[1.25rem] z-[-1]"
+                        className={`absolute inset-0 ${transparent ? 'bg-transparent' : 'bg-black'} rounded-[1.25rem] z-[-1]`}
                         style={{
                             width: "calc(100% - 2px)",
                             height: "calc(100% - 2px)",
