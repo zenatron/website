@@ -20,12 +20,6 @@ export default function AboutPage() {
             squareSize={40}
             hoverFillColor="#222"
           />
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 2, ease: 'linear' }}
-            className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-purple-900/20"
-          />
         </div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}

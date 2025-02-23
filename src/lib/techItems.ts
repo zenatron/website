@@ -50,5 +50,13 @@ export const techItems = [
   {
     image: 'https://raw.githubusercontent.com/devicons/devicon/master/icons/jupyter/jupyter-original.svg',
     link: 'https://jupyter.org/'
-  }
+  },
+  {
+    image: 'https://raw.githubusercontent.com/devicons/devicon/ca28c779441053191ff11710fe24a9e6c23690d6/icons/vscode/vscode-original.svg',
+    link: 'https://code.visualstudio.com/'
+  },
+  {
+    image: 'https://raw.githubusercontent.com/devicons/devicon/ca28c779441053191ff11710fe24a9e6c23690d6/icons/java/java-original.svg',
+    link: 'https://www.java.com/'
+  },
 ];
