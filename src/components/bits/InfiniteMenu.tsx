@@ -1350,25 +1350,26 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [] }) => {
               h-[40px]
               grid
               place-items-center
-              bg-accent/30
-              border
+              bg-accent
+              border-2
               rounded-full
-              border-accent/20
+              border-accent/50
               cursor-pointer
-              hover:bg-accent/50
+              hover:bg-accent/80
               hover:scale-105
-              shadow-sm
-              hover:shadow-accent/10
+              shadow-lg
+              shadow-black/20
+              hover:shadow-accent/30
               transition-all
               ease-[cubic-bezier(0.25,0.1,0.25,1.0)]
               ${
                 isMoving
                   ? "bottom-[-80px] opacity-0 pointer-events-none duration-[100ms] scale-0 -translate-x-1/2"
-                  : "bottom-[2em] opacity-80 pointer-events-auto duration-[500ms] scale-100 -translate-x-1/2"
+                  : "bottom-[2em] opacity-100 pointer-events-auto duration-[500ms] scale-100 -translate-x-1/2"
               }
             `}
           >
-            <p className="select-none relative text-primary-bg/80 top-[1px] text-[18px]">
+            <p className="select-none relative text-primary-bg text-[18px] font-bold top-[1px]">
               &#x2197;
             </p>
           </div>
