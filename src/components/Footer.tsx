@@ -43,7 +43,7 @@ export default function Footer() {
       </div>
       <div className="flex items-center justify-center gap-3">
         <p className="text-sm">
-          © {new Date().getFullYear()} Philip Vishnevsky. All rights reserved.
+          © {new Date().getFullYear()} Phil Vishnevsky. All rights reserved.
         </p>
         <span className="tag-bubble text-xs">
           v{pkg.version}
