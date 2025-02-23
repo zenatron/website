@@ -9,7 +9,7 @@ export default function Footer() {
   const versionText = `v${pkg.version}`;
 
   return (
-    <footer className="bg-secondary-bg text-muted-text py-6 text-center">
+    <footer className="bg-primary-bg text-muted-text py-6 text-center">
       <div className="flex justify-center items-center space-x-6 mb-4">
         <a
           href="https://github.com/zenatron"

@@ -62,34 +62,34 @@ export default function HomePage() {
               </GradientText>
             </div>
             <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-                {"Showcasing my CS projects, blogs, and more."}
+              {"Building interactive experiences with code and modern design"}
             </p>
           </section>
 
 
           {/* Icon Section */}
-          <section className="mt-12 grid gap-6 sm:gap-8 grid-cols-3 px-4 sm:px-8 lg:px-0">
-            <Link href="/projects" className="block">
-              <SpotlightCard className="p-4">
-                <div className="group flex flex-col items-center transition-all duration-300 transform hover:-translate-y-2">
-                  <FaCode className="text-2xl sm:text-3xl text-accent mb-2 group-hover:animate-bounce" />
-                  <h3 className="text-base sm:text-lg font-bold">Projects</h3>
+          <section className="mt-12 grid gap-4 md:gap-6 grid-cols-3 mx-auto max-w-2xl">
+            <Link href="/projects" className="block aspect-square">
+              <SpotlightCard className="p-4 md:p-10 h-full">
+                <div className="group flex flex-col items-center justify-center h-full transition-all duration-300 transform hover:-translate-y-2">
+                  <FaCode className="text-3xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
+                  <h3 className="text-md md:text-lg font-bold">Projects</h3>
                 </div>
               </SpotlightCard>
             </Link>
-            <Link href="/blog" className="block">
-              <SpotlightCard className="p-4">
-                <div className="group flex flex-col items-center transition-all duration-300 transform hover:-translate-y-2">
-                  <FaBlog className="text-2xl sm:text-3xl text-accent mb-2 group-hover:animate-bounce" />
-                  <h3 className="text-base sm:text-lg font-bold">Blog</h3>
+            <Link href="/blog" className="block aspect-square">
+              <SpotlightCard className="p-4 md:p-10 h-full">
+                <div className="group flex flex-col items-center justify-center h-full transition-all duration-300 transform hover:-translate-y-2">
+                  <FaBlog className="text-3xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
+                  <h3 className="text-md md:text-lg font-bold">Blog</h3>
                 </div>
               </SpotlightCard>
             </Link>
-            <Link href="/about" className="block">
-              <SpotlightCard className="p-4">
-                <div className="group flex flex-col items-center transition-all duration-300 transform hover:-translate-y-2">
-                  <MdPerson className="text-2xl sm:text-3xl text-accent mb-2 group-hover:animate-bounce" />
-                  <h3 className="text-base sm:text-lg font-bold">About</h3>
+            <Link href="/about" className="block aspect-square">
+              <SpotlightCard className="p-4 md:p-10 h-full">
+                <div className="group flex flex-col items-center justify-center h-full transition-all duration-300 transform hover:-translate-y-2">
+                  <MdPerson className="text-3xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
+                  <h3 className="text-md md:text-lg font-bold">About</h3>
                 </div>
               </SpotlightCard>
             </Link>
