@@ -2,10 +2,14 @@ import { FaGithub, FaEnvelope, FaDice } from 'react-icons/fa';
 import { SiBluesky } from 'react-icons/si';
 import Link from 'next/link';
 import pkg from '../../package.json';
+import ShinyText from './bits/ShinyText';
 
 export default function Footer() {
+
+  const versionText = `v${pkg.version}`;
+
   return (
-    <footer className="bg-secondary-bg text-muted-text py-6 text-center">
+    <footer className="bg-primary-bg text-muted-text py-6 text-center">
       <div className="flex justify-center items-center space-x-6 mb-4">
         <a
           href="https://github.com/zenatron"
@@ -42,12 +46,21 @@ export default function Footer() {
         </Link>
       </div>
       <div className="flex items-center justify-center gap-3">
-        <p className="text-sm">
+        <p className="text-xs">
           © {new Date().getFullYear()} Phil Vishnevsky. All rights reserved.
         </p>
-        <span className="tag-bubble text-xs">
-          v{pkg.version}
-        </span>
+        <Link 
+          href="https://github.com/zenatron/portfolio/deployments" 
+          target="_blank" 
+          rel="noopener noreferrer"
+        >
+          <ShinyText 
+            text={versionText} 
+            disabled={false} 
+            speed={3} 
+            className="tag-bubble text-xs border-gray-600 hover:border-gray-400"
+          />
+        </Link>
       </div>
     </footer>
   );

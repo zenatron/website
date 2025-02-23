@@ -28,6 +28,31 @@ const config: Config = {
         light: 'var(--border-light)',
         dark: 'var(--border-dark)',
       },
+      keyframes: {
+        shine: {
+          '0%': { 'background-position': '100%' },
+          '100%': { 'background-position': '-100%' },
+        },
+        gradient: { 
+          '0%': { 'background-position': '0% 50%' },
+          '50%': { 'background-position': '100% 50%' },
+          '100%': { 'background-position': '0% 50%' },
+        },
+        starMovementTop: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(500%)' },
+        },
+        starMovementBottom: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-500%)' },
+        },
+      },
+      animation: {
+        shine: 'shine 5s linear infinite',
+        gradient: 'gradient 8s linear infinite',
+        'star-movement-top': 'starMovementTop var(--speed, 6s) linear infinite',
+        'star-movement-bottom': 'starMovementBottom var(--speed, 6s) linear infinite',
+      },
     },
   },
   plugins: [

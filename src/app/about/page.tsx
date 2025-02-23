@@ -2,53 +2,81 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
-import { FiCode, FiCommand } from 'react-icons/fi';
-import { TypeAnimation } from 'react-type-animation';
+import Squares from '@/components/bits/Squares';
+import InfiniteMenu from '@/components/bits/InfiniteMenu';
+import { techItems } from '@/lib/techItems';
+import GradientText from '@/components/bits/GradientText';
+import VariableProximity from '@/components/bits/VariableProximity';
+import { useRef } from 'react';
+
 
 export default function AboutPage() {
+  const containerRef = useRef(null);
+
   return (
     <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
       <Header />
-      <main className="flex-1 flex flex-col items-center justify-center text-center px-6 relative overflow-hidden">
+      <main className="flex-1 flex flex-col items-center justify-center text-center px-6 py-10 relative overflow-hidden">
+        <section className="flex flex-col items-center justify-center text-center animate-fade-in mb-10 z-10">
+          <div
+            ref={containerRef}
+            style={{ 
+              position: 'relative',
+              minHeight: '100px',
+              width: '100%',
+              padding: '10px'
+            }}
+          >
+            <GradientText
+              animationSpeed={24}
+              transparent={true}
+            >
+              <VariableProximity
+                label="About"
+                className="text-6xl md:text-6xl font-bold"
+                fromFontVariationSettings="'wght' 100, 'opsz' 8"
+                toFontVariationSettings="'wght' 900, 'opsz' 48"
+                containerRef={containerRef as unknown as React.RefObject<HTMLElement>}
+                radius={100}
+                falloff="linear"
+              />
+            </GradientText>
+          </div>
+          <p className="text-lg md:text-xl text-muted-text leading-relaxed">
+            {"Learn more about me and my work."}
+          </p>
+        </section>
         <div className="absolute inset-0 z-0">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 2, ease: 'linear' }}
-            className="absolute w-full h-full bg-gradient-to-br from-blue-900/20 to-purple-900/20"
+          <Squares
+            direction="diagonal"
+            speed={0.5}
+            borderColor="#333"
+            squareSize={40}
+            hoverFillColor="#222"
           />
         </div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="z-10 max-w-3xl w-full"
+          transition={{ duration: 0.8 }}
+          className="z-10 w-full max-w-4xl space-y-8"
         >
-          <h2 className="text-4xl md:text-6xl font-bold mb-8 relative inline-flex items-center justify-center gap-4">
-            <FiCode />
-            {"About Me"}
-            <FiCommand />
-        </h2>
-          <div className="space-y-6">
-            <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-              {"Hi, I'm Philip Vishnevsky, a passionate software developer and tech enthusiast."}
-            </p>
-            <TypeAnimation
-              sequence={[
-                'I love exploring cutting-edge technologies...',
-                2000,
-                '...and applying them to solve real-world problems.',
-                2000,
-              ]}
-              wrapper="p"
-              cursor={true}
-              repeat={Infinity}
-              className="text-lg md:text-xl text-muted-text leading-relaxed mb-6"
-            />
-            <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-              {"Beyond coding, I enjoy tinkering with computers, working out, and exploring creative hobbies. My goal is to constantly learn, grow, and share my knowledge with others."}
-            </p>
+          <div className="flex justify-center">
+            <div className="border border-gray-600/50 rounded-xl overflow-hidden w-[400px] md:w-[600px]">
+              <section className="relative">
+                <InfiniteMenu items={techItems} />
+              </section>
+            </div>
           </div>
+
+          <section className="space-y-8 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-muted-text leading-relaxed">
+              {"Hey! I'm Phil, a software developer with a knack for building interesting things. I love testing out new technologies and finding creative ways to solve problems - especially when it involves graphics programming or game development."}
+            </p>
+            <p className="text-lg md:text-xl text-muted-text leading-relaxed">
+              {"When I'm not coding, you'll find me tinkering with my homelab, playing indie games, or working on my next game. I'm always excited to learn new things and share what I discover along the way."}
+            </p>
+          </section>
         </motion.div>
       </main>
       <Footer />

@@ -1,26 +1,40 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import GradientText from './bits/GradientText';
+import VariableProximity from './bits/VariableProximity';
+import { useRef } from 'react';
 
 export default function ProjectsHeader() {
+  const containerRef = useRef(null);
+
   return (
-    <>
-      <motion.h1 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-5xl font-bold text-center bg-gradient-to-r from-accent via-purple-500 to-pink-500 text-transparent bg-clip-text p-2"
+    <section className="flex flex-col items-center justify-center text-center animate-fade-in mb-10">
+      <div
+        ref={containerRef}
+        style={{ 
+          position: 'relative',
+          minHeight: '100px',
+          width: '100%',
+          padding: '10px'
+        }}
       >
-        {"Projects"}
-      </motion.h1>
-      
-      <motion.p 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="text-center text-muted-text text-lg max-w-2xl mx-auto mb-12"
-      >
-        {"A collection of my work across web dev, data science, and game dev."}
-      </motion.p>
-    </>
+        <GradientText
+          animationSpeed={24}
+        >
+          <VariableProximity
+            label="Projects"
+            className="text-6xl md:text-6xl font-bold"
+            fromFontVariationSettings="'wght' 100, 'opsz' 8"
+            toFontVariationSettings="'wght' 900, 'opsz' 48"
+            containerRef={containerRef as unknown as React.RefObject<HTMLElement>}
+            radius={100}
+            falloff="linear"
+          />
+        </GradientText>
+      </div>
+      <p className="text-lg md:text-xl text-muted-text leading-relaxed">
+        {"Exploring software engineering through personal projects, technical writing, and open-source contributions."}
+      </p>
+    </section>
   );
 } 

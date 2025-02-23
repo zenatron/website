@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { FaCalendarAlt, FaSortAlphaDown, FaSortAlphaUp, FaRegClock, FaHashtag, FaSearch, FaTimes } from 'react-icons/fa';
 import { BlogPost } from '@/types/types';
 import { motion } from 'framer-motion';
+import GradientText from './bits/GradientText';
+import VariableProximity from './bits/VariableProximity';
 
 export default function BlogClient({ posts }: { posts: BlogPost[] }) {
   const [sortBy, setSortBy] = useState<'title' | 'date'>('date');
@@ -81,26 +83,39 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
     show: { opacity: 1, y: 0 }
   };
 
+  const containerRef = useRef(null);
+
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="flex flex-col space-y-2 mb-8">
-        <motion.h1 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-5xl font-bold text-center bg-gradient-to-r from-accent via-purple-500 to-pink-500 text-transparent bg-clip-text p-2"
+      <section className="flex flex-col items-center justify-center text-center animate-fade-in mb-10">
+      <div
+        ref={containerRef}
+        style={{ 
+          position: 'relative',
+          minHeight: '100px',
+          width: '100%',
+          padding: '10px'
+        }}
+      >
+        <GradientText
+          animationSpeed={24}
+          transparent={true}
         >
-          {"Blog"}
-        </motion.h1>
-        
-        <motion.p 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-center text-muted-text text-lg max-w-2xl m-auto"
-        >
-          {"Exploring ideas in technology, programming, and data science"}
-        </motion.p>
+          <VariableProximity
+            label="Blog"
+            className="text-6xl md:text-6xl font-bold"
+            fromFontVariationSettings="'wght' 100, 'opsz' 8"
+            toFontVariationSettings="'wght' 900, 'opsz' 48"
+            containerRef={containerRef as unknown as React.RefObject<HTMLElement>}
+            radius={100}
+            falloff="linear"
+          />
+        </GradientText>
       </div>
+      <p className="text-lg md:text-xl text-muted-text leading-relaxed">
+        {"Read my thoughts on software engineering, data science, and more."}
+      </p>
+    </section>
 
       <div className="flex flex-col space-y-6 md:space-y-0 md:flex-row md:justify-between items-center mb-8">
         {/* Tag Filter */}

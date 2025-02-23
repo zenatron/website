@@ -71,37 +71,38 @@ export default async function ProjectPage({ params }: Props) {
       <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
         <Header />
         <main className="flex-1 px-6 py-10">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto h-[85vh]">
             <div className="flex justify-between items-center mb-6">
               <Link
                 href="/projects"
-                className="inline-flex items-center btn-nav"
+                className="inline-flex items-center btn-nav text-sm md:text-base"
               >
-                <FaArrowLeft className="mr-2 text-lg" />
+                <FaArrowLeft className="mr-1 md:mr-2 text-base md:text-lg" />
                 Back to Projects
               </Link>
 
               {project.downloads && (
-                <div className="flex gap-4">
+                <div className="flex gap-2 md:gap-4">
                   {project.downloads.map((download, index) => (
                     <a
                       key={index}
                       href={`/downloads/${download.filename}`}
                       download
-                      className="btn btn-secondary inline-flex items-center"
+                      className="btn-secondary text-xs md:text-sm inline-flex items-center px-2 md:px-4 py-1.5"
                     >
                       {getFileIcon(download.type)}
-                      {download.label}
+                      <span className="hidden sm:inline">{download.label}</span>
+                      <span className="sm:hidden">Download</span>
                     </a>
                   ))}
                 </div>
               )}
             </div>
 
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden h-[calc(100%-4rem)]">
               <iframe
                 srcDoc={htmlContent}
-                className="w-full h-[800px] border-0"
+                className="w-full h-full border-0"
                 title={project.metadata.title || 'Project Content'}
               />
             </div>
@@ -122,23 +123,24 @@ export default async function ProjectPage({ params }: Props) {
           <div className="flex justify-between items-center mb-6">
             <Link
               href="/projects"
-              className="inline-flex items-center btn-nav"
+              className="inline-flex items-center btn-nav text-sm md:text-base"
             >
-              <FaArrowLeft className="mr-2 text-lg" />
+              <FaArrowLeft className="mr-1 md:mr-2 text-base md:text-lg" />
               Back to Projects
             </Link>
 
             {project.downloads && (
-              <div className="flex gap-4">
+              <div className="flex gap-2 md:gap-4">
                 {project.downloads.map((download, index) => (
                   <a
                     key={index}
                     href={`/downloads/${download.filename}`}
                     download
-                    className="btn btn-secondary inline-flex items-center"
+                    className="btn-secondary text-xs md:text-sm inline-flex items-center px-2 md:px-4 py-1.5"
                   >
                     {getFileIcon(download.type)}
-                    {download.label}
+                    <span className="hidden sm:inline">{download.label}</span>
+                    <span className="sm:hidden">Download</span>
                   </a>
                 ))}
               </div>
