@@ -53,7 +53,6 @@ interface VariableProximityProps {
     className?: string;
     onClick?: () => void;
     style?: CSSProperties;
-    [key: string]: any;
 }
 
 const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((props, ref) => {
@@ -67,7 +66,6 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
         className = "",
         onClick,
         style,
-        ...restProps
     } = props;
 
     const letterRefs = useRef<(HTMLSpanElement | null)[]>([]);
@@ -98,19 +96,19 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
     const calculateDistance = (x1: number, y1: number, x2: number, y2: number) =>
         Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 
-    const calculateFalloff = (distance: number) => {
-        const norm = Math.min(Math.max(1 - distance / radius, 0), 1);
-        switch (falloff) {
-            case "exponential": return norm ** 2;
-            case "gaussian": return Math.exp(-((distance / (radius / 2)) ** 2) / 2);
-            case "linear":
-            default: return norm;
-        }
-    };
-
     const animationCallback = useCallback(() => {
         if (!containerRef?.current) return;
         const containerRect = containerRef.current.getBoundingClientRect();
+
+        const calculateFalloff = (distance: number) => {
+            const norm = Math.min(Math.max(1 - distance / radius, 0), 1);
+            switch (falloff) {
+                case "exponential": return norm ** 2;
+                case "gaussian": return Math.exp(-((distance / (radius / 2)) ** 2) / 2);
+                case "linear":
+                default: return norm;
+            }
+        };
 
         letterRefs.current.forEach((letterRef, index) => {
             if (!letterRef) return;
@@ -142,7 +140,14 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
             interpolatedSettingsRef.current[index] = newSettings;
             letterRef.style.fontVariationSettings = newSettings;
         });
-    }, []);
+    }, [
+        containerRef,
+        radius,
+        falloff,
+        fromFontVariationSettings,
+        parsedSettings,
+        mousePositionRef
+    ]);
 
     useAnimationFrame(animationCallback);
 
@@ -160,7 +165,6 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
                 ...style,
             }}
             className={className}
-            {...restProps}
         >
             {words.map((word: string, wordIndex: number) => (
                 <span

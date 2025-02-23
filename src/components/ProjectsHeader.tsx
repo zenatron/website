@@ -26,7 +26,7 @@ export default function ProjectsHeader() {
             className="text-6xl md:text-6xl font-bold"
             fromFontVariationSettings="'wght' 100, 'opsz' 8"
             toFontVariationSettings="'wght' 900, 'opsz' 48"
-            containerRef={containerRef}
+            containerRef={containerRef as unknown as React.RefObject<HTMLElement>}
             radius={100}
             falloff="linear"
           />

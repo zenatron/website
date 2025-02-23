@@ -11,7 +11,7 @@ import GradientText from '@/components/bits/GradientText';
 
 export default function HomePage() {
   
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
@@ -36,7 +36,7 @@ export default function HomePage() {
                 className="text-4xl md:text-6xl font-bold"
                 fromFontVariationSettings="'wght' 100, 'opsz' 8"
                 toFontVariationSettings="'wght' 900, 'opsz' 48"
-                containerRef={containerRef}
+                containerRef={containerRef as unknown as React.RefObject<HTMLElement>}
                 radius={100}
                 falloff="linear"
               />
