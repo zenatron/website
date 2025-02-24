@@ -62,7 +62,7 @@ export default function HomePage() {
               </GradientText>
             </div>
             <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-              {"Building interactive experiences with code and modern design"}
+              {"Crafting interactive experiences with code and modern design."}
             </p>
           </section>
 

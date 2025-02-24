@@ -53,7 +53,7 @@ export default function MobileMenu() {
       <>
         {/* Backdrop */}
         <div
-          className={`fixed inset-0 bg-black bg-opacity-50 z-20 transition-opacity duration-300 ${
+          className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-20 transition-opacity duration-300 ${
             menuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
           onClick={() => setMenuOpen(false)}
@@ -61,10 +61,13 @@ export default function MobileMenu() {
 
         {/* Menu */}
         <nav
-          className={`fixed top-0 right-0 h-full w-4/5 bg-primary-bg flex flex-col items-start space-y-6 py-6 px-6 z-30 shadow-lg
-            transition-transform transform duration-300 ${
-              menuOpen ? 'translate-x-0' : 'translate-x-full'
-            }`}
+          className={`fixed top-0 right-0 h-full w-4/5 
+            bg-secondary-bg/30 backdrop-blur-xl
+            border-l border-white/5
+            flex flex-col items-start space-y-6 py-6 px-6 z-30 
+            shadow-[0_0_15px_rgba(0,0,0,0.2)]
+            transition-transform transform duration-300 
+            ${menuOpen ? 'translate-x-0' : 'translate-x-full'}`}
         >
           {/* Back Button */}
           <button
