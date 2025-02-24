@@ -49,9 +49,9 @@ export default function AboutPage() {
         <div className="absolute inset-0 z-0">
           <Squares
             direction="diagonal"
-            speed={0.5}
+            speed={0.3}
             borderColor="#333"
-            squareSize={40}
+            squareSize={96}
             hoverFillColor="#222"
           />
         </div>

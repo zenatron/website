@@ -50,18 +50,12 @@ export default async function BlogPage({ params }: Props) {
             Back to Blog
           </Link>
           
-          <article>
-            <h1 className="text-4xl font-bold mb-4">{post.metadata.title}</h1>
+          <article className="flex flex-col items-center">
+            <h1 className="text-4xl font-bold mb-4 text-center w-full">{post.metadata.title}</h1>
             
-            <div className="flex flex-wrap items-center gap-4 mb-8 text-muted-text">
-              <time>{new Date(post.metadata.date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}</time>
-              
+            <div className="flex flex-col items-center gap-4 mb-8 text-muted-text w-full">
               {post.metadata.tags && post.metadata.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 justify-center">
                   {post.metadata.tags.map((tag, index) => (
                     <Link 
                       key={index}
@@ -74,6 +68,12 @@ export default async function BlogPage({ params }: Props) {
                   ))}
                 </div>
               )}
+              
+              <time className="text-sm">{new Date(post.metadata.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}</time>
             </div>
 
             <div className="prose dark:prose-invert 
@@ -87,7 +87,8 @@ export default async function BlogPage({ params }: Props) {
               prose-img:mx-auto
               [&>*]:mx-auto [&>*]:max-w-3xl
               [&>pre]:max-w-4xl
-              [&>img]:max-w-4xl"
+              [&>img]:max-w-4xl
+              w-full"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </article>

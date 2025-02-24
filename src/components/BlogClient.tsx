@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import Link from 'next/link';
 import { FaCalendarAlt, FaSortAlphaDown, FaSortAlphaUp, FaRegClock, FaHashtag, FaSearch, FaTimes } from 'react-icons/fa';
 import { BlogPost } from '@/types/types';
 import { motion } from 'framer-motion';
 import GradientText from './bits/GradientText';
 import VariableProximity from './bits/VariableProximity';
+import CardSpotlight from './GlassCard';
 
 export default function BlogClient({ posts }: { posts: BlogPost[] }) {
   const [sortBy, setSortBy] = useState<'title' | 'date'>('date');
@@ -217,18 +217,8 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
           </motion.div>
         ) : (
           sortedPosts.map((post) => (
-            <motion.div
-              key={post.slug}
-              variants={item}
-              className="group relative bg-secondary-bg rounded-lg p-6 shadow-md 
-                hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
-            >
-              <Link href={`/blog/${post.slug}`} className="block">
-                {/* Spotlight effect */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-transparent 
-                  via-accent/5 to-accent/10 opacity-0 group-hover:opacity-100 
-                  transition-opacity rounded-lg pointer-events-none" />
-                
+            <motion.div key={post.slug} variants={item}>
+              <CardSpotlight href={`/blog/${post.slug}`}>
                 <div className="relative z-10">
                   <div className="flex items-center text-muted-text mb-2">
                     <FaCalendarAlt className="mr-2" />
@@ -258,7 +248,7 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
                     </div>
                   )}
                 </div>
-              </Link>
+              </CardSpotlight>
             </motion.div>
           ))
         )}
