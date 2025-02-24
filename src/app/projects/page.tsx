@@ -10,7 +10,7 @@ export default async function ProjectsPage() {
   const allProjects = [...dataProjects, ...githubProjects];
 
   return (
-    <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
+    <div className="min-h-screen flex flex-col bg-transparent">
       <Header />
       <ProjectsLayout projects={allProjects} />
       <Footer />

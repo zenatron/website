@@ -7,7 +7,7 @@ export default async function BlogPage() {
   const posts = await getAllBlogPosts();
 
   return (
-    <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
+    <div className="min-h-screen flex flex-col bg-transparent">
       <Header />
       <BlogLayout posts={posts} />
       <Footer />

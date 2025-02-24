@@ -21,7 +21,7 @@ export default async function BlogPage({ params }: Props) {
 
   if (!post) {
     return (
-      <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
+      <div className="min-h-screen flex flex-col bg-transparent">
         <Header />
         <main className="flex-1 flex flex-col items-center justify-center text-center px-6">
           <h1 className="text-6xl font-bold">404</h1>
@@ -38,7 +38,7 @@ export default async function BlogPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
+    <div className="min-h-screen flex flex-col bg-transparent">
       <Header />
       <main className="flex-1 px-6 py-10">
         <div className="max-w-4xl mx-auto">

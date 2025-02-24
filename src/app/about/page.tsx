@@ -14,7 +14,7 @@ export default function AboutPage() {
   const containerRef = useRef(null);
 
   return (
-    <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
+    <div className="min-h-screen flex flex-col bg-transparent">
       <Header />
       <main className="flex-1 flex flex-col items-center justify-center text-center px-6 py-10 relative overflow-hidden">
         <section className="flex flex-col items-center justify-center text-center animate-fade-in mb-10 z-10">
