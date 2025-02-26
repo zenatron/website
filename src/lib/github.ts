@@ -41,15 +41,21 @@ export async function getGithubRepos() {
         homepage: string | null;
         html_url: string;
         stargazers_count: number;
+        topics: string[];
       }) => {
         const description = repo.description || await getReadmeDescription(repo.name) || 'No description available';
+        
+        // Combine language and topics for tags, filter out null/undefined values
+        const tags = [repo.language, ...(repo.topics || [])]
+          .filter(Boolean)
+          .map(tag => tag.toLowerCase());
         
         return {
           metadata: {
             title: repo.name,
             description,
             type: 'web' as const,
-            tags: [repo.language].filter(Boolean),
+            tags,
           },
           links: {
             live: repo.homepage,
