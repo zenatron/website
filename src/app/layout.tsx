@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Phil Vishnevsky Portfolio",
-  description: "Phil Vishnevsky Portfolio",
+  title: "Phil Vishnevsky",
+  description: "SWE + AI + Game Dev Portfolio",
 };
 
 export default function RootLayout({
