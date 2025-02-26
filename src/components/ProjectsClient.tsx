@@ -49,7 +49,7 @@ export default function ProjectsClient({ projects }: { projects: ProjectCardType
 
   const allTypes = Array.from(
     new Set(
-      projects.map(project => project.metadata.type)
+      projects.map(project => project.links.github ? 'github' : project.metadata.type)
     )
   ).sort();
 
@@ -93,8 +93,8 @@ export default function ProjectsClient({ projects }: { projects: ProjectCardType
     switch (type.toLowerCase()) {
       case 'data':
         return <SiJupyter className="text-accent" />;
-      case 'web':
-        return <FaGlobe className="text-accent" />;
+      case 'github':
+        return <FaGithub className="text-accent" />;
       default:
         return null;
     }
@@ -112,7 +112,8 @@ export default function ProjectsClient({ projects }: { projects: ProjectCardType
   // Filter and sort projects
   const filteredAndSortedProjects = projects
     .filter(project => {
-      const matchesType = !selectedType || project.metadata.type === selectedType;
+      const matchesType = !selectedType || 
+        (selectedType === 'github' ? !!project.links.github : project.metadata.type === selectedType);
       
       if (!matchesType) return false;
 
@@ -227,7 +228,7 @@ export default function ProjectsClient({ projects }: { projects: ProjectCardType
         </div>
 
         {/* Search Bar */}
-        <div className="w-full md:w-auto order-1 md:order-2">
+        <div className="w-full md:w-auto order-1 md:order-2 md:mx-auto">
           <div className="relative max-w-2xl mx-auto md:w-[32rem]">
             <div className="overflow-hidden rounded-lg bg-secondary-bg/20 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center group">
               <div className="px-3 text-muted-text border-r border-white/5 flex items-center justify-center">
