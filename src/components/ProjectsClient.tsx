@@ -1,19 +1,19 @@
-'use client';
-
 import { useState, useRef, useEffect } from 'react';
-import { FaCalendarAlt, FaSortAlphaDown, FaSortAlphaUp, FaRegClock, FaHashtag, FaTimes } from 'react-icons/fa';
-import { BlogPost } from '@/types/types';
-import { motion } from 'framer-motion';
+import { FaSearch, FaTimes, FaHashtag, FaGithub, FaGlobe, FaCalendarAlt, FaSortAlphaDown, FaSortAlphaUp, FaRegClock } from 'react-icons/fa';
+import { SiJupyter } from 'react-icons/si';
+import { ProjectCard as ProjectCardType } from '@/types/types';
 import GradientText from './bits/GradientText';
 import VariableProximity from './bits/VariableProximity';
 import CardSpotlight from './GlassCard';
+import { motion } from 'framer-motion';
 
-export default function BlogClient({ posts }: { posts: BlogPost[] }) {
-  const [sortBy, setSortBy] = useState<'title' | 'date'>('date');
-  const [order, setOrder] = useState<'asc' | 'desc'>('desc');
+export default function ProjectsClient({ projects }: { projects: ProjectCardType[] }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedType, setSelectedType] = useState<string | null>(null);
   const [showTagSuggestions, setShowTagSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
+  const [sortBy, setSortBy] = useState<'title' | 'date'>('date');
+  const [order, setOrder] = useState<'asc' | 'desc'>('desc');
   const searchInputRef = useRef<HTMLInputElement>(null);
   const tagSuggestionsRef = useRef<HTMLDivElement>(null);
 
@@ -35,10 +35,21 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
     return () => document.removeEventListener('keydown', handleKeyPress);
   }, []);
 
-  // Extract unique tags from posts metadata
+  // Normalize tag helper function
+  const normalizeTag = (tag: string) => tag.toLowerCase().replace(/\s+/g, '-');
+
+  // Extract unique tags and types from projects
   const allTags = Array.from(
     new Set(
-      posts.flatMap(post => post.metadata.tags || [])
+      projects.flatMap(project => 
+        (project.metadata.tags || []).map(normalizeTag)
+      )
+    )
+  ).sort();
+
+  const allTypes = Array.from(
+    new Set(
+      projects.map(project => project.metadata.type)
     )
   ).sort();
 
@@ -47,35 +58,10 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
     const hashIndex = searchQuery.lastIndexOf('#');
     if (hashIndex === -1) return [];
     
-    const tagQuery = searchQuery.slice(hashIndex + 1).toLowerCase().trim();
-    if (!tagQuery) return allTags;
+    const tagQuery = searchQuery.slice(hashIndex + 1).toLowerCase();
     
-    return allTags.filter(tag => {
-      const normalizedTag = tag.toLowerCase().trim();
-      return normalizedTag.startsWith(tagQuery);
-    });
+    return allTags.filter(tag => tag.includes(tagQuery));
   };
-
-  // Handle tag suggestion click or selection
-  const handleTagSelect = (tag: string) => {
-    const hashIndex = searchQuery.lastIndexOf('#');
-    const beforeHash = searchQuery.slice(0, hashIndex);
-    // Remove any trailing space from beforeHash
-    const cleanedBeforeHash = beforeHash.trimEnd();
-    // Add a space before the tag if there's existing content
-    const space = cleanedBeforeHash ? ' ' : '';
-    setSearchQuery(cleanedBeforeHash + space + '#' + tag);
-    setShowTagSuggestions(false);
-    setSelectedSuggestionIndex(-1);
-    searchInputRef.current?.focus();
-  };
-
-  // Reset suggestion state when suggestions are hidden
-  useEffect(() => {
-    if (!showTagSuggestions) {
-      setSelectedSuggestionIndex(-1);
-    }
-  }, [showTagSuggestions]);
 
   // Scroll selected suggestion into view
   useEffect(() => {
@@ -90,42 +76,31 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
     }
   }, [selectedSuggestionIndex]);
 
-  // Sort and filter posts
-  const sortedPosts = [...posts]
-    .filter(post => {
-      const searchTerms = searchQuery.toLowerCase().split(' ');
-      const postContent = post.metadata.title.toLowerCase() + ' ' +
-        (post.metadata.excerpt?.toLowerCase() || '') + ' ' +
-        post.content.toLowerCase();
-      
-      return searchTerms.every(term => {
-        if (term.startsWith('#')) {
-          // Extract the tag without the # symbol
-          const tagQuery = term.slice(1).toLowerCase();
-          // If there's no tag query (just #), show all posts
-          if (!tagQuery) return true;
-          // Check if any post tag matches exactly
-          return post.metadata.tags?.some(tag => 
-            tag.toLowerCase() === tagQuery
-          );
-        }
-        return term === '' || postContent.includes(term);
-      });
-    })
-    .sort((a, b) => {
-      if (sortBy === 'title') {
-        return order === 'asc'
-          ? a.metadata.title.localeCompare(b.metadata.title)
-          : b.metadata.title.localeCompare(a.metadata.title);
-      } else {
-        const dateA = new Date(a.metadata.date);
-        const dateB = new Date(b.metadata.date);
-        return order === 'asc'
-          ? dateA.getTime() - dateB.getTime()
-          : dateB.getTime() - dateA.getTime();
-      }
-    });
+  // Handle tag suggestion click or selection
+  const handleTagSelect = (tag: string) => {
+    const hashIndex = searchQuery.lastIndexOf('#');
+    const beforeHash = searchQuery.slice(0, hashIndex);
+    const cleanedBeforeHash = beforeHash.trimEnd();
+    const space = cleanedBeforeHash ? ' ' : '';
+    setSearchQuery(cleanedBeforeHash + space + '#' + tag);
+    setShowTagSuggestions(false);
+    setSelectedSuggestionIndex(-1);
+    searchInputRef.current?.focus();
+  };
 
+  // Get icon for project type
+  const getTypeIcon = (type: string) => {
+    switch (type.toLowerCase()) {
+      case 'data':
+        return <SiJupyter className="text-accent" />;
+      case 'web':
+        return <FaGlobe className="text-accent" />;
+      default:
+        return null;
+    }
+  };
+
+  // Format date
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -134,6 +109,43 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
     });
   };
 
+  // Filter and sort projects
+  const filteredAndSortedProjects = projects
+    .filter(project => {
+      const matchesType = !selectedType || project.metadata.type === selectedType;
+      
+      if (!matchesType) return false;
+
+      const searchTerms = searchQuery.toLowerCase().split(' ');
+      const projectContent = project.metadata.title.toLowerCase() + ' ' +
+        (project.metadata.description?.toLowerCase() || '');
+      
+      return searchTerms.every(term => {
+        if (term.startsWith('#')) {
+          const tagQuery = term.slice(1).toLowerCase();
+          if (!tagQuery) return true;
+          return project.metadata.tags?.some(tag => 
+            normalizeTag(tag).includes(tagQuery)
+          );
+        }
+        return term === '' || projectContent.includes(term);
+      });
+    })
+    .sort((a, b) => {
+      if (sortBy === 'title') {
+        return order === 'asc'
+          ? a.metadata.title.localeCompare(b.metadata.title)
+          : b.metadata.title.localeCompare(a.metadata.title);
+      } else {
+        const dateA = new Date(a.metadata.date || '');
+        const dateB = new Date(b.metadata.date || '');
+        return order === 'asc'
+          ? dateA.getTime() - dateB.getTime()
+          : dateB.getTime() - dateA.getTime();
+      }
+    });
+
+  // Animation variants
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -153,39 +165,41 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
 
   return (
     <div className="max-w-4xl mx-auto">
+      {/* Header Section */}
       <section className="flex flex-col items-center justify-center text-center animate-fade-in mb-10">
-      <div
-        ref={containerRef}
-        style={{ 
-          position: 'relative',
-          minHeight: '100px',
-          width: '100%',
-          padding: '10px'
-        }}
-      >
-        <GradientText
-          animationSpeed={24}
-          transparent={true}
+        <div
+          ref={containerRef}
+          style={{ 
+            position: 'relative',
+            minHeight: '100px',
+            width: '100%',
+            padding: '10px'
+          }}
         >
-          <VariableProximity
-            label="Blog"
-            className="text-6xl md:text-6xl font-bold"
-            fromFontVariationSettings="'wght' 100, 'opsz' 8"
-            toFontVariationSettings="'wght' 900, 'opsz' 48"
-            containerRef={containerRef as unknown as React.RefObject<HTMLElement>}
-            radius={100}
-            falloff="linear"
-          />
-        </GradientText>
-      </div>
-      <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-        {"Read my thoughts on software engineering, data science, and more."}
-      </p>
-    </section>
+          <GradientText
+            animationSpeed={24}
+            transparent={true}
+          >
+            <VariableProximity
+              label="Projects"
+              className="text-6xl md:text-6xl font-bold"
+              fromFontVariationSettings="'wght' 100, 'opsz' 8"
+              toFontVariationSettings="'wght' 900, 'opsz' 48"
+              containerRef={containerRef as unknown as React.RefObject<HTMLElement>}
+              radius={100}
+              falloff="linear"
+            />
+          </GradientText>
+        </div>
+        <p className="text-lg md:text-xl text-muted-text leading-relaxed">
+          {"Exploring software engineering through personal projects and open-source contributions."}
+        </p>
+      </section>
 
+      {/* Search and Filter Section */}
       <div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:justify-between items-center mb-8">
         {/* Sort Controls */}
-        <div className="flex items-center gap-2 order-2 md:order-1 mt-2 md:mt-0">
+        <div className="flex items-center gap-2 order-2 md:order-1 mt-4 md:mt-0">
           <div className="overflow-hidden rounded-lg bg-secondary-bg/20 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center">
             <button
               onClick={() => {
@@ -213,7 +227,7 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
         </div>
 
         {/* Search Bar */}
-        <div className="w-full md:w-auto order-1 md:order-2 md:mx-auto">
+        <div className="w-full md:w-auto order-1 md:order-2">
           <div className="relative max-w-2xl mx-auto md:w-[32rem]">
             <div className="overflow-hidden rounded-lg bg-secondary-bg/20 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center group">
               <div className="px-3 text-muted-text border-r border-white/5 flex items-center justify-center">
@@ -222,7 +236,7 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
               <input
                 ref={searchInputRef}
                 type="text"
-                placeholder="Search posts... (Use # for tags)"
+                placeholder="Search projects... (Use # for tags)"
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
@@ -300,52 +314,77 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
           </div>
         </div>
 
-        {/* Empty div for flex spacing */}
-        <div className="w-[105px] hidden md:block order-3"></div>
+        {/* Type Filter */}
+        <div className="flex items-center gap-2 order-3 md:order-3 mb-4 md:mb-0">
+          <div className="overflow-hidden rounded-lg bg-secondary-bg/20 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center">
+            {allTypes.map(type => (
+              <button
+                key={type}
+                onClick={() => setSelectedType(selectedType === type ? null : type)}
+                className={`px-3 py-1.5 flex items-center gap-2 border-r border-white/5 transition-colors hover:bg-white/5 capitalize
+                  ${selectedType === type ? 'text-accent' : 'text-muted-text'}`}
+              >
+                {getTypeIcon(type)}
+                <span className="text-sm">{type}</span>
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
+      {/* Projects Grid */}
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
-        className="space-y-6 min-h-[60vh]"
+        className="grid grid-cols-1 md:grid-cols-2 gap-6"
       >
-        {sortedPosts.length === 0 ? (
+        {filteredAndSortedProjects.length === 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center py-12 text-muted-text"
+            className="text-center py-12 text-muted-text col-span-2"
           >
-            {"No posts found for the selected filter."}
+            No projects found matching your criteria.
           </motion.div>
         ) : (
-          sortedPosts.map((post) => (
-            <motion.div key={post.slug} variants={item}>
-              <CardSpotlight href={`/blog/${post.slug}`}>
+          filteredAndSortedProjects.map((project) => (
+            <motion.div key={project.metadata.title} variants={item}>
+              <CardSpotlight 
+                href={project.links.github || `/projects/${project.metadata.slug}`}
+                external={!!project.links.github}
+              >
                 <div className="relative z-10">
-                  <div className="flex items-center text-muted-text mb-2">
-                    <FaCalendarAlt className="mr-2" />
-                    <time>{formatDate(post.metadata.date)}</time>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      {getTypeIcon(project.metadata.type)}
+                      <h2 className="text-2xl font-bold group-hover:text-accent transition-colors">
+                        {project.metadata.title}
+                      </h2>
+                    </div>
+                    {project.links.github && (
+                      <FaGithub className="text-muted-text text-xl" />
+                    )}
                   </div>
-                  <h2 className="text-2xl font-bold mb-3 group-hover:text-accent 
-                    transition-colors">
-                    {post.metadata.title}
-                  </h2>
-                  {post.metadata.excerpt && (
-                    <p className="text-muted-text line-clamp-2">
-                      {post.metadata.excerpt}
-                    </p>
+                  {project.metadata.date && (
+                    <div className="flex items-center text-muted-text text-sm mb-3">
+                      <FaCalendarAlt className="mr-2" />
+                      <time>{formatDate(project.metadata.date)}</time>
+                    </div>
                   )}
+                  <p className="text-muted-text mb-4 line-clamp-2">
+                    {project.metadata.description}
+                  </p>
                   {/* Tags */}
-                  {post.metadata.tags && post.metadata.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-4">
-                      {post.metadata.tags.map((tag, index) => (
+                  {project.metadata.tags && project.metadata.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {project.metadata.tags.map((tag, index) => (
                         <span 
                           key={index}
                           className="tag-bubble cursor-default"
                         >
                           <FaHashtag className="mr-1 text-xs opacity-70" />
-                          {tag}
+                          {normalizeTag(tag)}
                         </span>
                       ))}
                     </div>
@@ -358,4 +397,4 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
       </motion.div>
     </div>
   );
-}
+} 

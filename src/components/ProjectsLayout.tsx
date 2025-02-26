@@ -1,8 +1,7 @@
 'use client';
 
 import Squares from '@/components/bits/Squares';
-import ProjectsGrid from '@/components/ProjectsGrid';
-import ProjectsHeader from '@/components/ProjectsHeader';
+import ProjectsClient from '@/components/ProjectsClient';
 import { ProjectCard } from '@/types/types';
 
 export default function ProjectsLayout({ projects }: { projects: ProjectCard[] }) {
@@ -21,10 +20,7 @@ export default function ProjectsLayout({ projects }: { projects: ProjectCard[] }
 
       {/* Content Layer */}
       <div className="relative z-10 px-6 py-10">
-        <div className="max-w-4xl mx-auto">
-          <ProjectsHeader />
-          <ProjectsGrid projects={projects} />
-        </div>
+        <ProjectsClient projects={projects} />
       </div>
     </main>
   );
