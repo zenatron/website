@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { FaCalendarAlt, FaSortAlphaDown, FaSortAlphaUp, FaRegClock, FaHashtag, FaSearch, FaTimes } from 'react-icons/fa';
+import { FaCalendarAlt, FaSortAlphaDown, FaSortAlphaUp, FaRegClock, FaHashtag, FaTimes } from 'react-icons/fa';
 import { BlogPost } from '@/types/types';
 import { motion } from 'framer-motion';
 import GradientText from './bits/GradientText';
@@ -11,22 +11,28 @@ import CardSpotlight from './GlassCard';
 export default function BlogClient({ posts }: { posts: BlogPost[] }) {
   const [sortBy, setSortBy] = useState<'title' | 'date'>('date');
   const [order, setOrder] = useState<'asc' | 'desc'>('desc');
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
-  const [tagSearch, setTagSearch] = useState('');
-  const [isTagDropdownOpen, setIsTagDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showTagSuggestions, setShowTagSuggestions] = useState(false);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const tagSuggestionsRef = useRef<HTMLDivElement>(null);
 
-  // Handle click outside
+  // Handle keyboard shortcuts
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsTagDropdownOpen(false);
-        setTagSearch('');
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Only trigger if not in an input field already
+      if (
+        document.activeElement?.tagName !== 'INPUT' && 
+        document.activeElement?.tagName !== 'TEXTAREA' &&
+        e.key === '/'
+      ) {
+        e.preventDefault();
+        searchInputRef.current?.focus();
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyPress);
+    return () => document.removeEventListener('keydown', handleKeyPress);
   }, []);
 
   // Extract unique tags from posts metadata
@@ -36,16 +42,67 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
     )
   ).sort();
 
-  // Filter tags based on search
-  const filteredTags = allTags.filter(tag => 
-    tag.toLowerCase().includes(tagSearch.toLowerCase())
-  );
+  // Get tag suggestions based on current input
+  const getTagSuggestions = () => {
+    const hashIndex = searchQuery.lastIndexOf('#');
+    if (hashIndex === -1) return [];
+    
+    const tagQuery = searchQuery.slice(hashIndex + 1).toLowerCase();
+    return allTags.filter(tag => 
+      tag.toLowerCase().includes(tagQuery)
+    );
+  };
+
+  // Handle tag suggestion click or selection
+  const handleTagSelect = (tag: string) => {
+    const hashIndex = searchQuery.lastIndexOf('#');
+    const beforeHash = searchQuery.slice(0, hashIndex);
+    setSearchQuery(beforeHash + '#' + tag + ' ');
+    setShowTagSuggestions(false);
+    setSelectedSuggestionIndex(-1);
+    searchInputRef.current?.focus();
+  };
+
+  // Reset suggestion state when suggestions are hidden
+  useEffect(() => {
+    if (!showTagSuggestions) {
+      setSelectedSuggestionIndex(-1);
+    }
+  }, [showTagSuggestions]);
+
+  // Scroll selected suggestion into view
+  useEffect(() => {
+    if (selectedSuggestionIndex >= 0 && tagSuggestionsRef.current) {
+      const suggestions = tagSuggestionsRef.current.children;
+      if (suggestions[selectedSuggestionIndex]) {
+        suggestions[selectedSuggestionIndex].scrollIntoView({
+          block: 'nearest',
+          behavior: 'smooth'
+        });
+      }
+    }
+  }, [selectedSuggestionIndex]);
 
   // Sort and filter posts
   const sortedPosts = [...posts]
-    .filter(post => 
-      !selectedTag || (post.metadata.tags || []).includes(selectedTag)
-    )
+    .filter(post => {
+      const searchTerms = searchQuery.toLowerCase().split(' ');
+      const postContent = post.metadata.title.toLowerCase() + ' ' +
+        (post.metadata.excerpt?.toLowerCase() || '') + ' ' +
+        post.content.toLowerCase();
+      
+      return searchTerms.every(term => {
+        if (term.startsWith('#')) {
+          // Tag search
+          const tagQuery = term.slice(1);
+          return post.metadata.tags?.some(tag => 
+            tag.toLowerCase().includes(tagQuery)
+          );
+        }
+        // Regular text search
+        return term === '' || postContent.includes(term);
+      });
+    })
     .sort((a, b) => {
       if (sortBy === 'title') {
         return order === 'asc'
@@ -117,95 +174,132 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
       </p>
     </section>
 
-      <div className="flex flex-col space-y-6 md:space-y-0 md:flex-row md:justify-between items-center mb-8">
-        {/* Tag Filter */}
-        <div className="relative" ref={dropdownRef}>
-          <div className="flex items-center gap-2">
-            <FaHashtag className="text-accent" />
-            {selectedTag ? (
-              <div className="flex items-center gap-2 bg-accent/10 px-3 py-1.5 rounded-md">
-                <span className="text-sm">{selectedTag}</span>
+      <div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:justify-between items-center mb-8">
+        {/* Sort Controls */}
+        <div className="flex items-center gap-2 order-2 md:order-1 mt-2 md:mt-0">
+          <div className="overflow-hidden rounded-lg bg-secondary-bg/20 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center">
+            <button
+              onClick={() => {
+                setSortBy('date');
+                setOrder(order === 'asc' ? 'desc' : 'asc');
+              }}
+              className={`px-3 py-1.5 flex items-center gap-2 border-r border-white/5 transition-colors hover:bg-white/5
+                ${sortBy === 'date' ? 'text-accent' : 'text-muted-text'}`}
+            >
+              <FaRegClock size={14} />
+              <span className="text-sm">Date</span>
+            </button>
+            <button
+              onClick={() => {
+                setSortBy('title');
+                setOrder(order === 'asc' ? 'desc' : 'asc');
+              }}
+              className={`px-3 py-1.5 flex items-center gap-2 transition-colors hover:bg-white/5
+                ${sortBy === 'title' ? 'text-accent' : 'text-muted-text'}`}
+            >
+              {order === 'asc' ? <FaSortAlphaDown size={14} /> : <FaSortAlphaUp size={14} />}
+              <span className="text-sm">Title</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Search Bar */}
+        <div className="w-full md:w-auto order-1 md:order-2 md:mx-auto">
+          <div className="relative max-w-2xl mx-auto md:w-[32rem]">
+            <div className="overflow-hidden rounded-lg bg-secondary-bg/20 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center group">
+              <div className="px-3 text-muted-text border-r border-white/5 flex items-center justify-center">
+                <kbd className="text-xs bg-white/5 px-1.5 py-0.5 rounded font-mono text-muted-text">/</kbd>
+              </div>
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Search posts... (Use # for tags)"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  const hasHash = e.target.value.includes('#');
+                  setShowTagSuggestions(hasHash);
+                  if (hasHash) {
+                    setSelectedSuggestionIndex(-1);
+                  }
+                }}
+                onKeyDown={(e) => {
+                  const suggestions = getTagSuggestions();
+                  
+                  if (e.key === 'Escape') {
+                    setSearchQuery('');
+                    setShowTagSuggestions(false);
+                    setSelectedSuggestionIndex(-1);
+                    searchInputRef.current?.blur();
+                    return;
+                  }
+
+                  if (showTagSuggestions && suggestions.length > 0) {
+                    if (e.key === 'ArrowDown') {
+                      e.preventDefault();
+                      setSelectedSuggestionIndex(prev => 
+                        prev < suggestions.length - 1 ? prev + 1 : prev
+                      );
+                    } else if (e.key === 'ArrowUp') {
+                      e.preventDefault();
+                      setSelectedSuggestionIndex(prev => 
+                        prev > 0 ? prev - 1 : -1
+                      );
+                    } else if ((e.key === 'Tab' || e.key === 'Enter') && selectedSuggestionIndex >= 0) {
+                      e.preventDefault();
+                      handleTagSelect(suggestions[selectedSuggestionIndex]);
+                    } else if (e.key === 'Tab' && suggestions.length > 0) {
+                      e.preventDefault();
+                      handleTagSelect(suggestions[0]);
+                    }
+                  }
+                }}
+                className="w-full py-2 px-4 bg-transparent text-primary-text focus:outline-none transition-colors placeholder-muted-text"
+              />
+              {searchQuery && (
                 <button
-                  onClick={() => setSelectedTag(null)}
-                  className="text-muted-text hover:text-accent"
+                  onClick={() => {
+                    setSearchQuery('');
+                    setShowTagSuggestions(false);
+                  }}
+                  className="px-3 text-muted-text hover:text-accent transition-colors"
                 >
                   <FaTimes size={14} />
                 </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => setIsTagDropdownOpen(!isTagDropdownOpen)}
-                className="btn-nav flex items-center gap-2"
+              )}
+            </div>
+            
+            {/* Tag Suggestions Dropdown */}
+            {showTagSuggestions && (
+              <div 
+                ref={tagSuggestionsRef}
+                className="absolute z-50 mt-2 w-full max-h-48 overflow-y-auto rounded-lg bg-secondary-bg/30 backdrop-blur-xl border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)]"
               >
-                <span>Filter by tag</span>
-                <FaSearch size={14} />
-              </button>
-            )}
-          </div>
-
-          {/* Tag Dropdown */}
-          {isTagDropdownOpen && (
-            <div className="absolute z-50 mt-2 w-64 bg-secondary-bg rounded-md shadow-lg">
-              <input
-                type="text"
-                placeholder="Search tags..."
-                value={tagSearch}
-                onChange={(e) => setTagSearch(e.target.value)}
-                className="w-full p-2 border-b border-accent/10 bg-transparent text-primary-text focus:outline-none"
-              />
-              <div className="max-h-48 overflow-y-auto">
-                {filteredTags.map(tag => (
+                {getTagSuggestions().map((tag, index) => (
                   <button
                     key={tag}
-                    onClick={() => {
-                      setSelectedTag(tag);
-                      setIsTagDropdownOpen(false);
-                      setTagSearch('');
-                    }}
-                    className="w-full text-left px-3 py-2 hover:bg-accent/10 text-sm"
+                    onClick={() => handleTagSelect(tag)}
+                    className={`w-full text-left px-4 py-2.5 hover:bg-white/10 text-sm transition-colors flex items-center gap-2
+                      ${selectedSuggestionIndex === index ? 'bg-white/10' : ''}`}
                   >
+                    <FaHashtag className="text-accent" />
                     {tag}
                   </button>
                 ))}
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
-        {/* Sort Controls */}
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={() => {
-              setSortBy('date');
-              setOrder(order === 'asc' ? 'desc' : 'asc');
-            }}
-            className={`btn-nav flex items-center space-x-2 ${
-              sortBy === 'date' ? 'bg-accent/10' : ''
-            }`}
-          >
-            <FaRegClock />
-            <span>Date</span>
-          </button>
-          <button
-            onClick={() => {
-              setSortBy('title');
-              setOrder(order === 'asc' ? 'desc' : 'asc');
-            }}
-            className={`btn-nav flex items-center space-x-2 ${
-              sortBy === 'title' ? 'bg-accent/10' : ''
-            }`}
-          >
-            {order === 'asc' ? <FaSortAlphaDown /> : <FaSortAlphaUp />}
-            <span>Title</span>
-          </button>
-        </div>
+        {/* Empty div for flex spacing */}
+        <div className="w-[105px] hidden md:block order-3"></div>
       </div>
 
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
-        className="space-y-6"
+        className="space-y-6 min-h-[60vh]"
       >
         {sortedPosts.length === 0 ? (
           <motion.div

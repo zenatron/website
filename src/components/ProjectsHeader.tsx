@@ -20,6 +20,7 @@ export default function ProjectsHeader() {
       >
         <GradientText
           animationSpeed={24}
+          transparent={true}
         >
           <VariableProximity
             label="Projects"
