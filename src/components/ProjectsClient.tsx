@@ -201,7 +201,7 @@ export default function ProjectsClient({ projects }: { projects: ProjectCardType
       <div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:justify-between items-center mb-8">
         {/* Sort Controls */}
         <div className="flex items-center gap-2 order-2 md:order-1 mt-4 md:mt-0">
-          <div className="overflow-hidden rounded-lg bg-secondary-bg/20 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center">
+          <div className="overflow-hidden rounded-lg bg-white/5 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center">
             <button
               onClick={() => {
                 setSortBy('date');
@@ -230,7 +230,7 @@ export default function ProjectsClient({ projects }: { projects: ProjectCardType
         {/* Search Bar */}
         <div className="w-full md:w-auto order-1 md:order-2 md:mx-auto">
           <div className="relative max-w-2xl mx-auto md:w-[32rem]">
-            <div className="overflow-hidden rounded-lg bg-secondary-bg/20 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center group">
+            <div className="overflow-hidden rounded-lg bg-white/5 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center group">
               <div className="px-3 text-muted-text border-r border-white/5 flex items-center justify-center">
                 <kbd className="text-xs bg-white/5 px-1.5 py-0.5 rounded font-mono text-muted-text">/</kbd>
               </div>
@@ -297,7 +297,7 @@ export default function ProjectsClient({ projects }: { projects: ProjectCardType
             {showTagSuggestions && (
               <div 
                 ref={tagSuggestionsRef}
-                className="absolute z-50 mt-2 w-full max-h-48 overflow-y-auto rounded-lg bg-secondary-bg/30 backdrop-blur-xl border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)]"
+                className="absolute z-50 mt-2 w-full max-h-48 overflow-y-auto rounded-lg bg-white/5 backdrop-blur-xl border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)]"
               >
                 {getTagSuggestions().map((tag, index) => (
                   <button
@@ -317,7 +317,7 @@ export default function ProjectsClient({ projects }: { projects: ProjectCardType
 
         {/* Type Filter */}
         <div className="flex items-center gap-2 order-3 md:order-3 mb-4 md:mb-0">
-          <div className="overflow-hidden rounded-lg bg-secondary-bg/20 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center">
+          <div className="overflow-hidden rounded-lg bg-white/5 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center">
             {allTypes.map(type => (
               <button
                 key={type}
