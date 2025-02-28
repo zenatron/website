@@ -2,6 +2,7 @@
 
 #### TODO:
 - [ ] fix duplicate tag issue when pulling tags from github topics
+- [ ] fix projects tag search
 - [ ] add a resume page
 - [ ] update styling on projects page
 - [ ] update projects page layout with optimizations for mobile
