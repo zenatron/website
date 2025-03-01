@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { FaSearch, FaTimes, FaHashtag, FaGithub, FaGlobe, FaCalendarAlt, FaSortAlphaDown, FaSortAlphaUp, FaRegClock } from 'react-icons/fa';
+import { FaTimes, FaHashtag, FaGithub, FaCalendarAlt, FaSortAlphaDown, FaSortAlphaUp, FaRegClock } from 'react-icons/fa';
 import { SiJupyter } from 'react-icons/si';
 import { ProjectCard as ProjectCardType } from '@/types/types';
 import GradientText from './bits/GradientText';
@@ -98,11 +98,6 @@ export default function ProjectsClient({ projects }: { projects: ProjectCardType
       default:
         return null;
     }
-  };
-
-  // Format date
-  const formatDate = (dateString: string) => {
-    return dateString;
   };
 
   // Filter and sort projects
@@ -366,7 +361,7 @@ export default function ProjectsClient({ projects }: { projects: ProjectCardType
                   {project.metadata.date && (
                     <div className="flex items-center text-muted-text text-sm mb-3">
                       <FaCalendarAlt className="mr-2" />
-                      <time>{formatDate(project.metadata.date)}</time>
+                      <time>{project.metadata.date}</time>
                     </div>
                   )}
                   <p className="text-muted-text mb-4 line-clamp-2">
