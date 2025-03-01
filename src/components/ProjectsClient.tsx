@@ -102,11 +102,7 @@ export default function ProjectsClient({ projects }: { projects: ProjectCardType
 
   // Format date
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    return dateString;
   };
 
   // Filter and sort projects

@@ -23,6 +23,18 @@
       }
     ]
   },
+  "Scikit_Learn_Exercise": {
+    "title": "Scikit-Learn Exercises",
+    "date": "2025-02-07",
+    "description": "Exercises with Scikit-Learn library",
+    "downloads": [
+      {
+        "label": "Download Notebook",
+        "filename": "Scikit_Learn_Exercise.ipynb",
+        "type": "notebook"
+      }
+    ]
+  },
   "Project_1_Problem_Definition": {
     "title": "Project 1: Problem Definition",
     "date": "2025-01-31",
@@ -35,14 +47,14 @@
       }
     ]
   },
-  "Scikit_Learn_Exercise": {
-    "title": "Scikit-Learn Exercises",
-    "date": "2025-02-07",
-    "description": "Exercises with Scikit-Learn library",
+  "Project_2_Classification": {
+    "title": "Project 2: Classification",
+    "date": "2025-02-27",
+    "description": "Predicting car brands using classification",
     "downloads": [
       {
         "label": "Download Notebook",
-        "filename": "Scikit_Learn_Exercise.ipynb",
+        "filename": "Project_2_Classification.ipynb",
         "type": "notebook"
       }
     ]
