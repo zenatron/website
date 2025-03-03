@@ -8,17 +8,6 @@ import VariableProximity from './bits/VariableProximity';
 import CardSpotlight from './GlassCard';
 import { motion } from 'framer-motion';
 
-// Tab key icon component
-const TabKeyIcon = () => (
-  <div className="inline-flex items-center justify-center border border-accent rounded px-1 h-4 text-accent">
-    <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 1H2C1.44772 1 1 1.44772 1 2V8C1 8.55228 1.44772 9 2 9H12C12.5523 9 13 8.55228 13 8V2C13 1.44772 12.5523 1 12 1Z" stroke="currentColor" strokeWidth="1" />
-      <path d="M3 5H7.5M7.5 5L5.5 3M7.5 5L5.5 7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M9 3V7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-    </svg>
-  </div>
-);
-
 export default function ProjectsClient({ projects }: { projects: ProjectCardType[] }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
