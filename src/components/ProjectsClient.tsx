@@ -1,14 +1,27 @@
 import { useState, useRef, useEffect } from 'react';
 import { FaTimes, FaHashtag, FaGithub, FaCalendarAlt, FaSortAlphaDown, FaSortAlphaUp, FaRegClock } from 'react-icons/fa';
 import { SiJupyter } from 'react-icons/si';
+import { MdKeyboardTab } from 'react-icons/md';
 import { ProjectCard as ProjectCardType } from '@/types/types';
 import GradientText from './bits/GradientText';
 import VariableProximity from './bits/VariableProximity';
 import CardSpotlight from './GlassCard';
 import { motion } from 'framer-motion';
 
+// Tab key icon component
+const TabKeyIcon = () => (
+  <div className="inline-flex items-center justify-center border border-accent rounded px-1 h-4 text-accent">
+    <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 1H2C1.44772 1 1 1.44772 1 2V8C1 8.55228 1.44772 9 2 9H12C12.5523 9 13 8.55228 13 8V2C13 1.44772 12.5523 1 12 1Z" stroke="currentColor" strokeWidth="1" />
+      <path d="M3 5H7.5M7.5 5L5.5 3M7.5 5L5.5 7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9 3V7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+    </svg>
+  </div>
+);
+
 export default function ProjectsClient({ projects }: { projects: ProjectCardType[] }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [showTagSuggestions, setShowTagSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
@@ -78,13 +91,29 @@ export default function ProjectsClient({ projects }: { projects: ProjectCardType
 
   // Handle tag suggestion click or selection
   const handleTagSelect = (tag: string) => {
+    // Add the tag to selectedTags if it's not already there
+    if (!selectedTags.includes(tag)) {
+      setSelectedTags([...selectedTags, tag]);
+    }
+    
+    // Remove the tag query from the search input
     const hashIndex = searchQuery.lastIndexOf('#');
-    const beforeHash = searchQuery.slice(0, hashIndex);
-    const cleanedBeforeHash = beforeHash.trimEnd();
-    const space = cleanedBeforeHash ? ' ' : '';
-    setSearchQuery(cleanedBeforeHash + space + '#' + tag);
+    let newQuery = searchQuery;
+    
+    if (hashIndex !== -1) {
+      const beforeHash = searchQuery.slice(0, hashIndex).trimEnd();
+      newQuery = beforeHash;
+    }
+    
+    setSearchQuery(newQuery);
     setShowTagSuggestions(false);
     setSelectedSuggestionIndex(-1);
+    searchInputRef.current?.focus();
+  };
+
+  // Remove a selected tag
+  const removeTag = (tagToRemove: string) => {
+    setSelectedTags(selectedTags.filter(tag => tag !== tagToRemove));
     searchInputRef.current?.focus();
   };
 
@@ -108,6 +137,16 @@ export default function ProjectsClient({ projects }: { projects: ProjectCardType
       
       if (!matchesType) return false;
 
+      // Check if project matches all selected tags (exact match)
+      if (selectedTags.length > 0) {
+        const projectTags = project.metadata.tags?.map(normalizeTag) || [];
+        const hasAllSelectedTags = selectedTags.every(selectedTag => 
+          projectTags.some(tag => tag === selectedTag)
+        );
+        if (!hasAllSelectedTags) return false;
+      }
+
+      // Check if project matches search terms
       const searchTerms = searchQuery.toLowerCase().split(' ');
       const projectContent = project.metadata.title.toLowerCase() + ' ' +
         (project.metadata.description?.toLowerCase() || '');
@@ -225,56 +264,84 @@ export default function ProjectsClient({ projects }: { projects: ProjectCardType
               <div className="px-3 text-muted-text border-r border-white/5 flex items-center justify-center">
                 <kbd className="text-xs bg-white/5 px-1.5 py-0.5 rounded font-mono text-muted-text">/</kbd>
               </div>
-              <input
-                ref={searchInputRef}
-                type="text"
-                placeholder="Search projects... (Use # for tags)"
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  const hasHash = e.target.value.includes('#');
-                  setShowTagSuggestions(hasHash);
-                  if (hasHash) {
-                    setSelectedSuggestionIndex(-1);
-                  }
-                }}
-                onKeyDown={(e) => {
-                  const suggestions = getTagSuggestions();
-                  
-                  if (e.key === 'Escape') {
-                    setSearchQuery('');
-                    setShowTagSuggestions(false);
-                    setSelectedSuggestionIndex(-1);
-                    searchInputRef.current?.blur();
-                    return;
-                  }
-
-                  if (showTagSuggestions && suggestions.length > 0) {
-                    if (e.key === 'ArrowDown') {
-                      e.preventDefault();
-                      setSelectedSuggestionIndex(prev => 
-                        prev < suggestions.length - 1 ? prev + 1 : prev
-                      );
-                    } else if (e.key === 'ArrowUp') {
-                      e.preventDefault();
-                      setSelectedSuggestionIndex(prev => 
-                        prev > 0 ? prev - 1 : -1
-                      );
-                    } else if ((e.key === 'Tab' || e.key === 'Enter') && selectedSuggestionIndex >= 0) {
-                      e.preventDefault();
-                      handleTagSelect(suggestions[selectedSuggestionIndex]);
-                    } else if (e.key === 'Tab' && suggestions.length > 0) {
-                      e.preventDefault();
-                      handleTagSelect(suggestions[0]);
+              <div className="flex flex-1 items-center flex-wrap gap-1 py-1 px-2">
+                {/* Selected tag bubbles */}
+                {selectedTags.map(tag => (
+                  <div 
+                    key={tag}
+                    className="flex items-center gap-1 bg-accent/20 text-accent rounded-full px-2 py-0.5 text-sm"
+                  >
+                    <FaHashtag size={10} />
+                    <span>{tag}</span>
+                    <button 
+                      onClick={() => removeTag(tag)}
+                      className="ml-1 hover:text-white transition-colors"
+                    >
+                      <FaTimes size={10} />
+                    </button>
+                  </div>
+                ))}
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder={selectedTags.length > 0 ? "" : "Search projects... (Use # for tags)"}
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    const hasHash = e.target.value.includes('#');
+                    setShowTagSuggestions(hasHash);
+                    if (hasHash) {
+                      setSelectedSuggestionIndex(-1);
                     }
-                  }
-                }}
-                className="w-full py-2 px-4 bg-transparent text-primary-text focus:outline-none transition-colors placeholder-muted-text"
-              />
-              {searchQuery && (
+                  }}
+                  onKeyDown={(e) => {
+                    const suggestions = getTagSuggestions();
+                    
+                    if (e.key === 'Escape') {
+                      setSearchQuery('');
+                      setShowTagSuggestions(false);
+                      setSelectedSuggestionIndex(-1);
+                      searchInputRef.current?.blur();
+                      return;
+                    }
+
+                    // Handle backspace to remove the last tag when input is empty
+                    if (e.key === 'Backspace' && searchQuery === '' && selectedTags.length > 0) {
+                      e.preventDefault();
+                      const newTags = [...selectedTags];
+                      newTags.pop();
+                      setSelectedTags(newTags);
+                      return;
+                    }
+
+                    if (showTagSuggestions && suggestions.length > 0) {
+                      if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        setSelectedSuggestionIndex(prev => 
+                          prev < suggestions.length - 1 ? prev + 1 : prev
+                        );
+                      } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        setSelectedSuggestionIndex(prev => 
+                          prev > 0 ? prev - 1 : -1
+                        );
+                      } else if ((e.key === 'Tab' || e.key === 'Enter') && selectedSuggestionIndex >= 0) {
+                        e.preventDefault();
+                        handleTagSelect(suggestions[selectedSuggestionIndex]);
+                      } else if (e.key === 'Tab' && suggestions.length > 0) {
+                        e.preventDefault();
+                        handleTagSelect(suggestions[0]);
+                      }
+                    }
+                  }}
+                  className="flex-1 py-1 bg-transparent text-primary-text focus:outline-none transition-colors placeholder-muted-text min-w-[100px]"
+                />
+              </div>
+              {(searchQuery || selectedTags.length > 0) && (
                 <button
                   onClick={() => {
                     setSearchQuery('');
+                    setSelectedTags([]);
                     setShowTagSuggestions(false);
                   }}
                   className="px-3 text-muted-text hover:text-accent transition-colors"
@@ -298,7 +365,13 @@ export default function ProjectsClient({ projects }: { projects: ProjectCardType
                       ${selectedSuggestionIndex === index ? 'bg-white/10' : ''}`}
                   >
                     <FaHashtag className="text-accent" />
-                    {tag}
+                    <span className="flex-1">{tag}</span>
+                    {selectedSuggestionIndex === index && (
+                      <div className="flex items-center gap-1 text-accent text-xs">
+                        {"TAB"}
+                        <MdKeyboardTab />
+                      </div>
+                    )}
                   </button>
                 ))}
               </div>

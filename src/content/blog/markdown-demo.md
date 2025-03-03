@@ -77,12 +77,7 @@ This is superscript (H<sup>2</sup>O) and subscript (CO<sub>2</sub>).
 
 
 ## Horizontal Rules
-
-___
-
 ---
-
-***
 
 ## Emphasis
 
@@ -96,14 +91,11 @@ _This is italic text_
 
 ~~Strikethrough~~
 
-
 ## Blockquotes
-
 
 > Blockquotes can also be nested...
 >> ...by using additional greater-than signs right next to each other...
 > > > ...or with spaces between arrows.
-
 
 ## Lists
 
@@ -160,6 +152,66 @@ var foo = function (bar) {
 
 console.log(foo(5));
 ```
+
+## Latex
+
+### Inline Latex
+Inline Latex is rendered inline with the text.
+$E = mc^2$
+
+### Block Latex
+Block Latex is rendered as a block of text.
+
+$$
+\int_0^\infty \frac{x^3}{e^x} \, dx = \frac{\pi^4}{15}
+$$
+
+$$
+\sum_{i=0}^n i^2 = \frac{(n^2+n)(2n+1)}{6}
+$$
+
+$$
+\frac{1}{2\pi i} \oint_C \frac{f(z)}{z-z_0} \, dz
+$$
+
+$$
+\lim_{x \to 0} \frac{\sin x}{x} = 1
+$$
+
+### Fractions
+
+$$
+\frac{\frac{1}{x} + \frac{1}{y}}{y-z}
+$$
+
+$$
+\frac{1}{\frac{1}{x} + \frac{1}{y}}
+$$
+
+### Quadratic Formula
+
+$$
+x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+$$
+
+### Matrices
+
+$$
+\begin{pmatrix}
+a & b \\
+c & d
+\end{pmatrix}
+$$
+
+### Arrays
+
+$$
+\begin{array}{c|c|c}
+a & b & c \\
+\hline
+d & e & f \\
+\end{array}
+$$
 
 ## Tables
 

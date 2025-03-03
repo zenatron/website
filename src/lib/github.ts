@@ -45,10 +45,23 @@ export async function getGithubRepos() {
       }) => {
         const description = repo.description || await getReadmeDescription(repo.name) || 'No description available';
         
-        // Combine language and topics for tags, filter out null/undefined values
-        const tags = [repo.language, ...(repo.topics || [])]
-          .filter(Boolean)
-          .map(tag => tag.toLowerCase());
+        // Combine language and topics for tags, filter out null/undefined values, and deduplicate
+        const tagsSet = new Set<string>();
+        
+        // Add language if it exists
+        if (repo.language) {
+          tagsSet.add(repo.language.toLowerCase());
+        }
+        
+        // Add topics if they exist
+        if (repo.topics && repo.topics.length > 0) {
+          repo.topics.forEach(topic => {
+            tagsSet.add(topic.toLowerCase());
+          });
+        }
+        
+        // Convert Set back to array
+        const tags = Array.from(tagsSet);
         
         return {
           metadata: {
