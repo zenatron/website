@@ -3,11 +3,11 @@
 import { motion } from 'framer-motion';
 import { FaGithub, FaGlobe } from 'react-icons/fa';
 import Link from 'next/link';
-import { ProjectCard as Project, isDataScienceProject } from '@/types/types';
+import { ProjectCard as Project } from '@/types/types';
 
 export default function ProjectCard({ project }: { project: Project }) {
   // Use type guard to determine project type
-  const isNotebookProject = isDataScienceProject(project);
+  const isNotebookProject = project.metadata.type === 'data';
 
   // Determine the card's main link
   const cardLink = isNotebookProject 

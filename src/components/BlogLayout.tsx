@@ -11,7 +11,7 @@ export default function BlogLayout({ posts }: { posts: BlogPost[] }) {
       <div className="absolute inset-0 z-0">
         <Squares
           direction="diagonal"
-          speed={0.3}
+          speed={0.2}
           borderColor="#333"
           squareSize={96}
           hoverFillColor="#222"

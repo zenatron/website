@@ -49,9 +49,3 @@ export type DataScienceProject = ProjectCard & {
     label: string;
   }[];
 }
-
-// Add type guard
-export function isDataScienceProject(project: ProjectCard): project is DataScienceProject {
-  return (project.metadata.type === 'data' && 
-    project.downloads?.some(d => d.type === 'notebook')) ?? (false);
-}

@@ -5,9 +5,7 @@
     "description": "A collection of Python exercises covering basic to advanced concepts",
     "downloads": [
       {
-        "label": "Download Notebook",
-        "filename": "Python-Exercise.ipynb",
-        "type": "notebook"
+        "filename": "Python-Exercise.ipynb"
       }
     ]
   },
@@ -17,9 +15,7 @@
     "description": "Data manipulation exercises using Pandas and NumPy libraries",
     "downloads": [
       {
-        "label": "Download Notebook",
-        "filename": "Pandas-Numpy-Exercise.ipynb",
-        "type": "notebook"
+        "filename": "Pandas-Numpy-Exercise.ipynb"
       }
     ]
   },
@@ -29,9 +25,7 @@
     "description": "Exercises with Scikit-Learn library",
     "downloads": [
       {
-        "label": "Download Notebook",
-        "filename": "Scikit_Learn_Exercise.ipynb",
-        "type": "notebook"
+        "filename": "Scikit_Learn_Exercise.ipynb"
       }
     ]
   },
@@ -41,9 +35,7 @@
     "description": "A detailed problem definition for Project 1, with data visualization",
     "downloads": [
       {
-        "label": "Download Notebook",
-        "filename": "Project-1-Problem-Definition.ipynb",
-        "type": "notebook"
+        "filename": "Project-1-Problem-Definition.ipynb"
       }
     ]
   },
@@ -53,9 +45,7 @@
     "description": "Predicting car brands using classification",
     "downloads": [
       {
-        "label": "Download Notebook",
-        "filename": "Project_2_Classification.ipynb",
-        "type": "notebook"
+        "filename": "Project_2_Classification.ipynb"
       }
     ]
   }
