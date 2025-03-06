@@ -1,8 +1,9 @@
 ---
 title: "Week 3 Prep: Problem Definition and Data Understanding"
 date: "2025-01-26"
+readingTime: "3min"
 excerpt: "In this blog post we define the problem and review a potential dataset."
-tags: ["datamining", "datascience", "machinelearning"]
+tags: ["data-mining", "data-science", "machine-learning"]
 ---
 **Topic: Problem Definition and Data Understanding (First Steps to Project 1)**
 #datamining 

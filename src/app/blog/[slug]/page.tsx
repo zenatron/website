@@ -68,12 +68,20 @@ export default async function BlogPage({ params }: Props) {
                   ))}
                 </div>
               )}
-              
-              <time className="text-sm">{new Date(post.metadata.date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}</time>
+              <div className="flex flex-row items-center text-muted-text mb-2">
+                <time className="text-sm">{new Date(post.metadata.date).toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}</time>
+              {post.metadata.readingTime && (
+                <>
+                  <span className="ml-2">{'•'}</span>
+                  <span className="ml-2">{post.metadata.readingTime}</span>
+                </>
+              )}
+              </div>
             </div>
 
             <div className="prose dark:prose-invert 

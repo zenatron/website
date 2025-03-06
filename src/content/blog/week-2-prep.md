@@ -1,13 +1,9 @@
 ---
-
 title: "Week 2 Prep: The Data Mining Pipeline"
-
 date: "2025-01-21"
-
+readingTime: "2min"
 excerpt: "In this blog post we discuss the data mining pipeline."
-
-tags: ["datamining", "datascience", "machinelearning"]
-
+tags: ["data-mining", "data-science", "machine-learning"]
 ---
 ### Topic: The Data Mining Pipeline (also called Data Science Pipeline, Data Mining Process, etc.)
 

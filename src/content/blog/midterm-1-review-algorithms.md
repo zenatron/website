@@ -1,8 +1,9 @@
 ---
 title: "Midterm 1 Study Guide: Algorithms"
 date: "2025-02-23"
+readingTime: "7min"
 excerpt: "Study guide for 4114: Real World Algorithms."
-tags: ["graphs", "computation", "sorting", "searching","algorithms"]
+tags: ["graphs", "computation", "sorting", "searching", "algorithms"]
 ---
 ---
 ## 1. Data Structures Review
