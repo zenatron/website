@@ -50,13 +50,13 @@ export async function getGithubRepos() {
         
         // Add language if it exists
         if (repo.language) {
-          tagsSet.add(repo.language.toLowerCase());
+          tagsSet.add(repo.language.toLowerCase().replace(/\s+/g, '-'));
         }
         
         // Add topics if they exist
         if (repo.topics && repo.topics.length > 0) {
           repo.topics.forEach(topic => {
-            tagsSet.add(topic.toLowerCase());
+            tagsSet.add(topic.toLowerCase().replace(/\s+/g, '-'));
           });
         }
         

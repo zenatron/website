@@ -70,7 +70,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
           </GradientText>
         </div>
         <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-          {"Exploring software engineering through personal projects and open-source contributions."}
+          {"A showcase of my coding journey, from passion projects to GitHub collaborations."}
         </p>
       </section>
 
@@ -113,7 +113,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
       >
         {displayProjects.length === 0 ? (
           <div className="col-span-full text-center text-muted-text py-12">
-            No projects found matching your search criteria.
+            {"No projects found matching your search criteria."}
           </div>
         ) : (
           displayProjects.map((project) => (

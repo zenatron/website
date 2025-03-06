@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import matter from 'gray-matter';
 import { ProjectCard, DataScienceProject } from '@/types/types';
 import projectMetadata from '@/content/projects/metadata.json';
 
@@ -26,7 +25,7 @@ function transformMetadataToProjects(): DataScienceProject[] {
         type: 'data' as const,
         slug,
         date: data.date,
-        tags: ['python', 'jupyter', 'data-science']
+        tags: ['python', 'jupyter-notebook', 'data-science']
       },
       links: {},
       downloads: [
@@ -40,57 +39,6 @@ function transformMetadataToProjects(): DataScienceProject[] {
 
   //console.log('================================\n');
   return projects as DataScienceProject[];
-}
-
-export async function getProjectBySlug(slug: string): Promise<ProjectCard | null> {
-  // First check metadata.json
-  if (slug in projectMetadata) {
-    const data = projectMetadata[slug as keyof typeof projectMetadata];
-    return {
-      metadata: {
-        slug,
-        title: data.title,
-        description: data.description,
-        type: 'data' as const,
-        date: data.date,
-        tags: ['python', 'jupyter', 'data-science']
-      },
-      links: {},
-      downloads: [
-        {
-          type: 'notebook',
-          filename: data.downloads[0].filename,
-          label: 'Download Notebook'
-        }
-      ],
-      featured: false
-    };
-  }
-
-  // Then check markdown files
-  try {
-    const fullPath = path.join(projectsDirectory, `${slug}.md`);
-    const fileContents = fs.readFileSync(fullPath, 'utf8');
-    const { data: metadata } = matter(fileContents);
-
-    return {
-      metadata: {
-        slug,
-        title: metadata.title,
-        description: metadata.description,
-        type: metadata.type,
-        tags: metadata.tags || [],
-        date: metadata.date?.toString() || '',
-      },
-      links: metadata.links || {},
-      downloads: metadata.downloads || [],
-      featured: metadata.featured || false,
-      image: metadata.image || null,
-    };
-  } catch (error) {
-    console.error(`Error getting project by slug: ${error}`);
-    return null;
-  }
 }
 
 export async function getAllProjects(): Promise<ProjectCard[]> {
