@@ -1,23 +1,22 @@
 import fs from 'fs';
 import path from 'path';
-import matter from 'gray-matter';
-import { ProjectCard } from '@/types/types';
+import { ProjectCard, DataScienceProject } from '@/types/types';
 import projectMetadata from '@/content/projects/metadata.json';
 
 const projectsDirectory = path.join(process.cwd(), 'src/content/projects');
 
 // Add this function to transform metadata.json entries to ProjectCards
-function transformMetadataToProjects(): ProjectCard[] {
-  console.log('\n=== Data Science Projects Slugs ===');
+function transformMetadataToProjects(): DataScienceProject[] {
+  //console.log('\n=== Data Science Projects Slugs ===');
   
   const projects = Object.entries(projectMetadata).map(([key, data]) => {
     const slug = key;
     
-    console.log(`Project: "${data.title}"`);
-    console.log(`  Key: ${key}`);
-    console.log(`  Slug: ${slug}`);
-    console.log(`  Notebook: ${data.downloads?.[0]?.filename}`);
-    console.log('---');
+    //console.log(`Project: "${data.title}"`);
+    //console.log(`  Key: ${key}`);
+    //console.log(`  Slug: ${slug}`);
+    //console.log(`  Notebook: ${data.downloads?.[0]?.filename}`);
+    //console.log('---');
 
     return {
       metadata: {
@@ -26,67 +25,25 @@ function transformMetadataToProjects(): ProjectCard[] {
         type: 'data' as const,
         slug,
         date: data.date,
-        tags: ['python', 'jupyter', 'data-science']
+        tags: ['python', 'jupyter-notebook', 'data-science']
       },
       links: {},
-      downloads: data.downloads,
+      downloads: [
+        {
+          filename: data.downloads[0].filename,
+        }
+      ],
       featured: false
     };
   });
 
-  console.log('================================\n');
-  return projects;
-}
-
-export async function getProjectBySlug(slug: string): Promise<ProjectCard | null> {
-  // First check metadata.json
-  if (slug in projectMetadata) {
-    const data = projectMetadata[slug as keyof typeof projectMetadata];
-    return {
-      metadata: {
-        slug,
-        title: data.title,
-        description: data.description,
-        type: 'data' as const,
-        date: data.date,
-        tags: ['python', 'jupyter', 'data-science']
-      },
-      links: {},
-      downloads: data.downloads,
-      featured: false
-    };
-  }
-
-  // Then check markdown files
-  try {
-    const fullPath = path.join(projectsDirectory, `${slug}.md`);
-    const fileContents = fs.readFileSync(fullPath, 'utf8');
-    const { data: metadata } = matter(fileContents);
-
-    return {
-      metadata: {
-        slug,
-        title: metadata.title,
-        description: metadata.description,
-        type: metadata.type,
-        tags: metadata.tags || [],
-        date: metadata.date?.toString() || '',
-      },
-      links: metadata.links || {},
-      downloads: metadata.downloads || [],
-      featured: metadata.featured || false,
-      image: metadata.image || null,
-    };
-  } catch (error) {
-    console.error(`Error getting project by slug: ${error}`);
-    return null;
-  }
+  //console.log('================================\n');
+  return projects as DataScienceProject[];
 }
 
 export async function getAllProjects(): Promise<ProjectCard[]> {
   // Get projects from metadata.json
   const dataProjects = transformMetadataToProjects();
-
   return [...dataProjects];
 }
 

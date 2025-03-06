@@ -49,7 +49,7 @@ export default function AboutPage() {
         <div className="absolute inset-0 z-0">
           <Squares
             direction="diagonal"
-            speed={0.3}
+            speed={0.2}
             borderColor="#333"
             squareSize={96}
             hoverFillColor="#222"
@@ -71,10 +71,10 @@ export default function AboutPage() {
 
           <section className="space-y-8 max-w-2xl mx-auto">
             <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-              {"Hey! I'm Phil, a software developer with a knack for building interesting things. I love testing out new technologies and finding creative ways to solve problems - especially when it involves graphics programming or game development."}
+              {"Hey! I'm Phil, a software developer with a knack for building interesting things. I love testing out new technologies and finding creative ways to solve problems."}
             </p>
             <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-              {"When I'm not coding, you'll find me tinkering with my homelab, playing indie games, or working on my next game. I'm always excited to learn new things and share what I discover along the way."}
+              {"When I'm not coding, you'll find me tinkering with my homelab, playing indie games, or enjoying the outdoors. I'm always excited to learn new things and share what I discover along the way."}
             </p>
           </section>
         </motion.div>

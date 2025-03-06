@@ -1,11 +1,10 @@
-import { getProjectBySlug } from '@/lib/projects';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { FaArrowLeft, FaDownload } from 'react-icons/fa';
 import fs from 'fs';
 import path from 'path';
-
+import { getAllProjects } from '@/lib/projects';
 export async function generateStaticParams() {
   const params = await import('@/lib/projects').then((mod) => mod.generateStaticParams());
   return params;
@@ -26,7 +25,7 @@ async function getProjectHTML(slug: string): Promise<string> {
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
 
   const { slug } = await params;
-  const project = await getProjectBySlug(slug);
+  const project = await getAllProjects().then((projects) => projects.find((project) => project.metadata.slug === slug));
 
   if (!project) {
     return (
@@ -35,7 +34,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         <main className="flex-1 flex flex-col items-center justify-center text-center px-6">
           <h1 className="text-6xl font-bold">404</h1>
           <p className="text-lg mt-4 text-muted-text">
-            The project you&#39;re looking for doesn&#39;t exist.
+            {"The project you're looking for doesn't exist."}
           </p>
           <Link href="/projects" className="btn btn-primary mt-6">
             Back to Projects
