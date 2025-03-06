@@ -44,8 +44,6 @@ export type DataScienceProject = ProjectCard & {
     slug: string; // Required for DS projects
   };
   downloads: {
-    type: 'notebook';
     filename: string;
-    label: string;
   }[];
 }
