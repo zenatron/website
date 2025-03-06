@@ -34,9 +34,9 @@ export default function HomePage() {
       {/* Scrollable content */}
       <div className="relative z-20 flex flex-col min-h-screen">
         <Header />
-        <main className="flex-1 flex flex-col items-center justify-center text-center px-6 py-6">
+        <main className="flex-1 flex flex-col items-center justify-center text-center px-6">
           {/* Hero Section */}
-          <section className="space-y-2 max-w-3xl animate-fade-in">
+          <section className="max-w-4xl animate-fade-in py-12">
             <div
               ref={containerRef}
               style={{ 
@@ -51,8 +51,8 @@ export default function HomePage() {
                 transparent={true}
               >
                 <VariableProximity
-                  label="Welcome to My Portfolio!"
-                  className="text-4xl md:text-6xl font-bold"
+                  label="Hi, I'm Phil!"
+                  className="text-6xl md:text-7xl font-bold"
                   fromFontVariationSettings="'wght' 100, 'opsz' 8"
                   toFontVariationSettings="'wght' 900, 'opsz' 48"
                   containerRef={containerRef as unknown as React.RefObject<HTMLElement>}
@@ -62,7 +62,7 @@ export default function HomePage() {
               </GradientText>
             </div>
             <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-              {"Crafting interactive experiences with code and modern design."}
+              {"I like to make stuff."}
             </p>
           </section>
 
