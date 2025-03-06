@@ -1,8 +1,9 @@
 ---
 title: "Week 7 Prep: Regression"
 date: "2025-02-26"
+readingTime: "5min"
 excerpt: "A comprehensive deep dive into Linear and Logistic Regression, including key concepts like regularization and evaluation metrics."
-tags: ["datamining", "datascience", "machinelearning", "regression", "algorithms"]
+tags: ["data-mining", "data-science", "machine-learning", "regression", "algorithms"]
 ---
 ## Linear Regression
 

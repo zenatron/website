@@ -1,6 +1,7 @@
 export type BlogMetadata = {
   title: string;
   date: string;
+  readingTime?: string;
   excerpt?: string;
   tags?: string[];
 }

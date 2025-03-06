@@ -64,7 +64,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
-      month: 'long',
+      month: 'short',
       day: 'numeric'
     });
   };
@@ -201,9 +201,15 @@ export default function BlogClient({ posts }: BlogClientProps) {
             >
               <CardSpotlight href={`/blog/${post.slug}`}>
                 <div className="relative z-10">
-                  <div className="flex items-center text-muted-text mb-2">
+                  <div className="flex flex-row items-center text-muted-text mb-2">
                     <FaCalendarAlt className="mr-2" />
                     <time>{formatDate(post.metadata.date)}</time>
+                    {post.metadata.readingTime && (
+                      <>
+                        <span className="ml-2">{'•'}</span>
+                        <span className="ml-2">{post.metadata.readingTime}</span>
+                      </>
+                    )}
                   </div>
                   <h2 className="text-2xl font-bold mb-3 group-hover:text-accent transition-colors">
                     {post.metadata.title}

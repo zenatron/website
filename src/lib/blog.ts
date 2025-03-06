@@ -97,6 +97,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
       metadata: {
         title: data.title || 'Untitled',
         date: data.date || '1970-01-01',
+        readingTime: data.readingTime,
         excerpt: data.excerpt || '',
         tags: data.tags || [],
       },
@@ -124,6 +125,7 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
         metadata: {
           title: data.title || 'Untitled',
           date: data.date || '1970-01-01',
+          readingTime: data.readingTime,
           excerpt: data.excerpt || '',
           tags: data.tags || [],
         },
