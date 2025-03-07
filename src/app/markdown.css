@@ -1,0 +1,334 @@
+/* markdown.css - Styles for MDX content */
+
+/* Basic typography */
+.mdx-content h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.mdx-content h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.mdx-content h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.mdx-content h4 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.mdx-content h5 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.mdx-content h6 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.mdx-content p {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.mdx-content a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.mdx-content a:hover {
+  color: var(--btn-primary-hover);
+}
+
+/* Lists */
+.mdx-content ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.mdx-content ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.mdx-content li {
+  margin: 0.25rem 0;
+}
+
+/* Block elements */
+.mdx-content blockquote {
+  border-left: 4px solid var(--accent);
+  padding-left: 1rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  margin: 1rem 0;
+  font-style: italic;
+}
+
+.mdx-content hr {
+  margin: 2rem 0;
+  border-color: var(--muted-text);
+  opacity: 0.3;
+}
+
+/* Tables */
+.mdx-content table {
+  min-width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+.mdx-content thead {
+  background-color: rgba(102, 102, 102, 0.1);
+}
+
+.mdx-content tbody {
+  border-top: 1px solid rgba(102, 102, 102, 0.2);
+}
+
+.mdx-content tbody tr {
+  border-bottom: 1px solid rgba(102, 102, 102, 0.2);
+}
+
+.mdx-content th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.mdx-content td {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+}
+
+/* Code blocks */
+.mdx-content code:not(pre code) {
+  background-color: var(--code-bg);
+  color: var(--code-text);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-family: monospace;
+}
+
+.mdx-content pre {
+  background-color: var(--code-bg);
+  color: var(--code-text);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  font-size: 0.875rem;
+}
+
+/* Images */
+.mdx-content img {
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Math */
+.mdx-content .math {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  padding: 1rem 0;
+}
+
+.mdx-content .math-display {
+  display: block;
+  text-align: center;
+}
+
+/* Special text effects */
+.typewriter {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid;
+  width: 0;
+  animation: typing 4s steps(20, end) forwards, blink 0.5s step-end infinite;
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink {
+  from, to { border-color: transparent; }
+  50% { border-color: black; }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.animate-heartbeat {
+  animation: heartbeat 2s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Syntax highlighting */
+.hljs-comment,
+.hljs-quote {
+  color: #5c6370;
+  font-style: italic;
+}
+
+.hljs-doctag,
+.hljs-keyword,
+.hljs-formula {
+  color: #c678dd;
+}
+
+.hljs-section,
+.hljs-name,
+.hljs-selector-tag,
+.hljs-deletion,
+.hljs-subst {
+  color: #e06c75;
+}
+
+.hljs-literal {
+  color: #56b6c2;
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta .hljs-string {
+  color: #98c379;
+}
+
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-type,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-number {
+  color: #d19a66;
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link,
+.hljs-meta,
+.hljs-selector-id,
+.hljs-title {
+  color: #61aeee;
+}
+
+.hljs-built_in,
+.hljs-title.class_,
+.hljs-class .hljs-title {
+  color: #e6c07b;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+.hljs-link {
+  text-decoration: underline;
+}
+
+/* Dark theme adjustments */
+:root[class~="dark"] .hljs-comment,
+:root[class~="dark"] .hljs-quote {
+  color: #7f848e;
+}
+
+:root[class~="dark"] .hljs-doctag,
+:root[class~="dark"] .hljs-keyword,
+:root[class~="dark"] .hljs-formula {
+  color: #c678dd;
+}
+
+:root[class~="dark"] .hljs-section,
+:root[class~="dark"] .hljs-name,
+:root[class~="dark"] .hljs-selector-tag,
+:root[class~="dark"] .hljs-deletion,
+:root[class~="dark"] .hljs-subst {
+  color: #e06c75;
+}
+
+:root[class~="dark"] .hljs-literal {
+  color: #56b6c2;
+}
+
+:root[class~="dark"] .hljs-string,
+:root[class~="dark"] .hljs-regexp,
+:root[class~="dark"] .hljs-addition,
+:root[class~="dark"] .hljs-attribute,
+:root[class~="dark"] .hljs-meta .hljs-string {
+  color: #98c379;
+}
+
+:root[class~="dark"] .hljs-attr,
+:root[class~="dark"] .hljs-variable,
+:root[class~="dark"] .hljs-template-variable,
+:root[class~="dark"] .hljs-type,
+:root[class~="dark"] .hljs-selector-class,
+:root[class~="dark"] .hljs-selector-attr,
+:root[class~="dark"] .hljs-selector-pseudo,
+:root[class~="dark"] .hljs-number {
+  color: #d19a66;
+}
+
+:root[class~="dark"] .hljs-symbol,
+:root[class~="dark"] .hljs-bullet,
+:root[class~="dark"] .hljs-link,
+:root[class~="dark"] .hljs-meta,
+:root[class~="dark"] .hljs-selector-id,
+:root[class~="dark"] .hljs-title {
+  color: #61aeee;
+}
+
+:root[class~="dark"] .hljs-built_in,
+:root[class~="dark"] .hljs-title.class_,
+:root[class~="dark"] .hljs-class .hljs-title {
+  color: #e6c07b;
+} 

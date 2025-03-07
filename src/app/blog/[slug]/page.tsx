@@ -84,7 +84,7 @@ export default async function BlogPage({ params }: Props) {
               </div>
             </div>
 
-            <div className="prose dark:prose-invert 
+            <div className="mdx-content prose dark:prose-invert 
               prose-a:text-accent hover:prose-a:text-btnPrimaryHover
               dark:prose-a:text-accent dark:hover:prose-a:text-btnPrimaryHover
               dark:prose-strong:text-primary-text
@@ -97,8 +97,9 @@ export default async function BlogPage({ params }: Props) {
               [&>pre]:max-w-4xl
               [&>img]:max-w-4xl
               w-full"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+            >
+              {post.content}
+            </div>
           </article>
         </div>
       </main>

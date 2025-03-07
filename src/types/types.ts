@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 export type BlogMetadata = {
   title: string;
   date: string;
@@ -8,7 +10,8 @@ export type BlogMetadata = {
 
 export type BlogPost = {
   slug: string;
-  content: string;
+  content: ReactNode;
+  searchableContent: string; // Plain text version for searching
   metadata: BlogMetadata;
 }
 

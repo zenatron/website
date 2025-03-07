@@ -1,6 +1,7 @@
 /* Global CSS: src/styles/globals.css */
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@100..900&display=swap');
+@import './markdown.css';
 
 @tailwind base;
 @tailwind components;
@@ -23,8 +24,8 @@
   :root[class~="dark"] {
     /* Dark theme */
     --primary-text: #e6e6e6;
-    --primary-bg: #1a1a1a;
-    --secondary-bg: #2d2d2d;
+    --primary-bg: #101010;
+    --secondary-bg: #252525;
     --accent: #3b82f6;
     --btn-primary: #3b82f6;
     --btn-primary-hover: #60a5fa;
@@ -138,16 +139,4 @@ body {
 
 .animate-fade-in {
   animation: fade-in 1s ease-in-out;
-}
-
-.math {
-  overflow-x: auto;
-  overflow-y: hidden;
-  max-width: 100%;
-  padding: 1rem 0;
-}
-
-.math-display {
-  display: block;
-  text-align: center;
 }
