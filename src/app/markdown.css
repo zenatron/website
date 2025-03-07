@@ -1,0 +1,301 @@
+/* markdown.css - Styles for MDX content */
+
+/* Basic typography */
+.prose.mdx-content {
+  color: var(--primary-text);
+}
+
+.prose.mdx-content h1,
+.prose.mdx-content h2,
+.prose.mdx-content h3,
+.prose.mdx-content h4,
+.prose.mdx-content h5,
+.prose.mdx-content h6 {
+  color: var(--primary-text);
+  font-weight: 700;
+}
+
+.prose.mdx-content h1 {
+  font-size: 2.25rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.prose.mdx-content h2 {
+  font-size: 1.875rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.prose.mdx-content h3 {
+  font-size: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose.mdx-content h4 {
+  font-size: 1.25rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose.mdx-content h5 {
+  font-size: 1.125rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose.mdx-content h6 {
+  font-size: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose.mdx-content p {
+  color: var(--primary-text);
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.prose.mdx-content a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.prose.mdx-content a:hover {
+  color: var(--btn-primary-hover);
+}
+
+.prose.mdx-content strong,
+.prose.mdx-content b {
+  color: var(--primary-text);
+  font-weight: 700;
+}
+
+/* Lists */
+.prose.mdx-content ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+  color: var(--primary-text);
+}
+
+.prose.mdx-content ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+  color: var(--primary-text);
+}
+
+.prose.mdx-content ol > li {
+  position: relative;
+  padding-left: 0.5rem;
+}
+
+.prose.mdx-content ul > li,
+.prose.mdx-content ol > li {
+  margin: 0.5rem 0;
+  padding-left: 0.5rem;
+  color: var(--primary-text);
+}
+
+.prose.mdx-content ul > li::marker,
+.prose.mdx-content ol > li::marker {
+  color: var(--muted-text);
+}
+
+/* Block elements */
+.prose.mdx-content blockquote {
+  border-left: 4px solid var(--accent);
+  padding-left: 1rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  margin: 1rem 0;
+  font-style: italic;
+  color: var(--primary-text);
+}
+
+.prose.mdx-content hr {
+  margin: 2rem 0;
+  border-color: var(--secondary-text);
+  opacity: 0.3;
+}
+
+/* Tables */
+.prose.mdx-content table {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  color: var(--primary-text);
+}
+
+.prose.mdx-content thead {
+  background-color: var(--secondary-bg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.prose.mdx-content tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.prose.mdx-content th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--primary-text);
+}
+
+.prose.mdx-content td {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: var(--primary-text);
+}
+
+/* Code blocks */
+.prose.mdx-content code:not(pre code) {
+  background-color: var(--code-bg);
+  color: var(--code-text);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-family: monospace;
+}
+
+.prose.mdx-content pre {
+  background-color: var(--code-bg);
+  color: var(--code-text);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  font-size: 0.875rem;
+}
+
+/* Images */
+.prose.mdx-content img {
+  border-radius: 0.5rem;
+  margin: 1.5rem auto;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Math */
+.prose.mdx-content .math {
+  color: var(--primary-text);
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  padding: 1rem 0;
+}
+
+.prose.mdx-content .math-display {
+  color: var(--primary-text);
+  display: block;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.prose.mdx-content .katex {
+  color: var(--primary-text);
+  font-size: 1.1em;
+}
+
+.prose.mdx-content .katex-display {
+  color: var(--primary-text);
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* Embedded content */
+.prose.mdx-content iframe {
+  border: 0;
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+  width: 100%;
+}
+
+/* Layout constraints */
+.prose.mdx-content > * {
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.prose.mdx-content > pre,
+.prose.mdx-content > .math-display,
+.prose.mdx-content > table {
+  max-width: 56rem;
+}
+
+/* Syntax highlighting */
+.prose.mdx-content .hljs-comment,
+.prose.mdx-content .hljs-quote {
+  color: #7f848e;
+}
+
+.prose.mdx-content .hljs-doctag,
+.prose.mdx-content .hljs-keyword,
+.prose.mdx-content .hljs-formula {
+  color: #c678dd;
+}
+
+.prose.mdx-content .hljs-section,
+.prose.mdx-content .hljs-name,
+.prose.mdx-content .hljs-selector-tag,
+.prose.mdx-content .hljs-deletion,
+.prose.mdx-content .hljs-subst {
+  color: #e06c75;
+}
+
+.prose.mdx-content .hljs-literal {
+  color: #56b6c2;
+}
+
+.prose.mdx-content .hljs-string,
+.prose.mdx-content .hljs-regexp,
+.prose.mdx-content .hljs-addition,
+.prose.mdx-content .hljs-attribute,
+.prose.mdx-content .hljs-meta .hljs-string {
+  color: #98c379;
+}
+
+.prose.mdx-content .hljs-attr,
+.prose.mdx-content .hljs-variable,
+.prose.mdx-content .hljs-template-variable,
+.prose.mdx-content .hljs-type,
+.prose.mdx-content .hljs-selector-class,
+.prose.mdx-content .hljs-selector-attr,
+.prose.mdx-content .hljs-selector-pseudo,
+.prose.mdx-content .hljs-number {
+  color: #d19a66;
+}
+
+.prose.mdx-content .hljs-symbol,
+.prose.mdx-content .hljs-bullet,
+.prose.mdx-content .hljs-link,
+.prose.mdx-content .hljs-meta,
+.prose.mdx-content .hljs-selector-id,
+.prose.mdx-content .hljs-title {
+  color: #61aeee;
+}
+
+.prose.mdx-content .hljs-built_in,
+.prose.mdx-content .hljs-title.class_,
+.prose.mdx-content .hljs-class .hljs-title {
+  color: #e6c07b;
+}
+
+.prose.mdx-content .hljs-emphasis {
+  font-style: italic;
+}
+
+.prose.mdx-content .hljs-strong {
+  font-weight: bold;
+}
+
+.prose.mdx-content .hljs-link {
+  text-decoration: underline;
+} 

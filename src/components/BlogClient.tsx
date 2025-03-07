@@ -201,7 +201,10 @@ export default function BlogClient({ posts }: BlogClientProps) {
             >
               <CardSpotlight href={`/blog/${post.slug}`}>
                 <div className="relative z-10">
-                  <div className="flex flex-row items-center text-muted-text mb-2">
+                  <h2 className="text-2xl font-bold mb-3 group-hover:text-accent transition-colors">
+                    {post.metadata.title}
+                  </h2>
+                  <div className="flex flex-row items-center text-muted-text text-sm mb-3">
                     <FaCalendarAlt className="mr-2" />
                     <time>{formatDate(post.metadata.date)}</time>
                     {post.metadata.readingTime && (
@@ -211,9 +214,6 @@ export default function BlogClient({ posts }: BlogClientProps) {
                       </>
                     )}
                   </div>
-                  <h2 className="text-2xl font-bold mb-3 group-hover:text-accent transition-colors">
-                    {post.metadata.title}
-                  </h2>
                   {post.metadata.excerpt && (
                     <p className="text-muted-text line-clamp-2">
                       {post.metadata.excerpt}

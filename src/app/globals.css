@@ -1,40 +1,31 @@
 /* Global CSS: src/styles/globals.css */
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@100..900&display=swap');
+@import './markdown.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    /* Light theme */
-    --primary-text: #1a1a1a;
-    --primary-bg: #ffffff;
-    --secondary-bg: #f8f9fa;
-    --accent: #4a90e2;
-    --btn-primary: #3b82f6;
-    --btn-primary-hover: #60a5fa;
-    --muted-text: #666666;
-    --code-bg: #f5f5f5;
-    --code-text: #1a1a1a;
-  }
-
-  :root[class~="dark"] {
-    /* Dark theme */
-    --primary-text: #e6e6e6;
-    --primary-bg: #1a1a1a;
-    --secondary-bg: #2d2d2d;
-    --accent: #3b82f6;
-    --btn-primary: #3b82f6;
-    --btn-primary-hover: #60a5fa;
-    --muted-text: #a3a3a3;
-    --code-bg: #2d2d2d;
-    --code-text: #e6e6e6;
-  }
+:root {
+  --primary-text: #e6e6e6;
+  --primary-bg: #101010;
+  --secondary-bg: #252525;
+  --accent: #227be0;
+  --btn-primary: #227be0;
+  --btn-primary-hover: #60a5fa;
+  --secondary-text: #a3a3a3;
+  --code-bg: #2d2d2d;
+  --code-text: #e6e6e6;
 }
 
-/* Add base styles for better dark mode transitions */
+/* Base styles */
+body {
+  background-color: var(--primary-bg);
+  color: var(--primary-text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 @layer utilities {
   .line-clamp-2 {
     display: -webkit-box;
@@ -67,12 +58,6 @@
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer components {
   .btn {
     @apply px-4 py-2 rounded-lg font-medium 
@@ -80,13 +65,11 @@ body {
   }
 
   .btn.btn-primary {
-    @apply bg-btnPrimary border border-accent border-opacity-20;
-    color: white;
+    @apply bg-btn-primary border border-accent border-opacity-20 text-white;
   }
 
   .btn.btn-primary:hover {
-    @apply bg-btnPrimaryHover;
-    color: white;
+    @apply bg-btn-primary-hover text-white;
   }
 
   .btn-secondary {
@@ -108,12 +91,12 @@ body {
   }
 
   .btn-disabled {
-    @apply bg-secondary-bg text-muted-text opacity-50 cursor-not-allowed;
+    @apply bg-secondary-bg text-secondary-text opacity-50 cursor-not-allowed;
   }
 
   .btn-nav {
-    @apply text-muted-text px-3 py-1.5 rounded-md text-sm font-medium
-    hover:bg-accent hover:text-primary-text active:bg-accent;
+    @apply text-secondary-text px-3 py-1.5 text-sm font-medium
+    hover:text-accent transition-colors duration-100;
   }
 
   .tag-bubble {
@@ -138,16 +121,4 @@ body {
 
 .animate-fade-in {
   animation: fade-in 1s ease-in-out;
-}
-
-.math {
-  overflow-x: auto;
-  overflow-y: hidden;
-  max-width: 100%;
-  padding: 1rem 0;
-}
-
-.math-display {
-  display: block;
-  text-align: center;
 }

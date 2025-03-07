@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import ThemeSwitch from './ThemeSwitch';
 
 export default function MobileMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -114,8 +113,6 @@ export default function MobileMenu() {
           >
             {"About"}
           </Link>
-          {/* Theme Switch */}
-          <ThemeSwitch />
         </nav>
       </>
     </>

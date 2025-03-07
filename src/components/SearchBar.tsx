@@ -65,10 +65,11 @@ export default function SearchBar<T extends ProjectCard | BlogPost>({
           return 'description' in item.metadata;
         };
 
+        // Build a searchable string from metadata and searchableContent
         const itemContent = (
           item.metadata.title.toLowerCase() + ' ' +
           (isProjectCard(item) ? item.metadata.description?.toLowerCase() : item.metadata.excerpt?.toLowerCase() || '') +
-          ('content' in item ? ' ' + item.content.toLowerCase() : '')
+          (!isProjectCard(item) ? ' ' + (item as BlogPost).searchableContent.toLowerCase() : '')
         );
         
         // Split search query into terms

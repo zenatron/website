@@ -12,9 +12,7 @@ export default function ProjectsLayout({ projects }: { projects: ProjectCard[] }
         <Squares
           direction="diagonal"
           speed={0.2}
-          borderColor="#333"
           squareSize={96}
-          hoverFillColor="#222"
         />
       </div>
 

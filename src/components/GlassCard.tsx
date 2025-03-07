@@ -9,13 +9,15 @@ interface CardSpotlightProps {
   children: ReactNode;
   className?: string;
   external?: boolean;
+  spotlightColor?: string;
 }
 
 export default function CardSpotlight({ 
   href, 
   children, 
   className = "", 
-  external = false 
+  external = false,
+  spotlightColor
 }: CardSpotlightProps) {
   const linkProps = external ? {
     target: "_blank",
@@ -24,7 +26,10 @@ export default function CardSpotlight({
 
   return (
     <Link href={href} {...linkProps} className="block">
-      <SpotlightCard className={`p-4 md:p-6 h-full ${className}`}>
+      <SpotlightCard 
+        className={`p-4 md:p-6 h-full ${className}`}
+        spotlightColor={spotlightColor}
+      >
         <div className="group flex flex-col h-full transition-all duration-300 transform hover:-translate-y-2">
           {children}
         </div>

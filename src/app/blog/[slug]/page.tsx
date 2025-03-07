@@ -4,18 +4,12 @@ import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { FaArrowLeft, FaHashtag } from 'react-icons/fa';
 
-type Props = {
-  params: Promise<{
-    slug: string
-  }>
-}
-
 export async function generateStaticParams() {
   const params = await import('@/lib/blog').then((mod) => mod.generateStaticParams());
   return params;
 }
 
-export default async function BlogPage({ params }: Props) {
+export default async function BlogPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = await getBlogPostBySlug(slug);
 
@@ -84,21 +78,9 @@ export default async function BlogPage({ params }: Props) {
               </div>
             </div>
 
-            <div className="prose dark:prose-invert 
-              prose-a:text-accent hover:prose-a:text-btnPrimaryHover
-              dark:prose-a:text-accent dark:hover:prose-a:text-btnPrimaryHover
-              dark:prose-strong:text-primary-text
-              dark:prose-code:text-primary-text
-              dark:prose-pre:bg-code-bg
-              dark:prose-pre:text-code-text
-              prose-img:rounded-lg
-              prose-img:mx-auto
-              [&>*]:mx-auto [&>*]:max-w-3xl
-              [&>pre]:max-w-4xl
-              [&>img]:max-w-4xl
-              w-full"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+            <div className="mdx-content prose w-full">
+              {post.content}
+            </div>
           </article>
         </div>
       </main>

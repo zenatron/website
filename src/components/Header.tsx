@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import ThemeSwitch from '@/components/ThemeSwitch';
 import MobileMenu from '@/components/MobileMenu';
 import DecryptText from './bits/DecryptText';
 
@@ -29,7 +28,6 @@ export default function Header() {
         <Link href="/about" className="btn-nav">
           {"About"}
         </Link>
-        <ThemeSwitch />
       </nav>
 
       {/* Mobile Menu */}
