@@ -10,15 +10,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'primary-text': 'var(--primary-text)',
         'primary-bg': 'var(--primary-bg)',
+        'secondary-bg': 'var(--secondary-bg)',
+        'primary-text': 'var(--primary-text)',
+        'secondary-text': 'var(--secondary-text)',
         'accent': 'var(--accent)',
-        'btnPrimary': 'var(--btn-primary)',
-        'btnPrimaryHover': 'var(--btn-primary-hover)',
-        'muted-text': 'var(--muted-text)',
+        'btn-primary': 'var(--btn-primary)',
+        'btn-primary-hover': 'var(--btn-primary-hover)',
         'code-bg': 'var(--code-bg)',
         'code-text': 'var(--code-text)',
-        'secondary-bg': 'var(--secondary-bg)',
+        'muted-text': 'var(--muted-text)',
+        'btnPrimary': 'var(--btn-primary)',
+        'btnPrimaryHover': 'var(--btn-primary-hover)',
       },
       boxShadow: {
         soft: 'var(--shadow-soft)',

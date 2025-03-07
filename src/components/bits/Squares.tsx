@@ -10,17 +10,13 @@ interface GridOffset {
 interface SquaresProps {
   direction?: "diagonal" | "up" | "right" | "down" | "left";
   speed?: number;
-  borderColor?: CanvasStrokeStyle;
   squareSize?: number;
-  hoverFillColor?: CanvasStrokeStyle;
 }
 
 const Squares: React.FC<SquaresProps> = ({
   direction = "right",
   speed = 1,
-  borderColor = "#999",
   squareSize = 40,
-  hoverFillColor = "#222",
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestRef = useRef<number | null>(null);
@@ -49,6 +45,12 @@ const Squares: React.FC<SquaresProps> = ({
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      // Get colors from CSS variables
+      const computedStyle = getComputedStyle(document.documentElement);
+      const borderColor = computedStyle.getPropertyValue('--primary-text').trim() || '#999';
+      const hoverFillColor = computedStyle.getPropertyValue('--secondary-bg').trim() || '#222';
+      const bgColor = computedStyle.getPropertyValue('--primary-bg').trim() || '#101010';
+
       const startX = Math.floor(gridOffset.current.x / squareSize) * squareSize;
       const startY = Math.floor(gridOffset.current.y / squareSize) * squareSize;
 
@@ -67,11 +69,15 @@ const Squares: React.FC<SquaresProps> = ({
             ctx.fillRect(squareX, squareY, squareSize, squareSize);
           }
 
+          // Use a more transparent version of the text color for the grid
           ctx.strokeStyle = borderColor;
+          ctx.globalAlpha = 0.2; // Make the grid lines more subtle
           ctx.strokeRect(squareX, squareY, squareSize, squareSize);
+          ctx.globalAlpha = 1.0;
         }
       }
 
+      // Create a gradient that fades to the background color
       const gradient = ctx.createRadialGradient(
         canvas.width / 2,
         canvas.height / 2,
@@ -80,8 +86,26 @@ const Squares: React.FC<SquaresProps> = ({
         canvas.height / 2,
         Math.sqrt(canvas.width ** 2 + canvas.height ** 2) / 2
       );
-      gradient.addColorStop(0, "rgba(0, 0, 0, 0)");
-      gradient.addColorStop(1, "#060606");
+      
+      // Parse the background color to create a transparent version
+      let r = 0, g = 0, b = 0;
+      
+      if (bgColor.startsWith('#')) {
+        // Handle hex color
+        const hex = bgColor.substring(1);
+        if (hex.length === 3) {
+          r = parseInt(hex[0] + hex[0], 16);
+          g = parseInt(hex[1] + hex[1], 16);
+          b = parseInt(hex[2] + hex[2], 16);
+        } else if (hex.length === 6) {
+          r = parseInt(hex.substring(0, 2), 16);
+          g = parseInt(hex.substring(2, 4), 16);
+          b = parseInt(hex.substring(4, 6), 16);
+        }
+      }
+      
+      gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0)`);
+      gradient.addColorStop(1, bgColor);
 
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -148,17 +172,28 @@ const Squares: React.FC<SquaresProps> = ({
       hoveredSquareRef.current = null;
     };
 
+    // Set up a MutationObserver to detect theme changes
+    const observer = new MutationObserver(() => {
+      drawGrid(); // Redraw when theme changes
+    });
+    
+    observer.observe(document.documentElement, { 
+      attributes: true,
+      attributeFilter: ['class'] 
+    });
+
     canvas.addEventListener("mousemove", handleMouseMove);
     canvas.addEventListener("mouseleave", handleMouseLeave);
     requestRef.current = requestAnimationFrame(updateAnimation);
 
     return () => {
+      observer.disconnect();
       window.removeEventListener("resize", resizeCanvas);
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
       canvas.removeEventListener("mousemove", handleMouseMove);
       canvas.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [direction, speed, borderColor, hoverFillColor, squareSize]);
+  }, [direction, speed, squareSize]);
 
   return (
     <canvas

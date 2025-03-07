@@ -13,19 +13,19 @@ export default function Counter() {
           onClick={() => setCount(count + 1)}
           className="px-4 py-2 bg-accent text-white rounded hover:bg-accent/80 transition-colors"
         >
-          Increment
+          {"+1"}
         </button>
         <button 
           onClick={() => setCount(count - 1)}
           className="px-4 py-2 bg-muted-text/20 rounded hover:bg-muted-text/30 transition-colors"
         >
-          Decrement
+          {"-1"}
         </button>
         <button 
           onClick={() => setCount(0)}
           className="px-4 py-2 bg-muted-text/20 rounded hover:bg-muted-text/30 transition-colors"
         >
-          Reset
+          {"Reset"}
         </button>
       </div>
     </div>
