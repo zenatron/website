@@ -268,7 +268,11 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                   {project.metadata.date && (
                     <div className="flex items-center text-muted-text text-sm mb-3">
                       <FaCalendarAlt className="mr-2" />
-                      <time>{project.metadata.date}</time>
+                      <time>{new Date(project.metadata.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}</time>
                     </div>
                   )}
                   <p className="text-muted-text mb-4 line-clamp-2">
