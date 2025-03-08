@@ -1,7 +1,5 @@
 import React, { useRef, useEffect } from "react";
 
-type CanvasStrokeStyle = string | CanvasGradient | CanvasPattern;
-
 interface GridOffset {
   x: number;
   y: number;
@@ -11,12 +9,16 @@ interface SquaresProps {
   direction?: "diagonal" | "up" | "right" | "down" | "left";
   speed?: number;
   squareSize?: number;
+  borderColor?: string;
+  hoverFillColor?: string;
 }
 
 const Squares: React.FC<SquaresProps> = ({
   direction = "right",
   speed = 1,
   squareSize = 40,
+  borderColor = '#333333',
+  hoverFillColor = '#202020',
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestRef = useRef<number | null>(null);
@@ -47,8 +49,6 @@ const Squares: React.FC<SquaresProps> = ({
 
       // Get colors from CSS variables
       const computedStyle = getComputedStyle(document.documentElement);
-      const borderColor = computedStyle.getPropertyValue('--primary-text').trim() || '#999';
-      const hoverFillColor = computedStyle.getPropertyValue('--secondary-bg').trim() || '#222';
       const bgColor = computedStyle.getPropertyValue('--primary-bg').trim() || '#101010';
 
       const startX = Math.floor(gridOffset.current.x / squareSize) * squareSize;
