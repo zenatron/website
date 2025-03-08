@@ -19,7 +19,7 @@ const config: Config = {
         'btn-primary-hover': 'var(--btn-primary-hover)',
         'code-bg': 'var(--code-bg)',
         'code-text': 'var(--code-text)',
-        'muted-text': 'var(--muted-text)',
+        'muted-text': 'var(--secondary-text)',
         'btnPrimary': 'var(--btn-primary)',
         'btnPrimaryHover': 'var(--btn-primary-hover)',
       },
