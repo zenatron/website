@@ -7,7 +7,7 @@ import { SiJupyter } from "react-icons/si";
 import GradientText from "./bits/GradientText";
 import VariableProximity from "./bits/VariableProximity";
 import CardSpotlight from "./GlassCard";
-
+import dateFormatter from "@/utils/dateFormatter";
 type SortField = 'title' | 'date';
 type SortDirection = 'asc' | 'desc';
 
@@ -268,10 +268,10 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                   {project.metadata.date && (
                     <div className="flex items-center text-muted-text text-sm mb-3">
                       <FaCalendarAlt className="mr-2" />
-                      <time>{new Date(project.metadata.date).toLocaleDateString('en-US', {
-                        year: 'numeric',
+                      <time>{dateFormatter({ date: project.metadata.date,
                         month: 'short',
-                        day: 'numeric'
+                        day: 'numeric',
+                        year: 'numeric',
                       })}</time>
                     </div>
                   )}

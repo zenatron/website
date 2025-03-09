@@ -8,7 +8,7 @@ import { FaHashtag, FaCalendarAlt, FaSortAlphaDown, FaSortAlphaUp, FaSort } from
 import GradientText from "./bits/GradientText";
 import VariableProximity from "./bits/VariableProximity";
 import CardSpotlight from "./GlassCard";
-
+import dateFormatter from "@/utils/dateFormatter";
 type SortField = 'title' | 'date';
 type SortDirection = 'asc' | 'desc';
 
@@ -60,14 +60,6 @@ export default function BlogClient({ posts }: BlogClientProps) {
       return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
     }
   });
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -206,7 +198,11 @@ export default function BlogClient({ posts }: BlogClientProps) {
                   </h2>
                   <div className="flex flex-row items-center text-muted-text text-sm mb-3">
                     <FaCalendarAlt className="mr-2" />
-                    <time>{formatDate(post.metadata.date)}</time>
+                    <time>{dateFormatter({ date: post.metadata.date,
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}</time>
                     {post.metadata.readingTime && (
                       <>
                         <span className="ml-2">{'•'}</span>

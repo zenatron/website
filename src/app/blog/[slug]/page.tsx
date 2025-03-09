@@ -3,7 +3,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { FaArrowLeft, FaHashtag } from 'react-icons/fa';
-
+import dateFormatter, { dateFormatters } from '@/utils/dateFormatter';
 export async function generateStaticParams() {
   const params = await import('@/lib/blog').then((mod) => mod.generateStaticParams());
   return params;
@@ -63,11 +63,8 @@ export default async function BlogPage({ params }: { params: Promise<{ slug: str
                 </div>
               )}
               <div className="flex flex-row items-center text-muted-text mb-2">
-                <time className="text-sm">{new Date(post.metadata.date).toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
+                <time className="text-sm">{dateFormatter({ date: post.metadata.date,
+                  formatStyle: 'full'
                 })}</time>
               {post.metadata.readingTime && (
                 <>
