@@ -22,45 +22,19 @@
  * All formatting options are optional and match the Intl.DateTimeFormatOptions interface
  */
 interface DateFormatterProps {
-  /** The date to format - can be a string or Date object */
   date: string | Date;
-  
-  /** The locale to use for formatting (defaults to 'en-US') */
   locale?: string | string[];
-  
-  /** Day of week format */
   weekday?: 'long' | 'short' | 'narrow';
-  
-  /** Era format (e.g., AD/BC) */
   era?: 'long' | 'short' | 'narrow';
-  
-  /** Year format */
   year?: 'numeric' | '2-digit';
-  
-  /** Month format */
   month?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow';
-  
-  /** Day format */
   day?: 'numeric' | '2-digit';
-  
-  /** Hour format */
   hour?: 'numeric' | '2-digit';
-  
-  /** Minute format */
   minute?: 'numeric' | '2-digit';
-  
-  /** Second format */
   second?: 'numeric' | '2-digit';
-  
-  /** Timezone name display */
   timeZoneName?: 'long' | 'short';
-  
-  /** Timezone to use (e.g., 'UTC', 'America/New_York') */
   timeZone?: string;
-  
-  /** Whether to use 12-hour format */
   hour12?: boolean;
-  
   /**
    * Predefined format style - a convenient shorthand for common date formats
    * 
