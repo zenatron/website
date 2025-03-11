@@ -219,7 +219,7 @@
 
 /* Layout constraints */
 .mdx-content > * {
-  max-width: 48rem;
+  max-width: 72rem;
   margin-left: auto;
   margin-right: auto;
 }
@@ -227,7 +227,7 @@
 .mdx-content > pre,
 .mdx-content > .math-display,
 .mdx-content > table {
-  max-width: 56rem;
+  max-width: 80rem;
 }
 
 /* Syntax highlighting */

@@ -36,7 +36,7 @@ export default async function BlogPage({ params }: { params: Promise<{ slug: str
     <div className="min-h-screen flex flex-col bg-transparent">
       <Header />
       <main className="flex-1 px-6 py-10">
-        <div className="max-w-screen mx-auto">
+        <div className="max-w-xl md:max-w-3xl mx-auto">
           <article className="flex flex-col items-center">
             <h1 className="text-4xl font-bold mb-4 text-center w-full">{post.metadata.title}</h1>
             
@@ -68,7 +68,7 @@ export default async function BlogPage({ params }: { params: Promise<{ slug: str
               </div>
             </div>
 
-            <div className="mdx-content prose w-full">
+            <div className="mdx-content max-w-full">
               {post.content}
             </div>
           </article>
