@@ -1,0 +1,317 @@
+---
+title: "Ultimate Git Cheat Sheet"
+date: "2025-03-10"
+readingTime: "10m"
+excerpt: "A comprehensive cheat sheet for Git commands"
+tags: ["git", "bash"]
+---
+# The Ultimate Git Cheat Sheet
+This comprehensive cheat sheet covers a wide array of Git commands—from basics to advanced operations—complete with real-world examples and detailed explanations. Whether you're managing local changes, merging branches, rebasing commits, or working with remote repositories, this guide is designed to be your go-to resource for mastering Git.
+
+---
+## Table of Contents
+- Basic Git Commands
+- Interactive Staging with git add -p
+- Branching and Merging
+- Rebasing and Resetting
+  - Real-World Examples for git reset
+- Undoing Changes
+- Working with Remote Repositories
+- Handling Merge Conflicts
+- Advanced Git Techniques
+- Additional Topics (Workflows, Hooks, Submodules, Configurations)
+- Tips & Best Practices
+- Conclusion
+
+---
+## Basic Git Commands
+| Command    | Description                                                   | Options/Flags                                                    | Example                                      |
+| ---------- | ------------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------- |
+| git init   | Initialize a new Git repository                               | N/A                                                              | `git init my_project`                        |
+| git clone  | Clone an existing repository                                  | N/A                                                              | `git clone https://github.com/user/repo.git` |
+| git status | Show the current status of the working directory              | N/A                                                              | `git status`                                 |
+| git add    | Add file contents to the staging area                         | Specify file(s) or use a dot to add all changes                  | `git add .` or `git add index.html`     |
+| git commit | Record changes to the repository                              | -m "message": include a commit message; -a: commit tracked files | `git commit -m "Initial commit"`             |
+| git log    | Show commit logs                                              | --oneline, --graph, --decorate for visualization                 | `git log --oneline --graph`                  |
+| git diff   | Show differences between commits or working directory changes | N/A                                                              | `git diff`                                   |
+
+Example:
+```bash
+git init my_project
+git clone https://github.com/user/repo.git
+git status
+git add .
+git commit -m "Initial commit"
+```
+
+---
+## Interactive Staging with git add -p
+Interactive staging allows you to review and stage changes hunk by hunk, giving you granular control over what gets committed.
+
+| Key | Action                                    | Description                                                 |
+| --- | ----------------------------------------- | ----------------------------------------------------------- |
+| y   | Stage this hunk                           | Accept and stage the current hunk                           |
+| n   | Do not stage this hunk                    | Skip the current hunk                                       |
+| q   | Quit                                      | Stop reviewing; no further hunks will be staged             |
+| a   | Stage this hunk and all remaining hunks   | Accept this and every remaining hunk in the file            |
+| d   | Do not stage this hunk or any later hunks | Reject the current hunk and all remaining hunks in the file |
+| s   | Split the current hunk                    | Break the hunk into smaller parts for more precise staging  |
+| e   | Manually edit the current hunk            | Open the hunk in your editor for custom modifications       |
+| ?   | Help                                      | Display a summary of these options                          |
+
+Usage:
+```bash
+git add -p
+```
+
+When prompted, type the corresponding key (y, n, s, etc.) to decide how to handle each hunk.
+
+---
+
+## Branching and Merging
+| Command      | Description                                    | Options/Flags                                | Example                                                       |
+| ------------ | ---------------------------------------------- | -------------------------------------------- | ------------------------------------------------------------- |
+| git branch   | List, create, or delete branches               | -d: delete a branch                          | `git branch new-feature ` or `git branch -d old-feature` |
+| git checkout | Switch branches or restore working files       | N/A (being gradually replaced by git switch) | `git checkout new-feature`                                    |
+| git switch   | A modern, user-friendly way to change branches | -c: create and switch to a new branch        | `git switch new-feature ` or `git switch -c new-feature` |
+| git merge    | Combine changes from different branches        | N/A                                          | `git checkout main` or `git merge feature/login`         |
+
+Real-World Merge Example:
+1. You have a feature branch "feature/login" and want to merge it into "main":
+```bash
+git checkout main
+git merge feature/login
+```
+1. If conflicts occur, Git will mark the affected files. Open and manually resolve these conflicts, then:
+```bash
+git add conflicted-file
+git commit
+```
+
+---
+## Rebasing and Resetting
+
+### Git Rebase
+Rebasing re-applies commits on top of another base commit to produce a linear history.
+Basic Example:
+```bash
+git checkout feature-branch
+git rebase main
+```
+Interactive Rebase (for cleaning up commit history):
+```bash
+git rebase -i HEAD~5
+```
+Handling Conflicts During Rebase:
+1. Git stops at the conflicting commit.
+2. Manually resolve conflicts in the affected files.
+3. Stage the resolved files:
+```bash
+git add <conflicted-file>
+```
+1. Continue the rebase:
+```bash
+git rebase --continue
+```
+
+### Real-World Examples for git reset
+#### 1. git reset --soft  
+**Scenario:** You committed too soon and want to add more changes before pushing.  
+**Example:** 
+1. You are working on a new feature and accidentally commit too early:
+```bash
+git add .
+git commit -m "Started new feature"
+```
+1. You realize you forgot to include some important files.
+2. Use `git reset --soft` to undo the commit but **keep the changes staged**:
+```bash
+git reset --soft HEAD~1
+```
+1. Now, add the missing files:
+```bash
+git add additional-file.js
+```
+1. Re-commit everything together:
+```bash
+git commit -m "Completed new feature with additional files"
+```
+1. The history is clean, and you can now push the correct commit.  
+**Best Use Case:** When you need to **edit the last commit** before pushing but want to keep everything staged.
+
+#### 2. git reset --mixed  
+**Scenario:** You committed the wrong files and want to unstage them before committing again.  
+**Example:**  
+1. You mistakenly commit files that shouldn’t be included:
+```bash
+git add .
+git commit -m "Added feature (oops, included config.json)"
+```
+1. You want to remove `config.json` from the commit before pushing.
+2. Use `git reset --mixed` (or simply `git reset` as mixed is the default) to **undo the commit and unstage all changes**:
+```bash
+git reset HEAD~1
+```
+1. Now, remove the unwanted file from staging:
+```bash
+git restore --staged config.json
+```
+1. Re-commit only the correct files:
+```bash
+git commit -m "Added feature (without config.json)"
+```
+1. Your commit now contains only what should be in the repository.  
+ **Best Use Case:** When you need to **redo a commit** while keeping your work but removing unwanted files.
+
+#### 3. git reset --hard  
+**Scenario:** You made a mess of your working directory and want to start over.  
+**Example:**  
+1. You experimented with changes that broke your project:
+```bash
+echo "Some bad code" >> app.js
+git add .
+git commit -m "Added buggy code"
+```
+1. Then, you made even more destructive edits.
+2. Instead of manually fixing everything, reset to the last known good commit:
+```bash
+git reset --hard HEAD~1
+```
+1. Your project is now **exactly as it was before the last commit**—all bad changes are **permanently erased**.  
+**Warning:** This action is **irreversible** unless you have a backup or know the commit hash.  
+**Best Use Case:** When you want to **completely remove changes and reset your project to a known good state**.
+#### Summary Table for git reset Modes
+| Reset Mode   | What it Does                                   | Use Case                                                  |
+|--------------|------------------------------------------------|-----------------------------------------------------------|
+| --soft      | Moves HEAD but **keeps changes staged**        | Editing the last commit before pushing                  |
+| --mixed     | Moves HEAD and **unstages changes**, but keeps them in the working directory | Redo a commit while preserving your work (remove unwanted files) |
+| --hard      | Moves HEAD and **discards all changes**        | Start fresh and completely remove mistakes              |
+
+---
+## Undoing Changes
+| Command         | Description                                                          | Example                    |
+| --------------- | -------------------------------------------------------------------- | -------------------------- |
+| git revert      | Create a new commit that undoes changes from a previous commit       | `git revert <commit-hash>` |
+| git cherry-pick | Apply changes introduced by an existing commit to the current branch | `git cherry-pick abc1234`  |
+
+Example:
+```bash
+git revert a1b2c3d4
+git cherry-pick e5f6g7h8
+```
+
+---
+## Working with Remote Repositories
+| Command    | Description                                        | Options/Flags           | Example                                                  |
+| ---------- | -------------------------------------------------- | ----------------------- | -------------------------------------------------------- |
+| git remote | Manage remote repository URLs                      | add, remove, rename     | `git remote add origin https://github.com/user/repo.git` |
+| git fetch  | Download objects and refs from a remote repository | N/A                     | `git fetch origin`                                       |
+| git pull   | Fetch and merge changes from a remote repository   | N/A                     | `git pull origin main`                                   |
+| git push   | Update remote refs along with associated objects   | -u: set upstream branch | `git push -u origin main`                                |
+
+Example:
+```bash
+git remote add origin https://github.com/user/repo.git
+git fetch origin
+git pull origin main
+git push -u origin main
+```
+
+---
+## Handling Merge Conflicts
+Merge conflicts occur when changes from different branches affect the same part of a file. Here’s how to resolve them:
+
+**Merge Conflict Resolution Example:**
+1. Start merging a feature branch into main:
+       git checkout main
+       git merge feature-branch
+2. If conflicts occur, Git marks the affected files with conflict markers (e.g., `<<<<<<<, =======, >>>>>>>`).
+3. Open each conflicted file and manually resolve the differences.
+4. Stage the resolved files:
+```bash
+git add <conflicted-file>
+```
+1. Finalize the merge with:
+```bash
+git commit
+```
+
+**During a Rebase:**
+After manually resolving conflicts:
+```bash
+git add <conflicted-file>
+git rebase --continue
+```
+
+---
+## Advanced Git Techniques
+### Stashing Changes 
+Stashing lets you temporarily save changes that aren’t ready to commit. 
+
+| Command         | Description                                                              | Example                                          |
+| --------------- | ------------------------------------------------------------------------ | ------------------------------------------------ |
+| git stash       | Save your current modifications and revert the working directory to HEAD | `git stash save "WIP: working on login feature"` |
+| git stash list  | List all stashed changes                                                 | `git stash list`                                 |
+| git stash apply | Reapply stashed changes without removing them from the stash list        | `git stash apply stash@{0}`                      |
+| git stash drop  | Remove a specific stash entry                                            | `git stash drop stash@{0}`                       |
+### Tagging 
+
+| Command         | Description                            | Example                                    |
+| --------------- | -------------------------------------- | ------------------------------------------ |
+| git tag         | List or create tags                    | `git tag -a v1.0 -m "Version 1.0 Release"` |
+| git push --tags | Push all tags to the remote repository | `git push origin --tags`                   |
+
+---
+## Additional Topics
+### Git Workflows
+Choose a workflow that fits your project’s needs.
+- **Git Flow:** A branching model with dedicated branches for features, development, releases, and hotfixes.
+      Example:
+```bash
+git checkout -b feature/my-feature develop
+git flow release start 1.0.0
+```
+- **GitHub Flow:** A lightweight workflow using feature branches and pull requests.
+      Example:
+```bash
+git checkout -b new-feature
+(make changes)
+git push -u origin new-feature
+Then create a pull request on GitHub
+```
+### Git Hooks
+Git hooks are scripts that run automatically at specific points in the Git workflow.
+Example:
+```bash
+# Edit the pre-commit hook at .git/hooks/pre-commit and add:
+#!/bin/sh
+npm test
+```
+Ensure the hook script is executable.
+### Git Submodules
+Submodules let you include and manage external repositories within your main repository.
+Example:
+```bash
+git submodule add https://github.com/user/submodule-repo.git
+git submodule update --init --recursive
+```
+### Advanced Configuration and Aliases
+Customize Git with aliases and configuration tweaks.
+Examples:
+```bash
+git config --global alias.st status
+git config --global alias.co checkout
+git config --global alias.br branch
+```
+Set up a global ignore file:
+```bash
+git config --global core.excludesfile ~/.gitignore_global
+```
+---
+## Tips & Best Practices
+- Commit frequently and write clear, descriptive commit messages.
+- Use branches for features and bug fixes; merge or rebase regularly to maintain a clean history.
+- Leverage interactive staging (git add -p) to review changes before committing.
+- Regularly push to remote repositories to back up your work and facilitate collaboration.
+- Review Git logs and diffs to catch potential errors early.
+- Customize Git aliases to streamline your workflow.

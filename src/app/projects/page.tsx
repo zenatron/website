@@ -1,4 +1,4 @@
-import ProjectsLayout from '@/components/ProjectsLayout';
+import ProjectsLayout from '@/components/layouts/ProjectsLayout';
 import { getGithubRepos } from '@/lib/github';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';

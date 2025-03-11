@@ -2,11 +2,11 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
-import Squares from '@/components/bits/Squares';
-import InfiniteMenu from '@/components/bits/InfiniteMenu';
+import Squares from '@/components/ui/Squares';
+import InfiniteMenu from '@/components/ui/InfiniteMenu';
 import { techItems } from '@/lib/techItems';
-import GradientText from '@/components/bits/GradientText';
-import VariableProximity from '@/components/bits/VariableProximity';
+import GradientText from '@/components/ui/GradientText';
+import VariableProximity from '@/components/ui/VariableProximity';
 import { useRef } from 'react';
 
 

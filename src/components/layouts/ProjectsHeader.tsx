@@ -1,7 +1,7 @@
 'use client';
 
-import GradientText from './bits/GradientText';
-import VariableProximity from './bits/VariableProximity';
+import GradientText from '../ui/GradientText';
+import VariableProximity from '../ui/VariableProximity';
 import { useRef } from 'react';
 
 export default function ProjectsHeader() {

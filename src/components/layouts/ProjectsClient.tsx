@@ -1,12 +1,12 @@
 import { useState, useRef } from "react";
 import { ProjectCard } from "@/types/types";
-import SearchBar from "./SearchBar";
+import SearchBar from "../ui/SearchBar";
 import { motion } from "framer-motion";
 import { FaHashtag, FaGithub, FaCalendarAlt, FaSortAlphaDown, FaSortAlphaUp, FaSort } from "react-icons/fa";
 import { SiJupyter } from "react-icons/si";
-import GradientText from "./bits/GradientText";
-import VariableProximity from "./bits/VariableProximity";
-import CardSpotlight from "./GlassCard";
+import GradientText from "../ui/GradientText";
+import VariableProximity from "../ui/VariableProximity";
+import GlassCard from "../ui/GlassCard";
 import dateFormatter from "@/utils/dateFormatter";
 type SortField = 'title' | 'date';
 type SortDirection = 'asc' | 'desc';
@@ -249,7 +249,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <CardSpotlight 
+              <GlassCard 
                 href={project.links.github || `/projects/${project.metadata.slug}`}
                 external={!!project.links.github}
               >
@@ -293,7 +293,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                     </div>
                   )}
                 </div>
-              </CardSpotlight>
+              </GlassCard>
             </motion.div>
           ))
         )}

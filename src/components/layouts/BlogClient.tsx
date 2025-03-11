@@ -2,12 +2,12 @@
 
 import { useState, useRef } from "react";
 import { BlogPost } from "@/types/types";
-import SearchBar from "./SearchBar";
+import SearchBar from "../ui/SearchBar";
 import { motion } from "framer-motion";
 import { FaHashtag, FaCalendarAlt, FaSortAlphaDown, FaSortAlphaUp, FaSort } from "react-icons/fa";
-import GradientText from "./bits/GradientText";
-import VariableProximity from "./bits/VariableProximity";
-import CardSpotlight from "./GlassCard";
+import GradientText from "../ui/GradientText";
+import VariableProximity from "../ui/VariableProximity";
+import GlassCard from "../ui/GlassCard";
 import dateFormatter from "@/utils/dateFormatter";
 type SortField = 'title' | 'date';
 type SortDirection = 'asc' | 'desc';
@@ -191,7 +191,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <CardSpotlight href={`/blog/${post.slug}`}>
+              <GlassCard href={`/blog/${post.slug}`}>
                 <div className="relative z-10">
                   <h2 className="text-2xl font-bold mb-3 group-hover:text-accent transition-colors">
                     {post.metadata.title}
@@ -230,7 +230,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
                     </div>
                   )}
                 </div>
-              </CardSpotlight>
+              </GlassCard>
             </motion.div>
           ))
         )}

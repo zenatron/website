@@ -2,7 +2,7 @@ import { FaGithub, FaEnvelope, FaDice, FaLinkedin } from 'react-icons/fa';
 import { SiBluesky } from 'react-icons/si';
 import Link from 'next/link';
 import pkg from '../../package.json';
-import ShinyText from './bits/ShinyText';
+import ShinyText from './ui/ShinyText';
 
 export default function Footer() {
 

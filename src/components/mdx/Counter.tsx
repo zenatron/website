@@ -11,19 +11,19 @@ export default function Counter() {
       <div className="flex gap-2">
         <button 
           onClick={() => setCount(count + 1)}
-          className="px-4 py-2 bg-accent text-white rounded hover:bg-accent/80 transition-colors"
+          className="px-4 py-2 bg-accent rounded hover:bg-accent/80 transition-colors"
         >
           {"+1"}
         </button>
         <button 
           onClick={() => setCount(count - 1)}
-          className="px-4 py-2 bg-muted-text/20 rounded hover:bg-muted-text/30 transition-colors"
+          className="px-4 py-2 bg-accent rounded hover:bg-accent/80 transition-colors"
         >
           {"-1"}
         </button>
         <button 
           onClick={() => setCount(0)}
-          className="px-4 py-2 bg-muted-text/20 rounded hover:bg-muted-text/30 transition-colors"
+          className="px-4 py-2 bg-accent rounded hover:bg-accent/80 transition-colors"
         >
           {"Reset"}
         </button>
