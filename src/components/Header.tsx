@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import MobileMenu from '@/components/MobileMenu';
-import DecryptText from './bits/DecryptText';
+import MobileMenu from '@/components/ui/MobileMenu';
+import DecryptText from './ui/DecryptText';
 
 export default function Header() {
   return (

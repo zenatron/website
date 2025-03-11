@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import SpotlightCard from './bits/SpotlightCard';
+import SpotlightCard from './SpotlightCard';
 import { ReactNode } from 'react';
 
 interface GlassCardProps {

@@ -1,12 +1,12 @@
 import { useState, useRef } from "react";
 import { ProjectCard } from "@/types/types";
-import SearchBar from "./SearchBar";
+import SearchBar from "../ui/SearchBar";
 import { motion } from "framer-motion";
 import { FaHashtag, FaGithub, FaCalendarAlt, FaSortAlphaDown, FaSortAlphaUp, FaSort } from "react-icons/fa";
 import { SiJupyter } from "react-icons/si";
-import GradientText from "./bits/GradientText";
-import VariableProximity from "./bits/VariableProximity";
-import GlassCard from "./GlassCard";
+import GradientText from "../ui/GradientText";
+import VariableProximity from "../ui/VariableProximity";
+import GlassCard from "../ui/GlassCard";
 import dateFormatter from "@/utils/dateFormatter";
 type SortField = 'title' | 'date';
 type SortDirection = 'asc' | 'desc';

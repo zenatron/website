@@ -5,10 +5,10 @@ import Footer from '@/components/Footer';
 import { FaCode, FaBlog } from 'react-icons/fa';
 import { MdPerson } from 'react-icons/md';
 import { useRef } from 'react';
-import VariableProximity from '@/components/bits/VariableProximity';
-import GradientText from '@/components/bits/GradientText';
-import LetterGlitch from '@/components/bits/LetterGlitch';
-import GlassCard from '@/components/GlassCard';
+import VariableProximity from '@/components/ui/VariableProximity';
+import GradientText from '@/components/ui/GradientText';
+import LetterGlitch from '@/components/ui/LetterGlitch';
+import GlassCard from '@/components/ui/GlassCard';
 
 export default function HomePage() {
   

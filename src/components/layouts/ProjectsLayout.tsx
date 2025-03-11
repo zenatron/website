@@ -1,7 +1,7 @@
 'use client';
 
-import Squares from '@/components/bits/Squares';
-import ProjectsClient from '@/components/ProjectsClient';
+import Squares from '@/components/ui/Squares';
+import ProjectsClient from '@/components/layouts/ProjectsClient';
 import { ProjectCard } from '@/types/types';
 
 export default function ProjectsLayout({ projects }: { projects: ProjectCard[] }) {

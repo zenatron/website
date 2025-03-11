@@ -7,7 +7,7 @@ import remarkMath from 'remark-math';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import { BlogPost } from '@/types/types';
-import Counter from '@/components/Counter';
+import Counter from '@/components/mdx/Counter';
 import { createElement } from 'react';
 
 const blogDirectory = path.join(process.cwd(), 'src/content/blog');
