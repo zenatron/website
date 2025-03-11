@@ -6,7 +6,7 @@ import { FaHashtag, FaGithub, FaCalendarAlt, FaSortAlphaDown, FaSortAlphaUp, FaS
 import { SiJupyter } from "react-icons/si";
 import GradientText from "./bits/GradientText";
 import VariableProximity from "./bits/VariableProximity";
-import CardSpotlight from "./GlassCard";
+import GlassCard from "./GlassCard";
 import dateFormatter from "@/utils/dateFormatter";
 type SortField = 'title' | 'date';
 type SortDirection = 'asc' | 'desc';
@@ -249,7 +249,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <CardSpotlight 
+              <GlassCard 
                 href={project.links.github || `/projects/${project.metadata.slug}`}
                 external={!!project.links.github}
               >
@@ -293,7 +293,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                     </div>
                   )}
                 </div>
-              </CardSpotlight>
+              </GlassCard>
             </motion.div>
           ))
         )}

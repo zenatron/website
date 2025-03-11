@@ -2,8 +2,9 @@ import { getBlogPostBySlug } from '@/lib/blog';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
-import { FaArrowLeft, FaHashtag } from 'react-icons/fa';
+import { FaHashtag } from 'react-icons/fa';
 import dateFormatter from '@/utils/dateFormatter';
+
 export async function generateStaticParams() {
   const params = await import('@/lib/blog').then((mod) => mod.generateStaticParams());
   return params;
@@ -35,15 +36,7 @@ export default async function BlogPage({ params }: { params: Promise<{ slug: str
     <div className="min-h-screen flex flex-col bg-transparent">
       <Header />
       <main className="flex-1 px-6 py-10">
-        <div className="max-w-4xl mx-auto">
-          <Link 
-            href="/blog"
-            className="inline-flex items-center text-accent hover:text-accent/80 mb-8"
-          >
-            <FaArrowLeft className="mr-2" />
-            Back to Blog
-          </Link>
-          
+        <div className="max-w-screen mx-auto">
           <article className="flex flex-col items-center">
             <h1 className="text-4xl font-bold mb-4 text-center w-full">{post.metadata.title}</h1>
             

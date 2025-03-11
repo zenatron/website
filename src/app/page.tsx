@@ -5,11 +5,10 @@ import Footer from '@/components/Footer';
 import { FaCode, FaBlog } from 'react-icons/fa';
 import { MdPerson } from 'react-icons/md';
 import { useRef } from 'react';
-import Link from 'next/link';
 import VariableProximity from '@/components/bits/VariableProximity';
 import GradientText from '@/components/bits/GradientText';
 import LetterGlitch from '@/components/bits/LetterGlitch';
-import SpotlightCard from '@/components/bits/SpotlightCard';
+import GlassCard from '@/components/GlassCard';
 
 export default function HomePage() {
   
@@ -66,33 +65,26 @@ export default function HomePage() {
             </p>
           </section>
 
-
           {/* Icon Section */}
           <section className="mt-12 grid gap-4 md:gap-6 grid-cols-3 mx-auto max-w-2xl">
-            <Link href="/projects" className="block aspect-square">
-              <SpotlightCard className="p-4 md:p-10 h-full">
-                <div className="group flex flex-col items-center justify-center h-full transition-all duration-300 transform hover:-translate-y-2">
-                  <FaCode className="text-3xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
-                  <h3 className="text-md md:text-lg font-bold">Projects</h3>
-                </div>
-              </SpotlightCard>
-            </Link>
-            <Link href="/blog" className="block aspect-square">
-              <SpotlightCard className="p-4 md:p-10 h-full">
-                <div className="group flex flex-col items-center justify-center h-full transition-all duration-300 transform hover:-translate-y-2">
-                  <FaBlog className="text-3xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
-                  <h3 className="text-md md:text-lg font-bold">Blog</h3>
-                </div>
-              </SpotlightCard>
-            </Link>
-            <Link href="/about" className="block aspect-square">
-              <SpotlightCard className="p-4 md:p-10 h-full">
-                <div className="group flex flex-col items-center justify-center h-full transition-all duration-300 transform hover:-translate-y-2">
+            <GlassCard href="/projects" className="p-4 md:p-10 h-full">
+              <div className="group flex flex-col items-center justify-center h-full">
+                <FaCode className="text-3xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
+                <h3 className="text-md md:text-lg font-bold">Projects</h3>
+              </div>
+            </GlassCard>
+            <GlassCard href="/blog" className="p-4 md:p-10 h-full">
+              <div className="group flex flex-col items-center justify-center h-full">
+                <FaBlog className="text-3xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
+                <h3 className="text-md md:text-lg font-bold">Blog</h3>
+              </div>
+            </GlassCard>
+            <GlassCard href="/about" className="p-4 md:p-10 h-full">
+              <div className="group flex flex-col items-center justify-center h-full">
                   <MdPerson className="text-3xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
                   <h3 className="text-md md:text-lg font-bold">About</h3>
                 </div>
-              </SpotlightCard>
-            </Link>
+            </GlassCard>
           </section>
         </main>
         <Footer />
