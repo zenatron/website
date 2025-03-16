@@ -56,7 +56,7 @@ export default async function BlogPage({ params }: { params: Promise<{ slug: str
                 </div>
               )}
               <div className="flex flex-row items-center text-muted-text mb-2">
-                <time className="text-sm">{dateFormatter({ date: post.metadata.date,
+                <time>{dateFormatter({ date: post.metadata.date,
                   formatStyle: 'full'
                 })}</time>
               {post.metadata.readingTime && (

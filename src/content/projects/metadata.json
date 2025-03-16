@@ -1,6 +1,6 @@
 {
   "Python_Exercise": {
-    "title": "Python Exercises",
+    "title": "Intro to ML: Python Exercises",
     "date": "2024-01-15",
     "description": "A collection of Python exercises covering basic to advanced concepts",
     "downloads": [
@@ -10,7 +10,7 @@
     ]
   },
   "Pandas_Numpy_Exercise": {
-    "title": "Pandas & Numpy Exercises",
+    "title": "Intro to ML: Pandas & Numpy Exercises",
     "date": "2024-01-20",
     "description": "Data manipulation exercises using Pandas and NumPy libraries",
     "downloads": [
@@ -20,7 +20,7 @@
     ]
   },
   "Scikit_Learn_Exercise": {
-    "title": "Scikit-Learn Exercises",
+    "title": "Intro to ML: Scikit-Learn Exercises",
     "date": "2025-02-07",
     "description": "Exercises with Scikit-Learn library",
     "downloads": [
@@ -30,7 +30,7 @@
     ]
   },
   "Project_1_Problem_Definition": {
-    "title": "Project 1: Problem Definition",
+    "title": "Intro to ML: Project 1",
     "date": "2025-01-31",
     "description": "A detailed problem definition for Project 1, with data visualization",
     "downloads": [
@@ -40,7 +40,7 @@
     ]
   },
   "Project_2_Classification": {
-    "title": "Project 2: Classification",
+    "title": "Intro to ML: Project 2",
     "date": "2025-02-27",
     "description": "Predicting car brands using classification",
     "downloads": [

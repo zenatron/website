@@ -1,0 +1,65 @@
+---
+title: "Week 9 Prep: Dimensionality Reduction & PCA"
+date: "2025-03-16"
+readingTime: "4min"
+excerpt: "Understanding Unsupervised Learning and Principal Component Analysis."
+tags: ["datamining", "datascience", "machinelearning", "PCA", "algorithms"]
+---
+# Unsupervised Learning and Principal Component Analysis
+
+## What is Unsupervised Learning?
+
+Unsupervised learning is a type of machine learning where the algorithm is given data without explicit labels or predefined categories. Instead of being trained on input-output pairs, the model identifies patterns, structures, or relationships within the data on its own. This is particularly useful for tasks such as clustering, anomaly detection, and dimensionality reduction.
+
+For example, in **customer segmentation**, an e-commerce company may want to group its users based on their purchasing behavior without explicitly knowing what those groups should be. An unsupervised learning algorithm, such as **k-means clustering** ([Wikipedia](https://en.wikipedia.org/wiki/K-means_clustering)), can help classify customers into distinct segments based on similarities in their shopping habits.
+
+## Difference Between Supervised and Unsupervised Learning
+
+Supervised learning, which we have covered so far, involves training a model on labeled data. Each input in the dataset is associated with a known output, and the model learns to map inputs to the correct outputs. This approach is commonly used for tasks like image classification and regression.
+
+Unsupervised learning, on the other hand, deals with **unlabeled data** and focuses on discovering hidden structures. Here’s a quick comparison:
+
+| Feature               | Supervised Learning | Unsupervised Learning |
+|----------------------|--------------------|----------------------|
+| Data Labels         | Labeled (input-output pairs) | Unlabeled (no predefined categories) |
+| Goal               | Predict outcomes based on input data | Find patterns and relationships in data |
+| Common Algorithms  | Linear Regression, Decision Trees, Neural Networks | K-Means, Hierarchical Clustering, PCA |
+| Example Applications | Spam detection, Fraud detection, Stock price prediction | Customer segmentation, Anomaly detection, Data compression |
+
+For example, in a **fraud detection system**, supervised learning can train a model using historical transactions labeled as "fraudulent" or "non-fraudulent." However, in **anomaly detection for cybersecurity**, an unsupervised learning model may detect suspicious behavior without predefined fraud labels.
+
+## What is Dimensionality Reduction?
+
+Dimensionality reduction is the process of reducing the number of variables (or **features**) in a dataset while preserving as much important information as possible. This is crucial when working with **high-dimensional data**, where too many features can lead to problems like increased computational cost and overfitting, a phenomenon known as the **curse of dimensionality** ([Wikipedia](https://en.wikipedia.org/wiki/Curse_of_dimensionality)).
+
+For example, if you're analyzing a dataset of **handwritten digits** with thousands of pixel values per image, you might want to reduce the number of features while still retaining enough information to distinguish digits. Dimensionality reduction techniques, such as **Principal Component Analysis (PCA)** and **t-SNE** ([Wikipedia](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding)), help transform the data into a lower-dimensional space while maintaining its structure.
+
+## What is PCA (Principal Component Analysis) and Why Do We Use It?
+
+**Principal Component Analysis (PCA)** is a widely used dimensionality reduction technique that transforms high-dimensional data into a **lower-dimensional space** while preserving as much **variance** (i.e., important information) as possible. PCA achieves this by finding new axes, called **principal components**, which represent the directions of maximum variance in the data.
+
+### How PCA Works:
+1. **Standardize the Data:** Since PCA is sensitive to scale, we first normalize the dataset.
+2. **Compute the Covariance Matrix:** This captures how different variables correlate.
+3. **Find Eigenvalues and Eigenvectors:** These help identify the principal components.
+4. **Select Top Principal Components:** The components with the highest variance are chosen.
+5. **Transform the Data:** Project the data onto these new components.
+
+Mathematically, PCA finds a transformation matrix $(P)$ that converts the original dataset $(X)$ into a new set of **uncorrelated variables**:
+
+$$
+Z = X P
+$$
+where:
+- ($Z$) is the transformed data in the new coordinate system.
+- ($P$) consists of eigenvectors of the covariance matrix of ($X$).
+
+### Why Do We Use PCA?
+- **Reduces Computational Complexity:** High-dimensional data can be computationally expensive to process. PCA helps by reducing the number of dimensions while retaining essential information.
+- **Removes Noise:** By capturing only the most significant components, PCA can filter out noise and redundant information.
+- **Visualizes High-Dimensional Data:** PCA helps project high-dimensional datasets into 2D or 3D for better visualization.
+- **Prevents Overfitting:** By reducing the number of features, PCA can help machine learning models generalize better.
+
+For example, in **facial recognition**, PCA is used to reduce the number of pixels needed to represent an image while maintaining key facial features ([Eigenfaces method](https://en.wikipedia.org/wiki/Eigenface)). This allows for faster and more efficient classification.
+### Conclusion
+Unsupervised learning opens up powerful methods for finding hidden patterns in data. While supervised learning relies on labeled datasets, unsupervised techniques like clustering and dimensionality reduction allow us to work with unlabeled data. **PCA**, in particular, plays a crucial role in making high-dimensional data more manageable, improving efficiency, and enhancing machine learning performance.
