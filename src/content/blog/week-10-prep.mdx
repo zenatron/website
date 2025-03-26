@@ -1,0 +1,74 @@
+---
+title: "Week 10 Prep: Clustering"
+date: "2025-03-25"
+readingTime: "3m"
+excerpt: "Understanding K-Means and Agglomerative Clustering."
+tags: ["datamining", "datascience", "machinelearning", "clustering", "algorithms"]
+---
+
+# K-Means vs. Agglomerative Clustering Methods
+
+## What is Clustering?
+
+Clustering is a technique used in **unsupervised learning** to group data points into clusters based on similarity. The main goal is to ensure that items in the same cluster are more similar to each other than to those in other clusters. Unlike classification, where we have predefined labels, clustering tries to discover natural groupings in data without prior knowledge.
+
+Think of clustering like organizing a music playlist without knowing the genres — you're grouping songs that "feel" similar based on tempo, mood, or lyrics, even if you don't have labels like "hip-hop" or "rock."
+
+Some real-world applications of clustering include:
+- **Customer segmentation** in marketing
+- **Anomaly detection** in cybersecurity
+- **Document classification** for topic modeling
+- **Image compression** and **object recognition**
+
+To dive deeper, check out the [Wikipedia page on clustering](https://en.wikipedia.org/wiki/Cluster_analysis).
+
+## K-Means Clustering (Centroid-Based Method)
+
+**K-Means clustering** is one of the most popular and simple clustering algorithms. It’s a **centroid-based** method, meaning each cluster is represented by the mean (or "center") of its points.
+### How It Works:
+1. **Choose the number of clusters** \( k \).
+2. **Randomly initialize** \( k \) centroids.
+3. **Assign each data point** to the nearest centroid using **Euclidean distance** (or another distance metric).
+4. **Recalculate** the centroid of each cluster based on the points assigned to it.
+5. **Repeat steps 3-4** until the centroids no longer change significantly (i.e., convergence).
+### Formula for Euclidean Distance:
+$$
+\text{distance}(x, \mu) = \sqrt{\sum_{i=1}^{n} (x_i - \mu_i)^2}
+$$
+Where:
+- $(x)$ is a data point,
+- $(\mu)$ is the centroid of a cluster,
+- $(n)$ is the number of features.
+### Example:
+Let’s say you want to group students by their scores in Math and English. K-means might find that students naturally fall into three clusters: high achievers, average, and those needing help — without being told these labels.
+
+K-means is fast and efficient, but it works best when clusters are spherical and equally sized. It can struggle with complex shapes or clusters of varying density. Learn more on [Wikipedia](https://en.wikipedia.org/wiki/K-means_clustering).
+
+## Agglomerative Clustering (Hierarchical Method)
+
+**Agglomerative clustering** is a type of **hierarchical clustering**. Instead of starting with a fixed number of clusters, it builds a hierarchy — starting from individual data points and **merging** them step-by-step until everything is in one big cluster.
+### How It Works:
+1. **Start** with each data point as its own cluster.
+2. **Find the two closest clusters** and merge them.
+3. **Update the distances** between clusters.
+4. **Repeat** until all points are in a single cluster or a stopping condition is met (like desired number of clusters).
+The result is a **dendrogram**, a tree-like diagram that shows the merge steps. You can “cut” this tree at a certain level to get your final clusters.
+### Distance Between Clusters:
+Agglomerative clustering requires a way to measure distance between clusters. Common linkage methods include:
+- **Single linkage**: distance between the two closest points.
+- **Complete linkage**: distance between the two farthest points.
+- **Average linkage**: average distance between all points in two clusters.
+- **Ward’s method**: minimizes the total within-cluster variance.
+### Example:
+Imagine clustering animals based on features like size, number of legs, and habitat. Agglomerative clustering would first group the most similar pairs (like dogs and wolves), then build larger clusters (adding foxes, then bigger carnivores), creating a taxonomical tree-like structure. Check out [hierarchical clustering on Wikipedia](https://en.wikipedia.org/wiki/Hierarchical_clustering) for more.
+## K-Means vs. Agglomerative Clustering
+
+| Feature           | K-Means           | Agglomerative                          |
+| ----------------- | ----------------- | -------------------------------------- |
+| Type              | Partitional       | Hierarchical                           |
+| Requires $(k)$?   | Yes               | No (optional cut on dendrogram)        |
+| Efficiency        | Fast              | Slower (especially for large datasets) |
+| Shape of Clusters | Assumes spherical | Can model complex shapes               |
+| Result            | Hard clusters     | Dendrogram (can extract clusters)      |
+## Conclusion
+K-means and agglomerative clustering are two powerful but different approaches to grouping data. K-means is fast and works best when clusters are clearly separated and roughly equal in size. Agglomerative clustering, though slower, doesn’t require you to choose the number of clusters up front and can capture more complex relationships through its hierarchical structure. The choice between them depends on your data shape, size, and whether you value speed or flexibility.
