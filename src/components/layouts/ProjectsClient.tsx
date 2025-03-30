@@ -4,10 +4,10 @@ import SearchBar from "../ui/SearchBar";
 import { motion } from "framer-motion";
 import { FaHashtag, FaGithub, FaCalendarAlt, FaSortAlphaDown, FaSortAlphaUp, FaSort } from "react-icons/fa";
 import { SiJupyter } from "react-icons/si";
-import GradientText from "../ui/GradientText";
-import VariableProximity from "../ui/VariableProximity";
 import GlassCard from "../ui/GlassCard";
 import dateFormatter from "@/utils/dateFormatter";
+import GradientText from "../ui/GradientText";
+import VariableProximity from "../ui/VariableProximity";
 type SortField = 'title' | 'date';
 type SortDirection = 'asc' | 'desc';
 
@@ -20,6 +20,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [sortField, setSortField] = useState<SortField>('date');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const containerRef = useRef(null);
   
   // Get icon for project type
   const getTypeIcon = (type: string) => {
@@ -85,40 +86,38 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
       }
     });
 
-  const containerRef = useRef(null);
-
   return (
     <div className="max-w-4xl mx-auto">
       {/* Header Section */}
       <section className="flex flex-col items-center justify-center text-center animate-fade-in mb-10">
-        <div
-          ref={containerRef}
-          style={{ 
-            position: 'relative',
-            minHeight: '100px',
-            width: '100%',
-            padding: '10px'
-          }}
+      <div
+        ref={containerRef}
+        style={{ 
+          position: 'relative',
+          minHeight: '100px',
+          width: '100%',
+          padding: '10px'
+        }}
+      >
+        <GradientText
+          animationSpeed={24}
+          transparent={true}
         >
-          <GradientText
-            animationSpeed={24}
-            transparent={true}
-          >
-            <VariableProximity
-              label="Projects"
-              className="text-6xl md:text-6xl font-bold"
-              fromFontVariationSettings="'wght' 100, 'opsz' 8"
-              toFontVariationSettings="'wght' 900, 'opsz' 48"
-              containerRef={containerRef as unknown as React.RefObject<HTMLElement>}
-              radius={100}
-              falloff="linear"
-            />
-          </GradientText>
-        </div>
-        <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-          {"A showcase of my coding journey, from passion projects to GitHub collaborations."}
-        </p>
-      </section>
+          <VariableProximity
+            label="Projects"
+            className="text-6xl md:text-6xl font-bold"
+            fromFontVariationSettings="'wght' 100, 'opsz' 8"
+            toFontVariationSettings="'wght' 900, 'opsz' 48"
+            containerRef={containerRef as unknown as React.RefObject<HTMLElement>}
+            radius={100}
+            falloff="linear"
+          />
+        </GradientText>
+      </div>
+      <p className="text-lg md:text-xl text-muted-text leading-relaxed">
+          {"A showcase of my coding journey."}
+      </p>
+    </section>
 
       {/* Search and Filter Section */}
       <div className="flex flex-col items-center gap-4 mb-8">

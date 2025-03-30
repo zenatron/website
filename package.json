@@ -1,6 +1,6 @@
 {
   "name": "personalsite",
-  "version": "0.42.5",
+  "version": "0.42.6",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -15,7 +15,7 @@
     "@tailwindcss/typography": "^0.5.16",
     "@types/katex": "^0.16.7",
     "@types/mdx": "^2.0.13",
-    "dompurify": "^3.2.3",
+    "dompurify": "^3.2.4",
     "framer-motion": "^12.4.7",
     "fs": "^0.0.1-security",
     "gl-matrix": "^3.4.3",
