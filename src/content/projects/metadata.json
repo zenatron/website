@@ -48,5 +48,15 @@
         "filename": "Project_2_Classification.ipynb"
       }
     ]
+  },
+  "Project_3_Regression": {
+    "title": "Intro to ML: Project 3",
+    "date": "2025-03-30",
+    "description": "Predicting song popularity using regression",
+    "downloads": [
+      {
+        "filename": "Project_3_Regression.ipynb"
+      }
+    ]
   }
 }
