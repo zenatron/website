@@ -1,11 +1,24 @@
 ---
 title: "Week 11 Prep: Project 4 Intro"
 date: "2025-03-30"
-readingTime: "3m"
+readingTime: "2m"
 excerpt: "In this blog post, we will choose a problem to solve using clustering for Project 4."
 tags: ["datamining", "datascience", "machinelearning", "clustering", "algorithms"]
 ---
-
 ## Project 4 Introduction
+For Project 4, I will be using clustering to analyze patterns among open-source projects hosted on GitHub. I’ll be working with the [GitHub Repositories Dataset from Kaggle](https://www.kaggle.com/datasets/nikhil25803/github-dataset?select=repository_data.csv), which contains detailed information on nearly 3 million repositories. The dataset includes features such as repository name, star count, fork count, watcher count, pull request count, primary language, list of languages used, commit count, license type, and the date the repository was created. This rich combination of both quantitative and categorical features provides a valuable opportunity to explore trends in project popularity, developer activity, and tech stack usage.
 
-In this blog post, we will choose a problem to solve using clustering for Project 4.
+## Key Questions
+Through this project, I aim to explore the following clustering-based questions:
+
+1. What are the natural groupings of repositories based on popularity and activity levels (e.g., stars, forks, commits, pull requests)?
+2. Are there common tech stacks that tend to appear together (based on primary language and languages used)?
+3. How do licensing choices (MIT, GPL, etc.) relate to a repository’s cluster—do permissive licenses correlate with more engagement?
+4. Can clustering reveal repositories that are high potential but currently under-the-radar (i.e., active but not yet popular)?
+
+## Impact
+Clustering this dataset can uncover meaningful patterns in how open-source projects grow and what drives their success. These insights could help developers make smarter decisions about which licenses to use, which languages to learn, or which types of projects to contribute to. For instance, clustering might reveal “hidden gems”—projects that are highly active but haven’t gained much attention yet—making it easier for contributors to find projects where their help could make a real impact. It could also help companies or organizations looking for open-source tools better assess which ones are mature and well-supported by the community.
+
+That said, there are some limitations to keep in mind. Metrics like stars and forks don’t always tell the full story—some great projects just haven’t been discovered yet. Relying too heavily on clustering might also reinforce existing biases, favoring popular or trendy projects over newer, more niche ones. Plus, the dataset doesn’t include more human-focused data like contributor backgrounds, issue discussions, or project goals, which are often key to understanding a project’s value and direction.
+
+Still, despite these gaps, this project could shed light on how different types of open-source projects function and offer a data-driven way to better navigate the vast GitHub ecosystem.
