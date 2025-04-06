@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useSearchParams } from 'next/navigation';
 import { FaTimes, FaHashtag } from "react-icons/fa";
 import { MdKeyboardTab } from "react-icons/md";
 import { ProjectCard, BlogPost } from "@/types/types";
@@ -14,8 +15,13 @@ export default function SearchBar<T extends ProjectCard | BlogPost>({
   onFilteredItems,
   className = ""
 }: SearchBarProps<T>) {
+  const searchParams = useSearchParams();
+  const initialTagFromUrl = searchParams.get('tag');
+
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>(
+    initialTagFromUrl ? [initialTagFromUrl.toLowerCase().trim()] : []
+  );
   const [showTagSuggestions, setShowTagSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   const searchInputRef = useRef<HTMLInputElement>(null);
