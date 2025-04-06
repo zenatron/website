@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, Suspense } from "react";
 import { ProjectCard } from "@/types/types";
 import SearchBar from "../ui/SearchBar";
 import { motion } from "framer-motion";
@@ -151,11 +151,13 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
           {/* Center - Search Bar */}
           <div className="flex-grow mx-4">
             <div className="max-w-[32rem] mx-auto">
-              <SearchBar
-                items={projects}
-                onFilteredItems={setFilteredProjects}
-                className="w-full"
-              />
+              <Suspense fallback={<div>Loading...</div>}>
+                <SearchBar
+                  items={projects}
+                  onFilteredItems={setFilteredProjects}
+                  className="w-full"
+                />
+              </Suspense>
             </div>
           </div>
 

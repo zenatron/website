@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useRef, useEffect } from "react";
 import { useSearchParams } from 'next/navigation';
 import { FaTimes, FaHashtag } from "react-icons/fa";
