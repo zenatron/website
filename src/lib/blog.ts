@@ -8,6 +8,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import { BlogPost } from '@/types/types';
 import Counter from '@/components/mdx/Counter';
+import Callout from '@/components/mdx/Callout';
 import { createElement } from 'react';
 
 const blogDirectory = path.join(process.cwd(), 'src/content/blog');
@@ -15,6 +16,7 @@ const blogDirectory = path.join(process.cwd(), 'src/content/blog');
 // Define components that can be imported in MDX files
 const components = {
   Counter,
+  Callout,
 };
 
 // Configure rehype-highlight options

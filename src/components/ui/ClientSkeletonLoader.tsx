@@ -17,7 +17,7 @@ const SkeletonCard = () => (
 
 interface ClientSkeletonLoaderProps {
   itemCount?: number;
-  layout?: 'list' | 'grid'; // Optional: To slightly adjust layout for projects vs blog
+  layout?: 'list' | 'grid';
 }
 
 const ClientSkeletonLoader: React.FC<ClientSkeletonLoaderProps> = ({ itemCount = 6, layout = 'list' }) => {

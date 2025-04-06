@@ -1,6 +1,6 @@
 {
   "name": "personalsite",
-  "version": "0.42.11",
+  "version": "0.42.12",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -37,7 +37,8 @@
     "rehype-highlight": "^7.0.1",
     "rehype-katex": "^7.0.1",
     "remark-gfm": "^4.0.0",
-    "remark-math": "^6.0.0"
+    "remark-math": "^6.0.0",
+    "tailwind-merge": "^3.2.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

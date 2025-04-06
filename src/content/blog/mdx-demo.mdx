@@ -1,11 +1,13 @@
 ---
 title: "MDX Rendering Test"
 date: "2025-01-02"
+readingTime: "10m"
 excerpt: "Test to see how MDX gets rendered on my site!"
 tags: ["mdx", "markdown", "latex", "web-dev"]
 ---
 
 import Counter from '@/components/mdx/Counter';
+import Callout from '@/components/mdx/Callout';
 
 # MDX Demo
 
@@ -132,6 +134,34 @@ You can use Next.js Image component in your MDX files (once properly set up).
 > This is a blockquote.
 > 
 > It can span multiple lines.
+
+## Callouts
+
+Here are examples of the different types of callouts available:
+
+<Callout type="info" showEmoji={true}>
+This is an information callout with the emoji inline with the text.
+</Callout>
+
+<Callout type="warning" title="Warning" showEmoji={true}>
+This is a warning callout with both a title and emoji.
+</Callout>
+
+<Callout type="error" title="Error" showEmoji={false}>
+This is an error callout with a title but no emoji.
+</Callout>
+
+<Callout type="success" showEmoji={false}>
+This is a success callout with no title and no emoji.
+</Callout>
+
+<Callout type="note" title="Custom Note Title" showEmoji={true}>
+This is a note callout with a custom title and emoji.
+</Callout>
+
+<Callout type="tip" showEmoji={true}>
+This is a tip callout with the emoji inline with the text. Perfect for quick tips!
+</Callout>
 
 ## Horizontal Rule
 

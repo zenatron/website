@@ -1,6 +1,7 @@
 import type { MDXComponents } from 'mdx/types'
 import Image, { ImageProps } from 'next/image'
 import Link from 'next/link'
+import Callout from './components/mdx/Callout'
  
 // This file allows you to provide custom React components
 // to be used in MDX files. You can import and use any
@@ -25,6 +26,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         alt={props.alt || 'Image'}
       />
     ),
+    
+    // Custom Callout component
+    Callout,
     
     // Include any custom components passed in
     ...components,
