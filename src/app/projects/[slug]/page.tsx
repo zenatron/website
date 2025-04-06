@@ -7,6 +7,7 @@ import path from 'path';
 import { getAllProjects } from '@/lib/projects';
 import HtmlRenderer from '@/components/HtmlRenderer';
 import { redirect } from 'next/navigation';
+import BackToTopButton from '@/components/BackToTopButton';
 
 export async function generateStaticParams() {
   const params = await import('@/lib/projects').then((mod) => mod.generateStaticParams());
@@ -78,6 +79,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           </div>
         </main>
         <Footer />
+        <BackToTopButton />
       </div>
     );
   }

@@ -3,7 +3,7 @@ import { getGithubRepos } from '@/lib/github';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { getAllProjects } from '@/lib/projects';
-
+import BackToTopButton from '@/components/BackToTopButton';
 export default async function ProjectsPage() {
   const githubProjects = await getGithubRepos();
   const dataProjects = await getAllProjects();
@@ -14,6 +14,7 @@ export default async function ProjectsPage() {
       <Header />
       <ProjectsLayout projects={allProjects} />
       <Footer />
+      <BackToTopButton />
     </div>
   );
 }
