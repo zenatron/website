@@ -1,15 +1,13 @@
-'use client';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { motion } from 'framer-motion';
-import Squares from '@/components/ui/Squares';
-import InfiniteMenu from '@/components/ui/InfiniteMenu';
-import { techItems } from '@/lib/techItems';
-import GradientText from '@/components/ui/GradientText';
-import VariableProximity from '@/components/ui/VariableProximity';
-import { useRef } from 'react';
-
-
+"use client";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { motion } from "framer-motion";
+import Squares from "@/components/ui/Squares";
+import GradientText from "@/components/ui/GradientText";
+import VariableProximity from "@/components/ui/VariableProximity";
+import { useRef } from "react";
+import { LuConstruction } from "react-icons/lu";
+import ShinyText from "@/components/ui/ShinyText";
 export default function AboutPage() {
   const containerRef = useRef(null);
 
@@ -20,23 +18,22 @@ export default function AboutPage() {
         <section className="flex flex-col items-center justify-center text-center animate-fade-in mb-10 z-10">
           <div
             ref={containerRef}
-            style={{ 
-              position: 'relative',
-              minHeight: '100px',
-              width: '100%',
-              padding: '10px'
+            style={{
+              position: "relative",
+              minHeight: "100px",
+              width: "100%",
+              padding: "10px",
             }}
           >
-            <GradientText
-              animationSpeed={24}
-              transparent={true}
-            >
+            <GradientText animationSpeed={24} transparent={true}>
               <VariableProximity
                 label="About"
                 className="text-6xl md:text-6xl font-bold"
                 fromFontVariationSettings="'wght' 100, 'opsz' 8"
                 toFontVariationSettings="'wght' 900, 'opsz' 48"
-                containerRef={containerRef as unknown as React.RefObject<HTMLElement>}
+                containerRef={
+                  containerRef as unknown as React.RefObject<HTMLElement>
+                }
                 radius={100}
                 falloff="linear"
               />
@@ -47,11 +44,7 @@ export default function AboutPage() {
           </p>
         </section>
         <div className="absolute inset-0 z-0">
-          <Squares
-            direction="diagonal"
-            speed={0.2}
-            squareSize={96}
-          />
+          <Squares direction="diagonal" speed={0.2} squareSize={96} />
         </div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -59,21 +52,14 @@ export default function AboutPage() {
           transition={{ duration: 0.8 }}
           className="z-10 w-full max-w-4xl space-y-8"
         >
-          <div className="flex justify-center">
-            <div className="border border-gray-600/50 rounded-xl overflow-hidden w-[400px] md:w-[600px]">
-              <section className="relative">
-                <InfiniteMenu items={techItems} />
-              </section>
-            </div>
-          </div>
-
           <section className="space-y-8 max-w-2xl mx-auto">
-            <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-              {"Hey! I'm Phil, a software developer with a knack for building interesting things. I love testing out new technologies and finding creative ways to solve problems."}
-            </p>
-            <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-              {"When I'm not coding, you'll find me tinkering with my homelab, playing indie games, or enjoying the outdoors. I'm always excited to learn new things and share what I discover along the way."}
-            </p>
+            <LuConstruction className="inline-block text-9xl text-muted-text" />
+            <ShinyText
+              text={
+                "This page is under construction. Please check back soon!"
+              }
+              className="text-4xl"
+            />
           </section>
         </motion.div>
       </main>
