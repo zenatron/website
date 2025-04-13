@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
+import { useState } from "react";
+import { FaProjectDiagram, FaLightbulb, FaUser } from "react-icons/fa";
+import GlassCard from "./GlassCard";
 
 export default function MobileMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -53,7 +54,7 @@ export default function MobileMenu() {
         {/* Backdrop */}
         <div
           className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-20 transition-opacity duration-300 ${
-            menuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
           onClick={() => setMenuOpen(false)}
         ></div>
@@ -66,7 +67,7 @@ export default function MobileMenu() {
             flex flex-col items-start space-y-6 py-6 px-6 z-30 
             shadow-[0_0_15px_rgba(0,0,0,0.2)]
             transition-transform transform duration-300 
-            ${menuOpen ? 'translate-x-0' : 'translate-x-full'}`}
+            ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
         >
           {/* Back Button */}
           <button
@@ -92,29 +93,41 @@ export default function MobileMenu() {
           </button>
 
           {/* Links */}
-          <Link
-            href="/projects"
-            className="btn-nav"
-            onClick={() => setMenuOpen(false)}
-          >
-            {"Projects"}
-          </Link>
-          <Link
-            href="/blog"
-            className="btn-nav"
-            onClick={() => setMenuOpen(false)}
-          >
-            {"Blog"}
-          </Link>
-          <Link
-            href="/about"
-            className="btn-nav"
-            onClick={() => setMenuOpen(false)}
-          >
-            {"About"}
-          </Link>
+          {/* Icon Section */}
+          <section className="mt-12 grid gap-4 md:gap-6 grid-cols-3 mx-auto max-w-2xl">
+            <GlassCard
+              href="/projects"
+              onClick={() => setMenuOpen(false)}
+              className="p-4 md:p-10 h-full"
+            >
+              <div className="group flex flex-col items-center justify-center h-full">
+                <FaProjectDiagram className="text-2xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
+                <h3 className="text-sm md:text-lg font-bold">Projects</h3>
+              </div>
+            </GlassCard>
+            <GlassCard
+              href="/blog"
+              onClick={() => setMenuOpen(false)}
+              className="p-4 md:p-10 h-full"
+            >
+              <div className="group flex flex-col items-center justify-center h-full">
+                <FaLightbulb className="text-2xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
+                <h3 className="text-sm md:text-lg font-bold">Blog</h3>
+              </div>
+            </GlassCard>
+            <GlassCard
+              href="/about"
+              onClick={() => setMenuOpen(false)}
+              className="p-4 md:p-10 h-full"
+            >
+              <div className="group flex flex-col items-center justify-center h-full">
+                <FaUser className="text-2xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
+                <h3 className="text-sm md:text-lg font-bold">About</h3>
+              </div>
+            </GlassCard>
+          </section>
         </nav>
       </>
     </>
   );
-} 
+}

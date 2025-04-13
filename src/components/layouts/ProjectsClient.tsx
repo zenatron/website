@@ -2,32 +2,40 @@ import { useState, useRef, Suspense } from "react";
 import { ProjectCard } from "@/types/types";
 import SearchBar from "../ui/SearchBar";
 import { motion } from "framer-motion";
-import { FaHashtag, FaGithub, FaCalendarAlt, FaSortAlphaDown, FaSortAlphaUp, FaSort } from "react-icons/fa";
+import {
+  FaHashtag,
+  FaGithub,
+  FaCalendarAlt,
+  FaSortAlphaDown,
+  FaSortAlphaUp,
+  FaSort,
+} from "react-icons/fa";
 import { SiJupyter } from "react-icons/si";
 import GlassCard from "../ui/GlassCard";
 import dateFormatter from "@/utils/dateFormatter";
 import GradientText from "../ui/GradientText";
 import VariableProximity from "../ui/VariableProximity";
-type SortField = 'title' | 'date';
-type SortDirection = 'asc' | 'desc';
+type SortField = "title" | "date";
+type SortDirection = "asc" | "desc";
 
 interface ProjectsClientProps {
   projects: ProjectCard[];
 }
 
 export default function ProjectsClient({ projects }: ProjectsClientProps) {
-  const [filteredProjects, setFilteredProjects] = useState<ProjectCard[]>(projects);
+  const [filteredProjects, setFilteredProjects] =
+    useState<ProjectCard[]>(projects);
   const [selectedType, setSelectedType] = useState<string | null>(null);
-  const [sortField, setSortField] = useState<SortField>('date');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [sortField, setSortField] = useState<SortField>("date");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const containerRef = useRef(null);
-  
+
   // Get icon for project type
   const getTypeIcon = (type: string) => {
     switch (type.toLowerCase()) {
-      case 'data':
+      case "data":
         return <SiJupyter className="text-accent" />;
-      case 'github':
+      case "github":
         return <FaGithub className="text-accent" />;
       default:
         return null;
@@ -36,7 +44,9 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
 
   const allTypes = Array.from(
     new Set(
-      projects.map(project => project.links.github ? 'github' : project.metadata.type)
+      projects.map((project) =>
+        project.links.github ? "github" : project.metadata.type
+      )
     )
   ).sort();
 
@@ -44,11 +54,11 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
   const handleSortClick = (field: SortField) => {
     if (field === sortField) {
       // Toggle direction if same field
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
       // Set default direction for new field (asc for title, desc for date)
       setSortField(field);
-      setSortDirection(field === 'title' ? 'asc' : 'desc');
+      setSortDirection(field === "title" ? "asc" : "desc");
     }
   };
 
@@ -57,32 +67,42 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
     if (field !== sortField) {
       return <FaSort className="opacity-50" />;
     }
-    
-    if (field === 'title') {
-      return sortDirection === 'asc' ? <FaSortAlphaDown /> : <FaSortAlphaUp />;
+
+    if (field === "title") {
+      return sortDirection === "asc" ? <FaSortAlphaDown /> : <FaSortAlphaUp />;
     } else {
       // Date icons (newest first is desc, oldest first is asc)
-      return sortDirection === 'desc' ? <FaCalendarAlt /> : <FaCalendarAlt className="rotate-180" />;
+      return sortDirection === "desc" ? (
+        <FaCalendarAlt />
+      ) : (
+        <FaCalendarAlt className="rotate-180" />
+      );
     }
   };
 
   // Filter by type and sort
   const displayProjects = [...filteredProjects]
     // Filter by type
-    .filter(project => !selectedType || (selectedType === 'github' ? !!project.links.github : project.metadata.type === selectedType))
+    .filter(
+      (project) =>
+        !selectedType ||
+        (selectedType === "github"
+          ? !!project.links.github
+          : project.metadata.type === selectedType)
+    )
     // Sort by field and direction
     .sort((a, b) => {
-      if (sortField === 'title') {
+      if (sortField === "title") {
         const comparison = a.metadata.title.localeCompare(b.metadata.title);
-        return sortDirection === 'asc' ? comparison : -comparison;
+        return sortDirection === "asc" ? comparison : -comparison;
       } else {
         // Sort by date - handle missing dates
-        if (!a.metadata.date) return sortDirection === 'asc' ? -1 : 1;
-        if (!b.metadata.date) return sortDirection === 'asc' ? 1 : -1;
-        
+        if (!a.metadata.date) return sortDirection === "asc" ? -1 : 1;
+        if (!b.metadata.date) return sortDirection === "asc" ? 1 : -1;
+
         const dateA = new Date(a.metadata.date).getTime();
         const dateB = new Date(b.metadata.date).getTime();
-        return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
+        return sortDirection === "asc" ? dateA - dateB : dateB - dateA;
       }
     });
 
@@ -90,34 +110,33 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
     <div className="max-w-4xl mx-auto">
       {/* Header Section */}
       <section className="flex flex-col items-center justify-center text-center animate-fade-in mb-10">
-      <div
-        ref={containerRef}
-        style={{ 
-          position: 'relative',
-          minHeight: '100px',
-          width: '100%',
-          padding: '10px'
-        }}
-      >
-        <GradientText
-          animationSpeed={24}
-          transparent={true}
+        <div
+          ref={containerRef}
+          style={{
+            position: "relative",
+            minHeight: "100px",
+            width: "100%",
+            padding: "10px",
+          }}
         >
-          <VariableProximity
-            label="Projects"
-            className="text-6xl md:text-6xl font-bold"
-            fromFontVariationSettings="'wght' 100, 'opsz' 8"
-            toFontVariationSettings="'wght' 900, 'opsz' 48"
-            containerRef={containerRef as unknown as React.RefObject<HTMLElement>}
-            radius={100}
-            falloff="linear"
-          />
-        </GradientText>
-      </div>
-      <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-          {"A showcase of my coding journey."}
-      </p>
-    </section>
+          <GradientText animationSpeed={24} transparent={true}>
+            <VariableProximity
+              label="Projects"
+              className="text-6xl md:text-6xl font-bold"
+              fromFontVariationSettings="'wght' 100, 'opsz' 8"
+              toFontVariationSettings="'wght' 900, 'opsz' 48"
+              containerRef={
+                containerRef as unknown as React.RefObject<HTMLElement>
+              }
+              radius={100}
+              falloff="linear"
+            />
+          </GradientText>
+        </div>
+        <p className="text-lg md:text-xl text-muted-text leading-relaxed">
+          {'Philosophy: "Build Smarter. Solve Faster"'}
+        </p>
+      </section>
 
       {/* Search and Filter Section */}
       <div className="flex flex-col items-center gap-4 mb-8">
@@ -127,22 +146,30 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
           <div className="flex-shrink-0">
             <div className="overflow-hidden rounded-lg bg-white/5 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center">
               <button
-                onClick={() => handleSortClick('title')}
+                onClick={() => handleSortClick("title")}
                 className={`px-3 py-1.5 flex items-center gap-2 border-r border-white/5 transition-colors hover:bg-white/5
-                  ${sortField === 'title' ? 'text-accent' : 'text-muted-text'}`}
-                aria-label={`Sort by title ${sortField === 'title' && sortDirection === 'asc' ? 'descending' : 'ascending'}`}
+                  ${sortField === "title" ? "text-accent" : "text-muted-text"}`}
+                aria-label={`Sort by title ${
+                  sortField === "title" && sortDirection === "asc"
+                    ? "descending"
+                    : "ascending"
+                }`}
               >
-                {getSortIcon('title')}
+                {getSortIcon("title")}
                 <span className="text-sm">Title</span>
               </button>
-              
+
               <button
-                onClick={() => handleSortClick('date')}
+                onClick={() => handleSortClick("date")}
                 className={`px-3 py-1.5 flex items-center gap-2 transition-colors hover:bg-white/5
-                  ${sortField === 'date' ? 'text-accent' : 'text-muted-text'}`}
-                aria-label={`Sort by date ${sortField === 'date' && sortDirection === 'desc' ? 'oldest first' : 'newest first'}`}
+                  ${sortField === "date" ? "text-accent" : "text-muted-text"}`}
+                aria-label={`Sort by date ${
+                  sortField === "date" && sortDirection === "desc"
+                    ? "oldest first"
+                    : "newest first"
+                }`}
               >
-                {getSortIcon('date')}
+                {getSortIcon("date")}
                 <span className="text-sm">Date</span>
               </button>
             </div>
@@ -164,12 +191,16 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
           {/* Right - Type Filter */}
           <div className="flex-shrink-0">
             <div className="overflow-hidden rounded-lg bg-white/5 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center">
-              {allTypes.map(type => (
+              {allTypes.map((type) => (
                 <button
                   key={type}
-                  onClick={() => setSelectedType(selectedType === type ? null : type)}
+                  onClick={() =>
+                    setSelectedType(selectedType === type ? null : type)
+                  }
                   className={`px-3 py-1.5 flex items-center gap-2 border-r border-white/5 transition-colors hover:bg-white/5 capitalize
-                    ${selectedType === type ? 'text-accent' : 'text-muted-text'}`}
+                    ${
+                      selectedType === type ? "text-accent" : "text-muted-text"
+                    }`}
                 >
                   {getTypeIcon(type)}
                   <span className="text-sm">{type}</span>
@@ -193,34 +224,46 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
             {/* Sort Controls - Left aligned */}
             <div className="overflow-hidden rounded-lg bg-white/5 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center flex-1">
               <button
-                onClick={() => handleSortClick('title')}
+                onClick={() => handleSortClick("title")}
                 className={`px-2 py-1.5 flex items-center gap-1 border-r border-white/5 transition-colors hover:bg-white/5 flex-1 justify-center
-                  ${sortField === 'title' ? 'text-accent' : 'text-muted-text'}`}
-                aria-label={`Sort by title ${sortField === 'title' && sortDirection === 'asc' ? 'descending' : 'ascending'}`}
+                  ${sortField === "title" ? "text-accent" : "text-muted-text"}`}
+                aria-label={`Sort by title ${
+                  sortField === "title" && sortDirection === "asc"
+                    ? "descending"
+                    : "ascending"
+                }`}
               >
-                {getSortIcon('title')}
+                {getSortIcon("title")}
                 <span className="text-xs">Title</span>
               </button>
-              
+
               <button
-                onClick={() => handleSortClick('date')}
+                onClick={() => handleSortClick("date")}
                 className={`px-2 py-1.5 flex items-center gap-1 transition-colors hover:bg-white/5 flex-1 justify-center
-                  ${sortField === 'date' ? 'text-accent' : 'text-muted-text'}`}
-                aria-label={`Sort by date ${sortField === 'date' && sortDirection === 'desc' ? 'oldest first' : 'newest first'}`}
+                  ${sortField === "date" ? "text-accent" : "text-muted-text"}`}
+                aria-label={`Sort by date ${
+                  sortField === "date" && sortDirection === "desc"
+                    ? "oldest first"
+                    : "newest first"
+                }`}
               >
-                {getSortIcon('date')}
+                {getSortIcon("date")}
                 <span className="text-xs">Date</span>
               </button>
             </div>
 
             {/* Type Filter - Right aligned */}
             <div className="overflow-hidden rounded-lg bg-white/5 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center flex-1">
-              {allTypes.map(type => (
+              {allTypes.map((type) => (
                 <button
                   key={type}
-                  onClick={() => setSelectedType(selectedType === type ? null : type)}
+                  onClick={() =>
+                    setSelectedType(selectedType === type ? null : type)
+                  }
                   className={`px-2 py-1.5 flex items-center gap-1 border-r border-white/5 transition-colors hover:bg-white/5 capitalize flex-1 justify-center
-                    ${selectedType === type ? 'text-accent' : 'text-muted-text'}`}
+                    ${
+                      selectedType === type ? "text-accent" : "text-muted-text"
+                    }`}
                 >
                   {getTypeIcon(type)}
                   <span className="text-xs">{type}</span>
@@ -232,7 +275,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
       </div>
 
       {/* Projects Grid */}
-      <motion.div 
+      <motion.div
         className="grid grid-cols-1 md:grid-cols-2 gap-6"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -250,8 +293,10 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <GlassCard 
-                href={project.links.github || `/projects/${project.metadata.slug}`}
+              <GlassCard
+                href={
+                  project.links.github || `/projects/${project.metadata.slug}`
+                }
                 external={!!project.links.github}
               >
                 <div className="relative z-10">
@@ -269,30 +314,34 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                   {project.metadata.date && (
                     <div className="flex items-center text-muted-text text-sm mb-3">
                       <FaCalendarAlt className="mr-2" />
-                      <time>{dateFormatter({ date: project.metadata.date,
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}</time>
+                      <time>
+                        {dateFormatter({
+                          date: project.metadata.date,
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </time>
                     </div>
                   )}
                   <p className="text-muted-text mb-4 line-clamp-2">
                     {project.metadata.description}
                   </p>
                   {/* Tags */}
-                  {project.metadata.tags && project.metadata.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {project.metadata.tags.map((tag, index) => (
-                        <span
-                          key={index}
-                          className="flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-accent/10 text-accent"
-                        >
-                          <FaHashtag className="w-3 h-3" />
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                  {project.metadata.tags &&
+                    project.metadata.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {project.metadata.tags.map((tag, index) => (
+                          <span
+                            key={index}
+                            className="flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-accent/10 text-accent"
+                          >
+                            <FaHashtag className="w-3 h-3" />
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                 </div>
               </GlassCard>
             </motion.div>
@@ -301,4 +350,4 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
       </motion.div>
     </div>
   );
-} 
+}

@@ -1,17 +1,15 @@
-'use client';
+"use client";
 
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { FaCode, FaBlog } from 'react-icons/fa';
-import { MdPerson } from 'react-icons/md';
-import { useRef } from 'react';
-import VariableProximity from '@/components/ui/VariableProximity';
-import GradientText from '@/components/ui/GradientText';
-import LetterGlitch from '@/components/ui/LetterGlitch';
-import GlassCard from '@/components/ui/GlassCard';
-
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { FaProjectDiagram, FaUser, FaLightbulb } from "react-icons/fa";
+import { useRef } from "react";
+import VariableProximity from "@/components/ui/VariableProximity";
+import GradientText from "@/components/ui/GradientText";
+import LetterGlitch from "@/components/ui/LetterGlitch";
+import GlassCard from "@/components/ui/GlassCard";
+import ShinyText from "@/components/ui/ShinyText";
 export default function HomePage() {
-  
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -19,7 +17,7 @@ export default function HomePage() {
       {/* Wrapper div to contain the fixed background */}
       <div className="fixed inset-0 w-screen h-screen">
         <LetterGlitch
-          glitchColors={['#1a1a1a', '#4a4a4a', '#808080']}
+          glitchColors={["#1a1a1a", "#4a4a4a", "#808080"]}
           glitchSpeed={50}
           centerVignette={true}
           outerVignette={false}
@@ -38,52 +36,58 @@ export default function HomePage() {
           <section className="max-w-4xl animate-fade-in py-12">
             <div
               ref={containerRef}
-              style={{ 
-                position: 'relative',
-                minHeight: '100px',
-                width: '100%',
-                padding: '10px'
+              style={{
+                position: "relative",
+                minHeight: "100px",
+                width: "100%",
+                padding: "10px",
               }}
             >
               <GradientText
+                className="mb-6"
                 animationSpeed={24}
                 transparent={true}
               >
                 <VariableProximity
-                  label="Hi, I'm Phil!"
-                  className="text-6xl md:text-7xl font-bold"
+                  label="Hey, I'm Phil!"
+                  className="text-5xl md:text-7xl font-bold"
                   fromFontVariationSettings="'wght' 100, 'opsz' 8"
                   toFontVariationSettings="'wght' 900, 'opsz' 48"
-                  containerRef={containerRef as unknown as React.RefObject<HTMLElement>}
+                  containerRef={
+                    containerRef as unknown as React.RefObject<HTMLElement>
+                  }
                   radius={100}
                   falloff="linear"
                 />
               </GradientText>
             </div>
-            <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-              {"I like to make stuff."}
-            </p>
+            <ShinyText
+              text={"Let's build something amazing together."}
+              disabled={false}
+              speed={3}
+              className="tag-bubble text-sm md:text-lg border-gray-600 hover:border-gray-400"
+            />
           </section>
 
           {/* Icon Section */}
           <section className="mt-12 grid gap-4 md:gap-6 grid-cols-3 mx-auto max-w-2xl">
             <GlassCard href="/projects" className="p-4 md:p-10 h-full">
               <div className="group flex flex-col items-center justify-center h-full">
-                <FaCode className="text-3xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
+                <FaProjectDiagram className="text-3xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
                 <h3 className="text-md md:text-lg font-bold">Projects</h3>
               </div>
             </GlassCard>
             <GlassCard href="/blog" className="p-4 md:p-10 h-full">
               <div className="group flex flex-col items-center justify-center h-full">
-                <FaBlog className="text-3xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
+                <FaLightbulb className="text-3xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
                 <h3 className="text-md md:text-lg font-bold">Blog</h3>
               </div>
             </GlassCard>
             <GlassCard href="/about" className="p-4 md:p-10 h-full">
               <div className="group flex flex-col items-center justify-center h-full">
-                  <MdPerson className="text-3xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
-                  <h3 className="text-md md:text-lg font-bold">About</h3>
-                </div>
+                <FaUser className="text-3xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
+                <h3 className="text-md md:text-lg font-bold">About</h3>
+              </div>
             </GlassCard>
           </section>
         </main>
