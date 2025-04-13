@@ -17,8 +17,8 @@ const Squares: React.FC<SquaresProps> = ({
   direction = "right",
   speed = 1,
   squareSize = 40,
-  borderColor = '#333333',
-  hoverFillColor = '#202020',
+  borderColor = "#333333",
+  hoverFillColor = "#202020",
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestRef = useRef<number | null>(null);
@@ -49,7 +49,8 @@ const Squares: React.FC<SquaresProps> = ({
 
       // Get colors from CSS variables
       const computedStyle = getComputedStyle(document.documentElement);
-      const bgColor = computedStyle.getPropertyValue('--primary-bg').trim() || '#101010';
+      const bgColor =
+        computedStyle.getPropertyValue("--primary-bg").trim() || "#101010";
 
       const startX = Math.floor(gridOffset.current.x / squareSize) * squareSize;
       const startY = Math.floor(gridOffset.current.y / squareSize) * squareSize;
@@ -86,11 +87,13 @@ const Squares: React.FC<SquaresProps> = ({
         canvas.height / 2,
         Math.sqrt(canvas.width ** 2 + canvas.height ** 2) / 2
       );
-      
+
       // Parse the background color to create a transparent version
-      let r = 0, g = 0, b = 0;
-      
-      if (bgColor.startsWith('#')) {
+      let r = 0,
+        g = 0,
+        b = 0;
+
+      if (bgColor.startsWith("#")) {
         // Handle hex color
         const hex = bgColor.substring(1);
         if (hex.length === 3) {
@@ -103,7 +106,7 @@ const Squares: React.FC<SquaresProps> = ({
           b = parseInt(hex.substring(4, 6), 16);
         }
       }
-      
+
       gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0)`);
       gradient.addColorStop(1, bgColor);
 
@@ -176,10 +179,10 @@ const Squares: React.FC<SquaresProps> = ({
     const observer = new MutationObserver(() => {
       drawGrid(); // Redraw when theme changes
     });
-    
-    observer.observe(document.documentElement, { 
+
+    observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['class'] 
+      attributeFilter: ["class"],
     });
 
     canvas.addEventListener("mousemove", handleMouseMove);
@@ -193,7 +196,7 @@ const Squares: React.FC<SquaresProps> = ({
       canvas.removeEventListener("mousemove", handleMouseMove);
       canvas.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [direction, speed, squareSize]);
+  }, [direction, speed, squareSize, borderColor, hoverFillColor]);
 
   return (
     <canvas

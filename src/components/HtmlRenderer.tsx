@@ -1,13 +1,16 @@
-'use client';
+"use client";
 
-import { useRef } from 'react';
+import { useRef } from "react";
 
 interface HtmlRendererProps {
   htmlContent: string;
   title?: string;
 }
 
-export default function HtmlRenderer({ htmlContent, title }: HtmlRendererProps) {
+export default function HtmlRenderer({
+  htmlContent,
+  title,
+}: HtmlRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // Prepare content with styles to fix scrolling and script to handle links
@@ -43,11 +46,11 @@ export default function HtmlRenderer({ htmlContent, title }: HtmlRendererProps) 
   `;
 
   return (
-    <iframe 
+    <iframe
       ref={iframeRef}
-      title={title || 'HTML Content'}
+      title={title || "HTML Content"}
       className="w-full border-0"
-      style={{ width: '100%', border: 'none' }}
+      style={{ width: "100%", border: "none" }}
       srcDoc={contentWithStyle}
       scrolling="no"
       sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
@@ -56,14 +59,18 @@ export default function HtmlRenderer({ htmlContent, title }: HtmlRendererProps) 
           // Simple resize on load
           const iframe = e.currentTarget;
           if (iframe.contentWindow) {
-            iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
+            iframe.style.height =
+              iframe.contentWindow.document.body.scrollHeight + "px";
           }
         } catch (error) {
           // Fallback height if we can't access the content due to cross-origin
-          console.log('Could not access iframe height, using fallback');
-          e.currentTarget.style.height = '1200px';
+          console.error(
+            "Could not access iframe height, using fallback",
+            error
+          );
+          e.currentTarget.style.height = "1200px";
         }
       }}
     />
   );
-} 
+}
