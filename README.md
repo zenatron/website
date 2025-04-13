@@ -26,11 +26,7 @@ Don't be an ass. That's about it.
 ## 🧪 Tests
 To run tests for the project, use:
 ```bash
-pnpm test
-```
-and 
-```bash
-pnpm lint
+pnpm lint && pnpm test
 ```
 Ensure code passes tests and/or lint.
 
