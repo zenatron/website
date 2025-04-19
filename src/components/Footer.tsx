@@ -1,3 +1,5 @@
+"use client";
+
 import {
   FaGithub,
   FaEnvelope,
@@ -7,12 +9,8 @@ import {
 } from "react-icons/fa";
 import { FaBluesky } from "react-icons/fa6";
 import Link from "next/link";
-import pkg from "../../package.json";
-import ShinyText from "./ui/ShinyText";
-
+import Calendar from "@/components/ui/Calendar";
 export default function Footer() {
-  const versionText = `v${pkg.version}`;
-
   return (
     <footer className="bg-primary-bg text-muted-text py-6 text-center relative z-10">
       <div className="flex justify-center items-center space-x-4 md:space-x-8 mb-4">
@@ -50,15 +48,7 @@ export default function Footer() {
         >
           <FaLinkedin />
         </Link>
-        <Link
-          href="https://philipv.me/phil"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Book a Call"
-          className="text-muted-text hover:text-accent transition-transform duration-200 hover:scale-110 inline-block text-2xl"
-        >
-          <FaCalendarAlt />
-        </Link>
+        <Calendar />
         <Link
           href="https://underscore.games"
           target="_blank"
@@ -73,18 +63,6 @@ export default function Footer() {
         <p className="text-xs">
           © {new Date().getFullYear()} Phil Vishnevsky. All rights reserved.
         </p>
-        <Link
-          href="https://github.com/zenatron/portfolio/deployments"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <ShinyText
-            text={versionText}
-            disabled={false}
-            speed={3}
-            className="tag-bubble text-xs border-gray-600 hover:border-gray-400"
-          />
-        </Link>
       </div>
     </footer>
   );

@@ -3,9 +3,13 @@
 import { useState } from "react";
 import { FaProjectDiagram, FaLightbulb, FaUser } from "react-icons/fa";
 import GlassCard from "./GlassCard";
+import Link from "next/link";
+import ShinyText from "./ShinyText";
+import pkg from "../../../package.json";
 
 export default function MobileMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const versionText = `v${pkg.version}`;
 
   return (
     <>
@@ -61,7 +65,7 @@ export default function MobileMenu() {
 
         {/* Menu */}
         <nav
-          className={`fixed top-0 right-0 h-full w-4/5 
+          className={`fixed top-0 right-0 h-full w-1/2 
             bg-secondary-bg/30 backdrop-blur-xl
             border-l border-white/5
             flex flex-col items-start space-y-6 py-6 px-6 z-30 
@@ -94,38 +98,51 @@ export default function MobileMenu() {
 
           {/* Links */}
           {/* Icon Section */}
-          <section className="mt-12 grid gap-4 md:gap-6 grid-cols-3 mx-auto max-w-2xl">
+          <section className="flex flex-col mt-12 gap-4 md:gap-6 w-full max-w-2xl">
             <GlassCard
               href="/projects"
               onClick={() => setMenuOpen(false)}
-              className="p-4 md:p-10 h-full"
+              className="p-4 md:p-6"
             >
-              <div className="group flex flex-col items-center justify-center h-full">
-                <FaProjectDiagram className="text-2xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
+              <div className="group flex items-center justify-center gap-4 h-full">
+                <FaProjectDiagram className="text-xl md:text-2xl text-accent" />
                 <h3 className="text-sm md:text-lg font-bold">Projects</h3>
               </div>
             </GlassCard>
             <GlassCard
               href="/blog"
               onClick={() => setMenuOpen(false)}
-              className="p-4 md:p-10 h-full"
+              className="p-4 md:p-6"
             >
-              <div className="group flex flex-col items-center justify-center h-full">
-                <FaLightbulb className="text-2xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
+              <div className="group flex items-center justify-center gap-4 h-full">
+                <FaLightbulb className="text-xl md:text-2xl text-accent" />
                 <h3 className="text-sm md:text-lg font-bold">Blog</h3>
               </div>
             </GlassCard>
             <GlassCard
               href="/about"
               onClick={() => setMenuOpen(false)}
-              className="p-4 md:p-10 h-full"
+              className="p-4 md:p-6"
             >
-              <div className="group flex flex-col items-center justify-center h-full">
-                <FaUser className="text-2xl md:text-4xl text-accent mb-2 group-hover:animate-bounce" />
+              <div className="group flex items-center justify-center gap-4 h-full">
+                <FaUser className="text-xl md:text-2xl text-accent" />
                 <h3 className="text-sm md:text-lg font-bold">About</h3>
               </div>
             </GlassCard>
           </section>
+          <Link
+            href="https://github.com/zenatron/portfolio/deployments"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute bottom-4 left-0 right-0 flex justify-center"
+          >
+            <ShinyText
+              text={versionText}
+              disabled={false}
+              speed={3}
+              className="tag-bubble text-xs border-gray-600 hover:border-gray-400"
+            />
+          </Link>
         </nav>
       </>
     </>
