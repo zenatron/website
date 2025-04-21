@@ -4,12 +4,6 @@ A personal website built to showcase my projects, resume, and blog posts.
 ### 📄 Abstract
 This is my personal website, built to showcase my portfolio, blog, and resume. It serves as a central place where I can share my projects, write about topics that interest me, and provide an easy way for people to learn more about my work. The site is built with Next.js and Tailwind CSS, making it fast, responsive, and easy to maintain.
 
-### 🪄 Features
-- **📄 Projects** – Display of selected projects with descriptions and links.
-- **📝 Blog** – Platform for publishing my thoughts and insights.
-- **📄 About** – Learn about me!
-- **📱 Responsive Design** – Snappy and optimized for various devices.
-
 ### ©️ Copyright Notice
 The source code for this website is licensed under the MIT License.
 However, all blog posts, written content, images, and project documentation found on this site are copyright © Phil Vishnevsky, and may not be reproduced, distributed, or used without explicit permission, unless otherwise stated.
