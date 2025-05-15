@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import ShinyText from './ShinyText';
+import React, { useState, useEffect, useRef } from "react";
+import ShinyText from "./ShinyText";
 
 interface DecryptTextProps {
   initialText: string;
@@ -14,16 +14,17 @@ interface DecryptTextProps {
 const DecryptText: React.FC<DecryptTextProps> = ({
   initialText,
   finalText,
-  className = '',
+  className = "",
   shinySpeed = 5,
-  decryptionSpeed = 40
+  decryptionSpeed = 40,
 }) => {
   const [displayText, setDisplayText] = useState(initialText);
   const [isHovering, setIsHovering] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Characters to use during the "decryption" animation
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,./<>?";
+  const chars =
+    "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,./<>?";
   //const chars = "philvishnevsky";
 
   // Function to start the decryption animation
@@ -35,7 +36,7 @@ const DecryptText: React.FC<DecryptTextProps> = ({
 
     let iteration = 0;
     const maxIterations = 15; // Number of scrambling iterations
-    
+
     // Create a new interval
     intervalRef.current = setInterval(() => {
       if (iteration >= maxIterations) {
@@ -47,29 +48,30 @@ const DecryptText: React.FC<DecryptTextProps> = ({
         }
         return;
       }
-      
+
       // Create a partially decrypted version
       setDisplayText(
         finalText
           .split("")
           .map((targetChar, index) => {
             // For spaces, always show spaces
-            if (targetChar === ' ') return ' ';
-            
+            if (targetChar === " ") return " ";
+
             // Gradually reveal more characters as iterations progress
             const progress = iteration / maxIterations;
-            const shouldRevealChar = Math.random() < progress || index < progress * finalText.length;
-            
+            const shouldRevealChar =
+              Math.random() < progress || index < progress * finalText.length;
+
             if (shouldRevealChar) {
               return targetChar;
             }
-            
+
             // Random character for others
             return chars[Math.floor(Math.random() * chars.length)];
           })
           .join("")
       );
-      
+
       iteration += 1;
     }, decryptionSpeed);
   };
@@ -83,7 +85,7 @@ const DecryptText: React.FC<DecryptTextProps> = ({
 
     let iteration = 0;
     const maxIterations = 10; // Number of scrambling iterations
-    
+
     // Create a new interval
     intervalRef.current = setInterval(() => {
       if (iteration >= maxIterations) {
@@ -95,29 +97,30 @@ const DecryptText: React.FC<DecryptTextProps> = ({
         }
         return;
       }
-      
+
       // Create a partially encrypted version
       setDisplayText(
         initialText
           .split("")
           .map((targetChar, index) => {
             // For spaces, always show spaces
-            if (targetChar === ' ') return ' ';
-            
+            if (targetChar === " ") return " ";
+
             // Gradually reveal more characters as iterations progress
             const progress = iteration / maxIterations;
-            const shouldRevealChar = Math.random() < progress || index < progress * initialText.length;
-            
+            const shouldRevealChar =
+              Math.random() < progress || index < progress * initialText.length;
+
             if (shouldRevealChar) {
               return targetChar;
             }
-            
+
             // Random character for others
             return chars[Math.floor(Math.random() * chars.length)];
           })
           .join("")
       );
-      
+
       iteration += 1;
     }, decryptionSpeed);
   };
@@ -129,7 +132,7 @@ const DecryptText: React.FC<DecryptTextProps> = ({
     } else if (displayText !== initialText) {
       startEncryption();
     }
-    
+
     // Cleanup function
     return () => {
       if (intervalRef.current) {
@@ -139,18 +142,14 @@ const DecryptText: React.FC<DecryptTextProps> = ({
   }, [isHovering]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div 
+    <div
       className="cursor-pointer"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
-      <ShinyText 
-        text={displayText} 
-        className={className}
-        speed={shinySpeed}
-      />
+      <ShinyText text={displayText} className={className} speed={shinySpeed} />
     </div>
   );
 };
 
-export default DecryptText; 
+export default DecryptText;

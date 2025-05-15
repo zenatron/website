@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import Squares from '@/components/ui/Squares';
-import ProjectsClient from '@/components/layouts/ProjectsClient';
-import { ProjectCard } from '@/types/types';
+import Squares from "@/components/ui/Squares";
+import ProjectsClient from "@/components/layouts/ProjectsClient";
+import { ProjectCard } from "@/types/types";
 
-export default function ProjectsLayout({ projects }: { projects: ProjectCard[] }) {
+export default function ProjectsLayout({
+  projects,
+}: {
+  projects: ProjectCard[];
+}) {
   return (
     <main className="flex-1 relative overflow-hidden">
       {/* Background Layer */}
       <div className="absolute inset-0 z-0">
-        <Squares
-          direction="diagonal"
-          speed={0.2}
-          squareSize={96}
-        />
+        <Squares direction="diagonal" speed={0.2} squareSize={96} />
       </div>
 
       {/* Content Layer */}
@@ -22,4 +22,4 @@ export default function ProjectsLayout({ projects }: { projects: ProjectCard[] }
       </div>
     </main>
   );
-} 
+}

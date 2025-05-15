@@ -1,17 +1,23 @@
-import { getBlogPostBySlug } from '@/lib/blog';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import Link from 'next/link';
-import { FaHashtag, FaArrowLeft } from 'react-icons/fa';
-import dateFormatter from '@/utils/dateFormatter';
-import BackToTopButton from '@/components/BackToTopButton';
+import { getBlogPostBySlug } from "@/lib/blog";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import Link from "next/link";
+import { FaHashtag, FaArrowLeft } from "react-icons/fa";
+import dateFormatter from "@/utils/dateFormatter";
+import BackToTopButton from "@/components/BackToTopButton";
 
 export async function generateStaticParams() {
-  const params = await import('@/lib/blog').then((mod) => mod.generateStaticParams());
+  const params = await import("@/lib/blog").then((mod) =>
+    mod.generateStaticParams()
+  );
   return params;
 }
 
-export default async function BlogPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function BlogPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
   const post = await getBlogPostBySlug(slug);
 
@@ -38,19 +44,24 @@ export default async function BlogPage({ params }: { params: Promise<{ slug: str
       <Header />
       <main className="flex-1 px-6 py-10">
         <div className="max-w-xl md:max-w-3xl mx-auto">
-          <Link href="/blog" className="inline-flex items-center gap-2 text-muted-text hover:text-foreground mb-6 text-sm">
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-2 text-muted-text hover:text-foreground mb-6 text-sm"
+          >
             <FaArrowLeft />
             Back to Blog
           </Link>
-          
+
           <article className="flex flex-col items-center">
-            <h1 className="text-4xl font-bold mb-4 text-center w-full">{post.metadata.title}</h1>
-            
+            <h1 className="text-4xl font-bold mb-4 text-center w-full">
+              {post.metadata.title}
+            </h1>
+
             <div className="flex flex-col items-center gap-4 mb-8 text-muted-text w-full">
               {post.metadata.tags && post.metadata.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 justify-center">
                   {post.metadata.tags.map((tag, index) => (
-                    <Link 
+                    <Link
                       key={index}
                       href={`/blog?tag=${tag}`}
                       className="tag-bubble"
@@ -62,21 +73,22 @@ export default async function BlogPage({ params }: { params: Promise<{ slug: str
                 </div>
               )}
               <div className="flex flex-row items-center text-muted-text mb-2">
-                <time>{dateFormatter({ date: post.metadata.date,
-                  formatStyle: 'full'
-                })}</time>
-              {post.metadata.readingTime && (
-                <>
-                  <span className="ml-2">{'•'}</span>
-                  <span className="ml-2">{post.metadata.readingTime}</span>
-                </>
-              )}
+                <time>
+                  {dateFormatter({
+                    date: post.metadata.date,
+                    formatStyle: "full",
+                  })}
+                </time>
+                {post.metadata.readingTime && (
+                  <>
+                    <span className="ml-2">{"•"}</span>
+                    <span className="ml-2">{post.metadata.readingTime}</span>
+                  </>
+                )}
               </div>
             </div>
 
-            <div className="mdx-content max-w-full">
-              {post.content}
-            </div>
+            <div className="mdx-content max-w-full">{post.content}</div>
           </article>
         </div>
       </main>

@@ -1,7 +1,14 @@
-import React from 'react';
-import { twMerge } from 'tailwind-merge';
+import React from "react";
+import { twMerge } from "tailwind-merge";
 
-type CalloutType = 'info' | 'warning' | 'error' | 'success' | 'note' | 'tip' | 'custom';
+type CalloutType =
+  | "info"
+  | "warning"
+  | "error"
+  | "success"
+  | "note"
+  | "tip"
+  | "custom";
 
 interface CalloutProps {
   type?: CalloutType;
@@ -12,26 +19,27 @@ interface CalloutProps {
 }
 
 const emojis = {
-  info: '💡',
-  warning: '⚠️',
-  error: '❌',
-  success: '✅',
-  note: '📝',
-  tip: '💬',
-  custom: '🔍'
+  info: "💡",
+  warning: "⚠️",
+  error: "❌",
+  success: "✅",
+  note: "📝",
+  tip: "💬",
+  custom: "🔍",
 };
 
-export default function Callout({ 
-  type = 'info', 
+export default function Callout({
+  type = "info",
   title,
   showEmoji = true,
   className,
-  children 
+  children,
 }: CalloutProps) {
   const baseClasses = "callout";
-  const calloutClasses = type === 'custom'
-    ? twMerge(baseClasses, className)
-    : `${baseClasses} ${type}`;
+  const calloutClasses =
+    type === "custom"
+      ? twMerge(baseClasses, className)
+      : `${baseClasses} ${type}`;
 
   // title and optional emoji
   if (title) {
@@ -45,7 +53,7 @@ export default function Callout({
       </div>
     );
   }
-  
+
   // no title, but we have emoji
   if (showEmoji) {
     return (
@@ -57,11 +65,7 @@ export default function Callout({
       </div>
     );
   }
-  
+
   // no title, no emoji
-  return (
-    <div className={calloutClasses}>
-      {children}
-    </div>
-  );
-} 
+  return <div className={calloutClasses}>{children}</div>;
+}

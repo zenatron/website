@@ -1,43 +1,54 @@
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import Link from 'next/link';
-import { FaArrowLeft, FaDownload } from 'react-icons/fa';
-import fs from 'fs';
-import path from 'path';
-import { getAllProjects } from '@/lib/projects';
-import HtmlRenderer from '@/components/HtmlRenderer';
-import { redirect } from 'next/navigation';
-import BackToTopButton from '@/components/BackToTopButton';
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import Link from "next/link";
+import { FaArrowLeft, FaDownload } from "react-icons/fa";
+import fs from "fs";
+import path from "path";
+import { getAllProjects } from "@/lib/projects";
+import HtmlRenderer from "@/components/HtmlRenderer";
+import { redirect } from "next/navigation";
+import BackToTopButton from "@/components/BackToTopButton";
 
 export async function generateStaticParams() {
-  const params = await import('@/lib/projects').then((mod) => mod.generateStaticParams());
+  const params = await import("@/lib/projects").then((mod) =>
+    mod.generateStaticParams()
+  );
   return params;
 }
 
 // Add this function to read HTML content
 async function getProjectHTML(slug: string): Promise<string> {
   try {
-    const htmlPath = path.join(process.cwd(), 'src/content/projects', `${slug}.html`);
-    const content = fs.readFileSync(htmlPath, 'utf8');
+    const htmlPath = path.join(
+      process.cwd(),
+      "src/content/projects",
+      `${slug}.html`
+    );
+    const content = fs.readFileSync(htmlPath, "utf8");
     return content;
   } catch (error) {
     console.error(`Error reading HTML for ${slug}:`, error);
-    return '<p>Error loading project content</p>';
+    return "<p>Error loading project content</p>";
   }
 }
 
-export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
-
+export default async function ProjectPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
-  const project = await getAllProjects().then((projects) => projects.find((project) => project.metadata.slug === slug));
+  const project = await getAllProjects().then((projects) =>
+    projects.find((project) => project.metadata.slug === slug)
+  );
 
   if (!project) {
-    redirect('/projects');
+    redirect("/projects");
   }
 
-  if (project.metadata.type === 'data') {
+  if (project.metadata.type === "data") {
     // Get HTML content for data science project
-    const htmlContent = await getProjectHTML(project.metadata.slug || '');
+    const htmlContent = await getProjectHTML(project.metadata.slug || "");
 
     return (
       <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
@@ -71,9 +82,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             </div>
 
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-              <HtmlRenderer 
-                htmlContent={htmlContent} 
-                title={project.metadata.title || 'Project Content'} 
+              <HtmlRenderer
+                htmlContent={htmlContent}
+                title={project.metadata.title || "Project Content"}
               />
             </div>
           </div>

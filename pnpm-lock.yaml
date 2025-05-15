@@ -71,6 +71,9 @@ importers:
       pnpm:
         specifier: ^10.6.2
         version: 10.6.2
+      prettier:
+        specifier: ^3.5.3
+        version: 3.5.3
       react:
         specifier: ^19.0.0
         version: 19.0.0

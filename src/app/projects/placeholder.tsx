@@ -1,7 +1,7 @@
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { FaHardHat, FaHammer, FaWrench } from 'react-icons/fa';
-import Link from 'next/link';
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { FaHardHat, FaHammer, FaWrench } from "react-icons/fa";
+import Link from "next/link";
 
 export default function ProjectsPage() {
   return (
@@ -19,13 +19,17 @@ export default function ProjectsPage() {
             {"Projects Under Construction"}
           </h1>
           <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-            {"I'm building something amazing! Check back soon for updates on my latest projects."}
+            {
+              "I'm building something amazing! Check back soon for updates on my latest projects."
+            }
           </p>
         </div>
 
         {/* Call to Action */}
         <div className="mt-8 space-y-4 sm:space-y-0 sm:space-x-4 flex flex-col sm:flex-row">
-          <Link href="/" className="btn btn-primary">{"Return Home"}</Link>
+          <Link href="/" className="btn btn-primary">
+            {"Return Home"}
+          </Link>
         </div>
       </main>
       <Footer />

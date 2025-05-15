@@ -1,0 +1,20 @@
+# Node modules
+node_modules
+
+# Next.js build output
+.next
+
+# Blog and project content
+/public
+/src/content
+
+# Lock files
+pnpm-lock.yaml
+
+# dotfiles
+.gitignore
+.env
+.env.*
+.DS_Store
+.prettierrc
+.prettierignore

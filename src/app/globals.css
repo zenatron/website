@@ -1,6 +1,6 @@
 /* Global CSS: src/styles/globals.css */
 
-@import './markdown.css';
+@import "./markdown.css";
 
 @tailwind base;
 @tailwind components;

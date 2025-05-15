@@ -84,7 +84,13 @@ const InfiniteSphere: React.FC<InfiniteSphereProps> = ({
 
   const tags = useMemo(() => {
     return items.map((item, i) => {
-      const { x, y, z, scale } = computePosition(i, items.length, radius, angleX, angleY);
+      const { x, y, z, scale } = computePosition(
+        i,
+        items.length,
+        radius,
+        angleX,
+        angleY
+      );
       const opacity = (z + radius) / (2 * radius); // Fade out items in the back
       const clampedOpacity = Math.max(0.2, Math.min(1, opacity)); // Ensure opacity is between 0.2 and 1
       const brightness = 1 + (z / radius) * 0.5; // Make closer items brighter
@@ -107,7 +113,7 @@ const InfiniteSphere: React.FC<InfiniteSphereProps> = ({
               opacity: clampedOpacity,
               zIndex: Math.round(scale * 100),
               filter: filter,
-              willChange: 'transform, opacity, filter'
+              willChange: "transform, opacity, filter",
             }}
           >
             <img
@@ -132,13 +138,15 @@ const InfiniteSphere: React.FC<InfiniteSphereProps> = ({
       const mouseX = event.clientX;
       const mouseY = event.clientY;
 
-      const distanceToCenter = Math.sqrt((mouseX - centerX) ** 2 + (mouseY - centerY) ** 2);
+      const distanceToCenter = Math.sqrt(
+        (mouseX - centerX) ** 2 + (mouseY - centerY) ** 2
+      );
       const hoverThreshold = rect.width * 0.2; // Pause when within 20% of the center
 
       isHoveringCenterRef.current = distanceToCenter < hoverThreshold;
 
       if (!isHoveringCenterRef.current) {
-         // Normalize coordinates relative to center, ranging roughly -1 to 1
+        // Normalize coordinates relative to center, ranging roughly -1 to 1
         const normX = (mouseX - centerX) / (rect.width / 2);
         const normY = (mouseY - centerY) / (rect.height / 2);
 
@@ -146,16 +154,14 @@ const InfiniteSphere: React.FC<InfiniteSphereProps> = ({
         const speedFactorX = normX * Math.abs(normX);
         const speedFactorY = normY * Math.abs(normY);
 
-
         // Adjust speed based on scaled position and maxSpeed
         speedYRef.current = (speedFactorX * maxSpeed) / 10000; // Rotate around Y-axis based on horizontal mouse movement
         speedXRef.current = (speedFactorY * maxSpeed) / 10000; // Rotate around X-axis based on vertical mouse movement (removed inversion)
       } else {
         // Stop rotation gradually when hovering center
-         speedXRef.current *= 0.95;
-         speedYRef.current *= 0.95;
+        speedXRef.current *= 0.95;
+        speedYRef.current *= 0.95;
       }
-
 
       lastMouseXRef.current = mouseX;
       lastMouseYRef.current = mouseY;
@@ -173,21 +179,21 @@ const InfiniteSphere: React.FC<InfiniteSphereProps> = ({
     container.addEventListener("mouseleave", handleMouseLeave);
 
     const animate = () => {
-       if (!isHoveringCenterRef.current && lastMouseXRef.current === null) {
-         // Apply slight damping if not hovering center and mouse is outside
-          speedXRef.current *= 0.99;
-          // Only dampen Y speed if it's not already close to initial speed
-          if (Math.abs(speedYRef.current - initialSpeed / 10000) > 0.00001) {
-            speedYRef.current = speedYRef.current * 0.99 + (initialSpeed / 10000) * 0.01; // Gradually return to base speed
-          } else {
-             speedYRef.current = initialSpeed / 10000; // Snap to base speed if very close
-          }
-       } else if (isHoveringCenterRef.current) {
-           // Stronger damping when hovering center
-           speedXRef.current *= 0.9;
-           speedYRef.current *= 0.9;
-       }
-
+      if (!isHoveringCenterRef.current && lastMouseXRef.current === null) {
+        // Apply slight damping if not hovering center and mouse is outside
+        speedXRef.current *= 0.99;
+        // Only dampen Y speed if it's not already close to initial speed
+        if (Math.abs(speedYRef.current - initialSpeed / 10000) > 0.00001) {
+          speedYRef.current =
+            speedYRef.current * 0.99 + (initialSpeed / 10000) * 0.01; // Gradually return to base speed
+        } else {
+          speedYRef.current = initialSpeed / 10000; // Snap to base speed if very close
+        }
+      } else if (isHoveringCenterRef.current) {
+        // Stronger damping when hovering center
+        speedXRef.current *= 0.9;
+        speedYRef.current *= 0.9;
+      }
 
       setAngleX((prev) => prev + speedXRef.current);
       setAngleY((prev) => prev + speedYRef.current);
@@ -213,14 +219,17 @@ const InfiniteSphere: React.FC<InfiniteSphereProps> = ({
       style={{
         minHeight: `${radius * 2.5}px`,
         width: `${radius * 2.5}px`, // Make width equal to minHeight for square shape
-        perspective: '1000px',
+        perspective: "1000px",
       }}
     >
-      <div className="relative" style={{ width: '100%', height: '100%', transformStyle: "preserve-3d" }}>
+      <div
+        className="relative"
+        style={{ width: "100%", height: "100%", transformStyle: "preserve-3d" }}
+      >
         {tags.map((tag) => tag.element)}
       </div>
     </div>
   );
 };
 
-export default InfiniteSphere; 
+export default InfiniteSphere;

@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
 
 export type BlogMetadata = {
   title: string;
@@ -6,16 +6,16 @@ export type BlogMetadata = {
   readingTime?: string;
   excerpt?: string;
   tags?: string[];
-}
+};
 
 export type BlogPost = {
   slug: string;
   content: ReactNode;
   searchableContent: string; // Plain text version for searching
   metadata: BlogMetadata;
-}
+};
 
-export type ProjectTypes = 'data' | 'web' | 'game' | 'other';
+export type ProjectTypes = "data" | "web" | "game" | "other";
 
 export type ProjectMetadata = {
   title: string;
@@ -24,7 +24,7 @@ export type ProjectMetadata = {
   type: ProjectTypes;
   slug?: string;
   date?: string;
-}
+};
 
 export type ProjectCard = {
   metadata: ProjectMetadata;
@@ -39,15 +39,15 @@ export type ProjectCard = {
   }[];
   featured?: boolean;
   image?: string | null;
-}
+};
 
 // Add this type for data science projects
 export type DataScienceProject = ProjectCard & {
   metadata: {
-    type: 'data';
+    type: "data";
     slug: string; // Required for DS projects
   };
   downloads: {
     filename: string;
   }[];
-}
+};

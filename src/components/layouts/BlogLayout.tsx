@@ -1,19 +1,15 @@
-'use client';
+"use client";
 
-import Squares from '@/components/ui/Squares';
-import { BlogPost } from '@/types/types';
-import BlogClient from '@/components/layouts/BlogClient';
+import Squares from "@/components/ui/Squares";
+import { BlogPost } from "@/types/types";
+import BlogClient from "@/components/layouts/BlogClient";
 
 export default function BlogLayout({ posts }: { posts: BlogPost[] }) {
   return (
     <main className="flex-1 relative overflow-hidden">
       {/* Background Layer */}
       <div className="absolute inset-0 z-0">
-        <Squares
-          direction="diagonal"
-          speed={0.2}
-          squareSize={96}
-        />
+        <Squares direction="diagonal" speed={0.2} squareSize={96} />
       </div>
 
       {/* Content Layer */}
@@ -22,4 +18,4 @@ export default function BlogLayout({ posts }: { posts: BlogPost[] }) {
       </div>
     </main>
   );
-} 
+}

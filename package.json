@@ -1,12 +1,14 @@
 {
   "name": "personalsite",
-  "version": "0.43.0",
+  "version": "0.43.1",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@calcom/embed-react": "^1.5.2",
@@ -30,6 +32,7 @@
     "ogl": "^1.0.11",
     "path": "^0.12.7",
     "pnpm": "^10.6.2",
+    "prettier": "^3.5.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.4.0",
