@@ -1,15 +1,11 @@
 "use client";
 
-import {
-  FaGithub,
-  FaEnvelope,
-  FaDiceD20,
-  FaLinkedin,
-  FaCalendarAlt,
-} from "react-icons/fa";
+import { FaGithub, FaEnvelope, FaLinkedin } from "react-icons/fa";
 import { FaBluesky } from "react-icons/fa6";
 import Link from "next/link";
 import Calendar from "@/components/ui/Calendar";
+import UgIcon from "@/components/icons/UgIcon";
+
 export default function Footer() {
   return (
     <footer className="bg-primary-bg text-muted-text py-6 text-center relative z-10">
@@ -56,7 +52,7 @@ export default function Footer() {
           aria-label="Underscore Games"
           className="text-muted-text hover:text-accent transition-transform duration-200 hover:scale-110 inline-block text-2xl"
         >
-          <FaDiceD20 />
+          <UgIcon className="w-7 h-7" />
         </Link>
       </div>
       <div className="flex items-center justify-center gap-3">
