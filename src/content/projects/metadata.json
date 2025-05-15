@@ -1,6 +1,6 @@
 {
   "Python_Exercise": {
-    "title": "Intro to ML: Python Exercises",
+    "title": "Intro to Data Mining: Python Exercises",
     "date": "2024-01-15",
     "description": "A collection of Python exercises covering basic to advanced concepts",
     "downloads": [
@@ -10,7 +10,7 @@
     ]
   },
   "Pandas_Numpy_Exercise": {
-    "title": "Intro to ML: Pandas & Numpy Exercises",
+    "title": "Intro to Data Mining: Pandas & Numpy Exercises",
     "date": "2024-01-20",
     "description": "Data manipulation exercises using Pandas and NumPy libraries",
     "downloads": [
@@ -20,7 +20,7 @@
     ]
   },
   "Scikit_Learn_Exercise": {
-    "title": "Intro to ML: Scikit-Learn Exercises",
+    "title": "Intro to Data Mining: Scikit-Learn Exercises",
     "date": "2025-02-07",
     "description": "Exercises with Scikit-Learn library",
     "downloads": [
@@ -30,7 +30,7 @@
     ]
   },
   "Project_1_Problem_Definition": {
-    "title": "Intro to ML: Project 1",
+    "title": "Intro to Data Mining: Project 1",
     "date": "2025-01-31",
     "description": "A detailed problem definition for Project 1, with data visualization",
     "downloads": [
@@ -40,7 +40,7 @@
     ]
   },
   "Project_2_Classification": {
-    "title": "Intro to ML: Project 2",
+    "title": "Intro to Data Mining: Project 2",
     "date": "2025-02-27",
     "description": "Predicting car brands using classification",
     "downloads": [
@@ -50,12 +50,22 @@
     ]
   },
   "Project_3_Regression": {
-    "title": "Intro to ML: Project 3",
+    "title": "Intro to Data Mining: Project 3",
     "date": "2025-03-30",
     "description": "Predicting song popularity using regression",
     "downloads": [
       {
         "filename": "Project_3_Regression.ipynb"
+      }
+    ]
+  },
+  "itcs-3162-final-project": {
+    "title": "Intro to Data Mining: Final Project",
+    "date": "2025-05-08",
+    "description": "Clustering wine based on their chemical properties",
+    "downloads": [
+      {
+        "filename": "itcs-3162-final-project.ipynb"
       }
     ]
   }
