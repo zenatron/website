@@ -38,6 +38,7 @@ const BackToTopButton = () => {
       }`}
       aria-label="Scroll back to top"
       style={{ visibility: isVisible ? "visible" : "hidden" }}
+      title="Scroll back to top"
     >
       <FaArrowUp className="h-5 w-5 mix-blend-difference" />
     </button>

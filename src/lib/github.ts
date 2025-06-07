@@ -49,12 +49,29 @@ export async function getGithubRepos() {
             (await getReadmeDescription(repo.name)) ||
             "No description available";
 
-          // Combine language and topics for tags, filter out null/undefined values, and deduplicate
+          // Combine languages and topics for tags, filter out null/undefined values, and deduplicate
           const tagsSet = new Set<string>();
 
-          // Add language if it exists
-          if (repo.language) {
-            tagsSet.add(repo.language.toLowerCase().replace(/\s+/g, "-"));
+          // Fetch all languages for this repository
+          try {
+            const languagesResponse = await fetch(
+              `https://api.github.com/repos/zenatron/${repo.name}/languages`
+            );
+            if (languagesResponse.ok) {
+              const languages = await languagesResponse.json();
+              // Add all languages to tags
+              Object.keys(languages).forEach((language) => {
+                tagsSet.add(language.toLowerCase().replace(/\s+/g, "-"));
+              });
+            } else if (repo.language) {
+              // Fallback to primary language if languages API fails
+              tagsSet.add(repo.language.toLowerCase().replace(/\s+/g, "-"));
+            }
+          } catch {
+            // Fallback to primary language if request fails
+            if (repo.language) {
+              tagsSet.add(repo.language.toLowerCase().replace(/\s+/g, "-"));
+            }
           }
 
           // Add topics if they exist

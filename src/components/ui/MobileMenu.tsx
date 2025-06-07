@@ -19,6 +19,7 @@ export default function MobileMenu() {
         onClick={() => setMenuOpen(!menuOpen)}
         aria-label="Toggle Menu"
         aria-expanded={menuOpen}
+        title="Toggle Menu"
       >
         {menuOpen ? (
           <svg
@@ -78,6 +79,7 @@ export default function MobileMenu() {
             className="text-primary-text hover:text-accent flex items-center space-x-2"
             onClick={() => setMenuOpen(false)}
             aria-label="Close Menu"
+            title="Close Menu"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
