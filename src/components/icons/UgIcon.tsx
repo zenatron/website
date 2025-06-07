@@ -1,8 +1,7 @@
 import React from "react";
 
 interface UgIconProps extends React.SVGProps<SVGSVGElement> {
-  // You can add any specific props you want for this icon here
-  // For example: title?: string;
+
 }
 
 const UgIcon: React.FC<UgIconProps> = (props) => {

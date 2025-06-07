@@ -154,6 +154,11 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                     ? "descending"
                     : "ascending"
                 }`}
+                title={`Sort by title: ${
+                  sortField === "title" && sortDirection === "asc"
+                    ? "descending"
+                    : "ascending"
+                }`}
               >
                 {getSortIcon("title")}
                 <span className="text-sm">Title</span>
@@ -164,6 +169,11 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                 className={`px-3 py-1.5 flex items-center gap-2 transition-colors hover:bg-white/5
                   ${sortField === "date" ? "text-accent" : "text-muted-text"}`}
                 aria-label={`Sort by date ${
+                  sortField === "date" && sortDirection === "desc"
+                    ? "oldest first"
+                    : "newest first"
+                }`}
+                title={`Sort by date: ${
                   sortField === "date" && sortDirection === "desc"
                     ? "oldest first"
                     : "newest first"
@@ -201,6 +211,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                     ${
                       selectedType === type ? "text-accent" : "text-muted-text"
                     }`}
+                  title={`Filter by type: ${type}`}
                 >
                   {getTypeIcon(type)}
                   <span className="text-sm">{type}</span>
@@ -232,6 +243,11 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                     ? "descending"
                     : "ascending"
                 }`}
+                title={`Sort by title: ${
+                  sortField === "title" && sortDirection === "asc"
+                    ? "descending"
+                    : "ascending"
+                }`}
               >
                 {getSortIcon("title")}
                 <span className="text-xs">Title</span>
@@ -242,6 +258,11 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                 className={`px-2 py-1.5 flex items-center gap-1 transition-colors hover:bg-white/5 flex-1 justify-center
                   ${sortField === "date" ? "text-accent" : "text-muted-text"}`}
                 aria-label={`Sort by date ${
+                  sortField === "date" && sortDirection === "desc"
+                    ? "oldest first"
+                    : "newest first"
+                }`}
+                title={`Sort by date: ${
                   sortField === "date" && sortDirection === "desc"
                     ? "oldest first"
                     : "newest first"
@@ -264,6 +285,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                     ${
                       selectedType === type ? "text-accent" : "text-muted-text"
                     }`}
+                  title={`Filter by type: ${type}`}
                 >
                   {getTypeIcon(type)}
                   <span className="text-xs">{type}</span>

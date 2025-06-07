@@ -16,6 +16,7 @@ export default function Footer() {
           rel="noopener noreferrer"
           aria-label="GitHub"
           className="text-muted-text hover:text-accent transition-transform duration-200 hover:scale-110 inline-block text-2xl"
+          title="GitHub"
         >
           <FaGithub />
         </Link>
@@ -23,6 +24,7 @@ export default function Footer() {
           href="mailto:phil@underscore.games"
           aria-label="Email"
           className="text-muted-text hover:text-accent transition-transform duration-200 hover:scale-110 inline-block text-2xl"
+          title="Email Me!"
         >
           <FaEnvelope />
         </Link>
@@ -32,6 +34,7 @@ export default function Footer() {
           rel="noopener noreferrer"
           aria-label="Bluesky"
           className="text-muted-text hover:text-accent transition-transform duration-200 hover:scale-110 inline-block text-2xl"
+          title="Bluesky"
         >
           <FaBluesky />
         </Link>
@@ -41,6 +44,7 @@ export default function Footer() {
           rel="noopener noreferrer"
           aria-label="LinkedIn"
           className="text-muted-text hover:text-accent transition-transform duration-200 hover:scale-110 inline-block text-2xl"
+          title="LinkedIn"
         >
           <FaLinkedin />
         </Link>
@@ -51,6 +55,7 @@ export default function Footer() {
           rel="noopener noreferrer"
           aria-label="Underscore Games"
           className="text-muted-text hover:text-accent transition-transform duration-200 hover:scale-110 inline-block text-2xl"
+          title="Underscore Games"
         >
           <UgIcon className="w-7 h-7" />
         </Link>

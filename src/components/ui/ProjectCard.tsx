@@ -24,6 +24,7 @@ export default function ProjectCard({ project }: { project: Project }) {
           href={project.links.live}
           className="btn-nav text-xs"
           onClick={(e) => e.stopPropagation()}
+          title="View Project"
         >
           <FaGlobe className="mr-1" /> View Live
         </Link>
@@ -49,6 +50,7 @@ export default function ProjectCard({ project }: { project: Project }) {
               rel: "noopener noreferrer",
             }
           : {})}
+        title={project.metadata.title}
       >
         <div className="flex items-center gap-2 mb-2">
           <h4 className="font-bold group-hover:text-accent">

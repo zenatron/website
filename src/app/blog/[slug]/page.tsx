@@ -30,7 +30,11 @@ export default async function BlogPage({
           <p className="text-lg mt-4 text-muted-text">
             {"The blog post you're looking for doesn't exist."}
           </p>
-          <Link href="/blog" className="btn btn-primary mt-6">
+          <Link
+            href="/blog"
+            className="btn btn-primary mt-6"
+            title="Back to Blog"
+          >
             Back to Blog
           </Link>
         </main>
@@ -47,6 +51,7 @@ export default async function BlogPage({
           <Link
             href="/blog"
             className="inline-flex items-center gap-2 text-muted-text hover:text-foreground mb-6 text-sm"
+            title="Back to Blog"
           >
             <FaArrowLeft />
             Back to Blog
@@ -65,6 +70,7 @@ export default async function BlogPage({
                       key={index}
                       href={`/blog?tag=${tag}`}
                       className="tag-bubble"
+                      title={`View posts with tag: ${tag}`}
                     >
                       <FaHashtag className="mr-1 text-xs opacity-70" />
                       {tag}

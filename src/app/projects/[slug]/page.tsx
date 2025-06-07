@@ -59,6 +59,7 @@ export default async function ProjectPage({
               <Link
                 href="/projects"
                 className="inline-flex items-center btn-nav text-sm md:text-base"
+                title="Back to Projects"
               >
                 <FaArrowLeft className="mr-1 md:mr-2 text-base md:text-lg" />
                 Back to Projects

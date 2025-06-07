@@ -119,6 +119,11 @@ export default function BlogClient({ posts }: BlogClientProps) {
                     ? "descending"
                     : "ascending"
                 }`}
+                title={`Sort by title: ${
+                  sortField === "title" && sortDirection === "asc"
+                    ? "descending"
+                    : "ascending"
+                }`}
               >
                 {getSortIcon("title")}
                 <span className="text-sm">Title</span>
@@ -129,6 +134,11 @@ export default function BlogClient({ posts }: BlogClientProps) {
                 className={`px-3 py-1.5 flex items-center gap-2 transition-colors hover:bg-white/5
                   ${sortField === "date" ? "text-accent" : "text-muted-text"}`}
                 aria-label={`Sort by date ${
+                  sortField === "date" && sortDirection === "desc"
+                    ? "oldest first"
+                    : "newest first"
+                }`}
+                title={`Sort by date: ${
                   sortField === "date" && sortDirection === "desc"
                     ? "oldest first"
                     : "newest first"
@@ -177,6 +187,11 @@ export default function BlogClient({ posts }: BlogClientProps) {
                   ? "descending"
                   : "ascending"
               }`}
+              title={`Sort by title: ${
+                sortField === "title" && sortDirection === "asc"
+                  ? "descending"
+                  : "ascending"
+              }`}
             >
               {getSortIcon("title")}
               <span className="text-sm">Title</span>
@@ -187,6 +202,11 @@ export default function BlogClient({ posts }: BlogClientProps) {
               className={`px-3 py-1.5 flex items-center gap-2 transition-colors hover:bg-white/5
                 ${sortField === "date" ? "text-accent" : "text-muted-text"}`}
               aria-label={`Sort by date ${
+                sortField === "date" && sortDirection === "desc"
+                  ? "oldest first"
+                  : "newest first"
+              }`}
+              title={`Sort by date: ${
                 sortField === "date" && sortDirection === "desc"
                   ? "oldest first"
                   : "newest first"

@@ -23,6 +23,7 @@ export default function CalendarPopup() {
       data-cal-origin="https://z3n.me"
       data-cal-config='{"layout":"month_view"}'
       className="text-muted-text hover:text-accent transition-transform duration-200 hover:scale-110 inline-block text-2xl"
+      title="Book a Meeting"
     >
       <FaCalendarAlt style={{ pointerEvents: "none" }} />
     </button>
