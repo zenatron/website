@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { FaProjectDiagram, FaLightbulb, FaUser } from "react-icons/fa";
+import {
+  FaProjectDiagram,
+  FaLightbulb,
+  FaUser
+} from "react-icons/fa";
 import GlassCard from "./GlassCard";
 import Link from "next/link";
 import ShinyText from "./ShinyText";

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Roboto_Flex } from "next/font/google";
+import { Geist, Geist_Mono, Roboto_Flex, Atkinson_Hyperlegible } from "next/font/google";
 import "./globals.css";
+import "./markdown.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,6 +19,13 @@ const robotoFlex = Roboto_Flex({
   display: "swap",
 });
 
+const atkinson = Atkinson_Hyperlegible({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  display: "swap",
+  variable: "--font-atkinson",
+});
+
 export const metadata: Metadata = {
   title: "Phil Vishnevsky",
   description: "SWE + AI + Game Dev Portfolio",
@@ -25,11 +33,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${robotoFlex.variable} ${atkinson.variable} antialiased bg-primary-bg text-primary-text`}>
       <head>
         <link
           rel="stylesheet"

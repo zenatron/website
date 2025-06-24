@@ -51,3 +51,13 @@ export type DataScienceProject = ProjectCard & {
     filename: string;
   }[];
 };
+
+export interface LinkItem {
+  title: string;
+  url: string;
+  description?: string;
+  icon?: string | React.ElementType; // from react-icons, or a custom one
+  image?: string; // URL to an image
+  tags?: string[];
+  featured?: boolean; // To highlight certain links
+}
