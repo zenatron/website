@@ -37,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${robotoFlex.variable} ${atkinson.variable} antialiased bg-primary-bg text-primary-text`}>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${robotoFlex.variable} ${atkinson.variable}`}>
       <head>
         <link
           rel="stylesheet"
@@ -46,9 +46,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${robotoFlex.variable} antialiased bg-primary-bg text-primary-text`}
-      >
+      <body className="antialiased bg-primary-bg text-primary-text">
         {children}
       </body>
     </html>

@@ -1,6 +1,6 @@
 {
   "name": "personalsite",
-  "version": "0.46.0",
+  "version": "0.48.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -23,6 +23,7 @@
     "fs": "^0.0.1-security",
     "gl-matrix": "^3.4.3",
     "gray-matter": "^4.0.3",
+    "gsap": "^3.13.0",
     "jsdom": "^26.0.0",
     "jsrepo": "^1.29.0",
     "katex": "^0.16.21",
