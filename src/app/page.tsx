@@ -10,15 +10,48 @@ import GradientText from "@/components/ui/GradientText";
 import DotGrid from "@/components/ui/Dots";
 import GlassCard from "@/components/ui/GlassCard";
 import ShinyText from "@/components/ui/ShinyText";
+
+interface ParticleConfig {
+  initialX: number;
+  initialY: number;
+  endY: number;
+  duration: number;
+  delay: number;
+}
+
+interface HoverParticleConfig {
+  x: string;
+  y: string;
+}
+
 export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [particleConfigs, setParticleConfigs] = useState<ParticleConfig[]>([]);
+  const [hoverParticleConfigs, setHoverParticleConfigs] = useState<HoverParticleConfig[]>([]);
 
   useEffect(() => {
     setIsVisible(true);
     setIsMounted(true);
+
+    // Generate particle configurations on client side only
+    const configs: ParticleConfig[] = Array.from({ length: 12 }, () => ({
+      initialX: Math.random() * window.innerWidth,
+      initialY: Math.random() * window.innerHeight,
+      endY: window.innerHeight + 100,
+      duration: Math.random() * 15 + 15,
+      delay: Math.random() * 8,
+    }));
+    setParticleConfigs(configs);
+
+    // Generate hover particle configurations on client side only
+    const hoverConfigs: HoverParticleConfig[] = Array.from({ length: 3 }, () => ({
+      x: Math.random() * 100 + "%",
+      y: Math.random() * 100 + "%",
+    }));
+    setHoverParticleConfigs(hoverConfigs);
 
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
@@ -52,25 +85,25 @@ export default function HomePage() {
       </div>
 
       {/* Floating particles */}
-      {isMounted && (
+      {isMounted && particleConfigs.length > 0 && (
         <div className="fixed inset-0 pointer-events-none z-10">
-          {[...Array(12)].map((_, i) => (
+          {particleConfigs.map((config, i) => (
             <motion.div
               key={i}
               className="absolute w-1 h-1 bg-accent/20 rounded-full"
               initial={{
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
+                x: config.initialX,
+                y: config.initialY,
                 opacity: 0
               }}
               animate={{
-                y: [null, -100, window.innerHeight + 100],
+                y: [null, -100, config.endY],
                 opacity: [0, 0.6, 0]
               }}
               transition={{
-                duration: Math.random() * 15 + 15,
+                duration: config.duration,
                 repeat: Infinity,
-                delay: Math.random() * 8,
+                delay: config.delay,
                 ease: "linear"
               }}
             />
@@ -79,7 +112,7 @@ export default function HomePage() {
       )}
 
       {/* Mouse follower effect */}
-      <motion.div
+      {/* <motion.div
         className="fixed pointer-events-none z-15 w-96 h-96 rounded-full"
         style={{
           background: `radial-gradient(circle, rgba(34, 123, 224, 0.05) 0%, transparent 70%)`,
@@ -94,7 +127,7 @@ export default function HomePage() {
           repeat: Infinity,
           ease: "easeInOut"
         }}
-      />
+      /> */}
 
       {/* Scrollable content */}
       <div className="relative z-20 flex flex-col min-h-screen">
@@ -277,15 +310,15 @@ export default function HomePage() {
                   </div>
 
                   {/* Subtle hover effect particles */}
-                  {isMounted && (
+                  {isMounted && hoverParticleConfigs.length > 0 && (
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
-                      {[...Array(3)].map((_, i) => (
+                      {hoverParticleConfigs.map((config, i) => (
                         <motion.div
                           key={i}
                           className="absolute w-1 h-1 bg-accent/30 rounded-full"
                           initial={{
-                            x: Math.random() * 100 + "%",
-                            y: Math.random() * 100 + "%",
+                            x: config.x,
+                            y: config.y,
                             scale: 0
                           }}
                           whileHover={{

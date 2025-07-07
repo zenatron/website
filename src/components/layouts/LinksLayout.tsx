@@ -15,7 +15,7 @@ export default function LinksLayout({ links }: { links: LinkItem[] }) {
       </div>
 
       {/* Content Layer */}
-      <div className="relative z-10 px-6 py-10 pt-20">
+      <div className="relative z-10 px-6 py-10 pt-10">
         <LinksClient links={links} />
       </div>
     </main>
