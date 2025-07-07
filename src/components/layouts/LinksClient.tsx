@@ -103,4 +103,4 @@ export default function LinksClient({ links }: LinksClientProps) {
       </motion.div>
     </div>
   );
-} 
+}

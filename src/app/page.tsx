@@ -2,7 +2,13 @@
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { FaProjectDiagram, FaUser, FaLightbulb, FaArrowDown, FaCode, FaRocket } from "react-icons/fa";
+import {
+  FaProjectDiagram,
+  FaUser,
+  FaLightbulb,
+  FaCode,
+  FaRocket,
+} from "react-icons/fa";
 import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import VariableProximity from "@/components/ui/VariableProximity";
@@ -30,7 +36,9 @@ export default function HomePage() {
   const [isVisible, setIsVisible] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [particleConfigs, setParticleConfigs] = useState<ParticleConfig[]>([]);
-  const [hoverParticleConfigs, setHoverParticleConfigs] = useState<HoverParticleConfig[]>([]);
+  const [hoverParticleConfigs, setHoverParticleConfigs] = useState<
+    HoverParticleConfig[]
+  >([]);
 
   useEffect(() => {
     setIsVisible(true);
@@ -47,19 +55,22 @@ export default function HomePage() {
     setParticleConfigs(configs);
 
     // Generate hover particle configurations on client side only
-    const hoverConfigs: HoverParticleConfig[] = Array.from({ length: 3 }, () => ({
-      x: Math.random() * 100 + "%",
-      y: Math.random() * 100 + "%",
-    }));
+    const hoverConfigs: HoverParticleConfig[] = Array.from(
+      { length: 3 },
+      () => ({
+        x: Math.random() * 100 + "%",
+        y: Math.random() * 100 + "%",
+      })
+    );
     setHoverParticleConfigs(hoverConfigs);
 
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove);
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
 
@@ -67,7 +78,7 @@ export default function HomePage() {
     <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
       <div className="fixed inset-0 w-screen h-screen">
         {isMounted && (
-          <div style={{ width: '100%', height: '100vh', position: 'relative' }}>
+          <div style={{ width: "100%", height: "100vh", position: "relative" }}>
             <DotGrid
               dotSize={4}
               gap={15}
@@ -94,17 +105,17 @@ export default function HomePage() {
               initial={{
                 x: config.initialX,
                 y: config.initialY,
-                opacity: 0
+                opacity: 0,
               }}
               animate={{
                 y: [null, -100, config.endY],
-                opacity: [0, 0.6, 0]
+                opacity: [0, 0.6, 0],
               }}
               transition={{
                 duration: config.duration,
                 repeat: Infinity,
                 delay: config.delay,
-                ease: "linear"
+                ease: "linear",
               }}
             />
           ))}
@@ -176,12 +187,12 @@ export default function HomePage() {
                 className="absolute -top-4 -right-4 text-accent/20"
                 animate={{
                   rotate: [0, 360],
-                  scale: [1, 1.2, 1]
+                  scale: [1, 1.2, 1],
                 }}
                 transition={{
                   duration: 8,
                   repeat: Infinity,
-                  ease: "linear"
+                  ease: "linear",
                 }}
               >
                 <FaCode size={24} />
@@ -191,12 +202,12 @@ export default function HomePage() {
                 className="absolute -bottom-4 -left-4 text-accent/20"
                 animate={{
                   rotate: [360, 0],
-                  scale: [1, 1.3, 1]
+                  scale: [1, 1.3, 1],
                 }}
                 transition={{
                   duration: 6,
                   repeat: Infinity,
-                  ease: "linear"
+                  ease: "linear",
                 }}
               >
                 <FaRocket size={20} />
@@ -223,24 +234,8 @@ export default function HomePage() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.25, duration: 0.25 }}
               >
-                Software Engineer • AI Enthusiast • Game Developer
+                SWE • AI • Games
               </motion.p>
-            </motion.div>
-
-            {/* Scroll indicator */}
-            <motion.div
-              className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.25 }}
-            >
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="text-accent/60 hover:text-accent transition-colors cursor-pointer"
-              >
-                <FaArrowDown size={20} />
-              </motion.div>
             </motion.div>
           </motion.section>
 
@@ -257,22 +252,22 @@ export default function HomePage() {
                 icon: FaProjectDiagram,
                 title: "Projects",
                 description: "Explore my latest work",
-                spotlightColor: "rgba(59, 130, 246, 0.15)"
+                spotlightColor: "rgba(59, 130, 246, 0.15)",
               },
               {
                 href: "/blog",
                 icon: FaLightbulb,
                 title: "Blog",
                 description: "Thoughts and insights",
-                spotlightColor: "rgba(245, 158, 11, 0.15)"
+                spotlightColor: "rgba(245, 158, 11, 0.15)",
               },
               {
                 href: "/about",
                 icon: FaUser,
                 title: "About",
                 description: "Get to know me",
-                spotlightColor: "rgba(16, 185, 129, 0.15)"
-              }
+                spotlightColor: "rgba(16, 185, 129, 0.15)",
+              },
             ].map((item, index) => (
               <motion.div
                 key={item.href}
@@ -291,7 +286,7 @@ export default function HomePage() {
                     <motion.div
                       whileHover={{
                         rotate: [0, -10, 10, -10, 0],
-                        scale: 1.1
+                        scale: 1.1,
                       }}
                       transition={{ duration: 0.25 }}
                       className="text-2xl md:text-3xl text-accent"
@@ -319,17 +314,17 @@ export default function HomePage() {
                           initial={{
                             x: config.x,
                             y: config.y,
-                            scale: 0
+                            scale: 0,
                           }}
                           whileHover={{
                             scale: [0, 1, 0],
-                            y: [null, "-30px"]
+                            y: [null, "-30px"],
                           }}
                           transition={{
                             duration: 2,
                             delay: i * 0.3,
                             repeat: Infinity,
-                            ease: "easeOut"
+                            ease: "easeOut",
                           }}
                         />
                       ))}

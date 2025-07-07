@@ -76,7 +76,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
   const groupedPosts = useMemo(() => {
     const groups: { [year: string]: BlogPost[] } = {};
 
-    sortedPosts.forEach(post => {
+    sortedPosts.forEach((post) => {
       const year = new Date(post.metadata.date).getFullYear().toString();
       if (!groups[year]) {
         groups[year] = [];
@@ -85,11 +85,13 @@ export default function BlogClient({ posts }: BlogClientProps) {
     });
 
     // Sort years in descending order (newest first)
-    const sortedYears = Object.keys(groups).sort((a, b) => parseInt(b) - parseInt(a));
+    const sortedYears = Object.keys(groups).sort(
+      (a, b) => parseInt(b) - parseInt(a)
+    );
 
-    return sortedYears.map(year => ({
+    return sortedYears.map((year) => ({
       year,
-      posts: groups[year]
+      posts: groups[year],
     }));
   }, [sortedPosts]);
 
@@ -272,7 +274,8 @@ export default function BlogClient({ posts }: BlogClientProps) {
                 </motion.h2>
                 <div className="flex-1 h-px bg-gradient-to-r from-accent/50 to-transparent" />
                 <span className="text-sm text-secondary-text bg-secondary-bg/50 px-3 py-1 rounded-full">
-                  {yearGroup.posts.length} post{yearGroup.posts.length !== 1 ? 's' : ''}
+                  {yearGroup.posts.length} post
+                  {yearGroup.posts.length !== 1 ? "s" : ""}
                 </span>
               </div>
 
@@ -283,7 +286,10 @@ export default function BlogClient({ posts }: BlogClientProps) {
                     key={post.slug}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: (yearIndex * 0.1) + (postIndex * 0.05) }}
+                    transition={{
+                      duration: 0.4,
+                      delay: yearIndex * 0.1 + postIndex * 0.05,
+                    }}
                     whileHover={{ y: -4 }}
                   >
                     <GlassCard
@@ -325,24 +331,27 @@ export default function BlogClient({ posts }: BlogClientProps) {
                         )}
 
                         {/* Tags */}
-                        {post.metadata.tags && post.metadata.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mt-auto">
-                            {post.metadata.tags.slice(0, 3).map((tag, index) => (
-                              <span
-                                key={index}
-                                className="flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-accent/10 text-accent"
-                              >
-                                <FaHashtag className="w-3 h-3" />
-                                {tag}
-                              </span>
-                            ))}
-                            {post.metadata.tags.length > 3 && (
-                              <span className="text-xs text-secondary-text px-2 py-1">
-                                +{post.metadata.tags.length - 3} more
-                              </span>
-                            )}
-                          </div>
-                        )}
+                        {post.metadata.tags &&
+                          post.metadata.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mt-auto">
+                              {post.metadata.tags
+                                .slice(0, 3)
+                                .map((tag, index) => (
+                                  <span
+                                    key={index}
+                                    className="flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-accent/10 text-accent"
+                                  >
+                                    <FaHashtag className="w-3 h-3" />
+                                    {tag}
+                                  </span>
+                                ))}
+                              {post.metadata.tags.length > 3 && (
+                                <span className="text-xs text-secondary-text px-2 py-1">
+                                  +{post.metadata.tags.length - 3} more
+                                </span>
+                              )}
+                            </div>
+                          )}
                       </div>
                     </GlassCard>
                   </motion.div>

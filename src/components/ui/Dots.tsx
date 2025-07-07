@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import React, { useRef, useEffect, useCallback, useMemo } from "react";
 import { gsap } from "gsap";
 import { InertiaPlugin } from "gsap/InertiaPlugin";
@@ -70,7 +70,9 @@ const DotGrid: React.FC<DotGridProps> = ({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const dotsRef = useRef<Dot[]>([]);
-  const fixedDimensionsRef = useRef<{ width: number; height: number } | null>(null);
+  const fixedDimensionsRef = useRef<{ width: number; height: number } | null>(
+    null
+  );
   const pointerRef = useRef({
     x: 0,
     y: 0,

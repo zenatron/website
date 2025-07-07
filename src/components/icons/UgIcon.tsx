@@ -1,9 +1,7 @@
 "use client";
 import React from "react";
 
-interface UgIconProps extends React.SVGProps<SVGSVGElement> {
-
-}
+interface UgIconProps extends React.SVGProps<SVGSVGElement> {}
 
 const UgIcon: React.FC<UgIconProps> = (props) => {
   return (

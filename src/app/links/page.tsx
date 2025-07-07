@@ -9,4 +9,4 @@ export const metadata: Metadata = {
 
 export default function LinksPage() {
   return <LinksLayout links={links} />;
-} 
+}

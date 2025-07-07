@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Roboto_Flex, Atkinson_Hyperlegible } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Roboto_Flex,
+  Atkinson_Hyperlegible,
+} from "next/font/google";
 import "./globals.css";
 import "./markdown.css";
 
@@ -37,7 +42,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${robotoFlex.variable} ${atkinson.variable}`}>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} ${robotoFlex.variable} ${atkinson.variable}`}
+    >
       <head>
         <link
           rel="stylesheet"

@@ -42,4 +42,4 @@ export const links: LinkItem[] = [
     description: "My social media presence.",
     icon: "FaBluesky",
   },
-]; 
+];

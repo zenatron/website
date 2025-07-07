@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 interface NavigationItem {
   href: string;
@@ -15,19 +15,26 @@ interface PillNavigationProps {
   className?: string;
 }
 
-export default function PillNavigation({ items, className = '' }: PillNavigationProps) {
+export default function PillNavigation({
+  items,
+  className = "",
+}: PillNavigationProps) {
   const pathname = usePathname();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   const isActive = (href: string) => {
-    if (href === '/') {
-      return pathname === '/';
+    if (href === "/") {
+      return pathname === "/";
     }
     return pathname.startsWith(href);
   };
 
   return (
-    <nav className={`relative ${className}`} role="navigation" aria-label="Main navigation">
+    <nav
+      className={`relative ${className}`}
+      role="navigation"
+      aria-label="Main navigation"
+    >
       {/* Elegant glass navigation container */}
       <div
         className="flex items-center gap-0.5 p-0.5
@@ -39,7 +46,9 @@ export default function PillNavigation({ items, className = '' }: PillNavigation
       >
         {items.map((item) => {
           const active = isActive(item.href);
-          const shouldShowSelected = hoveredItem ? hoveredItem === item.href : active;
+          const shouldShowSelected = hoveredItem
+            ? hoveredItem === item.href
+            : active;
 
           return (
             <Link
@@ -52,17 +61,16 @@ export default function PillNavigation({ items, className = '' }: PillNavigation
                 transition-all duration-150 ease-out
                 hover:scale-105 active:scale-95
                 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2 focus:ring-offset-transparent
-                ${shouldShowSelected
-                  ? 'bg-neutral-800/60 backdrop-blur-md border-neutral-600/40 text-primary-text shadow-lg'
-                  : 'text-secondary-text'
+                ${
+                  shouldShowSelected
+                    ? "bg-neutral-800/60 backdrop-blur-md border-neutral-600/40 text-primary-text shadow-lg"
+                    : "text-secondary-text"
                 }
               `}
               title={item.title}
               onMouseEnter={() => setHoveredItem(item.href)}
             >
-              <span className="relative whitespace-nowrap">
-                {item.label}
-              </span>
+              <span className="relative whitespace-nowrap">{item.label}</span>
             </Link>
           );
         })}

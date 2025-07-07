@@ -82,30 +82,32 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
 
   // Filter by type and sort
   const sortedProjects = useMemo(() => {
-    return [...filteredProjects]
-      // Filter by type
-      .filter(
-        (project) =>
-          !selectedType ||
-          (selectedType === "github"
-            ? !!project.links.github
-            : project.metadata.type === selectedType)
-      )
-      // Sort by field and direction
-      .sort((a, b) => {
-        if (sortField === "title") {
-          const comparison = a.metadata.title.localeCompare(b.metadata.title);
-          return sortDirection === "asc" ? comparison : -comparison;
-        } else {
-          // Sort by date - handle missing dates
-          if (!a.metadata.date) return sortDirection === "asc" ? -1 : 1;
-          if (!b.metadata.date) return sortDirection === "asc" ? 1 : -1;
+    return (
+      [...filteredProjects]
+        // Filter by type
+        .filter(
+          (project) =>
+            !selectedType ||
+            (selectedType === "github"
+              ? !!project.links.github
+              : project.metadata.type === selectedType)
+        )
+        // Sort by field and direction
+        .sort((a, b) => {
+          if (sortField === "title") {
+            const comparison = a.metadata.title.localeCompare(b.metadata.title);
+            return sortDirection === "asc" ? comparison : -comparison;
+          } else {
+            // Sort by date - handle missing dates
+            if (!a.metadata.date) return sortDirection === "asc" ? -1 : 1;
+            if (!b.metadata.date) return sortDirection === "asc" ? 1 : -1;
 
-          const dateA = new Date(a.metadata.date).getTime();
-          const dateB = new Date(b.metadata.date).getTime();
-          return sortDirection === "asc" ? dateA - dateB : dateB - dateA;
-        }
-      });
+            const dateA = new Date(a.metadata.date).getTime();
+            const dateB = new Date(b.metadata.date).getTime();
+            return sortDirection === "asc" ? dateA - dateB : dateB - dateA;
+          }
+        })
+    );
   }, [filteredProjects, selectedType, sortField, sortDirection]);
 
   // Group projects by year
@@ -115,7 +117,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
     sortedProjects.forEach((project) => {
       const year = project.metadata.date
         ? new Date(project.metadata.date).getFullYear().toString()
-        : 'Undated';
+        : "Undated";
 
       if (!groups[year]) {
         groups[year] = [];
@@ -127,8 +129,8 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
     return Object.entries(groups)
       .map(([year, projects]) => ({ year, projects }))
       .sort((a, b) => {
-        if (a.year === 'Undated') return 1;
-        if (b.year === 'Undated') return -1;
+        if (a.year === "Undated") return 1;
+        if (b.year === "Undated") return -1;
         return parseInt(b.year) - parseInt(a.year);
       });
   }, [sortedProjects]);
@@ -304,9 +306,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                   setSelectedType(selectedType === type ? null : type)
                 }
                 className={`px-3 py-1.5 flex items-center gap-2 border-r border-white/5 transition-colors hover:bg-white/5 capitalize
-                  ${
-                    selectedType === type ? "text-accent" : "text-muted-text"
-                  }`}
+                  ${selectedType === type ? "text-accent" : "text-muted-text"}`}
                 title={`Filter by type: ${type}`}
               >
                 {getTypeIcon(type)}
@@ -348,7 +348,8 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                 </motion.h2>
                 <div className="flex-1 h-px bg-gradient-to-r from-accent/50 to-transparent" />
                 <span className="text-sm text-secondary-text bg-secondary-bg/50 px-3 py-1 rounded-full">
-                  {yearGroup.projects.length} project{yearGroup.projects.length !== 1 ? 's' : ''}
+                  {yearGroup.projects.length} project
+                  {yearGroup.projects.length !== 1 ? "s" : ""}
                 </span>
               </div>
 
@@ -359,12 +360,16 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                     key={project.metadata.title}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: (yearIndex * 0.1) + (projectIndex * 0.05) }}
+                    transition={{
+                      duration: 0.4,
+                      delay: yearIndex * 0.1 + projectIndex * 0.05,
+                    }}
                     whileHover={{ y: -4 }}
                   >
                     <GlassCard
                       href={
-                        project.links.github || `/projects/${project.metadata.slug}`
+                        project.links.github ||
+                        `/projects/${project.metadata.slug}`
                       }
                       external={!!project.links.github}
                       className="h-full p-4 hover:border-accent/30 transition-all duration-300"
@@ -405,24 +410,27 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                         </p>
 
                         {/* Tags */}
-                        {project.metadata.tags && project.metadata.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mt-auto">
-                            {project.metadata.tags.slice(0, 3).map((tag, index) => (
-                              <span
-                                key={index}
-                                className="flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-accent/10 text-accent"
-                              >
-                                <FaHashtag className="w-3 h-3" />
-                                {tag}
-                              </span>
-                            ))}
-                            {project.metadata.tags.length > 3 && (
-                              <span className="text-xs text-secondary-text px-2 py-1">
-                                +{project.metadata.tags.length - 3} more
-                              </span>
-                            )}
-                          </div>
-                        )}
+                        {project.metadata.tags &&
+                          project.metadata.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mt-auto">
+                              {project.metadata.tags
+                                .slice(0, 3)
+                                .map((tag, index) => (
+                                  <span
+                                    key={index}
+                                    className="flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-accent/10 text-accent"
+                                  >
+                                    <FaHashtag className="w-3 h-3" />
+                                    {tag}
+                                  </span>
+                                ))}
+                              {project.metadata.tags.length > 3 && (
+                                <span className="text-xs text-secondary-text px-2 py-1">
+                                  +{project.metadata.tags.length - 3} more
+                                </span>
+                              )}
+                            </div>
+                          )}
                       </div>
                     </GlassCard>
                   </motion.div>

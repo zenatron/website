@@ -3,7 +3,11 @@
 /* Basic typography */
 .mdx-content {
   color: var(--primary-text);
-  font-family: "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Atkinson Hyperlegible",
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 .mdx-content h1,
@@ -14,7 +18,11 @@
 .mdx-content h6 {
   color: var(--primary-text);
   font-weight: 700;
-  font-family: "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Atkinson Hyperlegible",
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 .mdx-content h1 {
@@ -57,13 +65,21 @@
   color: var(--primary-text);
   margin-top: 1rem;
   margin-bottom: 1rem;
-  font-family: "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Atkinson Hyperlegible",
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 .mdx-content a {
   color: var(--accent);
   text-decoration: underline;
-  font-family: "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Atkinson Hyperlegible",
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 .mdx-content a:hover {
@@ -82,7 +98,11 @@
   padding-left: 1.5rem;
   margin: 1rem 0;
   color: var(--primary-text);
-  font-family: "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Atkinson Hyperlegible",
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 .mdx-content ol {
@@ -90,7 +110,11 @@
   padding-left: 1.5rem;
   margin: 1rem 0;
   color: var(--primary-text);
-  font-family: "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Atkinson Hyperlegible",
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 .mdx-content ol > li {
@@ -103,7 +127,11 @@
   margin: 0.5rem 0;
   padding-left: 0.5rem;
   color: var(--primary-text);
-  font-family: "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Atkinson Hyperlegible",
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 .mdx-content ul > li::marker,
@@ -120,7 +148,11 @@
   margin: 1rem 0;
   font-style: italic;
   color: var(--primary-text);
-  font-family: "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Atkinson Hyperlegible",
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 /* Callouts */
@@ -187,7 +219,11 @@
   border-collapse: collapse;
   margin: 1.5rem 0;
   color: var(--primary-text);
-  font-family: "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Atkinson Hyperlegible",
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 .mdx-content thead {
@@ -205,14 +241,22 @@
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--primary-text);
-  font-family: "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Atkinson Hyperlegible",
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 .mdx-content td {
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
   color: var(--primary-text);
-  font-family: "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Atkinson Hyperlegible",
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 /* Code blocks */
@@ -222,7 +266,8 @@
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
   font-size: 0.875rem;
-  font-family: "Atkinson Hyperlegible Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  font-family:
+    "Atkinson Hyperlegible Mono", Consolas, "Liberation Mono", Menlo, monospace;
 }
 
 .mdx-content pre {
@@ -233,7 +278,8 @@
   overflow-x: auto;
   margin: 1.5rem 0;
   font-size: 0.875rem;
-  font-family: "Atkinson Hyperlegible Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  font-family:
+    "Atkinson Hyperlegible Mono", Consolas, "Liberation Mono", Menlo, monospace;
 }
 
 /* Images */
