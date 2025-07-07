@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import MobileMenu from "@/components/ui/MobileMenu";
 import DecryptText from "./ui/DecryptText";
+import PillNavigation from "./ui/PillNavigation";
 
 export default function Header() {
-  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,19 +19,20 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const isActive = (path: string) => pathname === path;
+
 
   return (
     <header
-      className={`
-        fixed top-0 left-0 right-0 z-50
-        flex items-center justify-between px-6 py-4
-        transition-all duration-300 ease-in-out
-        ${isScrolled
-          ? 'bg-primary-bg/80 backdrop-blur-xl border-b border-white/5 shadow-lg shadow-black/20'
-          : 'bg-transparent'
-        }
-      `}
+      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4"
+      style={{
+        backgroundColor: isScrolled ? 'rgba(16, 16, 16, 0.6)' : 'transparent',
+        backdropFilter: isScrolled ? 'blur(15px)' : 'blur(0px)',
+        borderBottom: `1px solid rgba(255, 255, 255, ${isScrolled ? 0.05 : 0})`,
+        boxShadow: isScrolled
+          ? '0 10px 25px -5px rgba(0, 0, 0, 0.2)'
+          : '0 0 0 0 rgba(0, 0, 0, 0)',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+      }}
     >
       {/* Logo Section */}
       <div className="flex items-center">
@@ -40,44 +41,26 @@ export default function Header() {
             initialText="pvi.sh"
             finalText="Phil Vishnevsky"
             className="text-xl font-bold hover:text-accent transition-all duration-300 group-hover:scale-105"
-            decryptionSpeed={40}
+            decryptionSpeed={24}
           />
         </Link>
       </div>
 
       {/* Desktop Navigation */}
-      <nav className="hidden md:flex items-center">
-        <div className="flex items-center space-x-1 bg-white/5 backdrop-blur-md rounded-full px-2 py-1 border border-white/10">
-          {[
-            { href: "/projects", label: "Projects", title: "Browse My Projects" },
-            { href: "/blog", label: "Blog", title: "Read My Blog" },
-            { href: "/about", label: "About", title: "Learn More About Me" }
-          ].map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`
-                relative px-4 py-2 rounded-full text-sm font-medium
-                transition-all duration-300 ease-in-out
-                hover:text-accent hover:scale-105
-                ${isActive(item.href)
-                  ? 'text-accent bg-accent/10 shadow-inner'
-                  : 'text-secondary-text hover:bg-white/5'
-                }
-              `}
-              title={item.title}
-            >
-              {item.label}
-              {isActive(item.href) && (
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-accent/20 to-purple-500/20 animate-pulse" />
-              )}
-            </Link>
-          ))}
-        </div>
-      </nav>
+      <PillNavigation
+        className="hidden md:flex items-center"
+        items={[
+          { href: "/projects", label: "Projects", title: "Browse My Projects" },
+          { href: "/blog", label: "Blog", title: "Read My Blog" },
+          { href: "/about", label: "About", title: "Learn More About Me" }
+        ]}
+      />
 
       {/* Mobile Menu */}
-      <MobileMenu />
+      <MobileMenu
+        menuOpen={mobileMenuOpen}
+        setMenuOpen={setMobileMenuOpen}
+      />
     </header>
   );
 }

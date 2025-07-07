@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   FaProjectDiagram,
   FaLightbulb,
@@ -11,8 +10,12 @@ import Link from "next/link";
 import ShinyText from "./ShinyText";
 import pkg from "../../../package.json";
 
-export default function MobileMenu() {
-  const [menuOpen, setMenuOpen] = useState(false);
+interface MobileMenuProps {
+  menuOpen: boolean;
+  setMenuOpen: (open: boolean) => void;
+}
+
+export default function MobileMenu({ menuOpen, setMenuOpen }: MobileMenuProps) {
   const versionText = `v${pkg.version}`;
 
   return (
@@ -70,13 +73,16 @@ export default function MobileMenu() {
 
         {/* Menu */}
         <nav
-          className={`fixed top-0 right-0 h-full w-1/2 
-            bg-secondary-bg/30 backdrop-blur-xl
+          className={`fixed top-0 right-0 h-screen w-1/2 max-w-80
             border-l border-white/5
-            flex flex-col items-start space-y-6 py-6 px-6 z-30 
-            shadow-[0_0_15px_rgba(0,0,0,0.2)]
-            transition-transform transform duration-300 
+            flex flex-col items-start space-y-6 py-6 px-6 z-30
+            transition-transform transform duration-300
             ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
+          style={{
+            backgroundColor: 'rgba(16, 16, 16, 0.9)',
+            backdropFilter: 'blur(25px)',
+            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)',
+          }}
         >
           {/* Back Button */}
           <button

@@ -19,6 +19,7 @@
 :root {
   --primary-text: #e6e6e6;
   --primary-bg: #101010;
+  --primary-bg-rgb: 16, 16, 16;
   --secondary-bg: #252525;
   --accent: #227be0;
   --btn-primary: #227be0;

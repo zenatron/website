@@ -7,7 +7,7 @@ import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import VariableProximity from "@/components/ui/VariableProximity";
 import GradientText from "@/components/ui/GradientText";
-import Cubes from "@/components/ui/Cubes";
+import DotGrid from "@/components/ui/Dots";
 import GlassCard from "@/components/ui/GlassCard";
 import ShinyText from "@/components/ui/ShinyText";
 export default function HomePage() {
@@ -35,19 +35,20 @@ export default function HomePage() {
       {/* Wrapper div to contain the fixed background */}
       <div className="fixed inset-0 w-screen h-screen">
         {isMounted && (
-          <Cubes
-            gridSize={16}
-            maxAngle={75}
-            radius={5}
-            borderStyle="1px solid rgba(255, 255, 255, 0.08)"
-            faceColor="rgba(26, 26, 26, 0.6)"
-            rippleColor="rgba(34, 123, 224, 0.6)"
-            rippleSpeed={1.2}
-            autoAnimate={true}
-            rippleOnClick={true}
-            duration={{ enter: 0.4, leave: 0.8 }}
-            cellGap={2}
-          />
+          <div style={{ width: '100%', height: '100vh', position: 'relative' }}>
+            <DotGrid
+              dotSize={4}
+              gap={15}
+              baseColor="#333333"
+              activeColor="#444444"
+              proximity={120}
+              shockRadius={250}
+              useFixedDimensions={true}
+              shockStrength={5}
+              resistance={750}
+              returnDuration={1.5}
+            />
+          </div>
         )}
         {/* Subtle overlay to ensure content readability */}
         <div className="absolute inset-0 bg-gradient-to-b from-primary-bg/20 via-transparent to-primary-bg/40 pointer-events-none" />
@@ -218,7 +219,7 @@ export default function HomePage() {
 
           {/* Enhanced Navigation Cards */}
           <motion.section
-            className="mt-20 grid gap-6 md:gap-8 grid-cols-1 md:grid-cols-3 mx-auto max-w-4xl w-full"
+            className="mt-16 grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-3 mx-auto max-w-3xl w-full px-4"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.5, duration: 0.8 }}
@@ -256,26 +257,26 @@ export default function HomePage() {
               >
                 <GlassCard
                   href={item.href}
-                  className="p-6 md:p-8 h-full relative overflow-hidden group hover:border-accent/30"
+                  className="p-4 md:p-6 h-full relative overflow-hidden group hover:border-accent/30"
                   spotlightColor={item.spotlightColor}
                 >
-                  <div className="relative z-10 flex flex-col items-center justify-center h-full text-center space-y-4">
+                  <div className="relative z-10 flex flex-col items-center justify-center h-full text-center space-y-3">
                     <motion.div
                       whileHover={{
                         rotate: [0, -10, 10, -10, 0],
-                        scale: 1.2
+                        scale: 1.1
                       }}
                       transition={{ duration: 0.5 }}
-                      className="text-4xl md:text-5xl text-accent mb-2"
+                      className="text-2xl md:text-3xl text-accent"
                     >
                       <item.icon />
                     </motion.div>
 
                     <div>
-                      <h3 className="text-lg md:text-xl font-bold mb-2 group-hover:text-accent transition-colors">
+                      <h3 className="text-base md:text-lg font-bold mb-1 group-hover:text-accent transition-colors">
                         {item.title}
                       </h3>
-                      <p className="text-sm text-secondary-text group-hover:text-primary-text transition-colors">
+                      <p className="text-xs md:text-sm text-secondary-text group-hover:text-primary-text transition-colors">
                         {item.description}
                       </p>
                     </div>
