@@ -1,7 +1,7 @@
 {
   "Python_Exercise": {
     "title": "Intro to Data Mining: Python Exercises",
-    "date": "2024-01-15",
+    "date": "2025-01-15",
     "description": "A collection of Python exercises covering basic to advanced concepts",
     "downloads": [
       {
@@ -11,7 +11,7 @@
   },
   "Pandas_Numpy_Exercise": {
     "title": "Intro to Data Mining: Pandas & Numpy Exercises",
-    "date": "2024-01-20",
+    "date": "2025-01-20",
     "description": "Data manipulation exercises using Pandas and NumPy libraries",
     "downloads": [
       {

@@ -53,7 +53,7 @@ export default async function ProjectPage({
     return (
       <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
         <Header />
-        <main className="flex-1 px-6 py-10">
+        <main className="flex-1 px-6 py-10 pt-20">
           <div className="max-w-4xl mx-auto">
             <div className="flex justify-between items-center mb-6">
               <Link

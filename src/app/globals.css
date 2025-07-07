@@ -18,7 +18,8 @@
 
 :root {
   --primary-text: #e6e6e6;
-  --primary-bg: #101010;
+  --primary-bg: #080808;
+  --primary-bg-rgb: 8, 8, 8;
   --secondary-bg: #252525;
   --accent: #227be0;
   --btn-primary: #227be0;

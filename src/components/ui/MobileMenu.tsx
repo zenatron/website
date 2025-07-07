@@ -70,12 +70,12 @@ export default function MobileMenu() {
 
         {/* Menu */}
         <nav
-          className={`fixed top-0 right-0 h-full w-1/2 
+          className={`fixed top-0 right-0 h-full sm:w-3/5 md:w-1/2 lg:w-96 
             bg-secondary-bg/30 backdrop-blur-xl
             border-l border-white/5
-            flex flex-col items-start space-y-6 py-6 px-6 z-30 
+            flex flex-col items-start space-y-6 py-6 px-6 z-30
             shadow-[0_0_15px_rgba(0,0,0,0.2)]
-            transition-transform transform duration-300 
+            transition-transform transform duration-300
             ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
         >
           {/* Back Button */}

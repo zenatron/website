@@ -46,7 +46,7 @@ export default async function BlogPage({
   return (
     <div className="min-h-screen flex flex-col bg-transparent relative">
       <Header />
-      <main className="flex-1 px-6 py-10">
+      <main className="flex-1 px-6 py-10 pt-20">
         <div className="max-w-xl md:max-w-3xl mx-auto">
           <Link
             href="/blog"

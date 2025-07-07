@@ -15,9 +15,11 @@ export default async function ProjectsPage() {
   return (
     <div className="min-h-screen flex flex-col bg-transparent">
       <Header />
-      <Suspense fallback={<ClientSkeletonLoader layout="grid" />}>
-        <ProjectsLayout projects={allProjects} />
-      </Suspense>
+      <div className="pt-4">
+        <Suspense fallback={<ClientSkeletonLoader layout="grid" />}>
+          <ProjectsLayout projects={allProjects} />
+        </Suspense>
+      </div>
       <Footer />
       <BackToTopButton />
     </div>

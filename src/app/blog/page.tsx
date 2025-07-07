@@ -12,9 +12,11 @@ export default async function BlogPage() {
   return (
     <div className="min-h-screen flex flex-col bg-transparent">
       <Header />
-      <Suspense fallback={<ClientSkeletonLoader layout="list" />}>
-        <BlogLayout posts={posts} />
-      </Suspense>
+      <div className="pt-4">
+        <Suspense fallback={<ClientSkeletonLoader layout="list" />}>
+          <BlogLayout posts={posts} />
+        </Suspense>
+      </div>
       <Footer />
       <BackToTopButton />
     </div>

@@ -12,7 +12,7 @@ export default function Header() {
           initialText="pvi.sh"
           finalText="Phil Vishnevsky"
           className="text-xl font-bold hover:text-accent transition-colors"
-          decryptionSpeed={40}
+          decryptionSpeed={32}
         />
       </Link>
 
