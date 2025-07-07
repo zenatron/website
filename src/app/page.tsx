@@ -175,7 +175,7 @@ export default function HomePage() {
               className="space-y-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
+              transition={{ delay: 0.25, duration: 0.8 }}
             >
               <ShinyText
                 text={"Let's build something amazing together."}
@@ -188,7 +188,7 @@ export default function HomePage() {
                 className="text-secondary-text text-sm md:text-base max-w-2xl mx-auto leading-relaxed"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1, duration: 0.8 }}
+                transition={{ delay: 0.25, duration: 0.8 }}
               >
                 Software Engineer • AI Enthusiast • Game Developer
               </motion.p>
@@ -199,7 +199,7 @@ export default function HomePage() {
               className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 2, duration: 0.8 }}
+              transition={{ delay: 1.0, duration: 0.8 }}
             >
               <motion.div
                 animate={{ y: [0, 10, 0] }}
@@ -216,7 +216,7 @@ export default function HomePage() {
             className="mt-4 grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-3 mx-auto max-w-3xl w-full px-4 py-4"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.0, duration: 0.8 }}
+            transition={{ delay: 0.75, duration: 0.8 }}
           >
             {[
               {
@@ -245,7 +245,7 @@ export default function HomePage() {
                 key={item.href}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.0 + index * 0.1, duration: 0.6 }}
+                transition={{ delay: 0.75 + index * 0.1, duration: 0.6 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
