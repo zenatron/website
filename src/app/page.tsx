@@ -32,15 +32,14 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
-      {/* Wrapper div to contain the fixed background */}
       <div className="fixed inset-0 w-screen h-screen">
         {isMounted && (
           <div style={{ width: '100%', height: '100vh', position: 'relative' }}>
             <DotGrid
               dotSize={4}
               gap={15}
-              baseColor="#333333"
-              activeColor="#444444"
+              baseColor="#111111"
+              activeColor="#222222"
               proximity={120}
               shockRadius={250}
               useFixedDimensions={true}
@@ -50,14 +49,9 @@ export default function HomePage() {
             />
           </div>
         )}
-        {/* Subtle overlay to ensure content readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-primary-bg/20 via-transparent to-primary-bg/40 pointer-events-none" />
       </div>
 
-      {/* Semi-transparent overlay */}
-      <div className="fixed inset-0 bg-black/50" />
-
-      {/* Floating particles - only render after mount to prevent hydration mismatch */}
+      {/* Floating particles */}
       {isMounted && (
         <div className="fixed inset-0 pointer-events-none z-10">
           {[...Array(12)].map((_, i) => (
@@ -219,10 +213,10 @@ export default function HomePage() {
 
           {/* Enhanced Navigation Cards */}
           <motion.section
-            className="mt-16 grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-3 mx-auto max-w-3xl w-full px-4"
+            className="mt-4 grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-3 mx-auto max-w-3xl w-full px-4 py-4"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.5, duration: 0.8 }}
+            transition={{ delay: 1.0, duration: 0.8 }}
           >
             {[
               {
@@ -251,7 +245,7 @@ export default function HomePage() {
                 key={item.href}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.7 + index * 0.1, duration: 0.6 }}
+                transition={{ delay: 1.0 + index * 0.1, duration: 0.6 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >

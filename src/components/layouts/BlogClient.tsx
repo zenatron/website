@@ -326,13 +326,13 @@ export default function BlogClient({ posts }: BlogClientProps) {
 
                         {/* Tags */}
                         {post.metadata.tags && post.metadata.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-auto">
+                          <div className="flex flex-wrap gap-2 mt-auto">
                             {post.metadata.tags.slice(0, 3).map((tag, index) => (
                               <span
                                 key={index}
-                                className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-md bg-accent/10 text-accent/80 hover:bg-accent/20 transition-colors"
+                                className="flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-accent/10 text-accent"
                               >
-                                <FaHashtag className="w-2 h-2" />
+                                <FaHashtag className="w-3 h-3" />
                                 {tag}
                               </span>
                             ))}

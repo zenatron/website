@@ -12,7 +12,7 @@ export default async function BlogPage() {
   return (
     <div className="min-h-screen flex flex-col bg-transparent">
       <Header />
-      <div className="pt-20">
+      <div className="pt-4">
         <Suspense fallback={<ClientSkeletonLoader layout="list" />}>
           <BlogLayout posts={posts} />
         </Suspense>
