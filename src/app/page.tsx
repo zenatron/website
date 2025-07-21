@@ -82,8 +82,8 @@ export default function HomePage() {
             <DotGrid
               dotSize={4}
               gap={15}
-              baseColor="#111111"
-              activeColor="#222222"
+              baseColor="#161616"
+              activeColor="#242424"
               proximity={120}
               shockRadius={250}
               useFixedDimensions={true}

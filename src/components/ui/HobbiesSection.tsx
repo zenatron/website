@@ -137,7 +137,7 @@ export default function HobbiesSection() {
             transition={{ delay: index * 0.1, duration: 0.4 }}
             whileHover={{ scale: 1.03, y: -5 }}
             onClick={() => setSelectedHobby(selectedHobby === hobby.name ? null : hobby.name)}
-            className="relative p-6 bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-3xl shadow-lg hover:border-accent/30 transition-all duration-300 cursor-pointer overflow-hidden"
+            className="relative p-6 bg-neutral-800/40 backdrop-blur-sm border border-neutral-600/40 rounded-2xl shadow-md hover:border-accent/40 transition-all duration-300 cursor-pointer overflow-hidden"
           >
             {/* Background Gradient */}
             <div 
@@ -217,18 +217,18 @@ export default function HobbiesSection() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
-        className="text-center p-6 bg-gradient-to-r from-accent/10 to-purple-500/10 backdrop-blur-md border border-accent/20 rounded-3xl"
+        className="text-center p-6 bg-gradient-to-r from-accent/5 to-purple-500/5 backdrop-blur-sm border border-accent/10 rounded-2xl"
       >
         <h3 className="text-lg font-semibold mb-2 text-primary-text">
           Life Philosophy
         </h3>
-        <div className="text-center flex flex-col gap-4">
+        <div className="text-center flex flex-col items-center gap-4">
           <p className="text-muted-text leading-relaxed">
             {"\"The best way to predict the future is to create it. Whether through code, art, or adventure, I believe in building experiences that matter and inspire others to do the same.\""}
           </p>
           <Link
             href={"/principles"}
-            className="btn btn-primary"
+            className="btn btn-primary inline-block"
           >
             {"Read My Principles"}
           </Link>

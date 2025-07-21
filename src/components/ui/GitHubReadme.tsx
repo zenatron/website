@@ -4,16 +4,18 @@ import { motion } from "framer-motion";
 import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { marked } from "marked";
+import DOMPurify from "dompurify";
 
 interface GitHubReadmeData {
-  content: string;
+  htmlContent: string;
   loading: boolean;
   error: string | null;
 }
 
 export default function GitHubReadme() {
   const [readmeData, setReadmeData] = useState<GitHubReadmeData>({
-    content: '',
+    htmlContent: '',
     loading: true,
     error: null
   });
@@ -28,16 +30,35 @@ export default function GitHubReadme() {
           throw new Error('Failed to fetch README');
         }
 
-        const content = await response.text();
+        const rawContent = await response.text();
+
+        // Remove everything before the first horizontal separator
+        const separatorIndex = rawContent.indexOf('---');
+        const processedContent = separatorIndex !== -1
+          ? rawContent.substring(separatorIndex + 3).trim()
+          : rawContent;
+
+        // Configure marked to handle HTML and GitHub-flavored markdown
+        marked.setOptions({
+          gfm: true,
+          breaks: true,
+        });
+
+        // Convert markdown to HTML
+        const htmlContent = await marked(processedContent);
+
+        // Sanitize the HTML content
+        const sanitizedHtml = DOMPurify.sanitize(htmlContent);
+
         setReadmeData({
-          content,
+          htmlContent: sanitizedHtml,
           loading: false,
           error: null
         });
       } catch (error) {
         console.error('Error fetching README:', error);
         setReadmeData({
-          content: '',
+          htmlContent: '',
           loading: false,
           error: 'Failed to load README content'
         });
@@ -47,69 +68,8 @@ export default function GitHubReadme() {
     fetchReadme();
   }, []);
 
-  // Parse the README content to extract sections
-  const parseReadmeContent = (content: string) => {
-    const lines = content.split('\n');
-    const sections: { [key: string]: string[] } = {};
-    let currentSection = '';
-
-    for (const line of lines) {
-      if (line.startsWith('## ') || line.startsWith('### ')) {
-        currentSection = line.replace(/^#+\s*/, '').replace(/\s*$/, '');
-        sections[currentSection] = [];
-      } else if (currentSection && line.trim()) {
-        sections[currentSection].push(line);
-      }
-    }
 
 
-
-    return sections;
-  };
-
-  // Extract image URLs from markdown and HTML
-  const extractImages = (content: string): string[] => {
-    if (!content) return [];
-
-    // Look for img tags with or without quotes around src
-    const htmlImageRegex = /<img[^>]+src=([^>\s]+)/g;
-    const images: string[] = [];
-    let match;
-
-    while ((match = htmlImageRegex.exec(content)) !== null) {
-      // Clean up the URL by removing quotes if present
-      let url = match[1].replace(/['"]/g, '');
-      images.push(url);
-    }
-
-    return images;
-  };
-
-  // Extract links from markdown and HTML
-  const extractLinks = (content: string): Array<{text: string, url: string, icon?: string}> => {
-    if (!content) return [];
-
-    // Look for HTML links with images
-    const htmlLinkRegex = /<a[^>]+href=([^>\s]+)[^>]*>(.*?)<\/a>/g;
-    const links: Array<{text: string, url: string, icon?: string}> = [];
-    let match;
-
-    while ((match = htmlLinkRegex.exec(content)) !== null) {
-      const url = match[1].replace(/['"]/g, '');
-      const linkContent = match[2];
-
-      // Extract icon from img tag within the link
-      const iconMatch = linkContent.match(/<img[^>]+src=([^>\s]+)/);
-      const icon = iconMatch ? iconMatch[1].replace(/['"]/g, '') : undefined;
-
-      // Extract text (remove img tags)
-      const text = linkContent.replace(/<img[^>]*>/g, '').trim() || 'Link';
-
-      links.push({ text, url, icon });
-    }
-
-    return links;
-  };
   if (readmeData.loading) {
     return (
       <div className="space-y-8">
@@ -153,12 +113,6 @@ export default function GitHubReadme() {
     );
   }
 
-  // Parse the README content
-  const sections = parseReadmeContent(readmeData.content);
-  const currentlyLearningImages = extractImages(sections['🧠 Currently Learning']?.join('\n') || '');
-  const techImages = extractImages(sections['⚙️ Technologies & Languages']?.join('\n') || '');
-  const contactLinks = extractLinks(sections['📫 Get in Touch']?.join('\n') || '');
-
   return (
     <div className="space-y-8">
       {/* GitHub README Embed */}
@@ -186,106 +140,21 @@ export default function GitHubReadme() {
         </div>
 
         {/* README Content */}
-        <div className="p-6 md:p-8">
-          {/* Currently Learning Section */}
-          {currentlyLearningImages.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="mb-8"
-            >
-              <h3 className="text-xl font-semibold text-primary-text mb-4 flex items-center gap-2">
-                🧠 Currently Learning
-              </h3>
-              <div className="grid grid-cols-4 md:grid-cols-5 gap-4">
-                {currentlyLearningImages.map((imageUrl, index) => {
-                  // Extract tech name from URL or use index
-                  const techName = imageUrl.split('/').pop()?.replace('.svg', '') || `Tech ${index + 1}`;
-                  return (
-                    <motion.div
-                      key={imageUrl}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.2 + index * 0.1 }}
-                      className="flex flex-col items-center gap-2 p-3 bg-neutral-800/30 rounded-xl border border-neutral-600/20"
-                      title={techName}
-                    >
-                      <img src={imageUrl} alt={techName} className="w-8 h-8" />
-                      <span className="text-xs text-muted-text text-center capitalize">{techName}</span>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </motion.div>
-          )}
-
-          {/* Technologies & Languages Section */}
-          {techImages.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="mb-8"
-            >
-              <h3 className="text-xl font-semibold text-primary-text mb-4 flex items-center gap-2">
-                ⚙️ Technologies & Languages
-              </h3>
-              <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
-                {techImages.map((imageUrl, index) => {
-                  // Extract tech name from URL or use index
-                  const techName = imageUrl.split('/').pop()?.replace('.svg', '') || `Tech ${index + 1}`;
-                  return (
-                    <motion.div
-                      key={imageUrl}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.4 + index * 0.05 }}
-                      className="flex flex-col items-center gap-2 p-3 bg-neutral-800/30 rounded-xl border border-neutral-600/20"
-                      title={techName}
-                    >
-                      <img src={imageUrl} alt={techName} className="w-8 h-8" />
-                      <span className="text-xs text-muted-text text-center capitalize">{techName}</span>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </motion.div>
-          )}
-
-          {/* Contact Links */}
-          {contactLinks.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="text-center"
-            >
-              <h3 className="text-xl font-semibold text-primary-text mb-4 flex items-center justify-center gap-2">
-                📫 Get in Touch
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-                {contactLinks.map((contact, index) => (
-                  <motion.div
-                    key={contact.url}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.6 + index * 0.1 }}
-                  >
-                    <Link
-                      href={contact.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex flex-col items-center gap-2 p-4 bg-neutral-800/30 rounded-xl border border-neutral-600/20 hover:border-accent/30 transition-all duration-200"
-                    >
-                      {contact.icon && <img src={contact.icon} alt={contact.text} className="w-8 h-8" />}
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </div>
+        <div
+          className="p-6 md:p-8 prose prose-invert max-w-none
+            prose-h2:text-xl prose-h2:font-semibold prose-h2:text-primary-text prose-h2:mb-4 prose-h2:mt-6 prose-h2:first:mt-0 prose-h2:flex prose-h2:items-center prose-h2:gap-2
+            prose-h3:text-lg prose-h3:font-semibold prose-h3:text-primary-text prose-h3:mb-3 prose-h3:mt-5 prose-h3:first:mt-0 prose-h3:flex prose-h3:items-center prose-h3:gap-2
+            prose-p:text-muted-text prose-p:mb-4 prose-p:leading-relaxed
+            prose-img:inline-block prose-img:w-8 prose-img:h-8 md:prose-img:w-10 md:prose-img:h-10 prose-img:mx-1 prose-img:my-1 prose-img:rounded-md prose-img:bg-white/10 prose-img:p-1
+            prose-a:text-accent prose-a:no-underline hover:prose-a:text-accent/80 prose-a:transition-colors prose-a:duration-200
+            prose-table:w-full prose-table:border-collapse prose-table:mb-6
+            prose-thead:bg-neutral-800/50
+            prose-tbody:divide-y prose-tbody:divide-neutral-600/30
+            prose-tr:hover:bg-neutral-800/25 prose-tr:transition-colors
+            prose-td:px-4 prose-td:py-3 prose-td:text-center
+            prose-th:px-4 prose-th:py-3 prose-th:text-center prose-th:font-semibold prose-th:text-primary-text"
+          dangerouslySetInnerHTML={{ __html: readmeData.htmlContent }}
+        />
       </motion.div>
     </div>
   );

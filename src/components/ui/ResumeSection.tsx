@@ -20,61 +20,25 @@ export default function ResumeSection() {
 
   return (
     <div className="space-y-6">
-      {/* Main Resume Card */}
+      {/* Simplified Resume Content */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="relative overflow-hidden bg-gradient-to-br from-accent/10 via-purple-500/5 to-transparent backdrop-blur-md border border-accent/20 rounded-3xl p-8 shadow-2xl"
+        className="relative text-center"
       >
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <motion.div
-            animate={{
-              rotate: [0, 360],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: 20,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-            className="absolute -top-10 -right-10 w-32 h-32 bg-accent/5 rounded-full"
-          />
-          <motion.div
-            animate={{
-              rotate: [360, 0],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 15,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-            className="absolute -bottom-10 -left-10 w-24 h-24 bg-purple-500/5 rounded-full"
-          />
-        </div>
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mb-6"
+        >
+          <FaFileAlt className="text-4xl text-accent mx-auto mb-4" />
+        </motion.div>
 
-        <div className="relative z-10 text-center">
-          {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mb-6"
-          >
-            <FaFileAlt className="text-4xl text-accent mx-auto mb-4" />
-            <h2 className="text-2xl md:text-3xl font-bold text-primary-text mb-2">
-              My Resume
-            </h2>
-            <p className="text-muted-text leading-relaxed max-w-2xl mx-auto">
-              Download my latest resume to learn more about my professional experience, 
-              education, and technical skills. Always kept up-to-date with my latest projects and achievements.
-            </p>
-          </motion.div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             {/* Download Button */}
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -113,29 +77,28 @@ export default function ResumeSection() {
               <FaEye className="text-lg" />
               <span>Preview Online</span>
             </motion.button>
-          </div>
-
-          {/* Resume Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4"
-          >
-            <div className="p-4 bg-neutral-800/30 backdrop-blur-sm rounded-2xl border border-neutral-600/20">
-              <div className="text-2xl font-bold text-accent">5+</div>
-              <div className="text-sm text-muted-text">Years Experience</div>
-            </div>
-            <div className="p-4 bg-neutral-800/30 backdrop-blur-sm rounded-2xl border border-neutral-600/20">
-              <div className="text-2xl font-bold text-accent">20+</div>
-              <div className="text-sm text-muted-text">Projects Completed</div>
-            </div>
-            <div className="p-4 bg-neutral-800/30 backdrop-blur-sm rounded-2xl border border-neutral-600/20">
-              <div className="text-2xl font-bold text-accent">15+</div>
-              <div className="text-sm text-muted-text">Technologies</div>
-            </div>
-          </motion.div>
         </div>
+
+        {/* Resume Stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4"
+        >
+          <div className="p-4 bg-neutral-800/30 backdrop-blur-sm rounded-2xl border border-neutral-600/20">
+            <div className="text-2xl font-bold text-accent">5+</div>
+            <div className="text-sm text-muted-text">Years Experience</div>
+          </div>
+          <div className="p-4 bg-neutral-800/30 backdrop-blur-sm rounded-2xl border border-neutral-600/20">
+            <div className="text-2xl font-bold text-accent">20+</div>
+            <div className="text-sm text-muted-text">Projects Completed</div>
+          </div>
+          <div className="p-4 bg-neutral-800/30 backdrop-blur-sm rounded-2xl border border-neutral-600/20">
+            <div className="text-2xl font-bold text-accent">15+</div>
+            <div className="text-sm text-muted-text">Technologies</div>
+          </div>
+        </motion.div>
       </motion.div>
 
 

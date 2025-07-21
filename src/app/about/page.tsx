@@ -21,26 +21,62 @@ export default function AboutPage() {
 
   // Intersection Observer for section animations
   useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['photos-bio', 'resume', 'github', 'hobbies'];
+      const windowHeight = window.innerHeight;
+      const scrollTop = window.scrollY;
+
+      // Check each section to see which one is most visible
+      let activeId = 'photos-bio'; // Default to first section
+
+      for (const sectionId of sections) {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          const elementTop = rect.top + scrollTop;
+
+          // If we're past the top of this section
+          if (scrollTop + windowHeight * 0.3 >= elementTop) {
+            activeId = sectionId;
+          }
+        }
+      }
+
+      setActiveSection(activeId);
+    };
+
+    // Use intersection observer as backup for animations
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
+            // Only update if we don't have an active section from scroll
+            handleScroll();
           }
         });
       },
-      { threshold: 0.3 }
+      {
+        threshold: 0.1,
+        rootMargin: '-20% 0px -20% 0px'
+      }
     );
 
-    const sections = document.querySelectorAll('[data-section]');
-    sections.forEach((section) => observer.observe(section));
+    const sectionElements = document.querySelectorAll('[data-section]');
+    sectionElements.forEach((section) => observer.observe(section));
 
-    return () => observer.disconnect();
+    window.addEventListener('scroll', handleScroll);
+
+    // Set initial state
+    handleScroll();
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   const sections = [
-    { id: "photos", title: "Photos", component: PhotoCarousel },
-    { id: "bio", title: "About Me", component: PersonalBio },
+    { id: "photos-bio", title: "About Me", component: PersonalBio },
     { id: "resume", title: "Resume", component: ResumeSection },
     { id: "github", title: "Skills & Tech", component: GitHubReadme },
     { id: "hobbies", title: "Hobbies", component: HobbiesSection },
@@ -109,17 +145,17 @@ export default function AboutPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.6 }}
-          className="sticky top-20 z-20 px-6 mb-12"
+          className="sticky top-4 z-20 px-6 mb-8"
         >
-          <div className="max-w-4xl mx-auto">
-            <div className="flex flex-wrap justify-center gap-2 p-4 bg-neutral-800/50 backdrop-blur-md border border-neutral-600/30 rounded-2xl shadow-lg">
+          <div className="flex justify-center">
+            <div className="inline-flex flex-wrap justify-center gap-1 p-1 bg-neutral-800/60 backdrop-blur-md border border-neutral-600/40 rounded-xl shadow-lg">
               {sections.map((section) => (
                 <motion.a
                   key={section.id}
                   href={`#${section.id}`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
                     activeSection === section.id
                       ? "bg-accent text-white shadow-lg"
                       : "text-muted-text hover:text-primary-text hover:bg-neutral-700/50"
@@ -140,10 +176,10 @@ export default function AboutPage() {
         </motion.section>
 
         {/* Content Sections */}
-        <div className="max-w-6xl mx-auto px-6 space-y-24 pb-24">
-          {/* Photo Carousel Section */}
+        <div className="max-w-7xl mx-auto px-6 space-y-24 pb-24">
+          {/* Top Section: Photos + Bio Side by Side */}
           <motion.section
-            id="photos"
+            id="photos-bio"
             data-section
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -151,46 +187,44 @@ export default function AboutPage() {
             transition={{ duration: 0.8 }}
             className="space-y-8"
           >
-            <div className="text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-primary-text mb-4">
-                A Glimpse Into My World
-              </h2>
-              <p className="text-muted-text max-w-2xl mx-auto">
-                Here are some moments that capture who I am - from professional settings
-                to personal adventures and everything in between.
-              </p>
+            {/* Two-column layout for larger screens */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+              {/* Photo Gallery - Left Column */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="space-y-4"
+              >
+                <h3 className="text-xl font-semibold text-primary-text text-center lg:text-left">
+                  A Glimpse Into My World
+                </h3>
+                <PhotoCarousel
+                  photos={aboutPhotos}
+                  className="w-full"
+                  autoPlay={true}
+                  autoPlayInterval={6000}
+                />
+              </motion.div>
+
+              {/* Personal Bio - Right Column */}
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="space-y-4"
+              >
+                <h3 className="text-xl font-semibold text-primary-text text-center lg:text-left">
+                  Who I Am
+                </h3>
+                <PersonalBio />
+              </motion.div>
             </div>
-            <PhotoCarousel
-              photos={aboutPhotos}
-              className="max-w-4xl mx-auto"
-              autoPlay={true}
-              autoPlayInterval={6000}
-            />
           </motion.section>
 
-          {/* Personal Bio Section */}
-          <motion.section
-            id="bio"
-            data-section
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8 }}
-            className="space-y-8"
-          >
-            <div className="text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-primary-text mb-4">
-                My Story
-              </h2>
-              <p className="text-muted-text max-w-2xl mx-auto">
-                Every developer has a unique journey. Here's mine - the experiences,
-                motivations, and philosophy that shape how I approach technology and life.
-              </p>
-            </div>
-            <PersonalBio />
-          </motion.section>
-
-          {/* Resume Section */}
+          {/* Resume Section - Glass Card */}
           <motion.section
             id="resume"
             data-section
@@ -198,18 +232,22 @@ export default function AboutPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8 }}
-            className="space-y-8"
+            className="relative"
           >
-            <div className="text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-primary-text mb-4">
-                Professional Profile
-              </h2>
-              <p className="text-muted-text max-w-2xl mx-auto">
-                Ready to take the next step? Download my resume or connect with me
-                to discuss opportunities and collaborations.
-              </p>
+            <div className="bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-3xl overflow-hidden shadow-lg">
+              <div className="p-8 md:p-12">
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl md:text-4xl font-bold text-primary-text mb-4">
+                    Professional Profile
+                  </h2>
+                  <p className="text-muted-text max-w-2xl mx-auto">
+                    Ready to take the next step? Download my resume or connect with me
+                    to discuss opportunities and collaborations.
+                  </p>
+                </div>
+                <ResumeSection />
+              </div>
             </div>
-            <ResumeSection />
           </motion.section>
 
           {/* Skills & Tech Section */}
@@ -225,7 +263,7 @@ export default function AboutPage() {
             <GitHubReadme />
           </motion.section>
 
-          {/* Hobbies Section */}
+          {/* Hobbies Section - Glass Card */}
           <motion.section
             id="hobbies"
             data-section
@@ -233,18 +271,22 @@ export default function AboutPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8 }}
-            className="space-y-8"
+            className="relative"
           >
-            <div className="text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-primary-text mb-4">
-                Beyond Code
-              </h2>
-              <p className="text-muted-text max-w-2xl mx-auto">
-                Life is about balance. When I'm not coding, you'll find me exploring these
-                passions that keep me inspired and energized.
-              </p>
+            <div className="bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-3xl overflow-hidden shadow-lg">
+              <div className="p-8 md:p-12">
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl md:text-4xl font-bold text-primary-text mb-4">
+                    Beyond Code
+                  </h2>
+                  <p className="text-muted-text max-w-2xl mx-auto">
+                    Life is about balance. When I'm not coding, you'll find me exploring these
+                    passions that keep me inspired and energized.
+                  </p>
+                </div>
+                <HobbiesSection />
+              </div>
             </div>
-            <HobbiesSection />
           </motion.section>
         </div>
       </main>
