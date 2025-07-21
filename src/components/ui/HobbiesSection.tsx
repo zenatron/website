@@ -90,36 +90,38 @@ export default function HobbiesSection() {
 
   return (
     <div className="space-y-8">
-      {/* Category Filter */}
-      <div className="flex flex-wrap gap-3 justify-center">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => setFilterCategory(null)}
-          className={`px-4 py-2 rounded-full border transition-all duration-200 ${
-            filterCategory === null
-              ? "bg-accent text-white border-accent"
-              : "bg-neutral-800/50 text-muted-text border-neutral-600/30 hover:border-accent/50"
-          }`}
-        >
-          All Hobbies
-        </motion.button>
-        
-        {categories.map((category) => (
+      {/* Category Filter - Glass Card */}
+      <div className="flex justify-center">
+        <div className="inline-flex flex-wrap gap-2 p-3 bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-2xl shadow-lg">
           <motion.button
-            key={category}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setFilterCategory(category)}
-            className={`px-4 py-2 rounded-full border transition-all duration-200 ${
-              filterCategory === category
-                ? "bg-accent text-white border-accent"
-                : "bg-neutral-800/50 text-muted-text border-neutral-600/30 hover:border-accent/50"
+            onClick={() => setFilterCategory(null)}
+            className={`px-4 py-2 rounded-xl border transition-all duration-200 ${
+              filterCategory === null
+                ? "bg-accent text-white border-accent shadow-lg"
+                : "bg-neutral-800/40 backdrop-blur-sm text-muted-text border-neutral-600/40 hover:border-accent/50 hover:bg-neutral-700/50"
             }`}
           >
-            {categoryLabels[category as keyof typeof categoryLabels]}
+            All Hobbies
           </motion.button>
-        ))}
+
+          {categories.map((category) => (
+            <motion.button
+              key={category}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setFilterCategory(category)}
+              className={`px-4 py-2 rounded-xl border transition-all duration-200 ${
+                filterCategory === category
+                  ? "bg-accent text-white border-accent shadow-lg"
+                  : "bg-neutral-800/40 backdrop-blur-sm text-muted-text border-neutral-600/40 hover:border-accent/50 hover:bg-neutral-700/50"
+              }`}
+            >
+              {categoryLabels[category as keyof typeof categoryLabels]}
+            </motion.button>
+          ))}
+        </div>
       </div>
 
       {/* Hobbies Grid */}
@@ -137,15 +139,18 @@ export default function HobbiesSection() {
             transition={{ delay: index * 0.1, duration: 0.4 }}
             whileHover={{ scale: 1.03, y: -5 }}
             onClick={() => setSelectedHobby(selectedHobby === hobby.name ? null : hobby.name)}
-            className="relative p-6 bg-neutral-800/40 backdrop-blur-sm border border-neutral-600/40 rounded-2xl shadow-md hover:border-accent/40 transition-all duration-300 cursor-pointer overflow-hidden"
+            className="relative p-6 bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-3xl shadow-lg hover:border-accent/40 hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden group"
           >
             {/* Background Gradient */}
-            <div 
-              className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
+            <div
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
               style={{
-                background: `linear-gradient(135deg, ${hobby.color}, transparent 70%)`
+                background: `linear-gradient(135deg, ${hobby.color}, transparent 60%)`
               }}
             />
+
+            {/* Glass effect overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent opacity-50" />
 
             {/* Content */}
             <div className="relative z-10">
@@ -174,25 +179,28 @@ export default function HobbiesSection() {
               {/* Expandable Details */}
               <motion.div
                 initial={false}
-                animate={{ 
+                animate={{
                   height: selectedHobby === hobby.name ? "auto" : 0,
                   opacity: selectedHobby === hobby.name ? 1 : 0
                 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
                 className="overflow-hidden"
               >
-                <div className="border-t border-neutral-600/30 pt-4 mt-4">
-                  <h4 className="text-sm font-semibold text-accent mb-2">Details:</h4>
-                  <ul className="space-y-1">
+                <div className="mt-4 p-4 bg-neutral-800/30 backdrop-blur-sm border border-neutral-600/20 rounded-2xl">
+                  <h4 className="text-sm font-semibold text-accent mb-3 flex items-center gap-2">
+                    <div className="w-2 h-2 bg-accent rounded-full" />
+                    What I Love About It
+                  </h4>
+                  <ul className="space-y-2">
                     {hobby.details.map((detail, idx) => (
                       <motion.li
                         key={idx}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.1 }}
-                        className="text-sm text-muted-text flex items-center gap-2"
+                        className="text-sm text-muted-text flex items-center gap-3 p-2 bg-neutral-700/20 rounded-lg"
                       >
-                        <div className="w-1.5 h-1.5 bg-accent rounded-full" />
+                        <div className="w-1.5 h-1.5 bg-accent rounded-full flex-shrink-0" />
                         {detail}
                       </motion.li>
                     ))}
@@ -212,26 +220,54 @@ export default function HobbiesSection() {
         ))}
       </motion.div>
 
-      {/* Fun Fact */}
+      {/* Life Philosophy - Glass Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
-        className="text-center p-6 bg-gradient-to-r from-accent/5 to-purple-500/5 backdrop-blur-sm border border-accent/10 rounded-2xl"
+        className="relative p-8 bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-3xl shadow-lg overflow-hidden"
       >
-        <h3 className="text-lg font-semibold mb-2 text-primary-text">
-          Life Philosophy
-        </h3>
-        <div className="text-center flex flex-col items-center gap-4">
-          <p className="text-muted-text leading-relaxed">
-            {"\"The best way to predict the future is to create it. Whether through code, art, or adventure, I believe in building experiences that matter and inspire others to do the same.\""}
-          </p>
-          <Link
-            href={"/principles"}
-            className="btn btn-primary inline-block"
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-purple-500/5 to-transparent" />
+
+        {/* Glass effect overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent opacity-50" />
+
+        <div className="relative z-10 text-center">
+          <motion.h3
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="text-xl font-semibold mb-6 text-primary-text flex items-center justify-center gap-3"
           >
-            {"Read My Principles"}
-          </Link>
+            <div className="w-2 h-2 bg-accent rounded-full" />
+            Life Philosophy
+            <div className="w-2 h-2 bg-accent rounded-full" />
+          </motion.h3>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.0 }}
+            className="flex flex-col items-center gap-6"
+          >
+            <blockquote className="text-muted-text leading-relaxed text-lg italic max-w-3xl">
+              "The best way to predict the future is to create it. Whether through code, art, or adventure, I believe in building experiences that matter and inspire others to do the same."
+            </blockquote>
+
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Link
+                href="/principles"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-accent/10 hover:bg-accent/20 border border-accent/30 hover:border-accent/50 rounded-xl text-accent font-medium transition-all duration-200 backdrop-blur-sm"
+              >
+                Read My Principles
+                <div className="w-1.5 h-1.5 bg-accent rounded-full" />
+              </Link>
+            </motion.div>
+          </motion.div>
         </div>
       </motion.div>
     </div>
