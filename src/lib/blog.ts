@@ -6,10 +6,12 @@ import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
+import rehypeSlug from "rehype-slug";
 import { BlogPost } from "@/types/types";
 import Counter from "@/components/mdx/Counter";
 import Callout from "@/components/mdx/Callout";
 import { createElement } from "react";
+import { extractHeadings, type Heading } from "@/utils/extractHeadings";
 
 const blogDirectory = path.join(process.cwd(), "src/content/blog");
 
@@ -76,6 +78,9 @@ export async function getBlogPostBySlug(
     // Extract plain text for searching
     const searchableContent = extractPlainText(content);
 
+    // Extract headings from the raw content
+    const headings = extractHeadings(content);
+
     try {
       const { content: compiledContent } = await compileMDX({
         source: content,
@@ -85,6 +90,7 @@ export async function getBlogPostBySlug(
           mdxOptions: {
             remarkPlugins: [remarkMath, remarkGfm],
             rehypePlugins: [
+              rehypeSlug, // Add IDs to headings
               rehypeKatex,
               [rehypeHighlight, rehypeHighlightOptions],
             ],
@@ -97,6 +103,7 @@ export async function getBlogPostBySlug(
         slug,
         content: compiledContent,
         searchableContent,
+        headings,
         metadata: {
           title: data.title || "Untitled",
           date: data.date || "1970-01-01",
@@ -116,6 +123,7 @@ export async function getBlogPostBySlug(
           `Error loading content: ${error instanceof Error ? error.message : "Unknown error"}`
         ),
         searchableContent,
+        headings,
         metadata: {
           title: data.title || "Untitled",
           date: data.date || "1970-01-01",
@@ -149,6 +157,9 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
       // Extract plain text for searching
       const searchableContent = extractPlainText(content);
 
+      // Extract headings from the raw content
+      const headings = extractHeadings(content);
+
       try {
         const { content: compiledContent } = await compileMDX({
           source: content,
@@ -158,6 +169,7 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
             mdxOptions: {
               remarkPlugins: [remarkMath, remarkGfm],
               rehypePlugins: [
+                rehypeSlug, // Add IDs to headings
                 rehypeKatex,
                 [rehypeHighlight, rehypeHighlightOptions],
               ],
@@ -170,6 +182,7 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
           slug,
           content: compiledContent,
           searchableContent,
+          headings,
           metadata: {
             title: data.title || "Untitled",
             date: data.date || "1970-01-01",

@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { Heading } from "@/utils/extractHeadings";
 
 export type BlogMetadata = {
   title: string;
@@ -13,6 +14,7 @@ export type BlogPost = {
   content: ReactNode;
   searchableContent: string; // Plain text version for searching
   metadata: BlogMetadata;
+  headings: Heading[]; // Table of contents headings
 };
 
 export type ProjectTypes = "data" | "web" | "game" | "other";

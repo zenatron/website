@@ -255,18 +255,17 @@ export default function HobbiesSection() {
               "The best way to predict the future is to create it. Whether through code, art, or adventure, I believe in building experiences that matter and inspire others to do the same."
             </blockquote>
 
-            <motion.div
+            {/* <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               <Link
                 href="/principles"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-accent/10 hover:bg-accent/20 border border-accent/30 hover:border-accent/50 rounded-xl text-accent font-medium transition-all duration-200 backdrop-blur-sm"
+                className="btn btn-primary"
               >
                 Read My Principles
-                <div className="w-1.5 h-1.5 bg-accent rounded-full" />
               </Link>
-            </motion.div>
+            </motion.div> */}
           </motion.div>
         </div>
       </motion.div>
