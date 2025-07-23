@@ -79,7 +79,7 @@ export default function AboutPage() {
     { id: "photos-bio", title: "About Me", component: PersonalBio },
     { id: "resume", title: "Resume", component: ResumeSection },
     { id: "github", title: "Skills & Tech", component: GitHubReadme },
-    { id: "hobbies", title: "Hobbies", component: HobbiesSection },
+    { id: "hobbies", title: "Apps & Life", component: HobbiesSection },
   ];
 
   return (
@@ -198,7 +198,7 @@ export default function AboutPage() {
                 className="space-y-4"
               >
                 <h3 className="text-xl font-semibold text-primary-text text-center lg:text-left">
-                  A Glimpse Into My World
+                  whoami
                 </h3>
                 <PhotoCarousel
                   photos={aboutPhotos}
@@ -217,7 +217,7 @@ export default function AboutPage() {
                 className="space-y-4"
               >
                 <h3 className="text-xl font-semibold text-primary-text text-center lg:text-left">
-                  Who I Am
+                  history | tail -20
                 </h3>
                 <PersonalBio />
               </motion.div>
@@ -238,7 +238,7 @@ export default function AboutPage() {
               <div className="p-8 md:p-12">
                 <div className="text-center mb-8">
                   <h2 className="text-3xl md:text-4xl font-bold text-primary-text mb-4">
-                    Professional Profile
+                    which skills
                   </h2>
                   <p className="text-muted-text max-w-2xl mx-auto">
                     Ready to take the next step? Download my resume or connect with me
@@ -263,7 +263,7 @@ export default function AboutPage() {
             <GitHubReadme />
           </motion.section>
 
-          {/* Hobbies Section - Glass Card */}
+          {/* Apps, Tools & Hobbies Section */}
           <motion.section
             id="hobbies"
             data-section
@@ -271,22 +271,17 @@ export default function AboutPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8 }}
-            className="relative"
+            className="space-y-8"
           >
-            <div className="bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-3xl overflow-hidden shadow-lg">
-              <div className="p-8 md:p-12">
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl md:text-4xl font-bold text-primary-text mb-4">
-                    Beyond Code
-                  </h2>
-                  <p className="text-muted-text max-w-2xl mx-auto">
-                    Life is about balance. When I'm not coding, you'll find me exploring these
-                    passions that keep me inspired and energized.
-                  </p>
-                </div>
-                <HobbiesSection />
-              </div>
+            <div className="text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-primary-text mb-4">
+                top -u phil
+              </h2>
+              <p className="text-muted-text max-w-2xl mx-auto">
+                The apps, tools, and hobbies that shape my daily routine and creative process.
+              </p>
             </div>
+            <HobbiesSection />
           </motion.section>
         </div>
       </main>

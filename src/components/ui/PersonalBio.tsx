@@ -65,10 +65,10 @@ const PersonalBio: React.FC = () => {
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-3 left-3 text-4xl text-accent">
-            <FaQuoteLeft />
+            {React.createElement(bioSections[activeSection].icon)}
           </div>
           <div className="absolute bottom-3 right-3 text-4xl text-accent">
-            <FaQuoteRight />
+            {React.createElement(bioSections[activeSection].icon)}
           </div>
         </div>
 
