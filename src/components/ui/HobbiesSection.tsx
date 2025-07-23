@@ -61,6 +61,7 @@ const favoriteItems: FavoriteItem[] = [
     name: "Ghostty",
     icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/ghostty.svg",
     description: "cool terminal",
+    url: "https://ghostty.org",
     category: "tools"
   },
 
@@ -301,12 +302,12 @@ export default function HobbiesSection() {
 
       {/* Category Filter */}
       <div className="flex justify-center">
-        <div className="inline-flex flex-wrap gap-2 p-2 bg-neutral-900/50 backdrop-blur-sm border border-neutral-700/50 rounded-xl">
+        <div className="inline-flex flex-wrap gap-1.5 p-1.5 bg-neutral-900/50 backdrop-blur-sm border border-neutral-700/50 rounded-lg">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setSelectedCategory(null)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 ${
               selectedCategory === null
                 ? "bg-accent text-white shadow-lg"
                 : "text-muted-text hover:text-primary-text hover:bg-neutral-800/50"
@@ -321,7 +322,7 @@ export default function HobbiesSection() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 ${
                 selectedCategory === category
                   ? "bg-accent text-white shadow-lg"
                   : "text-muted-text hover:text-primary-text hover:bg-neutral-800/50"
@@ -334,7 +335,7 @@ export default function HobbiesSection() {
       </div>
 
       {/* Items List */}
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-xl mx-auto">
         <motion.div
           layout
           className="space-y-0.5"

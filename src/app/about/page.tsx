@@ -197,9 +197,11 @@ export default function AboutPage() {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="space-y-4"
               >
-                <h3 className="text-xl font-semibold text-primary-text text-center lg:text-left">
-                  whoami
-                </h3>
+                <div className="flex justify-center lg:justify-start">
+                  <code className="inline-block px-3 py-1.5 bg-neutral-900/80 border border-neutral-700/50 rounded-md text-green-400 font-mono text-lg font-medium">
+                    ~ whoami
+                  </code>
+                </div>
                 <PhotoCarousel
                   photos={aboutPhotos}
                   className="w-full"
@@ -216,9 +218,11 @@ export default function AboutPage() {
                 transition={{ duration: 0.6, delay: 0.4 }}
                 className="space-y-4"
               >
-                <h3 className="text-xl font-semibold text-primary-text text-center lg:text-left">
-                  history | tail -20
-                </h3>
+                <div className="flex justify-center lg:justify-start">
+                  <code className="inline-block px-3 py-1.5 bg-neutral-900/80 border border-neutral-700/50 rounded-md text-green-400 font-mono text-lg font-medium">
+                    ~ history | tail -20
+                  </code>
+                </div>
                 <PersonalBio />
               </motion.div>
             </div>
@@ -237,9 +241,11 @@ export default function AboutPage() {
             <div className="bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-3xl overflow-hidden shadow-lg">
               <div className="p-8 md:p-12">
                 <div className="text-center mb-8">
-                  <h2 className="text-3xl md:text-4xl font-bold text-primary-text mb-4">
-                    which skills
-                  </h2>
+                  <div className="flex justify-center mb-4">
+                    <code className="inline-block px-4 py-2 bg-neutral-900/80 border border-neutral-700/50 rounded-md text-green-400 font-mono text-2xl md:text-3xl font-medium">
+                      ~ which skills
+                    </code>
+                  </div>
                   <p className="text-muted-text max-w-2xl mx-auto">
                     Ready to take the next step? Download my resume or connect with me
                     to discuss opportunities and collaborations.
@@ -274,9 +280,11 @@ export default function AboutPage() {
             className="space-y-8"
           >
             <div className="text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-primary-text mb-4">
-                top -u phil
-              </h2>
+              <div className="flex justify-center mb-4">
+                <code className="inline-block px-4 py-2 bg-neutral-900/80 border border-neutral-700/50 rounded-md text-green-400 font-mono text-2xl md:text-3xl font-medium">
+                  ~ top -u phil
+                </code>
+              </div>
               <p className="text-muted-text max-w-2xl mx-auto">
                 The apps, tools, and hobbies that shape my daily routine and creative process.
               </p>
