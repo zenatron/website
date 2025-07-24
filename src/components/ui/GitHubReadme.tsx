@@ -32,11 +32,17 @@ export default function GitHubReadme() {
 
         const rawContent = await response.text();
 
-        // Remove everything before the first horizontal separator
-        const separatorIndex = rawContent.indexOf('---');
-        const processedContent = separatorIndex !== -1
-          ? rawContent.substring(separatorIndex + 3).trim()
+        // Remove everything before the first horizontal separator and after the second
+        const firstSeparatorIndex = rawContent.indexOf('---');
+        let contentAfterFirst = firstSeparatorIndex !== -1
+          ? rawContent.substring(firstSeparatorIndex + 3).trim()
           : rawContent;
+
+        // Find the second separator and cut off everything after it
+        const secondSeparatorIndex = contentAfterFirst.indexOf('---');
+        const processedContent = secondSeparatorIndex !== -1
+          ? contentAfterFirst.substring(0, secondSeparatorIndex).trim()
+          : contentAfterFirst;
 
         // Configure marked to handle HTML and GitHub-flavored markdown
         marked.setOptions({
@@ -132,7 +138,7 @@ export default function GitHubReadme() {
             href="https://github.com/zenatron"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-3 py-1 bg-accent/10 hover:bg-accent/20 border border-accent/20 rounded-lg text-accent text-sm transition-all duration-200"
+            className="btn btn-nav"
           >
             <FaExternalLinkAlt className="text-xs" />
             {"See more"}
@@ -141,18 +147,18 @@ export default function GitHubReadme() {
 
         {/* README Content */}
         <div
-          className="p-6 md:p-8 prose prose-invert max-w-none
-            prose-h2:text-xl prose-h2:font-semibold prose-h2:text-primary-text prose-h2:mb-4 prose-h2:mt-6 prose-h2:first:mt-0 prose-h2:flex prose-h2:items-center prose-h2:gap-2
-            prose-h3:text-lg prose-h3:font-semibold prose-h3:text-primary-text prose-h3:mb-3 prose-h3:mt-5 prose-h3:first:mt-0 prose-h3:flex prose-h3:items-center prose-h3:gap-2
-            prose-p:text-muted-text prose-p:mb-4 prose-p:leading-relaxed
-            prose-img:inline-block prose-img:w-8 prose-img:h-8 md:prose-img:w-10 md:prose-img:h-10 prose-img:mx-1 prose-img:my-1 prose-img:rounded-md prose-img:bg-white/10 prose-img:p-1
-            prose-a:text-accent prose-a:no-underline hover:prose-a:text-accent/80 prose-a:transition-colors prose-a:duration-200
-            prose-table:w-full prose-table:border-collapse prose-table:mb-6
-            prose-thead:bg-neutral-800/50
-            prose-tbody:divide-y prose-tbody:divide-neutral-600/30
-            prose-tr:hover:bg-neutral-800/25 prose-tr:transition-colors
-            prose-td:px-4 prose-td:py-3 prose-td:text-center
-            prose-th:px-4 prose-th:py-3 prose-th:text-center prose-th:font-semibold prose-th:text-primary-text"
+          className="p-6 md:p-8 prose prose-invert max-w-none overflow-x-auto
+            [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-primary-text [&_h2]:mb-4 [&_h2]:mt-6 [&_h2:first-child]:mt-0 [&_h2]:flex [&_h2]:items-center [&_h2]:gap-2
+            [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-primary-text [&_h3]:mb-3 [&_h3]:mt-5 [&_h3:first-child]:mt-0 [&_h3]:flex [&_h3]:items-center [&_h3]:gap-2
+            [&_p]:text-muted-text [&_p]:mb-4 [&_p]:leading-relaxed
+            [&_img]:inline-block [&_img]:w-8 md:[&_img]:w-10 [&_img]:h-8 md:[&_img]:h-10 [&_img]:mx-1 [&_img]:my-1 [&_img]:rounded-md
+            [&_a]:text-accent [&_a]:no-underline hover:[&_a]:text-accent/80 [&_a]:transition-colors
+            [&_table]:w-full [&_table]:border-collapse [&_table]:mb-6 [&_table]:min-w-[500px]
+            [&_thead]:bg-neutral-800/50
+            [&_tbody]:divide-y [&_tbody]:divide-neutral-600/30
+            [&_tr]:hover:bg-neutral-800/25 [&_tr]:transition-colors
+            [&_td]:px-4 [&_td]:py-3 [&_td]:text-center [&_td]:whitespace-nowrap
+            [&_th]:px-4 [&_th]:py-3 [&_th]:text-center [&_th]:font-semibold [&_th]:text-primary-text [&_th]:whitespace-nowrap"
           dangerouslySetInnerHTML={{ __html: readmeData.htmlContent }}
         />
       </motion.div>

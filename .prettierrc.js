@@ -1,5 +1,7 @@
 module.exports = {
-  // General formatting options
+  // zenatron's reusable prettier config template
+  // comments because I will forget what each one of these does
+  
   printWidth: 80, // Specify the line length that the printer will wrap on.
   tabWidth: 2, // Specify the number of spaces per indentation-level.
   useTabs: false, // Indent lines with tabs instead of spaces.

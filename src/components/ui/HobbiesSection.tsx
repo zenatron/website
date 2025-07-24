@@ -8,7 +8,9 @@ import {
   FaHiking,
   FaCoffee,
   FaPlane,
-  FaExternalLinkAlt
+  FaExternalLinkAlt,
+  FaNetworkWired,
+  FaServer
 } from "react-icons/fa";
 import { MdFitnessCenter } from "react-icons/md";
 import Link from "next/link";
@@ -50,22 +52,21 @@ const favoriteItems: FavoriteItem[] = [
     category: "tools"
   },
   {
-    name: "Tailscale",
-    icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/tailscale.svg",
-    description: "how i connect stuff",
-    url: "https://tailscale.com",
-    category: "tools",
-    invertIcon: true
-  },
-  {
     name: "Ghostty",
     icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/ghostty.svg",
     description: "cool terminal",
     url: "https://ghostty.org",
     category: "tools"
   },
-
+  
   // Productivity & Organization
+  {
+    name: "Raycast",
+    icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/raycast.svg",
+    description: "better spotlight for macOS",
+    url: "https://raycast.com",
+    category: "apps"
+  },
   {
     name: "Obsidian",
     icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/obsidian.svg",
@@ -76,15 +77,22 @@ const favoriteItems: FavoriteItem[] = [
   {
     name: "Todoist",
     icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/todoist.svg",
-    description: "how i get stuff done",
+    description: "how i get sh*t done",
     url: "https://todoist.com",
     category: "apps"
   },
   {
-    name: "Arc",
-    icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/arc.svg",
-    description: "vivaldi is better",
-    url: "https://arc.net",
+    name: "Vivaldi",
+    icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/vivaldi.svg",
+    description: "function-first browser",
+    url: "https://vivaldi.com",
+    category: "apps"
+  },
+  {
+    name: "Fantastical",
+    icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/fantastical.png",
+    description: "the best calendar",
+    url: "https://flexibits.com/fantastical",
     category: "apps"
   },
   {
@@ -94,7 +102,7 @@ const favoriteItems: FavoriteItem[] = [
     url: "https://cal.com",
     category: "apps"
   },
-
+  
   // Communication & Social
   {
     name: "Discord",
@@ -117,19 +125,19 @@ const favoriteItems: FavoriteItem[] = [
     url: "https://bsky.app",
     category: "apps"
   },
-
+  
   // Entertainment & Media
   {
     name: "Spotify",
     icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/spotify.svg",
-    description: "music for my coding sessions",
+    description: "you know this one",
     url: "https://spotify.com",
     category: "entertainment"
   },
   {
     name: "Steam",
     icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/steam.svg",
-    description: "you know this one",
+    description: "games besides minecraft",
     url: "https://store.steampowered.com",
     category: "games"
   },
@@ -147,8 +155,16 @@ const favoriteItems: FavoriteItem[] = [
     url: "https://obsproject.com",
     category: "tools"
   },
-
+  
   // Self-hosted & Infrastructure
+  {
+    name: "Tailscale",
+    icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/tailscale.svg",
+    description: "how i connect stuff",
+    url: "https://tailscale.com",
+    category: "tools",
+    invertIcon: true
+  },
   {
     name: "OpenWebUI",
     icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/open-webui.svg",
@@ -162,13 +178,6 @@ const favoriteItems: FavoriteItem[] = [
     description: "media server",
     url: "https://jellyfin.org",
     category: "entertainment"
-  },
-  {
-    name: "Jellyseerr",
-    icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/jellyseerr.svg",
-    description: "media management",
-    url: "https://github.com/Fallenbagel/jellyseerr",
-    category: "tools"
   },
   {
     name: "Nextcloud",
@@ -227,19 +236,26 @@ const favoriteItems: FavoriteItem[] = [
     url: "https://mattermost.com",
     category: "apps"
   },
-  {
-    name: "Fantastical",
-    icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/fantastical.png",
-    description: "the best calendar",
-    url: "https://flexibits.com/fantastical",
-    category: "apps"
-  },
 
   // Hobbies & Interests
   {
-    name: "Game Development",
+    name: "Homelabbing",
+    icon: FaServer,
+    description: "building servers at home",
+    category: "hobbies",
+    color: "#6366F1"
+  },
+  {
+    name: "Game Dev",
     icon: FaGamepad,
     description: "did not work at blizzard",
+    category: "hobbies",
+    color: "#6366F1"
+  },
+  {
+    name: "Networking",
+    icon: FaNetworkWired,
+    description: "connecting computers",
     category: "hobbies",
     color: "#6366F1"
   },
@@ -248,12 +264,12 @@ const favoriteItems: FavoriteItem[] = [
     icon: FaBook,
     description: "sci-fi, tech, and self-improvement",
     category: "hobbies",
-    color: "#10B981"
+    color: "#22C55E"
   },
   {
     name: "Hiking",
     icon: FaHiking,
-    description: "exploring nature",
+    description: "touching grass",
     category: "hobbies",
     color: "#22C55E"
   },
@@ -269,7 +285,7 @@ const favoriteItems: FavoriteItem[] = [
     icon: MdFitnessCenter,
     description: "building strength and discipline",
     category: "hobbies",
-    color: "#6366F1"
+    color: "#22C55E"
   },
   {
     name: "Travel",
@@ -379,10 +395,10 @@ function FavoriteItemRow({ item }: FavoriteItemRowProps) {
     <motion.div
       whileHover={{ x: 4 }}
       whileTap={{ scale: 0.98 }}
-      className="flex items-center gap-3 py-2 px-3 rounded-md transition-all duration-200 cursor-pointer group hover:bg-neutral-900/20"
+      className="flex gap-3 py-2 px-3 rounded-md transition-all duration-200 cursor-pointer group hover:bg-neutral-900/20"
     >
       {/* Icon */}
-      <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
+      <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center mt-0.5 md:mt-0">
         {isImageIcon ? (
           <img
             src={item.icon as string}
@@ -402,19 +418,39 @@ function FavoriteItemRow({ item }: FavoriteItemRowProps) {
         )}
       </div>
 
-      {/* Content - Single Line */}
-      <div className="flex-grow min-w-0 flex items-center gap-2">
-        <h4 className="font-medium text-primary-text group-hover:text-accent transition-colors">
-          {item.name}
-        </h4>
-        {item.description && (
-          <span className="text-sm text-muted-text">
-            — {item.description}
-          </span>
-        )}
-        {item.url && (
-          <FaExternalLinkAlt className="w-3 h-3 text-muted-text opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-        )}
+      {/* Content - Responsive Layout */}
+      <div className="flex-grow min-w-0">
+        {/* Desktop/Tablet Layout - Single Line */}
+        <div className="hidden md:flex items-center gap-2">
+          <h4 className="font-medium text-primary-text group-hover:text-accent transition-colors">
+            {item.name}
+          </h4>
+          {item.description && (
+            <span className="text-sm text-muted-text">
+              — {item.description}
+            </span>
+          )}
+          {item.url && (
+            <FaExternalLinkAlt className="w-3 h-3 text-muted-text opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+          )}
+        </div>
+
+        {/* Mobile Layout - Stacked */}
+        <div className="md:hidden">
+          <div className="flex items-center gap-2">
+            <h4 className="font-medium text-primary-text group-hover:text-accent transition-colors">
+              {item.name}
+            </h4>
+            {item.url && (
+              <FaExternalLinkAlt className="w-3 h-3 text-muted-text opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+            )}
+          </div>
+          {item.description && (
+            <p className="text-xs text-muted-text mt-0.5 leading-tight">
+              {item.description}
+            </p>
+          )}
+        </div>
       </div>
     </motion.div>
   );

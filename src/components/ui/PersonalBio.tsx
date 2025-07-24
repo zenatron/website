@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { FaQuoteLeft, FaQuoteRight, FaHeart, FaCode, FaRocket } from "react-icons/fa";
+import { FaQuoteLeft, FaHeart, FaCode, FaRocket } from "react-icons/fa";
 
 interface BioSection {
   title: string;

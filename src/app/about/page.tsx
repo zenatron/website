@@ -11,6 +11,7 @@ import PersonalBio from "@/components/ui/PersonalBio";
 import GitHubReadme from "@/components/ui/GitHubReadme";
 import HobbiesSection from "@/components/ui/HobbiesSection";
 import ResumeSection from "@/components/ui/ResumeSection";
+import ContactButton from "@/components/ui/ContactButton";
 // import ContactSection from "@/components/ui/ContactSection";
 import { useRef, useState, useEffect } from "react";
 import { aboutPhotos } from "@/lib/aboutPhotos";
@@ -176,7 +177,7 @@ export default function AboutPage() {
         </motion.section>
 
         {/* Content Sections */}
-        <div className="max-w-7xl mx-auto px-6 space-y-24 pb-24">
+        <div className="max-w-7xl mx-auto px-6 space-y-24 pb-8">
           {/* Top Section: Photos + Bio Side by Side */}
           <motion.section
             id="photos-bio"
@@ -292,6 +293,9 @@ export default function AboutPage() {
             <HobbiesSection />
           </motion.section>
         </div>
+
+        {/* Contact Button at bottom of page */}
+        <ContactButton />
       </main>
 
       <Footer />

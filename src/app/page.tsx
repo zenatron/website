@@ -168,17 +168,17 @@ export default function HomePage() {
                   transparent={true}
                   colors={["#227be0", "#9c40ff", "#ffaa40", "#227be0"]}
                 >
-                  <VariableProximity
+                    <VariableProximity
                     label="Hey, I'm Phil!"
                     className="text-5xl md:text-8xl font-bold tracking-tight"
-                    fromFontVariationSettings="'wght' 100, 'opsz' 8"
-                    toFontVariationSettings="'wght' 900, 'opsz' 48"
-                    containerRef={
-                      containerRef as unknown as React.RefObject<HTMLElement>
-                    }
-                    radius={120}
-                    falloff="gaussian"
-                  />
+                      fromFontVariationSettings="'wght' 100, 'opsz' 8"
+                      toFontVariationSettings="'wght' 900, 'opsz' 48"
+                      containerRef={
+                        containerRef as unknown as React.RefObject<HTMLElement>
+                      }
+                      radius={120}
+                      falloff="gaussian"
+                    />
                 </GradientText>
               </div>
 
