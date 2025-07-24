@@ -168,9 +168,10 @@ export default function HomePage() {
                   transparent={true}
                   colors={["#227be0", "#9c40ff", "#ffaa40", "#227be0"]}
                 >
+                  <div className="flex flex-col items-center gap-2">
                     <VariableProximity
-                    label="Hey, I'm Phil!"
-                    className="text-5xl md:text-8xl font-bold tracking-tight"
+                      label="Hey,"
+                      className="text-6xl md:text-8xl font-bold tracking-tight"
                       fromFontVariationSettings="'wght' 100, 'opsz' 8"
                       toFontVariationSettings="'wght' 900, 'opsz' 48"
                       containerRef={
@@ -179,6 +180,18 @@ export default function HomePage() {
                       radius={120}
                       falloff="gaussian"
                     />
+                    <VariableProximity
+                      label="I'm Phil!"
+                      className="text-6xl md:text-8xl font-bold tracking-tight"
+                      fromFontVariationSettings="'wght' 100, 'opsz' 8"
+                      toFontVariationSettings="'wght' 900, 'opsz' 48"
+                      containerRef={
+                        containerRef as unknown as React.RefObject<HTMLElement>
+                      }
+                      radius={120}
+                      falloff="gaussian"
+                    />
+                  </div>
                 </GradientText>
               </div>
 
