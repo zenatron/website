@@ -20,17 +20,25 @@ export default function AboutPage() {
   const containerRef = useRef(null);
   const [activeSection, setActiveSection] = useState<string | null>(null);
 
+  // Define sections array before useEffect so it can be used inside the hook
+  const sections = [
+    { id: "photos-bio", title: "About Me", component: PersonalBio },
+    { id: "resume", title: "Resume", component: ResumeSection },
+    { id: "github", title: "Skills & Tech", component: GitHubReadme },
+    { id: "hobbies", title: "Apps & Life", component: HobbiesSection },
+  ];
+
   // Intersection Observer for section animations
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['photos-bio', 'resume', 'github', 'hobbies'];
+      const sectionIds = sections.map(section => section.id);
       const windowHeight = window.innerHeight;
       const scrollTop = window.scrollY;
 
       // Check each section to see which one is most visible
-      let activeId = 'photos-bio'; // Default to first section
+      let activeId = sectionIds[0]; // Default to first section
 
-      for (const sectionId of sections) {
+      for (const sectionId of sectionIds) {
         const element = document.getElementById(sectionId);
         if (element) {
           const rect = element.getBoundingClientRect();
@@ -74,14 +82,7 @@ export default function AboutPage() {
       observer.disconnect();
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
-
-  const sections = [
-    { id: "photos-bio", title: "About Me", component: PersonalBio },
-    { id: "resume", title: "Resume", component: ResumeSection },
-    { id: "github", title: "Skills & Tech", component: GitHubReadme },
-    { id: "hobbies", title: "Apps & Life", component: HobbiesSection },
-  ];
+  }, [sections]);
 
   return (
     <div className="min-h-screen flex flex-col bg-transparent">

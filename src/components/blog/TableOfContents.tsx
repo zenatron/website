@@ -36,7 +36,7 @@ function TOCItem({ heading, activeId, onHeadingClick, isMobile = false }: TOCIte
     ${heading.level === 3 ? 'ml-6 text-xs' : ''}
     ${heading.level === 4 ? 'ml-9 text-xs' : ''}
     ${heading.level === 5 ? 'ml-12 text-xs' : ''}
-    ${heading.level === 6 ? 'ml-15 text-xs' : ''}
+    ${heading.level === 6 ? 'ml-16 text-xs' : ''}
   `;
 
   return (

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaGithub, FaEnvelope, FaLinkedin, FaTimes, FaDiscord, FaCalendarAlt } from "react-icons/fa";
 import { FaBluesky } from "react-icons/fa6";
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 import UgIcon from "@/components/icons/UgIcon";
 import SpotlightCard from "./SpotlightCard";
 
@@ -21,6 +22,52 @@ interface ContactModalProps {
 }
 
 export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
+  const modalRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Handle keyboard events
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+
+      // Focus trap implementation
+      if (event.key === 'Tab' && modalRef.current) {
+        const focusableElements = modalRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstElement = focusableElements[0] as HTMLElement;
+        const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+        if (event.shiftKey) {
+          // Shift + Tab
+          if (document.activeElement === firstElement) {
+            event.preventDefault();
+            lastElement?.focus();
+          }
+        } else {
+          // Tab
+          if (document.activeElement === lastElement) {
+            event.preventDefault();
+            firstElement?.focus();
+          }
+        }
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      // Focus the close button when modal opens
+      setTimeout(() => {
+        closeButtonRef.current?.focus();
+      }, 100);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   const contactOptions: ContactOption[] = [
     {
@@ -87,19 +134,25 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
             onClick={onClose}
           >
             <motion.div
+              ref={modalRef}
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               className="relative w-full max-w-md sm:max-w-lg bg-neutral-900/80 backdrop-blur-xl border border-neutral-700/50 rounded-3xl shadow-2xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="modal-title"
             >
               {/* Header */}
               <div className="flex items-center justify-between p-4 border-b border-neutral-700/40">
-                <h2 className="text-xl font-bold text-primary-text">Let's Connect!</h2>
+                <h2 id="modal-title" className="text-xl font-bold text-primary-text">Let's Connect!</h2>
                 <button
+                  ref={closeButtonRef}
                   onClick={onClose}
                   className="p-1.5 hover:bg-neutral-700/50 rounded-lg transition-colors"
+                  aria-label="Close modal"
                 >
                   <FaTimes className="text-sm text-muted-text hover:text-primary-text" />
                 </button>

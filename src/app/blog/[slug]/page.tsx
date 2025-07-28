@@ -65,7 +65,7 @@ export default async function BlogPage({
           <div className="lg:flex lg:gap-8">
             {/* Desktop Table of Contents - Sidebar */}
             <aside className="hidden lg:block lg:w-64 lg:flex-shrink-0">
-              <TableOfContents headings={post.headings} />
+              {post.headings && <TableOfContents headings={post.headings} />}
             </aside>
 
             {/* Main Content */}
