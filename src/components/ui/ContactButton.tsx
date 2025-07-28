@@ -47,7 +47,7 @@ export default function ContactButton({
           {buttonText}
         </motion.button>
 
-        {mounted && createPortal(
+        {mounted && isModalOpen && createPortal(
           <ContactModal
             isOpen={isModalOpen}
             onClose={handleCloseModal}
@@ -91,7 +91,7 @@ export default function ContactButton({
       </motion.div>
 
       {/* Modal */}
-      {mounted && createPortal(
+      {mounted && isModalOpen && createPortal(
         <ContactModal
           isOpen={isModalOpen}
           onClose={handleCloseModal}
