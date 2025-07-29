@@ -16,17 +16,17 @@ import ContactButton from "@/components/ui/ContactButton";
 import { useRef, useState, useEffect } from "react";
 import { aboutPhotos } from "@/lib/aboutPhotos";
 
+// Define sections array outside component to maintain stable reference
+const sections = [
+  { id: "photos-bio", title: "About Me", component: PersonalBio },
+  { id: "resume", title: "Resume", component: ResumeSection },
+  { id: "github", title: "Skills & Tech", component: GitHubReadme },
+  { id: "hobbies", title: "Apps & Life", component: HobbiesSection },
+];
+
 export default function AboutPage() {
   const containerRef = useRef(null);
   const [activeSection, setActiveSection] = useState<string | null>(null);
-
-  // Define sections array before useEffect so it can be used inside the hook
-  const sections = [
-    { id: "photos-bio", title: "About Me", component: PersonalBio },
-    { id: "resume", title: "Resume", component: ResumeSection },
-    { id: "github", title: "Skills & Tech", component: GitHubReadme },
-    { id: "hobbies", title: "Apps & Life", component: HobbiesSection },
-  ];
 
   // Intersection Observer for section animations
   useEffect(() => {
