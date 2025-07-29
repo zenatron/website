@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { FaExternalLinkAlt, FaImage } from "react-icons/fa";
 import Link from "next/link";
@@ -11,11 +11,22 @@ import { favoriteItems, categoryLabels, type FavoriteItem } from "@/lib/favorite
 
 export default function HobbiesSection() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const categories = Array.from(new Set(favoriteItems.map(item => item.category)));
   const filteredItems = selectedCategory
     ? favoriteItems.filter(item => item.category === selectedCategory)
     : favoriteItems;
+
+  const handleCategoryChange = (category: string) => {
+    if (category === selectedCategory) return;
+
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setSelectedCategory(category);
+      setIsTransitioning(false);
+    }, 150); // Small delay to ensure smooth transition
+  };
 
   return (
     <div className="space-y-8">
@@ -26,7 +37,15 @@ export default function HobbiesSection() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setSelectedCategory(null)}
+            onClick={() => {
+              if (selectedCategory !== null) {
+                setIsTransitioning(true);
+                setTimeout(() => {
+                  setSelectedCategory(null);
+                  setIsTransitioning(false);
+                }, 150);
+              }
+            }}
             className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 ${
               selectedCategory === null
                 ? "bg-accent text-white shadow-lg"
@@ -41,7 +60,7 @@ export default function HobbiesSection() {
               key={category}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setSelectedCategory(category)}
+              onClick={() => handleCategoryChange(category)}
               className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 ${
                 selectedCategory === category
                   ? "bg-accent text-white shadow-lg"
@@ -56,29 +75,39 @@ export default function HobbiesSection() {
 
       {/* Items List */}
       <div className="max-w-xl mx-auto">
-        <motion.div
-          layout
-          className="space-y-0.5"
-        >
-          {filteredItems.map((item, index) => (
+        <div className="space-y-0.5">
+          <AnimatePresence mode="wait">
             <motion.div
-              key={item.name}
-              layout
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ delay: index * 0.03, duration: 0.3 }}
+              key={selectedCategory || 'all'}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="space-y-0.5"
             >
-              {item.url ? (
-                <Link href={item.url} target="_blank" rel="noopener noreferrer">
-                  <FavoriteItemRow item={item} />
-                </Link>
-              ) : (
-                <FavoriteItemRow item={item} />
-              )}
+              {filteredItems.map((item, index) => (
+                <motion.div
+                  key={item.name}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{
+                    delay: index * 0.02,
+                    duration: 0.2,
+                    ease: "easeOut"
+                  }}
+                >
+                  {item.url ? (
+                    <Link href={item.url} target="_blank" rel="noopener noreferrer">
+                      <FavoriteItemRow item={item} />
+                    </Link>
+                  ) : (
+                    <FavoriteItemRow item={item} />
+                  )}
+                </motion.div>
+              ))}
             </motion.div>
-          ))}
-        </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
 
     </div>
@@ -106,7 +135,7 @@ function FavoriteItemRow({ item }: FavoriteItemRowProps) {
     <motion.div
       whileHover={{ x: 4 }}
       whileTap={{ scale: 0.98 }}
-      className="flex gap-3 py-2 px-3 rounded-md transition-all duration-200 cursor-pointer group hover:bg-neutral-900/20"
+      className="flex gap-3 py-2 px-3 rounded-md transition-all duration-200 cursor-pointer group hover:bg-neutral-900/20 min-h-[2.5rem]"
     >
       {/* Icon */}
       <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center mt-0.5 md:mt-0">

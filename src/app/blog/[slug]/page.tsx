@@ -5,7 +5,7 @@ import Link from "next/link";
 import { FaHashtag, FaArrowLeft } from "react-icons/fa";
 import dateFormatter from "@/utils/dateFormatter";
 import BackToTopButton from "@/components/BackToTopButton";
-import TableOfContents from "@/components/blog/TableOfContents";
+import TableOfContents, { MobileTableOfContents } from "@/components/blog/TableOfContents";
 
 export async function generateStaticParams() {
   const params = await import("@/lib/blog").then((mod) =>
@@ -47,6 +47,7 @@ export default async function BlogPage({
   return (
     <div className="min-h-screen bg-transparent relative">
       <Header />
+
       <main className="px-6 py-10 pt-20">
         {/* Back to Blog Link */}
         <div className="max-w-7xl mx-auto mb-6">
@@ -62,9 +63,9 @@ export default async function BlogPage({
 
         {/* Main Layout Container */}
         <div className="max-w-7xl mx-auto">
-          <div className="lg:flex lg:gap-8">
+          <div className="lg:flex lg:gap-8 lg:items-start">
             {/* Desktop Table of Contents - Sidebar */}
-            <aside className="hidden lg:block lg:w-64 lg:flex-shrink-0">
+            <aside className="hidden lg:block lg:w-64 lg:flex-shrink-0 lg:sticky lg:top-24">
               {post.headings && <TableOfContents headings={post.headings} />}
             </aside>
 
@@ -107,10 +108,8 @@ export default async function BlogPage({
                   </div>
                 </div>
 
-                {/* Mobile Table of Contents */}
-                <div className="lg:hidden w-full mb-8">
-                  <TableOfContents headings={post.headings} />
-                </div>
+                {/* Mobile Table of Contents - Positioned after title/meta */}
+                {post.headings && <MobileTableOfContents headings={post.headings} />}
 
                 <div className="mdx-content w-full max-w-3xl">{post.content}</div>
               </div>

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { FaChevronLeft, FaChevronRight, FaExpand, FaTimes, FaDownload } from "react-icons/fa";
 import Image from "next/image";
+import { createPortal } from "react-dom";
 
 interface Photo {
   src: string;
@@ -281,13 +282,13 @@ export default function PhotoCarousel({
       </div>
 
       {/* Enhanced Fullscreen Modal - Mobile Optimized */}
-      <AnimatePresence>
-        {isFullscreen && (
+      {isFullscreen && typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center"
+            className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center"
             onClick={closeFullscreen}
           >
             {/* Modal Content */}
@@ -337,7 +338,7 @@ export default function PhotoCarousel({
               </div>
 
               {/* Top Controls - Mobile Optimized */}
-              <div className="absolute top-2 md:top-4 left-2 md:left-4 right-2 md:right-4 flex justify-between items-start z-10">
+              <div className="absolute top-2 md:top-4 left-2 md:left-4 right-2 md:right-4 flex justify-between items-start z-[100]">
                 <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
                   <div className="bg-black/40 backdrop-blur-md rounded-full px-3 py-1.5 md:px-4 md:py-2 text-white text-xs md:text-sm font-medium">
                     {currentIndex + 1} / {photos.length}
@@ -450,8 +451,9 @@ export default function PhotoCarousel({
               )}
             </motion.div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        </AnimatePresence>,
+        document.body
+      )}
     </>
   );
 }
