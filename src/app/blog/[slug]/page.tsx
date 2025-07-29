@@ -5,7 +5,7 @@ import Link from "next/link";
 import { FaHashtag, FaArrowLeft } from "react-icons/fa";
 import dateFormatter from "@/utils/dateFormatter";
 import BackToTopButton from "@/components/BackToTopButton";
-import TableOfContents, { MobileTableOfContents } from "@/components/blog/TableOfContents";
+import TableOfContents from "@/components/blog/TableOfContents";
 
 export async function generateStaticParams() {
   const params = await import("@/lib/blog").then((mod) =>
@@ -66,7 +66,7 @@ export default async function BlogPage({
           <div className="lg:flex lg:gap-8 lg:items-start">
             {/* Desktop Table of Contents - Sidebar */}
             <aside className="hidden lg:block lg:w-64 lg:flex-shrink-0 lg:sticky lg:top-24">
-              {post.headings && <TableOfContents headings={post.headings} />}
+              {post.headings && <TableOfContents headings={post.headings} className="desktop-only" />}
             </aside>
 
             {/* Main Content */}
@@ -109,7 +109,7 @@ export default async function BlogPage({
                 </div>
 
                 {/* Mobile Table of Contents - Positioned after title/meta */}
-                {post.headings && <MobileTableOfContents headings={post.headings} />}
+                {post.headings && <TableOfContents headings={post.headings} className="mobile-only" />}
 
                 <div className="mdx-content w-full max-w-3xl">{post.content}</div>
               </div>

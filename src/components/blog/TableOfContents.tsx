@@ -4,6 +4,84 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { Heading, NestedHeading, buildHeadingHierarchy } from "@/utils/extractHeadings";
 import { FaChevronDown, FaList } from "react-icons/fa";
 
+// Custom hook for tracking active heading with IntersectionObserver
+function useActiveHeading(headings: Heading[]) {
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntries = entries.filter(entry => entry.isIntersecting);
+
+        if (visibleEntries.length > 0) {
+          // Get the first visible heading (topmost)
+          const topEntry = visibleEntries.reduce((prev, current) => {
+            return prev.boundingClientRect.top < current.boundingClientRect.top ? prev : current;
+          });
+
+          setActiveId(topEntry.target.id);
+        }
+      },
+      {
+        rootMargin: '-20% 0% -35% 0%',
+        threshold: 0,
+      }
+    );
+
+    // Observe all headings
+    headings.forEach(({ id }) => {
+      const element = document.getElementById(id);
+      if (element) {
+        observer.observe(element);
+      }
+    });
+
+    return () => observer.disconnect();
+  }, [headings]);
+
+  return { activeId, setActiveId };
+}
+
+// Custom hook for outside click detection
+function useOutsideClick(ref: React.RefObject<HTMLElement | null>, isOpen: boolean, onClose: () => void) {
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [ref, isOpen, onClose]);
+}
+
+// Custom hook for heading navigation
+function useHeadingNavigation(setActiveId: (id: string) => void, onNavigate?: () => void) {
+  return useCallback((id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      // Smooth scroll to the heading with offset for header
+      const headerOffset = 80; // Adjust based on your header height + some padding
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+
+      setActiveId(id);
+      onNavigate?.();
+    }
+  }, [setActiveId, onNavigate]);
+}
+
 interface TableOfContentsProps {
   headings: Heading[];
   className?: string;
@@ -71,87 +149,88 @@ function TOCItem({ heading, activeId, onHeadingClick, isMobile = false }: TOCIte
 }
 
 export default function TableOfContents({ headings, className = "" }: TableOfContentsProps) {
-  const [activeId, setActiveId] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const nestedHeadings = buildHeadingHierarchy(headings);
 
-  // Track which heading is currently in view
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visibleEntries = entries.filter(entry => entry.isIntersecting);
+  // Use custom hooks for shared logic
+  const { activeId, setActiveId } = useActiveHeading(headings);
 
-        if (visibleEntries.length > 0) {
-          // Get the first visible heading (topmost)
-          const topEntry = visibleEntries.reduce((prev, current) => {
-            return prev.boundingClientRect.top < current.boundingClientRect.top ? prev : current;
-          });
+  useOutsideClick(dropdownRef, isDropdownOpen, () => setIsDropdownOpen(false));
 
-          setActiveId(topEntry.target.id);
-        }
-      },
-      {
-        rootMargin: '-20% 0% -35% 0%',
-        threshold: 0,
-      }
-    );
-
-    // Observe all headings
-    headings.forEach(({ id }) => {
-      const element = document.getElementById(id);
-      if (element) {
-        observer.observe(element);
-      }
-    });
-
-    return () => observer.disconnect();
-  }, [headings]);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    if (isDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isDropdownOpen]);
-
-  const handleHeadingClick = useCallback((id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      // Smooth scroll to the heading with offset for header
-      const headerOffset = 80; // Adjust based on your header height + some padding
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-
-      setActiveId(id);
-      setIsDropdownOpen(false); // Close dropdown on mobile after selection
-    }
-  }, []);
+  const handleHeadingClick = useHeadingNavigation(setActiveId, () => setIsDropdownOpen(false));
 
   if (headings.length === 0) {
     return null;
   }
 
+  const activeHeading = headings.find(h => h.id === activeId);
+
+  // Determine which version to render based on className
+  const showMobileOnly = className?.includes('mobile-only');
+  const showDesktopOnly = className?.includes('desktop-only');
+
   return (
     <>
+      {/* Mobile Version - Dropdown */}
+      {!showDesktopOnly && (
+        <div
+          className={`lg:hidden sticky top-8 z-40 mb-8 ${className}`}
+          ref={dropdownRef}
+        >
+        <div className="relative max-w-4xl mx-auto px-4">
+          <button
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            className="w-full bg-neutral-800/60 backdrop-blur-md border border-neutral-600/40 rounded-xl p-4 flex items-center justify-between text-left transition-colors duration-200 hover:bg-neutral-800/70 shadow-lg"
+            aria-expanded={isDropdownOpen}
+            aria-label="Toggle table of contents"
+          >
+            <div className="flex items-center gap-3">
+              <FaList className="text-sm" />
+              <div>
+                <div className="text-xs uppercase tracking-wide opacity-60 mb-1">
+                  Table of Contents
+                </div>
+                <div className="text-sm font-medium">
+                  {activeHeading ? activeHeading.text : "Jump to section"}
+                </div>
+              </div>
+            </div>
+            <FaChevronDown
+              className={`text-muted-text transition-transform duration-200 ${
+                isDropdownOpen ? 'rotate-180' : ''
+              }`}
+            />
+          </button>
+
+          {/* Dropdown Menu */}
+          {isDropdownOpen && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-neutral-800/90 backdrop-blur-md border border-neutral-600/40 rounded-xl shadow-lg max-h-80 overflow-y-auto z-50">
+              <div className="p-4">
+                <nav aria-label="Mobile table of contents navigation">
+                  <ul className="space-y-1" role="list">
+                    {nestedHeadings.map((heading) => (
+                      <TOCItem
+                        key={heading.id}
+                        heading={heading}
+                        activeId={activeId}
+                        onHeadingClick={handleHeadingClick}
+                        isMobile={true}
+                      />
+                    ))}
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          )}
+        </div>
+        </div>
+      )}
+
       {/* Desktop Version - Sidebar */}
-      <div className={`hidden lg:block ${className}`}>
+      {!showMobileOnly && (
+        <div className={`hidden lg:block ${className}`}>
         <div className="z-30">
           <div className="bg-neutral-800/60 backdrop-blur-md border border-neutral-600/40 rounded-xl p-4 shadow-lg max-h-[calc(100vh-8rem)] overflow-y-auto">
             <div className="flex items-center justify-between mb-3">
@@ -193,144 +272,13 @@ export default function TableOfContents({ headings, className = "" }: TableOfCon
             )}
           </div>
         </div>
-      </div>
+        </div>
+      )}
     </>
   );
 }
 
-// Mobile Table of Contents Component - Separate for proper sticky positioning
+// Export for backward compatibility - now just renders the mobile portion of the main component
 export function MobileTableOfContents({ headings, className = "" }: TableOfContentsProps) {
-  const [activeId, setActiveId] = useState<string | null>(null);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const nestedHeadings = buildHeadingHierarchy(headings);
-
-  // Track which heading is currently in view
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visibleEntries = entries.filter(entry => entry.isIntersecting);
-
-        if (visibleEntries.length > 0) {
-          // Get the first visible heading (topmost)
-          const topEntry = visibleEntries.reduce((prev, current) => {
-            return prev.boundingClientRect.top < current.boundingClientRect.top ? prev : current;
-          });
-
-          setActiveId(topEntry.target.id);
-        }
-      },
-      {
-        rootMargin: '-20% 0% -35% 0%',
-        threshold: 0,
-      }
-    );
-
-    // Observe all headings
-    headings.forEach(({ id }) => {
-      const element = document.getElementById(id);
-      if (element) {
-        observer.observe(element);
-      }
-    });
-
-    return () => observer.disconnect();
-  }, [headings]);
-
-
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    if (isDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isDropdownOpen]);
-
-  const handleHeadingClick = useCallback((id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      // Smooth scroll to the heading with offset for header
-      const headerOffset = 80; // Adjust based on your header height + some padding
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-
-      setActiveId(id);
-      setIsDropdownOpen(false); // Close dropdown on mobile after selection
-    }
-  }, []);
-
-  if (headings.length === 0) {
-    return null;
-  }
-
-  const activeHeading = headings.find(h => h.id === activeId);
-
-  return (
-    <div
-      className={`lg:hidden sticky top-20 z-40 mb-8 ${className}`}
-      ref={dropdownRef}
-    >
-      <div className="relative max-w-4xl mx-auto px-4">
-        <button
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="w-full bg-neutral-800/60 backdrop-blur-md border border-neutral-600/40 rounded-xl p-4 flex items-center justify-between text-left transition-colors duration-200 hover:bg-neutral-800/70 shadow-lg"
-          aria-expanded={isDropdownOpen}
-          aria-label="Toggle table of contents"
-        >
-          <div className="flex items-center gap-3">
-            <FaList className="text-sm" />
-            <div>
-              <div className="text-xs uppercase tracking-wide opacity-60 mb-1">
-                Table of Contents
-              </div>
-              <div className="text-sm font-medium">
-                {activeHeading ? activeHeading.text : "Jump to section"}
-              </div>
-            </div>
-          </div>
-          <FaChevronDown
-            className={`text-muted-text transition-transform duration-200 ${
-              isDropdownOpen ? 'rotate-180' : ''
-            }`}
-          />
-        </button>
-
-        {/* Dropdown Menu */}
-        {isDropdownOpen && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-neutral-800/90 backdrop-blur-md border border-neutral-600/40 rounded-xl shadow-lg max-h-80 overflow-y-auto z-50">
-            <div className="p-4">
-              <nav aria-label="Mobile table of contents navigation">
-                <ul className="space-y-1" role="list">
-                  {nestedHeadings.map((heading) => (
-                    <TOCItem
-                      key={heading.id}
-                      heading={heading}
-                      activeId={activeId}
-                      onHeadingClick={handleHeadingClick}
-                      isMobile={true}
-                    />
-                  ))}
-                </ul>
-              </nav>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  return <TableOfContents headings={headings} className={className} />;
 }
