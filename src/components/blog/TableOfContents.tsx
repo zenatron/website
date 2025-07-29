@@ -278,7 +278,3 @@ export default function TableOfContents({ headings, className = "" }: TableOfCon
   );
 }
 
-// Export for backward compatibility - now just renders the mobile portion of the main component
-export function MobileTableOfContents({ headings, className = "" }: TableOfContentsProps) {
-  return <TableOfContents headings={headings} className={className} />;
-}
