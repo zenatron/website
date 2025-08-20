@@ -15,34 +15,38 @@ interface GitHubReadmeData {
 
 export default function GitHubReadme() {
   const [readmeData, setReadmeData] = useState<GitHubReadmeData>({
-    htmlContent: '',
+    htmlContent: "",
     loading: true,
-    error: null
+    error: null,
   });
 
   useEffect(() => {
     const fetchReadme = async () => {
       try {
         // Fetch the raw README content from GitHub
-        const response = await fetch('https://raw.githubusercontent.com/zenatron/zenatron/main/README.md');
+        const response = await fetch(
+          "https://raw.githubusercontent.com/zenatron/zenatron/main/README.md"
+        );
 
         if (!response.ok) {
-          throw new Error('Failed to fetch README');
+          throw new Error("Failed to fetch README");
         }
 
         const rawContent = await response.text();
 
         // Remove everything before the first horizontal separator and after the second
-        const firstSeparatorIndex = rawContent.indexOf('---');
-        let contentAfterFirst = firstSeparatorIndex !== -1
-          ? rawContent.substring(firstSeparatorIndex + 3).trim()
-          : rawContent;
+        const firstSeparatorIndex = rawContent.indexOf("---");
+        const contentAfterFirst =
+          firstSeparatorIndex !== -1
+            ? rawContent.substring(firstSeparatorIndex + 3).trim()
+            : rawContent;
 
         // Find the second separator and cut off everything after it
-        const secondSeparatorIndex = contentAfterFirst.indexOf('---');
-        const processedContent = secondSeparatorIndex !== -1
-          ? contentAfterFirst.substring(0, secondSeparatorIndex).trim()
-          : contentAfterFirst;
+        const secondSeparatorIndex = contentAfterFirst.indexOf("---");
+        const processedContent =
+          secondSeparatorIndex !== -1
+            ? contentAfterFirst.substring(0, secondSeparatorIndex).trim()
+            : contentAfterFirst;
 
         // Configure marked to handle HTML and GitHub-flavored markdown
         marked.setOptions({
@@ -59,22 +63,20 @@ export default function GitHubReadme() {
         setReadmeData({
           htmlContent: sanitizedHtml,
           loading: false,
-          error: null
+          error: null,
         });
       } catch (error) {
-        console.error('Error fetching README:', error);
+        console.error("Error fetching README:", error);
         setReadmeData({
-          htmlContent: '',
+          htmlContent: "",
           loading: false,
-          error: 'Failed to load README content'
+          error: "Failed to load README content",
         });
       }
     };
 
     fetchReadme();
   }, []);
-
-
 
   if (readmeData.loading) {
     return (
@@ -104,7 +106,9 @@ export default function GitHubReadme() {
           className="relative bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-3xl overflow-hidden shadow-lg"
         >
           <div className="p-8 text-center">
-            <p className="text-red-400 mb-4">{"Failed to load GitHub README."}</p>
+            <p className="text-red-400 mb-4">
+              {"Failed to load GitHub README."}
+            </p>
             <Link
               href="https://github.com/zenatron"
               target="_blank"

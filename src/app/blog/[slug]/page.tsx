@@ -66,7 +66,12 @@ export default async function BlogPage({
           <div className="lg:flex lg:gap-8 lg:items-start">
             {/* Desktop Table of Contents - Sidebar */}
             <aside className="hidden lg:block lg:w-64 lg:flex-shrink-0 lg:sticky lg:top-24">
-              {post.headings && <TableOfContents headings={post.headings} className="desktop-only" />}
+              {post.headings && (
+                <TableOfContents
+                  headings={post.headings}
+                  className="desktop-only"
+                />
+              )}
             </aside>
 
             {/* Main Content */}
@@ -102,16 +107,25 @@ export default async function BlogPage({
                     {post.metadata.readingTime && (
                       <>
                         <span className="ml-2">{"•"}</span>
-                        <span className="ml-2">{post.metadata.readingTime}</span>
+                        <span className="ml-2">
+                          {post.metadata.readingTime}
+                        </span>
                       </>
                     )}
                   </div>
                 </div>
 
                 {/* Mobile Table of Contents - Positioned after title/meta */}
-                {post.headings && <TableOfContents headings={post.headings} className="mobile-only" />}
+                {post.headings && (
+                  <TableOfContents
+                    headings={post.headings}
+                    className="mobile-only"
+                  />
+                )}
 
-                <div className="mdx-content w-full max-w-3xl">{post.content}</div>
+                <div className="mdx-content w-full max-w-3xl">
+                  {post.content}
+                </div>
               </div>
             </article>
           </div>

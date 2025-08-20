@@ -4,18 +4,22 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { FaExternalLinkAlt, FaImage } from "react-icons/fa";
 import Link from "next/link";
-import { favoriteItems, categoryLabels, type FavoriteItem } from "@/lib/favoriteItems";
-
-
-
+import {
+  favoriteItems,
+  categoryLabels,
+  type FavoriteItem,
+} from "@/lib/favoriteItems";
+import Image from "next/image";
 
 export default function HobbiesSection() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [, setIsTransitioning] = useState(false);
 
-  const categories = Array.from(new Set(favoriteItems.map(item => item.category)));
+  const categories = Array.from(
+    new Set(favoriteItems.map((item) => item.category))
+  );
   const filteredItems = selectedCategory
-    ? favoriteItems.filter(item => item.category === selectedCategory)
+    ? favoriteItems.filter((item) => item.category === selectedCategory)
     : favoriteItems;
 
   const handleCategoryChange = (category: string) => {
@@ -30,7 +34,6 @@ export default function HobbiesSection() {
 
   return (
     <div className="space-y-8">
-
       {/* Category Filter */}
       <div className="flex justify-center">
         <div className="inline-flex flex-wrap gap-1.5 p-1.5 bg-neutral-900/50 backdrop-blur-sm border border-neutral-700/50 rounded-lg">
@@ -78,7 +81,7 @@ export default function HobbiesSection() {
         <div className="space-y-0.5">
           <AnimatePresence mode="wait">
             <motion.div
-              key={selectedCategory || 'all'}
+              key={selectedCategory || "all"}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
@@ -93,11 +96,15 @@ export default function HobbiesSection() {
                   transition={{
                     delay: index * 0.02,
                     duration: 0.2,
-                    ease: "easeOut"
+                    ease: "easeOut",
                   }}
                 >
                   {item.url ? (
-                    <Link href={item.url} target="_blank" rel="noopener noreferrer">
+                    <Link
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <FavoriteItemRow item={item} />
                     </Link>
                   ) : (
@@ -109,22 +116,18 @@ export default function HobbiesSection() {
           </AnimatePresence>
         </div>
       </div>
-
     </div>
   );
 }
 
-// Individual item row component
 interface FavoriteItemRowProps {
   item: FavoriteItem;
 }
 
 function FavoriteItemRow({ item }: FavoriteItemRowProps) {
-  // Check if icon is a string (image URL) or React component
-  const isImageIcon = typeof item.icon === 'string';
-  const IconComponent = !isImageIcon ? item.icon as React.ElementType : null;
+  const isImageIcon = typeof item.icon === "string";
+  const IconComponent = !isImageIcon ? (item.icon as React.ElementType) : null;
 
-  // State for handling image load errors
   const [imageError, setImageError] = useState(false);
 
   const handleImageError = () => {
@@ -146,21 +149,20 @@ function FavoriteItemRow({ item }: FavoriteItemRowProps) {
               title={`Failed to load icon for ${item.name}`}
             />
           ) : (
-            <img
+            <Image
               src={item.icon as string}
               alt={item.name}
-              className="w-4 h-4 object-contain"
+              width={16}
+              height={16}
+              className="object-contain"
               style={{
-                filter: item.invertIcon ? 'invert(1)' : 'none'
+                filter: item.invertIcon ? "invert(1)" : "none",
               }}
               onError={handleImageError}
             />
           )
         ) : IconComponent ? (
-          <IconComponent
-            className="w-4 h-4"
-            style={{ color: item.color }}
-          />
+          <IconComponent className="w-4 h-4" style={{ color: item.color }} />
         ) : (
           <div className="w-4 h-4 bg-gray-400 rounded" />
         )}

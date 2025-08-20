@@ -14,28 +14,32 @@ interface BioSection {
 const bioSections: BioSection[] = [
   {
     title: "Hello, I'm Phil",
-    content: "I'm a software engineer who loves building things that matter. I believe technology should make life better, not more complicated. When I write code, I'm thinking about the person who will use it and how I can make their day a little easier.",
+    content:
+      "I'm a software engineer who loves building things that matter. I believe technology should make life better, not more complicated. When I write code, I'm thinking about the person who will use it and how I can make their day a little easier.",
     icon: FaQuoteLeft,
-    color: "rgba(139, 92, 246, 0.15)"
+    color: "rgba(139, 92, 246, 0.15)",
   },
   {
     title: "My Journey",
-    content: "I started programming because I was curious about how websites worked. That curiosity turned into late nights learning new frameworks, contributing to open source projects, and eventually building full-stack applications. Each project taught me something new, and I'm still learning every day.",
+    content:
+      "I started programming because I was curious about how websites worked. That curiosity turned into late nights learning new frameworks, contributing to open source projects, and eventually building full-stack applications. Each project taught me something new, and I'm still learning every day.",
     icon: FaRocket,
-    color: "rgba(59, 130, 246, 0.15)"
+    color: "rgba(59, 130, 246, 0.15)",
   },
   {
     title: "What Drives Me",
-    content: "I get excited about solving real problems with code. Whether it's making a website load faster, building an intuitive interface, or automating something tedious, I love the moment when everything clicks and works beautifully. Good software should feel effortless to use.",
+    content:
+      "I get excited about solving real problems with code. Whether it's making a website load faster, building an intuitive interface, or automating something tedious, I love the moment when everything clicks and works beautifully. Good software should feel effortless to use.",
     icon: FaHeart,
-    color: "rgba(239, 68, 68, 0.15)"
+    color: "rgba(239, 68, 68, 0.15)",
   },
   {
     title: "My Approach",
-    content: "I like to understand the why before diving into the how. I ask questions, listen to users, and collaborate with my team to find the best solution. I write clean code that others can understand and maintain. Most importantly, I never stop learning new things.",
+    content:
+      "I like to understand the why before diving into the how. I ask questions, listen to users, and collaborate with my team to find the best solution. I write clean code that others can understand and maintain. Most importantly, I never stop learning new things.",
     icon: FaCode,
-    color: "rgba(16, 185, 129, 0.15)"
-  }
+    color: "rgba(16, 185, 129, 0.15)",
+  },
 ];
 
 const PersonalBio: React.FC = () => {
@@ -58,7 +62,7 @@ const PersonalBio: React.FC = () => {
           transition={{ duration: 0.5 }}
           className="absolute inset-0"
           style={{
-            background: `linear-gradient(135deg, ${bioSections[activeSection].color}, transparent 70%)`
+            background: `linear-gradient(135deg, ${bioSections[activeSection].color}, transparent 70%)`,
           }}
         />
 
@@ -111,7 +115,7 @@ const PersonalBio: React.FC = () => {
                 "Full-Stack Developer",
                 "AI Enthusiast",
                 "Open Source Contributor",
-                "Game Dev Hobbyist"
+                "Game Dev Hobbyist",
               ].map((highlight, index) => (
                 <motion.span
                   key={highlight}
@@ -144,8 +148,8 @@ const PersonalBio: React.FC = () => {
             whileTap={{ scale: 0.95 }}
             className={`relative p-3 rounded-xl border-2 transition-all duration-300 ${
               activeSection === index
-                ? 'border-accent bg-accent/10 shadow-lg'
-                : 'border-neutral-600/30 bg-neutral-800/25 hover:border-accent/50'
+                ? "border-accent bg-accent/10 shadow-lg"
+                : "border-neutral-600/30 bg-neutral-800/25 hover:border-accent/50"
             }`}
             title={section.title}
           >
@@ -163,12 +167,13 @@ const PersonalBio: React.FC = () => {
 
             <div
               className={`relative z-10 text-xl ${
-                activeSection === index ? 'text-accent' : 'text-muted-text'
+                activeSection === index ? "text-accent" : "text-muted-text"
               }`}
               style={{
-                filter: activeSection === index
-                  ? 'drop-shadow(0 0 8px rgba(34, 123, 224, 0.5))'
-                  : 'none'
+                filter:
+                  activeSection === index
+                    ? "drop-shadow(0 0 8px rgba(34, 123, 224, 0.5))"
+                    : "none",
               }}
             >
               {React.createElement(section.icon)}

@@ -11,7 +11,7 @@ import { BlogPost } from "@/types/types";
 import Counter from "@/components/mdx/Counter";
 import Callout from "@/components/mdx/Callout";
 import { createElement } from "react";
-import { extractHeadings, type Heading } from "@/utils/extractHeadings";
+import { extractHeadings } from "@/utils/extractHeadings";
 
 const blogDirectory = path.join(process.cwd(), "src/content/blog");
 
@@ -202,6 +202,7 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
             `Error loading content: ${error instanceof Error ? error.message : "Unknown error"}`
           ),
           searchableContent,
+          headings,
           metadata: {
             title: data.title || "Untitled",
             date: data.date || "1970-01-01",

@@ -18,7 +18,7 @@ export default function ContactButton({
   buttonText = "Let's Connect!",
   showDescription = true,
   description = "Want to Chat?",
-  variant = "default"
+  variant = "default",
 }: ContactButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -42,18 +42,17 @@ export default function ContactButton({
           onClick={handleOpenModal}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className={`px-6 py-3 bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-2xl shadow-lg hover:bg-neutral-700/30 transition-all duration-300 text-accent font-semibold ${className}`}
+          className={`px-6 py-3  bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-2xl shadow-lg hover:bg-neutral-700/30 transition-all duration-300 text-accent font-semibold ${className}`}
         >
           {buttonText}
         </motion.button>
 
-        {mounted && isModalOpen && createPortal(
-          <ContactModal
-            isOpen={isModalOpen}
-            onClose={handleCloseModal}
-          />,
-          document.body
-        )}
+        {mounted &&
+          isModalOpen &&
+          createPortal(
+            <ContactModal isOpen={isModalOpen} onClose={handleCloseModal} />,
+            document.body
+          )}
       </>
     );
   }
@@ -91,13 +90,12 @@ export default function ContactButton({
       </motion.div>
 
       {/* Modal */}
-      {mounted && isModalOpen && createPortal(
-        <ContactModal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-        />,
-        document.body
-      )}
+      {mounted &&
+        isModalOpen &&
+        createPortal(
+          <ContactModal isOpen={isModalOpen} onClose={handleCloseModal} />,
+          document.body
+        )}
     </>
   );
 }

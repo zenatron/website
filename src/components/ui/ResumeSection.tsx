@@ -1,23 +1,28 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FaDownload, FaExternalLinkAlt, FaCode, FaGraduationCap, FaMapMarkerAlt } from "react-icons/fa";
+import {
+  FaDownload,
+  FaExternalLinkAlt,
+  FaCode,
+  FaGraduationCap,
+  FaMapMarkerAlt,
+} from "react-icons/fa";
 import ContactButton from "./ContactButton";
 
 export default function ResumeSection() {
-
   const handleDownload = () => {
     // Create a link element and trigger download
-    const link = document.createElement('a');
-    link.href = '/downloads/Resume_Phil_Vishnevsky.pdf';
-    link.download = 'Resume_Phil_Vishnevsky.pdf';
+    const link = document.createElement("a");
+    link.href = "/downloads/Resume_Phil_Vishnevsky.pdf";
+    link.download = "Resume_Phil_Vishnevsky.pdf";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   const handlePreview = () => {
-    window.open('/downloads/Resume_Phil_Vishnevsky.pdf', '_blank');
+    window.open("/downloads/Resume_Phil_Vishnevsky.pdf", "_blank");
   };
 
   return (
@@ -31,7 +36,7 @@ export default function ResumeSection() {
         className="space-y-4"
       >
         <h3 className="text-xl font-semibold text-primary-text text-center lg:text-left">
-          Resume Preview
+          {"Resume Preview"}
         </h3>
 
         {/* PDF Embed Container */}
@@ -82,55 +87,43 @@ export default function ResumeSection() {
         transition={{ duration: 0.6, delay: 0.2 }}
         className="space-y-6"
       >
-        <h3 className="text-xl font-semibold text-primary-text text-center lg:text-left">
-          At a Glance
-        </h3>
-
-        {/* Quick Stats Grid */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="p-4 bg-neutral-800/30 backdrop-blur-sm rounded-2xl border border-neutral-600/20 text-center">
-            <div className="text-2xl font-bold text-accent mb-1">5+</div>
-            <div className="text-xs text-muted-text">Years Experience</div>
-          </div>
-          <div className="p-4 bg-neutral-800/30 backdrop-blur-sm rounded-2xl border border-neutral-600/20 text-center">
-            <div className="text-2xl font-bold text-accent mb-1">25+</div>
-            <div className="text-xs text-muted-text">Projects Built</div>
-          </div>
-          <div className="p-4 bg-neutral-800/30 backdrop-blur-sm rounded-2xl border border-neutral-600/20 text-center">
-            <div className="text-2xl font-bold text-accent mb-1">15+</div>
-            <div className="text-xs text-muted-text">Technologies</div>
-          </div>
-          <div className="p-4 bg-neutral-800/30 backdrop-blur-sm rounded-2xl border border-neutral-600/20 text-center">
-            <div className="text-2xl font-bold text-accent mb-1">3</div>
-            <div className="text-xs text-muted-text">Degrees</div>
-          </div>
-        </div>
-
         {/* Key Highlights */}
         <div className="space-y-3">
-          <h4 className="text-lg font-medium text-primary-text">Key Highlights</h4>
+          <h4 className="text-lg font-medium text-primary-text">Highlights</h4>
           <div className="space-y-3">
             <div className="flex items-center gap-3 p-3 bg-neutral-800/20 backdrop-blur-sm rounded-xl border border-neutral-600/20">
               <FaCode className="text-accent text-lg flex-shrink-0" />
               <div>
-                <div className="text-sm font-medium text-primary-text">Multi-Paradigm Programming</div>
-                <div className="text-xs text-muted-text">C++, Java, Rust, Python, TypeScript</div>
+                <div className="text-sm font-medium text-primary-text">
+                  {"Multi-Paradigm Programming"}
+                </div>
+                <div className="text-xs text-muted-text">
+                  {"C++, Java, Rust, Python, TypeScript"}
+                </div>
               </div>
             </div>
 
             <div className="flex items-center gap-3 p-3 bg-neutral-800/20 backdrop-blur-sm rounded-xl border border-neutral-600/20">
               <FaGraduationCap className="text-accent text-lg flex-shrink-0" />
               <div>
-                <div className="text-sm font-medium text-primary-text">Wide Background</div>
-                <div className="text-xs text-muted-text">SWE, AI/ML, Game Dev, Business</div>
+                <div className="text-sm font-medium text-primary-text">
+                  {"Wide Background"}
+                </div>
+                <div className="text-xs text-muted-text">
+                  {"SWE, AI/ML, Game Dev, Business"}
+                </div>
               </div>
             </div>
 
             <div className="flex items-center gap-3 p-3 bg-neutral-800/20 backdrop-blur-sm rounded-xl border border-neutral-600/20">
               <FaMapMarkerAlt className="text-accent text-lg flex-shrink-0" />
               <div>
-                <div className="text-sm font-medium text-primary-text">Based in Charlotte, USA</div>
-                <div className="text-xs text-muted-text">Open to remote opportunities</div>
+                <div className="text-sm font-medium text-primary-text">
+                  {"Based in Charlotte, USA"}
+                </div>
+                <div className="text-xs text-muted-text">
+                  {"Open to remote opportunities"}
+                </div>
               </div>
             </div>
           </div>
@@ -145,10 +138,10 @@ export default function ResumeSection() {
           className="text-center p-4 bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-2xl"
         >
           <h4 className="text-lg font-semibold mb-2 text-primary-text">
-            Want to Chat?
+            {"Want to Chat?"}
           </h4>
           <p className="text-muted-text mb-4 text-sm">
-            I'm always open to new opportunities and connections.
+            {"I'm always open to new opportunities and connections."}
           </p>
           <ContactButton
             variant="compact"

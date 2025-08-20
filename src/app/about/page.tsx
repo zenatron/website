@@ -1,9 +1,9 @@
 "use client";
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BackToTopButton from "@/components/BackToTopButton";
 import { motion } from "framer-motion";
-import Squares from "@/components/ui/Squares";
 import GradientText from "@/components/ui/GradientText";
 import VariableProximity from "@/components/ui/VariableProximity";
 import PhotoCarousel from "@/components/ui/PhotoCarousel";
@@ -12,8 +12,7 @@ import GitHubReadme from "@/components/ui/GitHubReadme";
 import HobbiesSection from "@/components/ui/HobbiesSection";
 import ResumeSection from "@/components/ui/ResumeSection";
 import ContactButton from "@/components/ui/ContactButton";
-// import ContactSection from "@/components/ui/ContactSection";
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 import { aboutPhotos } from "@/lib/aboutPhotos";
 
 // Define sections array outside component to maintain stable reference
@@ -26,74 +25,11 @@ const sections = [
 
 export default function AboutPage() {
   const containerRef = useRef(null);
-  const [activeSection, setActiveSection] = useState<string | null>(null);
-
-  // Intersection Observer for section animations
-  useEffect(() => {
-    const handleScroll = () => {
-      const sectionIds = sections.map(section => section.id);
-      const windowHeight = window.innerHeight;
-      const scrollTop = window.scrollY;
-
-      // Check each section to see which one is most visible
-      let activeId = sectionIds[0]; // Default to first section
-
-      for (const sectionId of sectionIds) {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          const elementTop = rect.top + scrollTop;
-
-          // If we're past the top of this section
-          if (scrollTop + windowHeight * 0.3 >= elementTop) {
-            activeId = sectionId;
-          }
-        }
-      }
-
-      setActiveSection(activeId);
-    };
-
-    // Use intersection observer as backup for animations
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // Only update if we don't have an active section from scroll
-            handleScroll();
-          }
-        });
-      },
-      {
-        threshold: 0.1,
-        rootMargin: '-20% 0px -20% 0px'
-      }
-    );
-
-    const sectionElements = document.querySelectorAll('[data-section]');
-    sectionElements.forEach((section) => observer.observe(section));
-
-    window.addEventListener('scroll', handleScroll);
-
-    // Set initial state
-    handleScroll();
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [sections]);
 
   return (
     <div className="min-h-screen flex flex-col bg-transparent">
       <Header />
-
-      {/* Background */}
-      <div className="fixed inset-0 z-0">
-        <Squares direction="diagonal" speed={0.2} squareSize={96} />
-      </div>
-
-      <main className="flex-1 relative z-10">
+      <main className="flex-1 mb-8 relative z-10">
         {/* Hero Section */}
         <section className="flex flex-col items-center justify-center text-center px-6 pb-20 pt-8">
           <motion.div
@@ -136,8 +72,8 @@ export default function AboutPage() {
               transition={{ delay: 0.3, duration: 0.6 }}
               className="text-lg md:text-xl text-muted-text leading-relaxed max-w-2xl mx-auto"
             >
-              Welcome to my world! Discover my journey, skills, passions, and what drives me
-              as a software engineer and creative problem solver.
+              Welcome to my world! Discover my journey, skills, passions, and
+              what drives me as a software engineer and creative problem solver.
             </motion.p>
           </motion.div>
         </section>
@@ -157,16 +93,12 @@ export default function AboutPage() {
                   href={`#${section.id}`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
-                    activeSection === section.id
-                      ? "bg-accent text-white shadow-lg"
-                      : "text-muted-text hover:text-primary-text hover:bg-neutral-700/50"
-                  }`}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${"text-muted-text hover:text-primary-text hover:bg-neutral-700/50"}`}
                   onClick={(e) => {
                     e.preventDefault();
                     document.getElementById(section.id)?.scrollIntoView({
-                      behavior: 'smooth',
-                      block: 'start'
+                      behavior: "smooth",
+                      block: "start",
                     });
                   }}
                 >
@@ -249,8 +181,8 @@ export default function AboutPage() {
                     </code>
                   </div>
                   <p className="text-muted-text max-w-2xl mx-auto">
-                    Ready to take the next step? Download my resume or connect with me
-                    to discuss opportunities and collaborations.
+                    Ready to take the next step? Download my resume or connect
+                    with me to discuss opportunities and collaborations.
                   </p>
                 </div>
                 <ResumeSection />
@@ -288,7 +220,8 @@ export default function AboutPage() {
                 </code>
               </div>
               <p className="text-muted-text max-w-2xl mx-auto">
-                The apps, tools, and hobbies that shape my daily routine and creative process.
+                The apps, tools, and hobbies that shape my daily routine and
+                creative process.
               </p>
             </div>
             <HobbiesSection />

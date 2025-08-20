@@ -33,29 +33,131 @@ interface Skill {
 
 const skills: Skill[] = [
   // Frontend
-  { name: "React", icon: SiReact, level: 5, category: "frontend", description: "Building dynamic user interfaces" },
-  { name: "TypeScript", icon: SiTypescript, level: 5, category: "frontend", description: "Type-safe JavaScript development" },
-  { name: "Next.js", icon: SiNextdotjs, level: 5, category: "frontend", description: "Full-stack React framework" },
-  { name: "Tailwind CSS", icon: SiTailwindcss, level: 5, category: "frontend", description: "Utility-first CSS framework" },
-  { name: "JavaScript", icon: SiJavascript, level: 5, category: "frontend", description: "Core web development language" },
-  
+  {
+    name: "React",
+    icon: SiReact,
+    level: 5,
+    category: "frontend",
+    description: "Building dynamic user interfaces",
+  },
+  {
+    name: "TypeScript",
+    icon: SiTypescript,
+    level: 5,
+    category: "frontend",
+    description: "Type-safe JavaScript development",
+  },
+  {
+    name: "Next.js",
+    icon: SiNextdotjs,
+    level: 5,
+    category: "frontend",
+    description: "Full-stack React framework",
+  },
+  {
+    name: "Tailwind CSS",
+    icon: SiTailwindcss,
+    level: 5,
+    category: "frontend",
+    description: "Utility-first CSS framework",
+  },
+  {
+    name: "JavaScript",
+    icon: SiJavascript,
+    level: 5,
+    category: "frontend",
+    description: "Core web development language",
+  },
+
   // Backend
-  { name: "Node.js", icon: SiNodedotjs, level: 4, category: "backend", description: "Server-side JavaScript runtime" },
-  { name: "Python", icon: SiPython, level: 4, category: "backend", description: "Versatile programming language" },
-  { name: "GraphQL", icon: SiGraphql, level: 3, category: "backend", description: "Query language for APIs" },
-  { name: "Prisma", icon: SiPrisma, level: 4, category: "backend", description: "Next-generation ORM" },
-  
+  {
+    name: "Node.js",
+    icon: SiNodedotjs,
+    level: 4,
+    category: "backend",
+    description: "Server-side JavaScript runtime",
+  },
+  {
+    name: "Python",
+    icon: SiPython,
+    level: 4,
+    category: "backend",
+    description: "Versatile programming language",
+  },
+  {
+    name: "GraphQL",
+    icon: SiGraphql,
+    level: 3,
+    category: "backend",
+    description: "Query language for APIs",
+  },
+  {
+    name: "Prisma",
+    icon: SiPrisma,
+    level: 4,
+    category: "backend",
+    description: "Next-generation ORM",
+  },
+
   // Database
-  { name: "PostgreSQL", icon: SiPostgresql, level: 4, category: "database", description: "Advanced relational database" },
-  { name: "MongoDB", icon: SiMongodb, level: 3, category: "database", description: "NoSQL document database" },
-  { name: "Redis", icon: SiRedis, level: 3, category: "database", description: "In-memory data structure store" },
-  
+  {
+    name: "PostgreSQL",
+    icon: SiPostgresql,
+    level: 4,
+    category: "database",
+    description: "Advanced relational database",
+  },
+  {
+    name: "MongoDB",
+    icon: SiMongodb,
+    level: 3,
+    category: "database",
+    description: "NoSQL document database",
+  },
+  {
+    name: "Redis",
+    icon: SiRedis,
+    level: 3,
+    category: "database",
+    description: "In-memory data structure store",
+  },
+
   // DevOps
-  { name: "Docker", icon: SiDocker, level: 4, category: "devops", description: "Containerization platform" },
-  { name: "AWS", icon: SiAmazon, level: 3, category: "devops", description: "Cloud computing services" },
-  { name: "Google Cloud", icon: SiGooglecloud, level: 3, category: "devops", description: "Cloud platform and services" },
-  { name: "Kubernetes", icon: SiKubernetes, level: 2, category: "devops", description: "Container orchestration" },
-  { name: "Git", icon: SiGit, level: 5, category: "devops", description: "Version control system" },
+  {
+    name: "Docker",
+    icon: SiDocker,
+    level: 4,
+    category: "devops",
+    description: "Containerization platform",
+  },
+  {
+    name: "AWS",
+    icon: SiAmazon,
+    level: 3,
+    category: "devops",
+    description: "Cloud computing services",
+  },
+  {
+    name: "Google Cloud",
+    icon: SiGooglecloud,
+    level: 3,
+    category: "devops",
+    description: "Cloud platform and services",
+  },
+  {
+    name: "Kubernetes",
+    icon: SiKubernetes,
+    level: 2,
+    category: "devops",
+    description: "Container orchestration",
+  },
+  {
+    name: "Git",
+    icon: SiGit,
+    level: 5,
+    category: "devops",
+    description: "Version control system",
+  },
 ];
 
 const categoryColors = {
@@ -80,9 +182,9 @@ export default function SkillsSection() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
 
-  const categories = Array.from(new Set(skills.map(skill => skill.category)));
-  const filteredSkills = selectedCategory 
-    ? skills.filter(skill => skill.category === selectedCategory)
+  const categories = Array.from(new Set(skills.map((skill) => skill.category)));
+  const filteredSkills = selectedCategory
+    ? skills.filter((skill) => skill.category === selectedCategory)
     : skills;
 
   const renderStars = (level: number) => {
@@ -115,9 +217,10 @@ export default function SkillsSection() {
         >
           All Skills
         </motion.button>
-        
+
         {categories.map((category) => {
-          const IconComponent = categoryIcons[category as keyof typeof categoryIcons];
+          const IconComponent =
+            categoryIcons[category as keyof typeof categoryIcons];
           return (
             <motion.button
               key={category}
@@ -138,7 +241,7 @@ export default function SkillsSection() {
       </div>
 
       {/* Skills Grid */}
-      <motion.div 
+      <motion.div
         layout
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
       >
@@ -155,9 +258,10 @@ export default function SkillsSection() {
             onHoverEnd={() => setHoveredSkill(null)}
             className="relative p-4 bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-2xl shadow-lg hover:border-accent/30 transition-all duration-300 cursor-pointer"
             style={{
-              background: hoveredSkill === skill.name 
-                ? `linear-gradient(135deg, ${categoryColors[skill.category]}, rgba(0,0,0,0.1))`
-                : undefined
+              background:
+                hoveredSkill === skill.name
+                  ? `linear-gradient(135deg, ${categoryColors[skill.category]}, rgba(0,0,0,0.1))`
+                  : undefined,
             }}
           >
             {/* Skill Icon and Name */}
@@ -170,8 +274,12 @@ export default function SkillsSection() {
                 <skill.icon />
               </motion.div>
               <div>
-                <h3 className="font-semibold text-primary-text">{skill.name}</h3>
-                <p className="text-xs text-muted-text capitalize">{skill.category}</p>
+                <h3 className="font-semibold text-primary-text">
+                  {skill.name}
+                </h3>
+                <p className="text-xs text-muted-text capitalize">
+                  {skill.category}
+                </p>
               </div>
             </div>
 
@@ -206,11 +314,12 @@ export default function SkillsSection() {
         className="text-center p-6 bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-2xl"
       >
         <h3 className="text-lg font-semibold mb-2 text-primary-text">
-          Continuous Learning
+          {"Continuous Learning"}
         </h3>
         <p className="text-muted-text leading-relaxed">
-          I'm passionate about staying current with the latest technologies and best practices. 
-          Always exploring new tools and frameworks to deliver the best solutions.
+          {
+            "I'm passionate about staying current with the latest technologies and best practices. Always exploring new tools and frameworks to deliver the best solutions."
+          }
         </p>
       </motion.div>
     </div>

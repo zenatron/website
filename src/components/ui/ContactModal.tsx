@@ -1,7 +1,14 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { FaGithub, FaEnvelope, FaLinkedin, FaTimes, FaDiscord, FaCalendarAlt } from "react-icons/fa";
+import {
+  FaGithub,
+  FaEnvelope,
+  FaLinkedin,
+  FaTimes,
+  FaDiscord,
+  FaCalendarAlt,
+} from "react-icons/fa";
 import { FaBluesky } from "react-icons/fa6";
 import Link from "next/link";
 import { useEffect, useRef, useCallback, useMemo } from "react";
@@ -25,92 +32,100 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   // Memoize contact options to prevent recreation on every render
-  const contactOptions: ContactOption[] = useMemo(() => [
-    {
-      name: "GitHub",
-      icon: <FaGithub className="text-2xl" />,
-      href: "https://github.com/zenatron",
-      description: "Check out my code and projects",
-      color: "hover:bg-gray-600/20 hover:border-gray-400/50"
-    },
-    {
-      name: "Email",
-      icon: <FaEnvelope className="text-2xl" />,
-      href: "mailto:phil@underscore.games",
-      description: "Send me a message directly",
-      color: "hover:bg-red-600/20 hover:border-red-400/50"
-    },
-    {
-      name: "LinkedIn",
-      icon: <FaLinkedin className="text-2xl" />,
-      href: "https://www.linkedin.com/in/philipvishnevsky/",
-      description: "Connect professionally",
-      color: "hover:bg-blue-600/20 hover:border-blue-400/50"
-    },
-    {
-      name: "Bluesky",
-      icon: <FaBluesky className="text-2xl" />,
-      href: "https://bsky.app/profile/zenatron.bsky.social",
-      description: "Follow me on social",
-      color: "hover:bg-sky-600/20 hover:border-sky-400/50"
-    },
-    {
-      name: "Discord",
-      icon: <FaDiscord className="text-2xl" />,
-      href: "https://discord.com/users/492872848025583616",
-      description: "Chat with me on Discord",
-      color: "hover:bg-indigo-600/20 hover:border-indigo-400/50"
-    },
-    {
-      name: "Book a Call",
-      icon: <FaCalendarAlt className="text-2xl" />,
-      href: "https://z3n.me/phil",
-      description: "Schedule a meeting",
-      color: "hover:bg-green-600/20 hover:border-green-400/50"
-    },
-    {
-      name: "Underscore Games",
-      icon: <UgIcon className="w-7 h-7" />,
-      href: "https://underscore.games",
-      description: "Visit my game studio",
-      color: "hover:bg-purple-600/20 hover:border-purple-400/50"
-    }
-  ], []);
+  const contactOptions: ContactOption[] = useMemo(
+    () => [
+      {
+        name: "GitHub",
+        icon: <FaGithub className="text-2xl" />,
+        href: "https://github.com/zenatron",
+        description: "Check out my code and projects",
+        color: "hover:bg-gray-600/20 hover:border-gray-400/50",
+      },
+      {
+        name: "Email",
+        icon: <FaEnvelope className="text-2xl" />,
+        href: "mailto:phil@underscore.games",
+        description: "Send me a message directly",
+        color: "hover:bg-red-600/20 hover:border-red-400/50",
+      },
+      {
+        name: "LinkedIn",
+        icon: <FaLinkedin className="text-2xl" />,
+        href: "https://www.linkedin.com/in/philipvishnevsky/",
+        description: "Connect professionally",
+        color: "hover:bg-blue-600/20 hover:border-blue-400/50",
+      },
+      {
+        name: "Bluesky",
+        icon: <FaBluesky className="text-2xl" />,
+        href: "https://bsky.app/profile/zenatron.bsky.social",
+        description: "Follow me on social",
+        color: "hover:bg-sky-600/20 hover:border-sky-400/50",
+      },
+      {
+        name: "Discord",
+        icon: <FaDiscord className="text-2xl" />,
+        href: "https://discord.com/users/492872848025583616",
+        description: "Chat with me on Discord",
+        color: "hover:bg-indigo-600/20 hover:border-indigo-400/50",
+      },
+      {
+        name: "Book a Call",
+        icon: <FaCalendarAlt className="text-2xl" />,
+        href: "https://z3n.me/phil",
+        description: "Schedule a meeting",
+        color: "hover:bg-green-600/20 hover:border-green-400/50",
+      },
+      {
+        name: "Underscore Games",
+        icon: <UgIcon className="w-7 h-7" />,
+        href: "https://underscore.games",
+        description: "Visit my game studio",
+        color: "hover:bg-purple-600/20 hover:border-purple-400/50",
+      },
+    ],
+    []
+  );
 
   // Optimized keyboard handler with useCallback
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (event.key === 'Escape') {
-      onClose();
-      return;
-    }
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+        return;
+      }
 
-    // Simplified focus trap - only run when Tab is pressed
-    if (event.key === 'Tab' && modalRef.current) {
-      const focusableElements = modalRef.current.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      );
-      const firstElement = focusableElements[0] as HTMLElement;
-      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+      // Simplified focus trap - only run when Tab is pressed
+      if (event.key === "Tab" && modalRef.current) {
+        const focusableElements = modalRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstElement = focusableElements[0] as HTMLElement;
+        const lastElement = focusableElements[
+          focusableElements.length - 1
+        ] as HTMLElement;
 
-      if (event.shiftKey) {
-        if (document.activeElement === firstElement) {
-          event.preventDefault();
-          lastElement?.focus();
-        }
-      } else {
-        if (document.activeElement === lastElement) {
-          event.preventDefault();
-          firstElement?.focus();
+        if (event.shiftKey) {
+          if (document.activeElement === firstElement) {
+            event.preventDefault();
+            lastElement?.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            event.preventDefault();
+            firstElement?.focus();
+          }
         }
       }
-    }
-  }, [onClose]);
+    },
+    [onClose]
+  );
 
   // Handle keyboard events and body scroll lock
   useEffect(() => {
     if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden';
+      document.addEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "hidden";
 
       // Focus the close button when modal opens
       const timeoutId = setTimeout(() => {
@@ -118,8 +133,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       }, 150);
 
       return () => {
-        document.removeEventListener('keydown', handleKeyDown);
-        document.body.style.overflow = 'unset';
+        document.removeEventListener("keydown", handleKeyDown);
+        document.body.style.overflow = "unset";
         clearTimeout(timeoutId);
       };
     }
@@ -145,7 +160,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               type: "spring",
               damping: 30,
               stiffness: 400,
-              duration: 0.3
+              duration: 0.3,
             }}
             className="relative w-full max-w-md sm:max-w-lg bg-neutral-900/90 backdrop-blur-md border border-neutral-700/50 rounded-3xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
@@ -155,7 +170,12 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-neutral-700/40">
-              <h2 id="modal-title" className="text-xl font-bold text-primary-text">Let's Connect!</h2>
+              <h2
+                id="modal-title"
+                className="text-xl font-bold text-primary-text"
+              >
+                {"Let's Connect!"}
+              </h2>
               <button
                 ref={closeButtonRef}
                 onClick={onClose}
@@ -173,12 +193,18 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.1, duration: 0.3 }}
             >
-              {contactOptions.map((option, index) => (
+              {contactOptions.map((option) => (
                 <Link
                   key={option.name}
                   href={option.href}
-                  target={option.href.startsWith('mailto:') ? '_self' : '_blank'}
-                  rel={option.href.startsWith('mailto:') ? '' : 'noopener noreferrer'}
+                  target={
+                    option.href.startsWith("mailto:") ? "_self" : "_blank"
+                  }
+                  rel={
+                    option.href.startsWith("mailto:")
+                      ? ""
+                      : "noopener noreferrer"
+                  }
                   onClick={onClose}
                   className="block group"
                 >
