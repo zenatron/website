@@ -14,7 +14,7 @@ export interface FavoriteItem {
   icon: React.ElementType | string; // Can be React icon component or image URL
   description?: string;
   url?: string;
-  category: "apps" | "hobbies" | "tools" | "entertainment" | "lifestyle";
+  category: "apps" | "hobbies" | "tools" | "fun" | "lifestyle";
   color?: string;
   invertIcon?: boolean; // Whether to invert the icon colors for dark backgrounds
 }
@@ -124,21 +124,21 @@ export const favoriteItems: FavoriteItem[] = [
     icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/spotify.svg",
     description: "you know this one",
     url: "https://spotify.com",
-    category: "entertainment",
+    category: "apps",
   },
   {
     name: "Steam",
     icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/steam.svg",
     description: "games besides minecraft",
     url: "https://store.steampowered.com",
-    category: "entertainment",
+    category: "apps",
   },
   {
     name: "CurseForge",
     icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/curseforge-dark.svg",
     description: "modded minecraft",
     url: "https://curseforge.com",
-    category: "entertainment",
+    category: "apps",
   },
   {
     name: "OBS Studio",
@@ -169,7 +169,7 @@ export const favoriteItems: FavoriteItem[] = [
     icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/jellyfin.svg",
     description: "media server",
     url: "https://jellyfin.org",
-    category: "entertainment",
+    category: "apps",
   },
   {
     name: "Nextcloud",
@@ -292,6 +292,6 @@ export const categoryLabels = {
   apps: "Apps",
   hobbies: "Hobbies",
   tools: "Tools",
-  entertainment: "Entertainment",
+  fun: "Fun",
   lifestyle: "Lifestyle",
 };

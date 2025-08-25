@@ -17,7 +17,7 @@ import { aboutPhotos } from "@/lib/aboutPhotos";
 
 // Define sections array outside component to maintain stable reference
 const sections = [
-  { id: "photos-bio", title: "About Me", component: PersonalBio },
+  //{ id: "photos-bio", title: "About Me", component: PersonalBio },
   { id: "resume", title: "Resume", component: ResumeSection },
   { id: "github", title: "Skills & Tech", component: GitHubReadme },
   { id: "hobbies", title: "Apps & Life", component: HobbiesSection },
@@ -72,8 +72,7 @@ export default function AboutPage() {
               transition={{ delay: 0.3, duration: 0.6 }}
               className="text-lg md:text-xl text-muted-text leading-relaxed max-w-2xl mx-auto"
             >
-              Welcome to my world! Discover my journey, skills, passions, and
-              what drives me as a software engineer and creative problem solver.
+              {"Discover my journey, skills, passions, and what drives me as a software engineer and creative problem solver."}
             </motion.p>
           </motion.div>
         </section>
@@ -112,6 +111,7 @@ export default function AboutPage() {
         {/* Content Sections */}
         <div className="max-w-7xl mx-auto px-6 space-y-24 pb-8">
           {/* Top Section: Photos + Bio Side by Side */}
+          {/*
           <motion.section
             id="photos-bio"
             data-section
@@ -121,9 +121,7 @@ export default function AboutPage() {
             transition={{ duration: 0.8 }}
             className="space-y-8"
           >
-            {/* Two-column layout for larger screens */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-              {/* Photo Gallery - Left Column */}
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -144,7 +142,6 @@ export default function AboutPage() {
                 />
               </motion.div>
 
-              {/* Personal Bio - Right Column */}
               <motion.div
                 initial={{ opacity: 0, x: 30 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -161,6 +158,7 @@ export default function AboutPage() {
               </motion.div>
             </div>
           </motion.section>
+          */}
 
           {/* Resume Section - Glass Card */}
           <motion.section
@@ -181,8 +179,7 @@ export default function AboutPage() {
                     </code>
                   </div>
                   <p className="text-muted-text max-w-2xl mx-auto">
-                    Ready to take the next step? Download my resume or connect
-                    with me to discuss opportunities and collaborations.
+                    {"Download my resume or connect with me to discuss opportunities and collaborations."}
                   </p>
                 </div>
                 <ResumeSection />
