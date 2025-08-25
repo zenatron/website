@@ -15,12 +15,31 @@ import VariableProximity from "@/components/ui/VariableProximity";
 import GradientText from "@/components/ui/GradientText";
 import GlassCard from "@/components/ui/GlassCard";
 import ShinyText from "@/components/ui/ShinyText";
+import DotGrid from "@/components/ui/Dots";
 
 export default function HomePage() {
+
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
+      <div className="fixed inset-0 w-screen h-screen">
+          <div style={{ width: "100%", height: "100vh", position: "relative" }}>
+            <DotGrid
+              dotSize={4}
+              gap={15}
+              baseColor="#161616"
+              activeColor="#242424"
+              proximity={120}
+              shockRadius={250}
+              useFixedDimensions={true}
+              shockStrength={5}
+              resistance={750}
+              returnDuration={1.5}
+          />
+        </div>
+      </div>
       {/* Scrollable content */}
       <div className="relative z-20 flex flex-col min-h-screen">
         <Header />
