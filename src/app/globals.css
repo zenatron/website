@@ -9,6 +9,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Font display configuration */
 @layer base {
   html {
@@ -71,7 +81,7 @@ body {
 @layer components {
   .btn {
     @apply px-4 py-2 rounded-lg font-medium 
-    flex items-center gap-2 shadow-sm hover:shadow-md;
+    flex items-center justify-center gap-2 shadow-sm hover:shadow-md text-center;
   }
 
   .btn.btn-primary {

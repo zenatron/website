@@ -9,137 +9,37 @@ import {
   FaCode,
   FaRocket,
 } from "react-icons/fa";
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 import { motion } from "framer-motion";
 import VariableProximity from "@/components/ui/VariableProximity";
 import GradientText from "@/components/ui/GradientText";
-import DotGrid from "@/components/ui/Dots";
 import GlassCard from "@/components/ui/GlassCard";
 import ShinyText from "@/components/ui/ShinyText";
-
-interface ParticleConfig {
-  initialX: number;
-  initialY: number;
-  endY: number;
-  duration: number;
-  delay: number;
-}
-
-interface HoverParticleConfig {
-  x: string;
-  y: string;
-}
+import DotGrid from "@/components/ui/Dots";
 
 export default function HomePage() {
+
+
   const containerRef = useRef<HTMLDivElement>(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isVisible, setIsVisible] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-  const [particleConfigs, setParticleConfigs] = useState<ParticleConfig[]>([]);
-  const [hoverParticleConfigs, setHoverParticleConfigs] = useState<
-    HoverParticleConfig[]
-  >([]);
-
-  useEffect(() => {
-    setIsVisible(true);
-    setIsMounted(true);
-
-    // Generate particle configurations on client side only
-    const configs: ParticleConfig[] = Array.from({ length: 12 }, () => ({
-      initialX: Math.random() * window.innerWidth,
-      initialY: Math.random() * window.innerHeight,
-      endY: window.innerHeight + 100,
-      duration: Math.random() * 15 + 15,
-      delay: Math.random() * 8,
-    }));
-    setParticleConfigs(configs);
-
-    // Generate hover particle configurations on client side only
-    const hoverConfigs: HoverParticleConfig[] = Array.from(
-      { length: 3 },
-      () => ({
-        x: Math.random() * 100 + "%",
-        y: Math.random() * 100 + "%",
-      })
-    );
-    setHoverParticleConfigs(hoverConfigs);
-
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
       <div className="fixed inset-0 w-screen h-screen">
-        {isMounted && (
           <div style={{ width: "100%", height: "100vh", position: "relative" }}>
             <DotGrid
               dotSize={4}
               gap={15}
-              baseColor="#111111"
-              activeColor="#222222"
+              baseColor="#161616"
+              activeColor="#242424"
               proximity={120}
               shockRadius={250}
               useFixedDimensions={true}
               shockStrength={5}
               resistance={750}
               returnDuration={1.5}
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Floating particles */}
-      {isMounted && particleConfigs.length > 0 && (
-        <div className="fixed inset-0 pointer-events-none z-10">
-          {particleConfigs.map((config, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 bg-accent/20 rounded-full"
-              initial={{
-                x: config.initialX,
-                y: config.initialY,
-                opacity: 0,
-              }}
-              animate={{
-                y: [null, -100, config.endY],
-                opacity: [0, 0.6, 0],
-              }}
-              transition={{
-                duration: config.duration,
-                repeat: Infinity,
-                delay: config.delay,
-                ease: "linear",
-              }}
-            />
-          ))}
+          />
         </div>
-      )}
-
-      {/* Mouse follower effect */}
-      {/* <motion.div
-        className="fixed pointer-events-none z-15 w-96 h-96 rounded-full"
-        style={{
-          background: `radial-gradient(circle, rgba(34, 123, 224, 0.05) 0%, transparent 70%)`,
-          left: mousePosition.x - 192,
-          top: mousePosition.y - 192,
-        }}
-        animate={{
-          scale: [1, 1.1, 1],
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      /> */}
-
+      </div>
       {/* Scrollable content */}
       <div className="relative z-20 flex flex-col min-h-screen">
         <Header />
@@ -148,7 +48,7 @@ export default function HomePage() {
           <motion.section
             className="max-w-4xl py-12"
             initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
           >
             {/* Main title with enhanced effects */}
@@ -168,17 +68,30 @@ export default function HomePage() {
                   transparent={true}
                   colors={["#227be0", "#9c40ff", "#ffaa40", "#227be0"]}
                 >
-                  <VariableProximity
-                    label="Hey, I'm Phil!"
-                    className="text-5xl md:text-8xl font-bold tracking-tight"
-                    fromFontVariationSettings="'wght' 100, 'opsz' 8"
-                    toFontVariationSettings="'wght' 900, 'opsz' 48"
-                    containerRef={
-                      containerRef as unknown as React.RefObject<HTMLElement>
-                    }
-                    radius={120}
-                    falloff="gaussian"
-                  />
+                  <div className="flex flex-col items-center gap-2">
+                    <VariableProximity
+                      label="Hey,"
+                      className="text-6xl md:text-8xl font-bold tracking-tight"
+                      fromFontVariationSettings="'wght' 100, 'opsz' 8"
+                      toFontVariationSettings="'wght' 900, 'opsz' 48"
+                      containerRef={
+                        containerRef as unknown as React.RefObject<HTMLElement>
+                      }
+                      radius={120}
+                      falloff="gaussian"
+                    />
+                    <VariableProximity
+                      label="I'm Phil!"
+                      className="text-6xl md:text-8xl font-bold tracking-tight"
+                      fromFontVariationSettings="'wght' 100, 'opsz' 8"
+                      toFontVariationSettings="'wght' 900, 'opsz' 48"
+                      containerRef={
+                        containerRef as unknown as React.RefObject<HTMLElement>
+                      }
+                      radius={120}
+                      falloff="gaussian"
+                    />
+                  </div>
                 </GradientText>
               </div>
 
@@ -234,7 +147,7 @@ export default function HomePage() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.25, duration: 0.25 }}
               >
-                SWE • AI • Games
+                {"SWE • AI/ML • Games"}
               </motion.p>
             </motion.div>
           </motion.section>
@@ -303,33 +216,6 @@ export default function HomePage() {
                       </p>
                     </div>
                   </div>
-
-                  {/* Subtle hover effect particles */}
-                  {isMounted && hoverParticleConfigs.length > 0 && (
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
-                      {hoverParticleConfigs.map((config, i) => (
-                        <motion.div
-                          key={i}
-                          className="absolute w-1 h-1 bg-accent/30 rounded-full"
-                          initial={{
-                            x: config.x,
-                            y: config.y,
-                            scale: 0,
-                          }}
-                          whileHover={{
-                            scale: [0, 1, 0],
-                            y: [null, "-30px"],
-                          }}
-                          transition={{
-                            duration: 2,
-                            delay: i * 0.3,
-                            repeat: Infinity,
-                            ease: "easeOut",
-                          }}
-                        />
-                      ))}
-                    </div>
-                  )}
                 </GlassCard>
               </motion.div>
             ))}

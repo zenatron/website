@@ -7,28 +7,24 @@ export const links: LinkItem[] = [
     url: "https://github.com/zenatron",
     description: "My code, projects, and contributions.",
     icon: "FaGithub",
-    featured: true,
   },
   {
     title: "LinkedIn",
     url: "https://www.linkedin.com/in/philipvishnevsky/",
     description: "My professional network and career profile.",
     icon: "FaLinkedin",
-    featured: true,
   },
   {
     title: "Website",
     url: "https://pvi.sh",
     description: "Read my blog, see my projects, and more. (You're here!)",
     icon: "FaGlobe",
-    featured: true,
   },
   {
     title: "Underscore Games",
     url: "https://underscore.games",
     description: "Games & tools for game developers.",
     icon: UgIcon,
-    featured: true,
   },
   {
     title: "Let's Talk!",
