@@ -7,6 +7,7 @@ import { FaList, FaTh } from "react-icons/fa";
 import GradientText from "../ui/GradientText";
 import VariableProximity from "../ui/VariableProximity";
 import LinkCard from "../ui/LinkCard";
+import ShinyText from "../ui/ShinyText";
 
 type ViewMode = "grid" | "list";
 
@@ -31,7 +32,7 @@ export default function LinksClient({ links }: LinksClientProps) {
             padding: "10px",
           }}
         >
-          <GradientText animationSpeed={24} transparent={true}>
+          <GradientText animationSpeed={24} transparent={true} colors={["#00d4ff", "#0099ff", "#0047ff", "#00d4ff"]}>
             <VariableProximity
               label="Phil Vishnevsky"
               className="text-6xl md:text-6xl font-bold"
@@ -45,9 +46,27 @@ export default function LinksClient({ links }: LinksClientProps) {
             />
           </GradientText>
         </div>
-        <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-          Connect with me across platforms!
-        </p>
+        <motion.div
+          className="mt-2 space-y-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+        >
+          <ShinyText
+            text="Connect with me across platforms!"
+            disabled={false}
+            speed={3}
+            className="tag-bubble text-sm md:text-lg border-gray-600 hover:border-gray-400 transition-all duration-300"
+          />
+          <motion.p
+            className="text-secondary-text text-sm md:text-base max-w-2xl mx-auto leading-relaxed"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          >
+            {"SWE • AI/ML • Games"}
+          </motion.p>
+        </motion.div>
       </section>
 
       {/* View Mode Toggle */}
@@ -96,6 +115,7 @@ export default function LinksClient({ links }: LinksClientProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
+            style={viewMode === "grid" ? { aspectRatio: "1 / 1" } : undefined}
           >
             <LinkCard item={link} viewMode={viewMode} />
           </motion.div>

@@ -179,7 +179,7 @@ export const favoriteItems: FavoriteItem[] = [
     category: "tools",
   },
   {
-    name: "karakeep",
+    name: "Karakeep",
     icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/hoarder.svg",
     description: "bookmark manager",
     url: "https://github.com/karakeep-app/karakeep",
@@ -194,10 +194,17 @@ export const favoriteItems: FavoriteItem[] = [
     category: "tools",
   },
   {
-    name: "Authelia",
-    icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/authelia.svg",
+    name: "Tinyauth",
+    icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/tinyauth.svg",
     description: "auth server",
-    url: "https://authelia.com",
+    url: "https://tinyauth.app",
+    category: "tools",
+  },
+  {
+    name: "Pocket ID",
+    icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/pocket-id.svg",
+    description: "oidc provider",
+    url: "https://pocket-id.org",
     category: "tools",
   },
   {
@@ -226,7 +233,7 @@ export const favoriteItems: FavoriteItem[] = [
     icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/mattermost-blue.svg",
     description: "team collaboration",
     url: "https://mattermost.com",
-    category: "apps",
+    category: "tools",
   },
 
   // Hobbies & Interests
