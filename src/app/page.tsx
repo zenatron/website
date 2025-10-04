@@ -66,7 +66,7 @@ export default function HomePage() {
                   className="mb-6"
                   animationSpeed={24}
                   transparent={true}
-                  colors={["#227be0", "#9c40ff", "#ffaa40", "#227be0"]}
+                  colors={["#00d4ff", "#0099ff", "#0047ff", "#00d4ff"]}
                 >
                   <div className="flex flex-col items-center gap-2">
                     <VariableProximity

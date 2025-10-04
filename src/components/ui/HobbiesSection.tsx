@@ -85,14 +85,14 @@ export default function HobbiesSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
               className="space-y-0.5"
             >
               {filteredItems.map((item, index) => (
                 <motion.div
                   key={item.name}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                   transition={{
                     delay: index * 0.02,
                     duration: 0.2,
@@ -136,9 +136,10 @@ function FavoriteItemRow({ item }: FavoriteItemRowProps) {
 
   return (
     <motion.div
-      whileHover={{ x: 4 }}
+      whileHover={{ x: 4, backgroundColor: "rgba(23, 23, 23, 0.2)" }}
       whileTap={{ scale: 0.98 }}
-      className="flex gap-3 py-2 px-3 rounded-md transition-all duration-200 cursor-pointer group hover:bg-neutral-900/20 min-h-[2.5rem]"
+      transition={{ duration: 0.15, ease: "easeOut" }}
+      className="flex gap-3 py-2 px-3 rounded-md cursor-pointer group min-h-[2.5rem]"
     >
       {/* Icon */}
       <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center mt-0.5 md:mt-0">

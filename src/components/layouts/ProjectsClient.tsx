@@ -148,7 +148,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
             padding: "10px",
           }}
         >
-          <GradientText animationSpeed={24} transparent={true}>
+          <GradientText animationSpeed={24} transparent={true} colors={["#00d4ff", "#0099ff", "#0047ff", "#00d4ff"]}>
             <VariableProximity
               label="Projects"
               className="text-6xl md:text-6xl font-bold"
