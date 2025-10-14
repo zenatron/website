@@ -6,6 +6,8 @@ import { FaHashtag, FaArrowLeft } from "react-icons/fa";
 import dateFormatter from "@/utils/dateFormatter";
 import BackToTopButton from "@/components/BackToTopButton";
 import TableOfContents from "@/components/blog/TableOfContents";
+import KatexStyles from "@/components/KatexStyles";
+import GrainBackground from "@/components/GrainBackground";
 
 export async function generateStaticParams() {
   const params = await import("@/lib/blog").then((mod) =>
@@ -46,6 +48,8 @@ export default async function BlogPage({
 
   return (
     <div className="min-h-screen bg-transparent relative">
+      <GrainBackground />
+      <KatexStyles />
       <Header />
 
       <main className="px-6 py-10 pt-20">

@@ -108,7 +108,11 @@ export default function BlogClient({ posts }: BlogClientProps) {
             padding: "10px",
           }}
         >
-          <GradientText animationSpeed={24} transparent={true} colors={["#00d4ff", "#0099ff", "#0047ff", "#00d4ff"]}>
+          <GradientText
+            animationSpeed={24}
+            transparent={true}
+            colors={["#00d4ff", "#0099ff", "#0047ff", "#00d4ff"]}
+          >
             <VariableProximity
               label="Blog"
               className="text-6xl md:text-6xl font-bold"

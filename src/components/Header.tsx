@@ -16,7 +16,7 @@ export default function Header() {
         />
       </Link>
 
-      <nav className="hidden md:flex items-center space-x-4">
+      <nav className="hidden md:flex items-center space-x-4 font-atkinson">
         <Link
           href="/projects"
           className="btn-nav hover:text-accent transition-transform duration-200 hover:scale-110"
