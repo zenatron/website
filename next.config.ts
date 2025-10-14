@@ -20,6 +20,15 @@ const nextConfig: NextConfig = {
     removeConsole:
       process.env.NODE_ENV === "production" ? { exclude: ["error"] } : false,
   },
+  // Optimize package imports to reduce bundle size
+  experimental: {
+    optimizePackageImports: [
+      "framer-motion",
+      "react-icons",
+      "lucide-react",
+      "gsap",
+    ],
+  },
   pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
   images: {
     remotePatterns: [

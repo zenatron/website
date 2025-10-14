@@ -5,12 +5,14 @@ import BlogLayout from "@/components/layouts/BlogLayout";
 import BackToTopButton from "@/components/BackToTopButton";
 import { Suspense } from "react";
 import ClientSkeletonLoader from "@/components/ui/ClientSkeletonLoader";
+import GrainBackground from "@/components/GrainBackground";
 
 export default async function BlogPage() {
   const posts = await getAllBlogPosts();
 
   return (
     <div className="min-h-screen flex flex-col bg-transparent">
+      <GrainBackground />
       <Header />
       <div className="pt-4">
         <Suspense fallback={<ClientSkeletonLoader layout="list" />}>

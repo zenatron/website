@@ -60,7 +60,7 @@ export default function Footer() {
           <UgIcon className="w-7 h-7" />
         </Link>
       </div>
-      <div className="flex items-center justify-center gap-3">
+      <div className="flex items-center justify-center gap-3 font-atkinson">
         <p className="text-xs">
           © {new Date().getFullYear()} Phil Vishnevsky. All rights reserved.
         </p>

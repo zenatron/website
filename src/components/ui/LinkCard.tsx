@@ -2,13 +2,11 @@
 
 import React from "react";
 import { LinkItem } from "@/types/types";
-import GlassCard from "./GlassCard";
 import * as FaIcons from "react-icons/fa";
 import { FaBluesky } from "react-icons/fa6";
 
 interface LinkCardProps {
   item: LinkItem;
-  viewMode: "grid" | "list";
 }
 
 // A mapping from icon names (string) to actual icon components
@@ -17,7 +15,7 @@ const iconMap: { [key: string]: React.ElementType } = {
   FaBluesky,
 };
 
-export default function LinkCard({ item, viewMode }: LinkCardProps) {
+export default function LinkCard({ item }: LinkCardProps) {
   let IconComponent: React.ElementType | null = null;
   if (typeof item.icon === "string") {
     IconComponent = iconMap[item.icon] || null;
@@ -26,55 +24,33 @@ export default function LinkCard({ item, viewMode }: LinkCardProps) {
   }
 
   return (
-    <GlassCard
+    <a
       href={item.url}
-      external
-      className={`h-full w-full transition-all duration-300 ${
-        item.featured ? "border-accent/50" : ""
-      }`}
-      spotlightColor={
-        item.featured ? "rgba(108, 22, 222, 0.2)" : "rgba(255, 255, 255, 0.1)"
-      }
-    >
-      <div
-        className={`relative z-10 flex h-full w-full items-center transition-all duration-300 ${
-          viewMode === "list"
-            ? "flex-row gap-4 px-4 py-3"
-            : "flex-col justify-center text-center gap-2 p-4"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`group relative flex flex-row items-center gap-2.5 px-3 py-2 rounded-lg
+        border transition-all duration-200 hover:scale-[1.01] hover:shadow-lg
+        ${
+          item.featured
+            ? "border-accent/40 bg-accent/5 hover:border-accent/60 hover:bg-accent/10"
+            : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10"
         }`}
-      >
-        {IconComponent && (
-          <div
-            className={`relative ${
-              viewMode === "list" ? "flex-shrink-0" : ""
-            } mb-0`}
-          >
-            <IconComponent
-              className={`text-accent transition-transform duration-300 group-hover:scale-110 ${
-                viewMode === "list" ? "h-8 w-8" : "h-10 w-10"
-              }`}
-            />
-          </div>
-        )}
-        <div className="relative flex-grow">
-          <h3
-            className={`font-bold group-hover:text-accent transition-colors ${
-              viewMode === "list" ? "text-lg" : "text-md"
-            }`}
-          >
-            {item.title}
-          </h3>
-          {item.description && (
-            <p
-              className={`text-muted-text text-sm ${
-                viewMode === "list" ? "" : "hidden md:block"
-              }`}
-            >
-              {item.description}
-            </p>
-          )}
+    >
+      {IconComponent && (
+        <div className="relative flex-shrink-0">
+          <IconComponent className="text-accent transition-transform duration-200 group-hover:scale-110 h-5 w-5" />
         </div>
+      )}
+      <div className="relative flex-grow min-w-0">
+        <h3 className="font-semibold group-hover:text-accent transition-colors text-sm leading-tight">
+          {item.title}
+        </h3>
+        {item.description && (
+          <p className="text-muted-text text-xs leading-tight mt-0.5 line-clamp-1 opacity-70">
+            {item.description}
+          </p>
+        )}
       </div>
-    </GlassCard>
+    </a>
   );
 }

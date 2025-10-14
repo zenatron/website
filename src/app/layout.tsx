@@ -8,20 +8,26 @@ import {
 import "./globals.css";
 import "./markdown.css";
 
+// Optimize font loading with preload and display swap
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
+  preload: true,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
+  preload: true,
 });
 
 const robotoFlex = Roboto_Flex({
   variable: "--font-roboto-flex",
   subsets: ["latin"],
   display: "swap",
+  preload: true,
 });
 
 const atkinson = Atkinson_Hyperlegible({
@@ -29,6 +35,7 @@ const atkinson = Atkinson_Hyperlegible({
   weight: ["400", "700"],
   display: "swap",
   variable: "--font-atkinson",
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -47,12 +54,14 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${robotoFlex.variable} ${atkinson.variable}`}
     >
       <head>
+        {/* Preconnect to font and CDN origins for faster loading */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
-          rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
-          integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
+        <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
       </head>
       <body className="antialiased bg-primary-bg text-primary-text">
         {children}

@@ -14,6 +14,7 @@ import ResumeSection from "@/components/ui/ResumeSection";
 import ContactButton from "@/components/ui/ContactButton";
 import { useRef } from "react";
 import { aboutPhotos } from "@/lib/aboutPhotos";
+import GrainBackground from "@/components/GrainBackground";
 
 // Define sections array outside component to maintain stable reference
 const sections = [
@@ -28,6 +29,7 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-transparent">
+      <GrainBackground />
       <Header />
       <main className="flex-1 mb-8 relative z-10">
         {/* Hero Section */}
@@ -72,7 +74,9 @@ export default function AboutPage() {
               transition={{ delay: 0.3, duration: 0.6 }}
               className="text-lg md:text-xl text-muted-text leading-relaxed max-w-2xl mx-auto"
             >
-              {"Discover my journey, skills, passions, and what drives me as a software engineer and creative problem solver."}
+              {
+                "Discover my journey, skills, passions, and what drives me as a software engineer and creative problem solver."
+              }
             </motion.p>
           </motion.div>
         </section>
@@ -179,7 +183,9 @@ export default function AboutPage() {
                     </code>
                   </div>
                   <p className="text-muted-text max-w-2xl mx-auto">
-                    {"Download my resume or connect with me to discuss opportunities and collaborations."}
+                    {
+                      "Download my resume or connect with me to discuss opportunities and collaborations."
+                    }
                   </p>
                 </div>
                 <ResumeSection />

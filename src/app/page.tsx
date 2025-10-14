@@ -15,28 +15,36 @@ import VariableProximity from "@/components/ui/VariableProximity";
 import GradientText from "@/components/ui/GradientText";
 import GlassCard from "@/components/ui/GlassCard";
 import ShinyText from "@/components/ui/ShinyText";
-import DotGrid from "@/components/ui/Dots";
+import dynamic from "next/dynamic";
+import GrainBackground from "@/components/GrainBackground";
+
+// Lazy load DotGrid with no SSR for better performance
+const DotGrid = dynamic(() => import("@/components/ui/Dots"), {
+  ssr: false,
+  loading: () => (
+    <div className="fixed inset-0 w-screen h-screen bg-primary-bg" />
+  ),
+});
 
 export default function HomePage() {
-
-
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
+      <GrainBackground />
       <div className="fixed inset-0 w-screen h-screen">
-          <div style={{ width: "100%", height: "100vh", position: "relative" }}>
-            <DotGrid
-              dotSize={4}
-              gap={15}
-              baseColor="#161616"
-              activeColor="#242424"
-              proximity={120}
-              shockRadius={250}
-              useFixedDimensions={true}
-              shockStrength={5}
-              resistance={750}
-              returnDuration={1.5}
+        <div style={{ width: "100%", height: "100vh", position: "relative" }}>
+          <DotGrid
+            dotSize={4}
+            gap={15}
+            baseColor="#161616"
+            activeColor="#242424"
+            proximity={120}
+            shockRadius={250}
+            useFixedDimensions={true}
+            shockStrength={5}
+            resistance={750}
+            returnDuration={1.5}
           />
         </div>
       </div>
@@ -196,17 +204,9 @@ export default function HomePage() {
                   spotlightColor={item.spotlightColor}
                 >
                   <div className="relative z-10 flex flex-col items-center justify-center h-full text-center space-y-3">
-                    <motion.div
-                      whileHover={{
-                        rotate: [0, -10, 10, -10, 0],
-                        scale: 1.1,
-                      }}
-                      transition={{ duration: 0.25 }}
-                      className="text-2xl md:text-3xl text-accent"
-                    >
+                    <div className="text-2xl md:text-3xl text-accent">
                       <item.icon />
-                    </motion.div>
-
+                    </div>
                     <div>
                       <h3 className="text-base md:text-lg font-bold mb-1 group-hover:text-accent transition-colors">
                         {item.title}

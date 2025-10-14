@@ -8,6 +8,7 @@ import { getAllProjects } from "@/lib/projects";
 import HtmlRenderer from "@/components/HtmlRenderer";
 import { redirect } from "next/navigation";
 import BackToTopButton from "@/components/BackToTopButton";
+import GrainBackground from "@/components/GrainBackground";
 
 export async function generateStaticParams() {
   const params = await import("@/lib/projects").then((mod) =>
@@ -52,6 +53,7 @@ export default async function ProjectPage({
 
     return (
       <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
+        <GrainBackground />
         <Header />
         <main className="flex-1 px-6 py-10 pt-20">
           <div className="max-w-4xl mx-auto">
