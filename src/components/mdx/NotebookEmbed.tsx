@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaChevronDown, FaChevronUp, FaExternalLinkAlt } from "react-icons/fa";
+import { FaChevronDown, FaExternalLinkAlt } from "react-icons/fa";
+import { SiJupyter } from "react-icons/si";
 import HtmlRenderer from "@/components/HtmlRenderer";
 
 interface NotebookEmbedProps {
@@ -39,52 +40,56 @@ export default function NotebookEmbed({
 
   return (
     <div className="my-8 rounded-lg border border-white/10 bg-white/5 backdrop-blur-md overflow-hidden">
-      {/* Header with Toggle and Open in New Tab */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+      {/* Header with Toggle */}
+      <div className="flex items-center gap-4 px-6 py-4 border-b border-white/10">
+        {/* Jupyter Icon */}
+        <div className="flex-shrink-0">
+          <SiJupyter className="w-6 h-6 text-accent" />
+        </div>
+
+        {/* Title and description - clickable to toggle */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex-1 flex items-center gap-3 text-left hover:opacity-80 transition-opacity duration-200"
+          className="flex-1 text-left min-w-0 hover:opacity-80 transition-opacity duration-200"
         >
-          <div className="p-2 rounded-lg bg-accent/10 border border-accent/20">
-            <svg 
-              className="w-5 h-5 text-accent" 
-              fill="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-            </svg>
-          </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-primary-text">
-              {title}
-            </h3>
-            <p className="text-sm text-secondary-text">
-              {isOpen ? "Click to collapse" : "Click to expand notebook"}
-            </p>
-          </div>
-          <motion.div
-            animate={{ rotate: isOpen ? 180 : 0 }}
-            transition={{ duration: 0.3 }}
-            className="text-accent"
-          >
-            {isOpen ? <FaChevronUp size={20} /> : <FaChevronDown size={20} />}
-          </motion.div>
+          <h3 className="text-lg font-semibold text-primary-text mb-1">
+            {title}
+          </h3>
+          <p className="text-sm text-secondary-text">
+            {isOpen ? "Click to collapse" : "Click to expand Jupyter notebook"}
+          </p>
         </button>
-        
-        {/* Open in New Tab Button */}
-        <a
-          href={`/downloads/${notebookHtml}.html`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="ml-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg px-4 py-2 
-                     text-sm inline-flex items-center gap-2
-                     hover:bg-white/10 hover:border-white/20 shadow-lg transition-all duration-300"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <FaExternalLinkAlt className="text-accent" size={14} />
-          <span className="hidden sm:inline">Open Full Screen</span>
-          <span className="sm:hidden">Open</span>
-        </a>
+
+        {/* Right side buttons - Desktop: side by side, Mobile: stacked */}
+        <div className="flex sm:flex-row flex-col items-center gap-2 sm:gap-3 flex-shrink-0">
+          {/* Open in New Tab Button */}
+          <a
+            href={`/downloads/${notebookHtml}.html`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg
+                       hover:bg-white/10 hover:border-white/20 shadow-lg transition-all duration-300
+                       flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+            title="Open notebook in new tab"
+          >
+            <FaExternalLinkAlt className="text-accent" size={16} />
+          </a>
+
+          {/* Chevron Toggle */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="p-2 hover:bg-white/5 rounded-lg transition-colors duration-200"
+          >
+            <motion.div
+              animate={{ rotate: isOpen ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+              className="text-accent"
+            >
+              <FaChevronDown size={20} />
+            </motion.div>
+          </button>
+        </div>
       </div>
 
       {/* Collapsible Content */}

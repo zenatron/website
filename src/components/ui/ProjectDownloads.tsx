@@ -125,7 +125,7 @@ export default function ProjectDownloads({ downloads, projectTitle }: ProjectDow
           {/* Header */}
           <div className="p-3 border-b border-white/10 bg-white/5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold">Select files to download</span>
+              <span className="text-sm font-semibold">Select Files to Download</span>
               <button
                 onClick={toggleAll}
                 className="text-xs text-accent hover:text-accent/80 transition-colors"

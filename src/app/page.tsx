@@ -32,7 +32,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
       <GrainBackground />
-      <div className="fixed inset-0 w-screen h-screen">
+      {/* <div className="fixed inset-0 w-screen h-screen">
         <div style={{ width: "100%", height: "100vh", position: "relative" }}>
           <DotGrid
             dotSize={4}
@@ -47,7 +47,7 @@ export default function HomePage() {
             returnDuration={1.5}
           />
         </div>
-      </div>
+      </div> */}
       {/* Scrollable content */}
       <div className="relative z-20 flex flex-col min-h-screen">
         <Header />
