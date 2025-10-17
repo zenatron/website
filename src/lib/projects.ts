@@ -127,7 +127,11 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
       // Check if this is a notebook project with HTML content
       let htmlContent = "";
       if (data.notebookHtml) {
-        const htmlPath = path.join(process.cwd(), "public/downloads", `${data.notebookHtml}.html`);
+        // Only append .html if it doesn't already end with it
+        const filename = data.notebookHtml.endsWith('.html') 
+          ? data.notebookHtml 
+          : `${data.notebookHtml}.html`;
+        const htmlPath = path.join(process.cwd(), "public/downloads", filename);
         if (fs.existsSync(htmlPath)) {
           htmlContent = fs.readFileSync(htmlPath, "utf8");
         }
