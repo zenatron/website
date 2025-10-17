@@ -13,7 +13,15 @@ interface GitHubReadmeData {
   error: string | null;
 }
 
-export default function GitHubReadme() {
+interface GitHubReadmeProps {
+  repo?: string; // Format: "owner/repo", defaults to "zenatron/zenatron"
+  processSections?: boolean; // Whether to process sections between separators
+}
+
+export default function GitHubReadme({ 
+  repo = "zenatron/zenatron", // Default to your profile README
+  processSections = false 
+}: GitHubReadmeProps) {
   const [readmeData, setReadmeData] = useState<GitHubReadmeData>({
     htmlContent: "",
     loading: true,
@@ -25,7 +33,7 @@ export default function GitHubReadme() {
       try {
         // Fetch the raw README content from GitHub
         const response = await fetch(
-          "https://raw.githubusercontent.com/zenatron/zenatron/main/README.md"
+          `https://raw.githubusercontent.com/${repo}/main/README.md`
         );
 
         if (!response.ok) {
@@ -34,19 +42,22 @@ export default function GitHubReadme() {
 
         const rawContent = await response.text();
 
-        // Remove everything before the first horizontal separator and after the second
-        const firstSeparatorIndex = rawContent.indexOf("---");
-        const contentAfterFirst =
-          firstSeparatorIndex !== -1
-            ? rawContent.substring(firstSeparatorIndex + 3).trim()
-            : rawContent;
+        let processedContent = rawContent;
 
-        // Find the second separator and cut off everything after it
-        const secondSeparatorIndex = contentAfterFirst.indexOf("---");
-        const processedContent =
-          secondSeparatorIndex !== -1
-            ? contentAfterFirst.substring(0, secondSeparatorIndex).trim()
-            : contentAfterFirst;
+        // Optionally remove sections between separators (for personal README)
+        if (processSections) {
+          const firstSeparatorIndex = rawContent.indexOf("---");
+          const contentAfterFirst =
+            firstSeparatorIndex !== -1
+              ? rawContent.substring(firstSeparatorIndex + 3).trim()
+              : rawContent;
+
+          const secondSeparatorIndex = contentAfterFirst.indexOf("---");
+          processedContent =
+            secondSeparatorIndex !== -1
+              ? contentAfterFirst.substring(0, secondSeparatorIndex).trim()
+              : contentAfterFirst;
+        }
 
         // Configure marked to handle HTML and GitHub-flavored markdown
         marked.setOptions({
@@ -76,7 +87,7 @@ export default function GitHubReadme() {
     };
 
     fetchReadme();
-  }, []);
+  }, [repo, processSections]);
 
   if (readmeData.loading) {
     return (
@@ -136,16 +147,16 @@ export default function GitHubReadme() {
         <div className="flex items-center justify-between p-4 bg-neutral-900/50 border-b border-neutral-600/30">
           <div className="flex items-center gap-3">
             <FaGithub className="text-xl text-accent" />
-            <span className="font-semibold text-primary-text">zenatron</span>
+            <span className="font-semibold text-primary-text">{repo}</span>
           </div>
           <Link
-            href="https://github.com/zenatron"
+            href={`https://github.com/${repo}`}
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-nav"
           >
             <FaExternalLinkAlt className="text-xs" />
-            {"See more"}
+            {"View on GitHub"}
           </Link>
         </div>
 

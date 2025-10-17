@@ -1,0 +1,457 @@
+---
+title: "Projects System Documentation"
+description: "Complete guide to creating custom project pages with MDX, including all frontmatter options and features"
+type: "other"
+slug: "example-custom-project"
+date: "2025-10-16"
+tags: ["documentation", "mdx", "reference", "guide"]
+featured: false
+---
+
+import Counter from '@/components/mdx/Counter';
+import Callout from '@/components/mdx/Callout';
+
+# Projects System Documentation
+
+This page serves as both documentation and a live example of the custom projects system. Use this as a reference when creating your own project pages.
+
+<Callout type="info">
+**Quick Start**: Copy this file, update the frontmatter, and write your content. That's it!
+</Callout>
+
+---
+
+## Frontmatter Reference
+
+The frontmatter (the YAML block at the top between `---`) controls your project's metadata and features. Here are all available options:
+
+### Required Fields
+
+```yaml
+---
+title: "Your Project Title"           # Displayed as the main heading
+description: "Brief description"       # Shown on project cards and in meta tags
+type: "web"                           # Options: "web", "data", "game", "other"
+slug: "your-project-slug"             # URL will be /projects/your-project-slug
+---
+```
+
+### Optional Fields
+
+#### Dates & Featured Status
+```yaml
+date: "2025-10-16"                    # ISO format (YYYY-MM-DD), shows on project page
+featured: true                         # Highlights project on main projects page
+```
+
+#### Tags
+```yaml
+tags: ["react", "typescript", "nextjs"]  # Array of strings, creates tag bubbles
+```
+
+#### Images
+```yaml
+image: "/images/projects/hero.jpg"    # Main featured image (full width at top)
+images:                                # Image gallery (shown below content)
+  - "/images/projects/screenshot1.jpg"
+  - "/images/projects/screenshot2.jpg"
+  - "/images/projects/screenshot3.jpg"
+```
+
+<Callout type="warning">
+**Image Paths**: All images should be in `public/images/projects/` and referenced with absolute paths starting with `/images/...`
+</Callout>
+
+#### Videos
+```yaml
+video: "https://www.youtube.com/embed/VIDEO_ID"  # Main featured video
+# OR for local video:
+video: "/videos/demo.mp4"
+
+# For multiple videos (shown in gallery):
+videos:
+  - "https://www.youtube.com/embed/VIDEO_1"
+  - "/videos/demo1.mp4"
+  - "https://www.youtube.com/embed/VIDEO_2"
+```
+
+**Video Tips**:
+- YouTube: Use embed URL format: `https://www.youtube.com/embed/VIDEO_ID`
+- Local videos: Place in `public/videos/` folder, use MP4 or WebM format
+- Featured video appears at top, additional videos appear in gallery section
+
+#### Links
+```yaml
+github: "https://github.com/username/repo"        # GitHub repository link
+demoUrl: "https://your-demo.vercel.app"          # Live demo/deployment link
+# OR use 'live' instead of 'demoUrl':
+live: "https://your-demo.vercel.app"             # Same as demoUrl
+```
+
+These create buttons in the header of your project page.
+
+#### Downloads
+```yaml
+downloads:
+  - filename: "project-files.zip"
+    label: "Download Source"          # Optional: defaults to filename
+  - filename: "documentation.pdf"
+    label: "Documentation"
+  - filename: "notebook.ipynb"
+    label: "Jupyter Notebook"
+```
+
+**How it works**:
+- Files should be in `public/downloads/` folder
+- **Single file**: Shows a simple download button
+- **Multiple files**: Shows an elegant dropdown with checkboxes
+  - Users can select which files to download
+  - Select/deselect all option
+  - Shows file count (e.g., "Downloads (2/3)")
+  - Downloads selected files individually
+
+Perfect for projects with multiple resources like code files, notebooks, datasets, documentation, etc.
+
+#### GitHub Integration (Enhanced Projects)
+```yaml
+githubRepo: "username/repo-name"      # Automatically fetches and displays README
+```
+
+When you add `githubRepo`, the README from that repository will be automatically fetched and displayed **below** your custom MDX content. This is perfect for adding context, explanations, or additional media to complement the technical README.
+
+---
+
+## Complete Example
+
+Here's a full-featured frontmatter example showing all options:
+
+```yaml
+---
+title: "My Awesome Full-Stack App"
+description: "A comprehensive web application showcasing modern development practices"
+type: "web"
+slug: "awesome-fullstack-app"
+date: "2025-10-16"
+featured: true
+tags: ["react", "typescript", "nextjs", "tailwind", "postgresql"]
+image: "/images/projects/app-hero.jpg"
+images:
+  - "/images/projects/app-dashboard.jpg"
+  - "/images/projects/app-mobile.jpg"
+video: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+github: "https://github.com/username/awesome-app"
+demoUrl: "https://awesome-app.vercel.app"
+downloads:
+  - filename: "app-documentation.pdf"
+    label: "Documentation"
+  - filename: "app-source.zip"
+    label: "Source Code"
+githubRepo: "username/awesome-app"
+---
+```
+
+---
+
+## Project Types
+
+Choose the type that best describes your project:
+
+| Type | Description | Common Use Cases |
+|------|-------------|------------------|
+| `"web"` | Web applications, sites | React apps, Next.js sites, landing pages |
+| `"data"` | Data science, analysis | Jupyter notebooks, ML projects, visualizations |
+| `"game"` | Games, interactive experiences | Unity projects, web games, simulations |
+| `"other"` | Everything else | Tools, scripts, documentation, experiments |
+
+The type doesn't affect functionality, but helps users understand what kind of project it is at a glance.
+
+---
+
+## MDX Content Features
+
+After the frontmatter, you can use all standard Markdown plus these enhanced features:
+
+### 1. Markdown Basics
+
+```markdown
+# Heading 1
+## Heading 2
+### Heading 3
+
+**Bold text** and *italic text*
+
+- Bullet lists
+- Like this
+
+1. Numbered lists
+2. Like this
+
+[Links](https://example.com)
+
+> Blockquotes for emphasis
+```
+
+### 2. Code Blocks
+
+```typescript
+// Syntax highlighting works automatically
+function example() {
+  console.log("Hello, world!");
+  return true;
+}
+```
+
+Supports many languages: `javascript`, `typescript`, `python`, `java`, `bash`, `css`, `html`, etc.
+
+### 3. Math Equations (KaTeX)
+
+Inline math: $E = mc^2$
+
+Display math:
+
+$$
+\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
+$$
+
+More complex:
+
+$$
+\frac{d}{dx}\left( \int_{0}^{x} f(u)\,du\right)=f(x)
+$$
+
+### 4. React Components
+
+You can import and use React components in your MDX:
+
+#### Counter Component
+
+<Counter />
+
+#### Callout Component
+
+<Callout type="info">
+**Info**: Use this for helpful information or tips.
+</Callout>
+
+<Callout type="warning">
+**Warning**: Use this for important warnings or gotchas.
+</Callout>
+
+<Callout type="error">
+**Error**: Use this for critical information or errors to avoid.
+</Callout>
+
+To use these, import them at the top of your MDX file:
+
+```mdx
+import Counter from '@/components/mdx/Counter';
+import Callout from '@/components/mdx/Callout';
+```
+
+### 5. Tables
+
+| Feature | Supported | Notes |
+|---------|-----------|-------|
+| Images | ✅ | PNG, JPG, GIF, SVG |
+| Videos | ✅ | YouTube, local MP4/WebM |
+| Math | ✅ | KaTeX for LaTeX equations |
+| Code | ✅ | Syntax highlighting |
+| Components | ✅ | React components |
+
+### 6. Task Lists
+
+- [x] Feature implemented
+- [x] Tests written
+- [ ] Documentation complete
+- [ ] Deployment ready
+
+---
+
+## File Structure
+
+When creating a project, organize your files like this:
+
+```
+src/content/projects/
+  └── my-awesome-project.mdx        # Your project file
+
+public/
+  ├── images/projects/
+  │   ├── my-project-hero.jpg       # Featured image
+  │   ├── screenshot1.jpg           # Gallery images
+  │   └── screenshot2.jpg
+  ├── videos/
+  │   └── my-project-demo.mp4       # Video files
+  └── downloads/
+      ├── documentation.pdf          # Downloadable files
+      └── source-code.zip
+```
+
+---
+
+## Project Types Guide
+
+### Custom MDX Project (like this one)
+- **File**: `your-project.mdx` in `src/content/projects/`
+- **Shows**: Your custom MDX content only
+- **Best for**: Projects needing lots of context, explanations, media
+
+### GitHub Project (No MDX)
+- **File**: None needed - auto-fetched from GitHub
+- **Shows**: Repository README only
+- **URL**: `/projects/github-repo-name`
+- **Best for**: Quick showcase of GitHub repos
+
+### Enhanced GitHub Project (With MDX)
+- **File**: `github-repo-name.mdx` in `src/content/projects/`
+- **Shows**: Your custom content + GitHub README
+- **Best for**: Adding context, demos, or media to GitHub projects
+- Include `githubRepo: "username/repo"` in frontmatter
+
+### Jupyter Notebook Project
+- **File**: `notebook-name.html` + optional `notebook-name.mdx`
+- **Shows**: Rendered notebook + optional custom content
+- **Best for**: Data science projects, analysis, visualizations
+
+---
+
+## Tips & Best Practices
+
+### 1. Writing Good Descriptions
+- Keep under 160 characters for SEO
+- Be specific about what the project does
+- Mention key technologies if relevant
+
+### 2. Choosing Tags
+- Use lowercase
+- Be consistent across projects (e.g., always `"typescript"` not `"TypeScript"`)
+- Include main language/framework
+- Add 3-5 relevant tags maximum
+
+### 3. Images
+- Use descriptive filenames: `project-dashboard.jpg` not `img1.jpg`
+- Optimize images (< 500KB each)
+- Use 16:9 aspect ratio for featured images (1200x675px recommended)
+- Use consistent aspect ratios for gallery images
+
+### 4. Slugs
+- Use lowercase letters, numbers, and hyphens only
+- Be descriptive but concise: `weather-app` not `a`
+- Avoid changing slugs after publishing (breaks links)
+- For GitHub projects, prefix with `github-` automatically
+
+### 5. Content Organization
+```markdown
+# Start with Overview
+Explain what the project is and why it exists.
+
+## Show the Problem
+What issue does this solve?
+
+## Demonstrate the Solution
+Screenshots, videos, code examples.
+
+## Technical Details
+Architecture, tech stack, interesting decisions.
+
+## Future Plans
+What's next for the project?
+```
+
+---
+
+## Common Patterns
+
+### Embed Local Video
+```mdx
+<video src="/videos/demo.mp4" controls className="w-full rounded-lg shadow-lg my-8" />
+```
+
+### Image with Caption
+```mdx
+![Dashboard view](/images/projects/dashboard.jpg)
+*Figure 1: The main dashboard showing real-time data visualization*
+```
+
+### Multi-column Layout
+```mdx
+<div className="grid grid-cols-2 gap-4">
+  <div>
+    **Column 1**
+    Content here
+  </div>
+  <div>
+    **Column 2**
+    Content here
+  </div>
+</div>
+```
+
+---
+
+## Troubleshooting
+
+**Project not showing up?**
+- Check frontmatter syntax (valid YAML)
+- Ensure `slug` is unique
+- File must have `.mdx` extension
+- Check for TypeScript/build errors
+
+**Images not loading?**
+- Use absolute paths: `/images/projects/...`
+- Files must be in `public/` directory
+- Check spelling and case sensitivity
+
+**Math not rendering?**
+- Use single `$` for inline: `$E = mc^2$`
+- Use double `$$` for display (on own lines)
+- Escape special characters if needed: `\$100`
+
+**Components not working?**
+- Import at top of file
+- Check component name matches import
+- Ensure component is in `src/components/mdx/`
+
+---
+
+## Quick Reference Card
+
+```yaml
+# Minimal Project
+---
+title: "Project Name"
+description: "What it does"
+type: "web"
+slug: "project-name"
+---
+
+# Full-Featured Project
+---
+title: "Project Name"
+description: "What it does"
+type: "web"
+slug: "project-name"
+date: "2025-10-16"
+featured: true
+tags: ["tag1", "tag2"]
+image: "/images/projects/hero.jpg"
+images: ["/images/1.jpg", "/images/2.jpg"]
+video: "https://youtube.com/embed/ID"
+github: "https://github.com/user/repo"
+demoUrl: "https://demo.com"
+downloads:
+  - filename: "file.zip"
+    label: "Download"
+githubRepo: "user/repo"
+---
+```
+
+---
+
+<Callout type="info">
+**This Page is a Live Example**: Everything you see here is created using the features described. View the source file at `src/content/projects/example-custom-project.mdx` to see how it's built!
+</Callout>
+
+Happy project building! 🚀
+
+`- With ❤️, Phil`

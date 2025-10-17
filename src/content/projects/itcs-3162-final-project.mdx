@@ -1,0 +1,113 @@
+---
+title: "Intro to Data Mining: Final Project"
+date: "2025-05-08"
+description: "Clustering wine based on their chemical properties using unsupervised learning techniques and comprehensive cluster analysis."
+contentSource: "notebook"
+tags: ["Clustering", "Unsupervised Learning", "Data Mining", "Wine Analysis", "Final Project"]
+notebookHtml: "itcs-3162-final-project"
+downloads:
+  - filename: "itcs-3162-final-project.ipynb"
+  - filename: "itcs-3162-final-project.html"
+---
+
+## Project Overview
+
+This capstone project demonstrates **unsupervised learning** through clustering analysis of wine varieties. Without labeled data, the goal is to discover natural groupings based on chemical properties.
+
+## Problem Statement
+
+Given a dataset of wines with various chemical measurements (acidity, sugar content, pH, alcohol percentage, etc.), use clustering algorithms to identify distinct wine groups and understand what chemical characteristics define each cluster.
+
+## Dataset Features
+
+### Chemical Properties
+- **Fixed Acidity**: Tartaric acid concentration
+- **Volatile Acidity**: Acetic acid concentration
+- **Citric Acid**: Adds freshness and flavor
+- **Residual Sugar**: Remaining sugar after fermentation
+- **Chlorides**: Salt content
+- **Free Sulfur Dioxide**: Prevents microbial growth
+- **Total Sulfur Dioxide**: Free + bound forms
+- **Density**: Related to sugar and alcohol content
+- **pH**: Acidity/alkalinity measure
+- **Sulphates**: Wine additive
+- **Alcohol**: Percentage by volume
+
+## Clustering Approach
+
+### Algorithms Implemented
+
+<Callout type="success">
+Multiple clustering algorithms are compared to find the most meaningful wine groupings.
+</Callout>
+
+- **K-Means Clustering**: Partitioning into k clusters
+- **Hierarchical Clustering**: Building a cluster dendrogram
+- **DBSCAN**: Density-based clustering
+- **Gaussian Mixture Models**: Probabilistic clustering
+
+### Methodology
+
+1. **Data Preprocessing**
+   - Feature scaling and normalization
+   - Dimensionality reduction with PCA
+   - Outlier detection and handling
+
+2. **Optimal Cluster Selection**
+   - Elbow method
+   - Silhouette analysis
+   - Dendrogram visualization
+
+3. **Cluster Analysis**
+   - Profile each cluster by feature means
+   - Visualize clusters in 2D/3D space
+   - Interpret cluster characteristics
+
+4. **Validation**
+   - Silhouette score
+   - Davies-Bouldin index
+   - Calinski-Harabasz score
+
+## Results & Insights
+
+The project delivers:
+- Identification of distinct wine groups
+- Chemical profile of each cluster
+- Visual representations of clustering results
+- Comparison of clustering algorithms
+- Recommendations based on cluster characteristics
+
+## Key Findings
+
+<Callout type="info">
+Unsupervised learning reveals patterns that might not be apparent through manual inspection.
+</Callout>
+
+- Which chemical properties best differentiate wine types
+- Natural groupings in the wine dataset
+- Relationships between different chemical features
+- Quality indicators for different wine clusters
+
+## Skills Demonstrated
+
+- Unsupervised learning techniques
+- Cluster evaluation and validation
+- Dimensionality reduction (PCA, t-SNE)
+- Data visualization in high dimensions
+- Interpretation of complex results
+
+## Real-World Applications
+
+Clustering is used in:
+- Customer segmentation for marketing
+- Image compression and segmentation
+- Anomaly detection
+- Recommendation systems
+- Document categorization
+- Genetic sequence analysis
+
+---
+
+## Interactive Notebook
+
+<NotebookEmbed notebookHtml="itcs-3162-final-project" title="View Complete Final Project Notebook" />

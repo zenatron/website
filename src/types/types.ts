@@ -19,13 +19,29 @@ export type BlogPost = {
 
 export type ProjectTypes = "data" | "web" | "game" | "other";
 
+// Content source type - determines how project content is rendered
+export type ProjectContentSource = "mdx" | "github" | "notebook" | "html";
+
 export type ProjectMetadata = {
   title: string;
   description: string;
   tags?: string[];
   type: ProjectTypes;
-  slug?: string;
+  slug: string; // Now required for all projects
   date?: string;
+  // New metadata fields for enhanced content
+  image?: string; // Featured image URL or path
+  images?: string[]; // Gallery images
+  video?: string; // Video URL (YouTube, local, etc.)
+  videos?: string[]; // Multiple videos
+  demoUrl?: string; // Live demo URL
+  featured?: boolean;
+  // Content source
+  contentSource: ProjectContentSource;
+  // GitHub-specific
+  githubRepo?: string; // Format: "owner/repo"
+  // Notebook-specific
+  notebookHtml?: string; // Path to HTML file
 };
 
 export type ProjectCard = {
@@ -35,22 +51,41 @@ export type ProjectCard = {
     live?: string;
   };
   downloads?: {
-    type: string;
+    type?: string;
     filename: string;
-    label: string;
+    label?: string;
   }[];
   featured?: boolean;
   image?: string | null;
 };
 
-// Add this type for data science projects
+// Add this type for data science projects (backwards compatibility)
 export type DataScienceProject = ProjectCard & {
   metadata: {
     type: "data";
-    slug: string; // Required for DS projects
+    slug: string;
+    contentSource: "notebook" | "html";
   };
   downloads: {
     filename: string;
+  }[];
+};
+
+// New type for full project with content (for individual project pages)
+export type Project = {
+  metadata: ProjectMetadata;
+  content?: ReactNode; // MDX compiled content
+  searchableContent?: string; // Plain text for search
+  htmlContent?: string; // HTML content for notebooks
+  readmeContent?: string; // Markdown content from GitHub README
+  links: {
+    github?: string;
+    live?: string;
+  };
+  downloads?: {
+    type?: string;
+    filename: string;
+    label?: string;
   }[];
 };
 

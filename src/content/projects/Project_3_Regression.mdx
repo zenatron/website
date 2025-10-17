@@ -1,0 +1,87 @@
+---
+title: "Intro to Data Mining: Project 3"
+date: "2025-03-30"
+description: "Predicting song popularity using regression techniques with feature engineering and model optimization."
+contentSource: "notebook"
+tags: ["Regression", "Machine Learning", "Data Mining", "Feature Engineering", "Project"]
+notebookHtml: "Project_3_Regression"
+downloads:
+  - filename: "Project_3_Regression.ipynb"
+  - filename: "Project_3_Regression.html"
+---
+
+## Project Overview
+
+This project explores **regression analysis** by predicting song popularity based on audio features. It demonstrates how to build predictive models for continuous target variables.
+
+## Problem Statement
+
+Using audio features from Spotify's API (such as danceability, energy, loudness, tempo, valence), predict a song's popularity score. This is a practical application of regression in the music industry.
+
+## Dataset Features
+
+### Audio Characteristics
+- **Danceability**: How suitable a track is for dancing
+- **Energy**: Intensity and activity measure
+- **Loudness**: Overall volume in decibels
+- **Speechiness**: Presence of spoken words
+- **Acousticness**: Confidence measure of acoustic sound
+- **Instrumentalness**: Predicts whether a track contains vocals
+- **Tempo**: Beats per minute (BPM)
+- **Valence**: Musical positiveness
+
+## Methodology
+
+### Feature Engineering
+<Callout type="info">
+Creating meaningful features is often more important than choosing the right algorithm.
+</Callout>
+
+- Polynomial features for capturing non-linear relationships
+- Interaction terms between related features
+- Feature scaling and normalization
+- Handling outliers and skewed distributions
+
+### Models Implemented
+- **Linear Regression**: Baseline model
+- **Ridge Regression**: L2 regularization
+- **Lasso Regression**: L1 regularization with feature selection
+- **Polynomial Regression**: Capturing non-linear patterns
+- **Random Forest Regressor**: Ensemble approach
+
+### Evaluation Metrics
+- **Mean Squared Error (MSE)**: Average squared prediction error
+- **Root Mean Squared Error (RMSE)**: Interpretable error metric
+- **Mean Absolute Error (MAE)**: Average absolute prediction error
+- **R² Score**: Proportion of variance explained
+
+## Results & Analysis
+
+The project includes:
+- Comparison of model performance
+- Feature importance analysis
+- Residual plots and diagnostics
+- Predictions vs. actual values visualization
+- Discussion of model limitations
+
+## Key Insights
+
+- Which audio features most influence popularity
+- Trade-offs between model complexity and interpretability
+- Impact of regularization on model performance
+- Importance of proper validation strategies
+
+## Applications
+
+Regression techniques are used in:
+- Price prediction (real estate, stocks)
+- Sales forecasting
+- Risk assessment
+- Demand prediction
+- Performance optimization
+
+---
+
+## Interactive Notebook
+
+<NotebookEmbed notebookHtml="Project_3_Regression" title="View Complete Regression Project Notebook" />

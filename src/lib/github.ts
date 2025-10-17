@@ -18,15 +18,26 @@ async function getReadmeDescription(repo: string): Promise<string | null> {
 }
 
 export async function getGithubRepos() {
-  const response = await fetch("https://api.github.com/users/zenatron/repos", {
-    headers: {
+  try {
+    const headers: HeadersInit = {
       Accept: "application/vnd.github.v3+json",
-    },
-    next: { revalidate: 3600 },
-  });
+    };
+    
+    // Add GitHub token if available (for higher rate limits)
+    if (process.env.GITHUB_TOKEN) {
+      headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+    }
+    
+    const response = await fetch("https://api.github.com/users/zenatron/repos", {
+      headers,
+      next: { revalidate: 3600 },
+    });
 
-  if (!response.ok) throw new Error("Failed to fetch GitHub repos");
-  const repos = await response.json();
+    if (!response.ok) {
+      console.warn(`Failed to fetch GitHub repos: ${response.status} ${response.statusText}`);
+      return [];
+    }
+    const repos = await response.json();
 
   // Exclude specific repositories
   const excludedRepos = ["zenatron"];
@@ -54,8 +65,16 @@ export async function getGithubRepos() {
 
           // Fetch all languages for this repository
           try {
+            const languageHeaders: HeadersInit = {
+              Accept: "application/vnd.github.v3+json",
+            };
+            if (process.env.GITHUB_TOKEN) {
+              languageHeaders.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+            }
+            
             const languagesResponse = await fetch(
-              `https://api.github.com/repos/zenatron/${repo.name}/languages`
+              `https://api.github.com/repos/zenatron/${repo.name}/languages`,
+              { headers: languageHeaders }
             );
             if (languagesResponse.ok) {
               const languages = await languagesResponse.json();
@@ -84,12 +103,18 @@ export async function getGithubRepos() {
           // Convert Set back to array
           const tags = Array.from(tagsSet);
 
+          // Generate slug from repo name
+          const slug = `github-${repo.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+
           return {
             metadata: {
               title: repo.name,
               description,
               type: "web" as const,
+              slug,
               tags,
+              contentSource: "github" as const,
+              githubRepo: `zenatron/${repo.name}`,
             },
             links: {
               live: repo.homepage,
@@ -102,4 +127,8 @@ export async function getGithubRepos() {
   );
 
   return reposWithDescriptions;
+  } catch (error) {
+    console.error("Error fetching GitHub repos:", error);
+    return [];
+  }
 }
