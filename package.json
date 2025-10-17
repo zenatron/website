@@ -40,6 +40,7 @@
     "ogl": "^1.0.11",
     "path": "^0.12.7",
     "pnpm": "^10.6.2",
+    "postprocessing": "^6.37.8",
     "prettier": "^3.5.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -53,7 +54,8 @@
     "remark-math": "^6.0.0",
     "shadcn": "^2.10.0",
     "tailwind-merge": "^3.2.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "three": "^0.180.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -61,6 +63,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.180.0",
     "eslint": "^9",
     "eslint-config-next": "15.1.5",
     "postcss": "^8",
