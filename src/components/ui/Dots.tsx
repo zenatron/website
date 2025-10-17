@@ -22,6 +22,58 @@ interface Dot {
   xOffset: number;
   yOffset: number;
   _inertiaApplied: boolean;
+  gridX: number; // Grid cell coordinates for spatial partitioning
+  gridY: number;
+}
+
+// Spatial grid for efficient dot lookup
+class SpatialGrid {
+  private cellSize: number;
+  private grid: Map<string, Dot[]>;
+
+  constructor(cellSize: number) {
+    this.cellSize = cellSize;
+    this.grid = new Map();
+  }
+
+  private getCellKey(x: number, y: number): string {
+    const cellX = Math.floor(x / this.cellSize);
+    const cellY = Math.floor(y / this.cellSize);
+    return `${cellX},${cellY}`;
+  }
+
+  add(dot: Dot) {
+    const key = this.getCellKey(dot.cx, dot.cy);
+    if (!this.grid.has(key)) {
+      this.grid.set(key, []);
+    }
+    this.grid.get(key)!.push(dot);
+    dot.gridX = Math.floor(dot.cx / this.cellSize);
+    dot.gridY = Math.floor(dot.cy / this.cellSize);
+  }
+
+  getNearby(x: number, y: number, radius: number): Dot[] {
+    const nearby: Dot[] = [];
+    const cellX = Math.floor(x / this.cellSize);
+    const cellY = Math.floor(y / this.cellSize);
+    const cellRadius = Math.ceil(radius / this.cellSize);
+
+    // Check neighboring cells
+    for (let dy = -cellRadius; dy <= cellRadius; dy++) {
+      for (let dx = -cellRadius; dx <= cellRadius; dx++) {
+        const key = `${cellX + dx},${cellY + dy}`;
+        const dots = this.grid.get(key);
+        if (dots) {
+          nearby.push(...dots);
+        }
+      }
+    }
+    return nearby;
+  }
+
+  clear() {
+    this.grid.clear();
+  }
 }
 
 export interface DotGridProps {
@@ -70,6 +122,7 @@ const DotGrid: React.FC<DotGridProps> = ({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const dotsRef = useRef<Dot[]>([]);
+  const spatialGridRef = useRef<SpatialGrid | null>(null);
   const fixedDimensionsRef = useRef<{ width: number; height: number } | null>(
     null
   );
@@ -83,6 +136,10 @@ const DotGrid: React.FC<DotGridProps> = ({
     lastX: 0,
     lastY: 0,
   });
+  const lastMouseMove = useRef(Date.now());
+  const rafIdRef = useRef<number | null>(null);
+  let isDirty = false;
+  const IDLE_TIMEOUT = 100; // Stop rendering after 100ms of no activity
 
   const baseRgb = useMemo(() => hexToRgb(baseColor), [baseColor]);
   const activeRgb = useMemo(() => hexToRgb(activeColor), [activeColor]);
@@ -152,60 +209,120 @@ const DotGrid: React.FC<DotGridProps> = ({
     const startY = extraY / 2 + dotSize / 2;
 
     const dots: Dot[] = [];
+    // Create spatial grid with cell size = proximity * 2 for efficient queries
+    const spatialGrid = new SpatialGrid(Math.max(proximity, shockRadius) * 2);
+    
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < cols; x++) {
         const cx = startX + x * cell;
         const cy = startY + y * cell;
-        dots.push({ cx, cy, xOffset: 0, yOffset: 0, _inertiaApplied: false });
+        const dot: Dot = { cx, cy, xOffset: 0, yOffset: 0, _inertiaApplied: false, gridX: 0, gridY: 0 };
+        dots.push(dot);
+        spatialGrid.add(dot);
       }
     }
     dotsRef.current = dots;
-  }, [dotSize, gap, useFixedDimensions]);
+    spatialGridRef.current = spatialGrid;
+  }, [dotSize, gap, useFixedDimensions, proximity, shockRadius]);
 
   useEffect(() => {
     if (!circlePath) return;
 
     let rafId: number;
+    let isDirty = false;
+    let lastMouseMove = 0;
+    const IDLE_TIMEOUT = 200; // Increase idle timeout slightly
     const proxSq = proximity * proximity;
+    
+    // Track which dots are actively animating or need color updates
+    const activeDots = new Set<Dot>();
 
     const draw = () => {
       const canvas = canvasRef.current;
       if (!canvas) return;
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      const { x: px, y: py } = pointerRef.current;
+      // Only clear and redraw if something changed
+      if (isDirty) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      for (const dot of dotsRef.current) {
-        const ox = dot.cx + dot.xOffset;
-        const oy = dot.cy + dot.yOffset;
-        const dx = dot.cx - px;
-        const dy = dot.cy - py;
-        const dsq = dx * dx + dy * dy;
-
-        let style = baseColor;
-        if (dsq <= proxSq) {
-          const dist = Math.sqrt(dsq);
-          const t = 1 - dist / proximity;
-          const r = Math.round(baseRgb.r + (activeRgb.r - baseRgb.r) * t);
-          const g = Math.round(baseRgb.g + (activeRgb.g - baseRgb.g) * t);
-          const b = Math.round(baseRgb.b + (activeRgb.b - baseRgb.b) * t);
-          style = `rgb(${r},${g},${b})`;
+        const { x: px, y: py, speed } = pointerRef.current;
+        const spatialGrid = spatialGridRef.current;
+        
+        // Get only nearby dots for color calculations if mouse is moving
+        let dotsToCheck = dotsRef.current;
+        if (speed > 0 && spatialGrid) {
+          // Only check dots within proximity radius
+          dotsToCheck = spatialGrid.getNearby(px, py, proximity);
         }
 
-        ctx.save();
-        ctx.translate(ox, oy);
-        ctx.fillStyle = style;
-        ctx.fill(circlePath);
-        ctx.restore();
+        // First pass: render all dots and calculate colors only for nearby ones
+        for (const dot of dotsRef.current) {
+          const ox = dot.cx + dot.xOffset;
+          const oy = dot.cy + dot.yOffset;
+          
+          let style = baseColor;
+          
+          // Only calculate color for nearby dots
+          if (speed > 0 && dotsToCheck.includes(dot)) {
+            const dx = dot.cx - px;
+            const dy = dot.cy - py;
+            const dsq = dx * dx + dy * dy;
+
+            if (dsq <= proxSq) {
+              const dist = Math.sqrt(dsq);
+              const t = 1 - dist / proximity;
+              const r = Math.round(baseRgb.r + (activeRgb.r - baseRgb.r) * t);
+              const g = Math.round(baseRgb.g + (activeRgb.g - baseRgb.g) * t);
+              const b = Math.round(baseRgb.b + (activeRgb.b - baseRgb.b) * t);
+              style = `rgb(${r},${g},${b})`;
+            }
+          }
+
+          ctx.save();
+          ctx.translate(ox, oy);
+          ctx.fillStyle = style;
+          ctx.fill(circlePath);
+          ctx.restore();
+        }
+        
+        isDirty = false;
       }
 
-      rafId = requestAnimationFrame(draw);
+      // Check if we should keep animating
+      const now = performance.now();
+      const hasActiveAnimations = dotsRef.current.some(
+        (dot) => Math.abs(dot.xOffset) > 0.01 || Math.abs(dot.yOffset) > 0.01
+      );
+      const hasRecentMouseActivity = now - lastMouseMove < IDLE_TIMEOUT;
+
+      if (hasActiveAnimations || hasRecentMouseActivity) {
+        isDirty = true;
+        rafId = requestAnimationFrame(draw);
+      } else {
+        isDirty = false;
+        // Stop the animation loop
+      }
     };
 
+    // Function to mark as dirty and restart animation if needed
+    const markDirtyAndAnimate = () => {
+      lastMouseMove = performance.now();
+      if (!isDirty) {
+        isDirty = true;
+        rafId = requestAnimationFrame(draw);
+      }
+    };
+
+    // Store the function so mousemove can trigger redraws
+    (window as any).__dotGridMarkDirty = markDirtyAndAnimate;
+
     draw();
-    return () => cancelAnimationFrame(rafId);
+    return () => {
+      cancelAnimationFrame(rafId);
+      delete (window as any).__dotGridMarkDirty;
+    };
   }, [proximity, baseColor, activeRgb, baseRgb, circlePath]);
 
   useEffect(() => {
@@ -229,6 +346,11 @@ const DotGrid: React.FC<DotGridProps> = ({
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
+      // Trigger redraw
+      if ((window as any).__dotGridMarkDirty) {
+        (window as any).__dotGridMarkDirty();
+      }
+
       const now = performance.now();
       const pr = pointerRef.current;
       const dt = pr.lastTime ? now - pr.lastTime : 16;
@@ -254,58 +376,74 @@ const DotGrid: React.FC<DotGridProps> = ({
       pr.x = e.clientX - rect.left;
       pr.y = e.clientY - rect.top;
 
-      for (const dot of dotsRef.current) {
-        const dist = Math.hypot(dot.cx - pr.x, dot.cy - pr.y);
-        if (speed > speedTrigger && dist < proximity && !dot._inertiaApplied) {
-          dot._inertiaApplied = true;
-          gsap.killTweensOf(dot);
-          const pushX = dot.cx - pr.x + vx * 0.005;
-          const pushY = dot.cy - pr.y + vy * 0.005;
-          gsap.to(dot, {
-            inertia: { xOffset: pushX, yOffset: pushY, resistance },
-            onComplete: () => {
-              gsap.to(dot, {
-                xOffset: 0,
-                yOffset: 0,
-                duration: returnDuration,
-                ease: "elastic.out(1,0.75)",
-              });
-              dot._inertiaApplied = false;
-            },
-          });
+      // Only check dots if speed threshold is met - use spatial grid for efficiency
+      if (speed > speedTrigger && spatialGridRef.current) {
+        const nearbyDots = spatialGridRef.current.getNearby(pr.x, pr.y, proximity);
+        
+        for (const dot of nearbyDots) {
+          const dist = Math.hypot(dot.cx - pr.x, dot.cy - pr.y);
+          if (dist < proximity && !dot._inertiaApplied) {
+            dot._inertiaApplied = true;
+            gsap.killTweensOf(dot);
+            const pushX = dot.cx - pr.x + vx * 0.005;
+            const pushY = dot.cy - pr.y + vy * 0.005;
+            gsap.to(dot, {
+              inertia: { xOffset: pushX, yOffset: pushY, resistance },
+              onComplete: () => {
+                gsap.to(dot, {
+                  xOffset: 0,
+                  yOffset: 0,
+                  duration: returnDuration,
+                  ease: "elastic.out(1,0.75)",
+                });
+                dot._inertiaApplied = false;
+              },
+            });
+          }
         }
       }
     };
 
     const onClick = (e: MouseEvent) => {
+      // Trigger redraw
+      if ((window as any).__dotGridMarkDirty) {
+        (window as any).__dotGridMarkDirty();
+      }
+
       const rect = canvasRef.current!.getBoundingClientRect();
       const cx = e.clientX - rect.left;
       const cy = e.clientY - rect.top;
-      for (const dot of dotsRef.current) {
-        const dist = Math.hypot(dot.cx - cx, dot.cy - cy);
-        if (dist < shockRadius && !dot._inertiaApplied) {
-          dot._inertiaApplied = true;
-          gsap.killTweensOf(dot);
-          const falloff = Math.max(0, 1 - dist / shockRadius);
-          const pushX = (dot.cx - cx) * shockStrength * falloff;
-          const pushY = (dot.cy - cy) * shockStrength * falloff;
-          gsap.to(dot, {
-            inertia: { xOffset: pushX, yOffset: pushY, resistance },
-            onComplete: () => {
-              gsap.to(dot, {
-                xOffset: 0,
-                yOffset: 0,
-                duration: returnDuration,
-                ease: "elastic.out(1,0.75)",
-              });
-              dot._inertiaApplied = false;
-            },
-          });
+      
+      // Use spatial grid to only check nearby dots
+      if (spatialGridRef.current) {
+        const nearbyDots = spatialGridRef.current.getNearby(cx, cy, shockRadius);
+        
+        for (const dot of nearbyDots) {
+          const dist = Math.hypot(dot.cx - cx, dot.cy - cy);
+          if (dist < shockRadius && !dot._inertiaApplied) {
+            dot._inertiaApplied = true;
+            gsap.killTweensOf(dot);
+            const falloff = Math.max(0, 1 - dist / shockRadius);
+            const pushX = (dot.cx - cx) * shockStrength * falloff;
+            const pushY = (dot.cy - cy) * shockStrength * falloff;
+            gsap.to(dot, {
+              inertia: { xOffset: pushX, yOffset: pushY, resistance },
+              onComplete: () => {
+                gsap.to(dot, {
+                  xOffset: 0,
+                  yOffset: 0,
+                  duration: returnDuration,
+                  ease: "elastic.out(1,0.75)",
+                });
+                dot._inertiaApplied = false;
+              },
+            });
+          }
         }
       }
     };
 
-    const throttledMove = throttle(onMove, 50);
+    const throttledMove = throttle(onMove, 16); // ~60fps max, reduced from 50ms
     window.addEventListener("mousemove", throttledMove, { passive: true });
     window.addEventListener("click", onClick);
 

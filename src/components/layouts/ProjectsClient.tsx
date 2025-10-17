@@ -9,6 +9,9 @@ import {
   FaSortAlphaDown,
   FaSortAlphaUp,
   FaSort,
+  FaGlobe,
+  FaGamepad,
+  FaCode,
 } from "react-icons/fa";
 import { SiJupyter } from "react-icons/si";
 import GlassCard from "../ui/GlassCard";
@@ -37,8 +40,14 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
         return <SiJupyter className="text-accent" />;
       case "github":
         return <FaGithub className="text-accent" />;
+      case "web":
+        return <FaGlobe className="text-accent" />;
+      case "game":
+        return <FaGamepad className="text-accent" />;
+      case "other":
+        return <FaCode className="text-accent" />;
       default:
-        return null;
+        return <FaCode className="text-accent" />;
     }
   };
 

@@ -203,7 +203,7 @@ export default function AboutPage() {
             transition={{ duration: 0.8 }}
             className="space-y-8"
           >
-            <GitHubReadme />
+            <GitHubReadme repo="zenatron/zenatron" processSections={true} />
           </motion.section>
 
           {/* Apps, Tools & Hobbies Section */}

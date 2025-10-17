@@ -1,33 +1,39 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FaGithub, FaGlobe } from "react-icons/fa";
+import { FaGithub, FaGlobe, FaExternalLinkAlt } from "react-icons/fa";
 import Link from "next/link";
 import { ProjectCard as Project } from "@/types/types";
 
 export default function ProjectCard({ project }: { project: Project }) {
-  // Use type guard to determine project type
-  const isNotebookProject = project.metadata.type === "data";
-
-  // Determine the card's main link
-  const cardLink = isNotebookProject
-    ? `/projects/${project.metadata.slug}`
-    : project.links.github || "#"; // Provide fallback URL
-
-  // Determine if it's an external link
-  const isExternalLink = !isNotebookProject && project.links.github;
+  // All projects now link to their individual slug pages
+  const cardLink = `/projects/${project.metadata.slug}`;
 
   const ExternalLinks = () => (
     <div className="flex gap-2 mt-3 border-t border-accent/10 pt-3">
+      {project.links.github && (
+        <a
+          href={project.links.github}
+          className="btn-nav text-xs"
+          onClick={(e) => e.stopPropagation()}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="View on GitHub"
+        >
+          <FaGithub className="mr-1" /> GitHub
+        </a>
+      )}
       {project.links.live && (
-        <Link
+        <a
           href={project.links.live}
           className="btn-nav text-xs"
           onClick={(e) => e.stopPropagation()}
-          title="View Project"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="View Live Demo"
         >
-          <FaGlobe className="mr-1" /> View Live
-        </Link>
+          <FaGlobe className="mr-1" /> Live Demo
+        </a>
       )}
     </div>
   );
@@ -43,13 +49,7 @@ export default function ProjectCard({ project }: { project: Project }) {
     >
       <Link
         href={cardLink}
-        className="group"
-        {...(isExternalLink
-          ? {
-              target: "_blank",
-              rel: "noopener noreferrer",
-            }
-          : {})}
+        className="group block"
         title={project.metadata.title}
       >
         <div className="flex items-center gap-2 mb-2">
@@ -69,7 +69,7 @@ export default function ProjectCard({ project }: { project: Project }) {
           ))}
         </div>
       </Link>
-      {!isNotebookProject && project.links.live && <ExternalLinks />}
+      {(project.links.github || project.links.live) && <ExternalLinks />}
     </motion.div>
   );
 }

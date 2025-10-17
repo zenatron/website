@@ -9,7 +9,7 @@ import {
   FaCode,
   FaRocket,
 } from "react-icons/fa";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import VariableProximity from "@/components/ui/VariableProximity";
 import GradientText from "@/components/ui/GradientText";
@@ -17,37 +17,69 @@ import GlassCard from "@/components/ui/GlassCard";
 import ShinyText from "@/components/ui/ShinyText";
 import dynamic from "next/dynamic";
 import GrainBackground from "@/components/GrainBackground";
+import PixelBlast from '@/components/ui/PixelBlast';
 
 // Lazy load DotGrid with no SSR for better performance
-const DotGrid = dynamic(() => import("@/components/ui/Dots"), {
-  ssr: false,
-  loading: () => (
-    <div className="fixed inset-0 w-screen h-screen bg-primary-bg" />
-  ),
-});
+// const DotGrid = dynamic(() => import("@/components/ui/Dots"), {
+//   ssr: false,
+//   loading: () => (
+//     <div className="fixed inset-0 w-screen h-screen bg-primary-bg" />
+//   ),
+// });
 
 export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
       <GrainBackground />
-      <div className="fixed inset-0 w-screen h-screen">
+      {/* <div className="fixed inset-0 w-screen h-screen">
         <div style={{ width: "100%", height: "100vh", position: "relative" }}>
           <DotGrid
-            dotSize={4}
-            gap={15}
+            dotSize={isMobile ? 6 : 4}
+            gap={isMobile ? 25 : 15}
             baseColor="#161616"
             activeColor="#242424"
-            proximity={120}
-            shockRadius={250}
+            proximity={isMobile ? 80 : 120}
+            shockRadius={isMobile ? 150 : 250}
             useFixedDimensions={true}
             shockStrength={5}
             resistance={750}
             returnDuration={1.5}
           />
         </div>
+      </div> */}
+
+      <div className="fixed inset-0 w-screen h-screen">
+        <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+          <PixelBlast
+            variant="square"
+            pixelSize={8}
+            color="#0F253E"
+            patternScale={4}
+            patternDensity={1.2}
+            pixelSizeJitter={0.5}
+            liquid
+            liquidStrength={0.12}
+            liquidRadius={1.2}
+            liquidWobbleSpeed={5}
+            speed={0.6}
+            edgeFade={0.25}
+            transparent
+          />
+        </div>
       </div>
+
       {/* Scrollable content */}
       <div className="relative z-20 flex flex-col min-h-screen">
         <Header />
