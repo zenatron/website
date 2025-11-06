@@ -17,7 +17,7 @@ import GlassCard from "@/components/ui/GlassCard";
 import ShinyText from "@/components/ui/ShinyText";
 import dynamic from "next/dynamic";
 import GrainBackground from "@/components/GrainBackground";
-import PixelBlast from '@/components/ui/PixelBlast';
+import LetterGlitch from '@/components/ui/LetterGlitch';
 
 // Lazy load DotGrid with no SSR for better performance
 // const DotGrid = dynamic(() => import("@/components/ui/Dots"), {
@@ -30,6 +30,7 @@ import PixelBlast from '@/components/ui/PixelBlast';
 export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -38,6 +39,19 @@ export default function HomePage() {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    // Check for prefers-reduced-motion preference
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      setPrefersReducedMotion(e.matches);
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
   return (
@@ -60,25 +74,19 @@ export default function HomePage() {
         </div>
       </div> */}
 
-      <div className="fixed inset-0 w-screen h-screen">
-        <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-          <PixelBlast
-            variant="square"
-            pixelSize={8}
-            color="#0F253E"
-            patternScale={4}
-            patternDensity={1.2}
-            pixelSizeJitter={0.5}
-            liquid
-            liquidStrength={0.12}
-            liquidRadius={1.2}
-            liquidWobbleSpeed={5}
-            speed={0.6}
-            edgeFade={0.25}
-            transparent
-          />
+      {!prefersReducedMotion && (
+        <div className="fixed inset-0 w-screen h-screen">
+          <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+            <LetterGlitch
+              glitchColors={["#0F253E", "#1a3a52", "#0a1f2e"]}
+              glitchSpeed={50}
+              centerVignette={false}
+              outerVignette={true}
+              smooth={true}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Scrollable content */}
       <div className="relative z-20 flex flex-col min-h-screen">
