@@ -21,23 +21,15 @@ const SOCIAL_LINKS = [
 export default function Footer() {
   return (
     <footer className="mt-auto border-t border-white/[0.04]">
-      <div className="mx-auto max-w-5xl px-6 py-8">
-        <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
-          {/* Left: Brand + Copyright */}
-          <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent/10 text-xs font-medium text-accent">
-                P
-              </span>
-              <span className="text-sm font-medium text-primary-text">Phil Vishnevsky</span>
-            </Link>
-            <span className="hidden text-xs text-muted-text sm:inline">
-              © {new Date().getFullYear()}
-            </span>
-          </div>
+      <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
+        <div className="flex flex-col items-center justify-between gap-3 sm:flex-row sm:gap-6">
+          {/* Left: Copyright */}
+          <span className="text-xs text-muted-text">
+            © {new Date().getFullYear()} Phil Vishnevsky
+          </span>
 
           {/* Center: Navigation */}
-          <nav className="flex items-center gap-6">
+          <nav className="flex items-center gap-4 sm:gap-6">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}

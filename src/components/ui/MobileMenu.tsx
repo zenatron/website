@@ -19,6 +19,7 @@ export default function MobileMenu() {
     <>
       {/* Hamburger Button */}
       <button
+        type="button"
         className="flex h-10 w-10 items-center justify-center rounded-md border border-white/10 text-secondary-text transition-colors duration-150 hover:border-white/20 hover:text-primary-text md:hidden"
         onClick={() => setMenuOpen(!menuOpen)}
         aria-label="Toggle Menu"
@@ -45,6 +46,7 @@ export default function MobileMenu() {
         <div className="flex items-center justify-between">
           <p className="text-xs uppercase tracking-[0.26em] text-muted-text">Menu</p>
           <button
+            type="button"
             className="flex h-9 w-9 items-center justify-center rounded-md border border-white/10 text-secondary-text transition-colors duration-150 hover:border-white/20 hover:text-primary-text"
             onClick={() => setMenuOpen(false)}
             aria-label="Close menu"
@@ -69,7 +71,6 @@ export default function MobileMenu() {
         </ul>
 
         <div className="mt-auto space-y-1 text-xs text-muted-text">
-          <span className="font-atkinson uppercase tracking-[0.18em]">Build version</span>
           <span className="text-secondary-text">{versionText}</span>
         </div>
       </nav>

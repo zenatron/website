@@ -153,7 +153,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
   const hasActiveFilters = searchQuery !== "" || selectedType !== null;
 
   return (
-    <div className="mx-auto max-w-5xl px-6 pb-24 pt-32">
+    <div className="mx-auto max-w-5xl px-4 pb-24 pt-32 sm:px-6">
       {/* Header */}
       <header className="mb-16 space-y-6">
         <p className="text-sm font-medium tracking-[0.2em] text-accent">PROJECTS</p>
@@ -167,10 +167,11 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
       </header>
 
       {/* Filters */}
-      <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-        <div className="flex flex-wrap items-center gap-4">
+      <div className="mb-12 space-y-4">
+        {/* Search row with view toggle */}
+        <div className="flex items-center gap-3">
           {/* Search */}
-          <div className="relative">
+          <div className="relative flex-1 sm:flex-none">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-text" />
             <input
               ref={searchInputRef}
@@ -178,43 +179,76 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
               placeholder="Search... (# for tags)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-56 rounded-full border border-white/[0.06] bg-white/[0.02] py-2 pl-9 pr-10 text-sm text-primary-text placeholder-muted-text outline-none transition-colors focus:border-accent/30"
+              className="w-full rounded-full border border-white/[0.06] bg-white/[0.02] py-2 pl-9 pr-10 text-sm text-primary-text placeholder-muted-text outline-none transition-colors focus:border-accent/30 sm:w-56"
             />
             <kbd className="absolute right-3 top-1/2 -translate-y-1/2 hidden rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-muted-text sm:inline-block">/</kbd>
           </div>
 
-          {/* Type filters */}
-          <div className="flex items-center gap-1">
+          {/* View toggle */}
+          <div className="flex shrink-0 items-center gap-1 rounded-full border border-white/[0.06] p-1">
             <button
-              onClick={() => setSelectedType(null)}
+              type="button"
+              onClick={() => setViewMode("grid")}
               className={cn(
-                "rounded-full px-3 py-1.5 text-sm transition-colors",
-                selectedType === null
+                "rounded-full p-2 transition-colors",
+                viewMode === "grid"
                   ? "bg-white/[0.08] text-primary-text"
                   : "text-muted-text hover:text-secondary-text"
               )}
+              aria-label="Grid view"
             >
-              All
+              <Grid3X3 className="h-4 w-4" />
             </button>
-            {allTypes.map((type) => (
-              <button
-                key={type}
-                onClick={() => setSelectedType(selectedType === type ? null : type)}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm capitalize transition-colors",
-                  selectedType === type
-                    ? "bg-accent/20 text-accent"
-                    : "text-muted-text hover:text-secondary-text"
-                )}
-              >
-                {getTypeIcon(type)}
-                <span>{type}</span>
-              </button>
-            ))}
+            <button
+              type="button"
+              onClick={() => setViewMode("list")}
+              className={cn(
+                "rounded-full p-2 transition-colors",
+                viewMode === "list"
+                  ? "bg-white/[0.08] text-primary-text"
+                  : "text-muted-text hover:text-secondary-text"
+              )}
+              aria-label="List view"
+            >
+              <List className="h-4 w-4" />
+            </button>
           </div>
+        </div>
+
+        {/* Type filters row */}
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setSelectedType(null)}
+            className={cn(
+              "rounded-full px-3 py-1.5 text-sm transition-colors",
+              selectedType === null
+                ? "bg-white/[0.08] text-primary-text"
+                : "text-muted-text hover:text-secondary-text"
+            )}
+          >
+            All
+          </button>
+          {allTypes.map((type) => (
+            <button
+              type="button"
+              key={type}
+              onClick={() => setSelectedType(selectedType === type ? null : type)}
+              className={cn(
+                "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm capitalize transition-colors",
+                selectedType === type
+                  ? "bg-accent/20 text-accent"
+                  : "text-muted-text hover:text-secondary-text"
+              )}
+            >
+              {getTypeIcon(type)}
+              <span>{type}</span>
+            </button>
+          ))}
 
           {hasActiveFilters && (
             <button
+              type="button"
               onClick={clearFilters}
               className="flex items-center gap-1 text-xs text-muted-text hover:text-primary-text"
             >
@@ -222,34 +256,6 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
               Clear
             </button>
           )}
-        </div>
-
-        {/* View toggle */}
-        <div className="flex items-center gap-1 rounded-full border border-white/[0.06] p-1">
-          <button
-            onClick={() => setViewMode("grid")}
-            className={cn(
-              "rounded-full p-2 transition-colors",
-              viewMode === "grid"
-                ? "bg-white/[0.08] text-primary-text"
-                : "text-muted-text hover:text-secondary-text"
-            )}
-            aria-label="Grid view"
-          >
-            <Grid3X3 className="h-4 w-4" />
-          </button>
-          <button
-            onClick={() => setViewMode("list")}
-            className={cn(
-              "rounded-full p-2 transition-colors",
-              viewMode === "list"
-                ? "bg-white/[0.08] text-primary-text"
-                : "text-muted-text hover:text-secondary-text"
-            )}
-            aria-label="List view"
-          >
-            <List className="h-4 w-4" />
-          </button>
         </div>
       </div>
 

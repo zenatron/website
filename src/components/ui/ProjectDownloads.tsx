@@ -90,14 +90,11 @@ export default function ProjectDownloads({ downloads, projectTitle }: ProjectDow
       <a
         href={`/downloads/${download.filename}`}
         download
-        className="bg-white/5 backdrop-blur-md border border-white/10 rounded-lg px-2 md:px-4 py-1.5 
-                   text-xs md:text-sm inline-flex items-center gap-2
-                   hover:bg-white/10 hover:border-white/20 shadow-lg transition-all duration-300"
+        className="inline-flex items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.02] px-4 py-2 text-sm text-secondary-text transition-colors hover:border-accent/30 hover:bg-white/[0.04] hover:text-accent"
         title={download.label || "Download"}
       >
-        <FaDownload />
-        <span className="hidden sm:inline">{download.label || "Download"}</span>
-        <span className="sm:hidden">Download</span>
+        <FaDownload className="h-3.5 w-3.5" />
+        <span>{download.label || "Download"}</span>
       </a>
     );
   }
@@ -107,28 +104,25 @@ export default function ProjectDownloads({ downloads, projectTitle }: ProjectDow
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-white/5 backdrop-blur-md border border-white/10 rounded-lg px-2 md:px-4 py-1.5 
-                   text-xs md:text-sm inline-flex items-center gap-2
-                   hover:bg-white/10 hover:border-white/20 shadow-lg transition-all duration-300"
+        className="inline-flex items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.02] px-4 py-2 text-sm text-secondary-text transition-colors hover:border-accent/30 hover:bg-white/[0.04] hover:text-accent"
         title="Download files"
       >
-        <FaDownload />
-        <span className="hidden sm:inline">
+        <FaDownload className="h-3.5 w-3.5" />
+        <span>
           Downloads ({selectedFiles.size}/{downloads.length})
         </span>
-        <span className="sm:hidden">Files</span>
-        <FaChevronDown className={`transition-transform ${isOpen ? "rotate-180" : ""}`} />
+        <FaChevronDown className={`h-3 w-3 transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-72 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg shadow-lg z-50 overflow-hidden">
+        <div className="absolute right-0 mt-2 w-72 overflow-hidden rounded-xl border border-white/[0.06] bg-[#0f1012] shadow-xl z-50">
           {/* Header */}
-          <div className="p-3 border-b border-white/10 bg-white/5">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold">Select Files to Download</span>
+          <div className="border-b border-white/[0.06] bg-white/[0.02] p-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-primary-text">Select Files</span>
               <button
                 onClick={toggleAll}
-                className="text-xs text-accent hover:text-accent/80 transition-colors"
+                className="text-xs text-accent transition-colors hover:text-accent/80"
               >
                 {selectedFiles.size === downloads.length ? "Deselect All" : "Select All"}
               </button>
@@ -142,21 +136,21 @@ export default function ProjectDownloads({ downloads, projectTitle }: ProjectDow
               return (
                 <label
                   key={download.filename}
-                  className="flex items-center gap-3 p-3 hover:bg-white/5 cursor-pointer transition-colors"
+                  className="flex cursor-pointer items-center gap-3 p-3 transition-colors hover:bg-white/[0.02]"
                 >
                   <input
                     type="checkbox"
                     checked={isSelected}
                     onChange={() => toggleFile(download.filename)}
-                    className="w-4 h-4 rounded border-white/20 bg-white/10 text-accent focus:ring-2 focus:ring-accent focus:ring-offset-0"
+                    className="h-4 w-4 rounded border-white/10 bg-white/[0.02] text-accent accent-accent focus:ring-1 focus:ring-accent focus:ring-offset-0"
                   />
-                  <FaFile className="text-muted-text text-sm flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium truncate">
+                  <FaFile className="h-3.5 w-3.5 shrink-0 text-muted-text" />
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm text-primary-text">
                       {download.label || download.filename}
                     </div>
                     {download.label && (
-                      <div className="text-xs text-muted-text truncate">
+                      <div className="truncate text-xs text-muted-text">
                         {download.filename}
                       </div>
                     )}
@@ -167,27 +161,24 @@ export default function ProjectDownloads({ downloads, projectTitle }: ProjectDow
           </div>
 
           {/* Footer with download button */}
-          <div className="p-3 border-t border-white/10 bg-white/5">
+          <div className="border-t border-white/[0.06] bg-white/[0.02] p-3">
             <button
               onClick={downloadSelected}
               disabled={selectedFiles.size === 0}
-              className={`w-full bg-accent/90 hover:bg-accent text-white font-medium rounded-lg
-                         text-sm py-2 inline-flex items-center justify-center gap-2
-                         transition-all duration-300 shadow-lg
-                         ${selectedFiles.size === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
+              className={`inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent/90 ${selectedFiles.size === 0 ? "cursor-not-allowed opacity-50" : ""}`}
             >
               {selectedFiles.size === 1 ? (
                 <>
-                  <FaDownload /> Download File
+                  <FaDownload className="h-3.5 w-3.5" /> Download File
                 </>
               ) : (
                 <>
-                  <FaFileArchive /> Download {selectedFiles.size} Files
+                  <FaFileArchive className="h-3.5 w-3.5" /> Download {selectedFiles.size} Files
                 </>
               )}
             </button>
             {selectedFiles.size > 1 && (
-              <p className="text-xs text-muted-text mt-2 text-center">
+              <p className="mt-2 text-center text-xs text-muted-text">
                 Files will download individually
               </p>
             )}

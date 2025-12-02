@@ -31,9 +31,9 @@ export default function Header() {
           <Link
             href="/"
             title="Home"
-            className="group flex items-center gap-2.5 rounded-full border border-white/[0.06] bg-white/[0.02] px-3 py-1.5 backdrop-blur-sm transition-colors hover:border-white/[0.1] hover:bg-white/[0.04]"
+            className="group flex items-center gap-2.5 rounded-full border border-white/[0.06] bg-white/[0.02] p-1.5 backdrop-blur-sm transition-colors hover:border-white/[0.1] hover:bg-white/[0.04] sm:px-3"
           >
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent/15 text-xs font-semibold text-accent transition-colors group-hover:bg-accent/25">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent/15 text-xs font-semibold text-accent transition-colors group-hover:bg-accent/25">
               P
             </span>
             <span className="hidden text-sm font-medium text-primary-text sm:block">
@@ -65,6 +65,7 @@ export default function Header() {
           {/* Right side */}
           <div className="flex items-center gap-3">
             <button
+              type="button"
               onClick={() => setIsModalOpen(true)}
               className="hidden rounded-full border border-white/[0.06] bg-white/[0.02] px-4 py-2 text-sm font-medium text-secondary-text backdrop-blur-sm transition-colors hover:border-accent/30 hover:bg-accent/10 hover:text-accent sm:block"
             >
