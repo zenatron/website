@@ -134,10 +134,10 @@ export default function BlogClient({ posts }: BlogClientProps) {
       <header className="mb-16 space-y-6">
         <p className="text-sm font-medium tracking-[0.2em] text-accent">WRITING</p>
         <h1 className="text-4xl tracking-tight md:text-5xl">
-          Notes & field reports
+          Blog: Barely Legible Organized Gibberish
         </h1>
         <p className="max-w-xl text-secondary-text">
-          Longer-form thinking on engineering craft.
+          Thoughts on code, learning, and whatever else I&apos;m figuring out.
         </p>
       </header>
 
@@ -212,15 +212,15 @@ export default function BlogClient({ posts }: BlogClientProps) {
               </div>
 
               {/* Posts list */}
-              <div className="space-y-2 pl-4">
+              <div className="space-y-2">
                 {group.posts.map((post) => (
                   <Link
                     key={post.slug}
                     href={`/blog/${post.slug}`}
-                    className="group relative block rounded-xl py-5 pl-6 pr-4 transition-colors hover:bg-white/[0.02]"
+                    className="group relative block rounded-xl py-5 px-4 transition-colors hover:bg-white/[0.02] sm:pl-8"
                   >
-                    {/* Timeline dot */}
-                    <span className="absolute left-0 top-7 h-2 w-2 rounded-full border-2 border-accent/40 bg-primary-bg transition-colors group-hover:border-accent group-hover:bg-accent" />
+                    {/* Timeline dot - hidden on mobile */}
+                    <span className="absolute left-3 top-7 hidden h-2 w-2 rounded-full border-2 border-accent/40 bg-primary-bg transition-colors group-hover:border-accent group-hover:bg-accent sm:block" />
                     
                     <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                       <div className="flex-1 space-y-2">
@@ -259,7 +259,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
                         </div>
                       </div>
                       
-                      <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-muted-text opacity-0 transition-all group-hover:translate-x-1 group-hover:text-accent group-hover:opacity-100" />
+                      <ArrowRight className="mt-1 hidden h-4 w-4 shrink-0 text-muted-text opacity-0 transition-all group-hover:translate-x-1 group-hover:text-accent group-hover:opacity-100 sm:block" />
                     </div>
                   </Link>
                 ))}

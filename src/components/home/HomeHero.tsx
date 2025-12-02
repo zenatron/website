@@ -29,9 +29,8 @@ export default function HomeHero() {
         </h1>
         
         <p className="max-w-lg text-lg leading-relaxed text-secondary-text">
-          I build software that lasts. Clear architecture, boring deploys, 
-          and tooling that treats operators like humans. Currently focused on 
-          AI systems and game infrastructure.
+          Building things at the intersection of AI and games. 
+          I like code that&apos;s easy to delete and deploys that don&apos;t wake anyone up.
         </p>
       </div>
 

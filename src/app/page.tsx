@@ -6,6 +6,7 @@ import { getAllProjects } from "@/lib/projects";
 import { getAllBlogPosts } from "@/lib/blog";
 import dateFormatter from "@/utils/dateFormatter";
 import HomeHero from "@/components/home/HomeHero";
+import QuoteCarousel from "@/components/home/QuoteCarousel";
 
 const QUICK_FACTS = [
   { label: "Location", value: "Charlotte, NC", icon: MapPin },
@@ -165,10 +166,10 @@ export default async function HomePage() {
                   WRITING
                 </p>
                 <h2 className="text-3xl tracking-tight md:text-4xl">
-                  Notes on building
+                  Writing
                 </h2>
                 <p className="text-secondary-text">
-                  Longer-form thinking on engineering craft. Updated occasionally when something clicks.
+                  Sometimes I write things down. Mostly about code.
                 </p>
                 <Link 
                   href="/blog" 
@@ -213,16 +214,7 @@ export default async function HomePage() {
         {/* Philosophy section */}
         <section className="px-4 py-24 sm:px-6">
           <div className="mx-auto max-w-3xl text-center">
-            <blockquote className="relative">
-              <span className="absolute -top-4 left-0 text-6xl leading-none text-accent/20">&ldquo;</span>
-              <p className="text-2xl font-medium leading-relaxed tracking-tight text-primary-text md:text-3xl">
-                Good software is built by people who care about the humans operating it 
-                as much as the humans using it.
-              </p>
-              <footer className="mt-6 text-sm text-muted-text">
-                — My engineering philosophy, more or less
-              </footer>
-            </blockquote>
+            <QuoteCarousel />
           </div>
         </section>
       </main>

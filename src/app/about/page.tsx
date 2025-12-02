@@ -32,8 +32,8 @@ export default function AboutPage() {
                   Phil Vishnevsky
                 </h1>
                 <p className="mx-auto max-w-2xl text-lg leading-relaxed text-secondary-text">
-                  Software engineer with a bias toward maintainable systems and clear handoffs. 
-                  I care about boring deploys, inclusive teams, and tooling that respects the humans operating it.
+                  I write code, break things, and occasionally ship something useful. 
+                  CS student at UNC Charlotte. Making games and AI tools on the side.
                 </p>
               </div>
 
@@ -64,10 +64,10 @@ export default function AboutPage() {
                   EXPERIENCE
                 </p>
                 <h2 className="text-3xl tracking-tight md:text-4xl">
-                  Background & credentials
+                  The story so far
                 </h2>
                 <p className="text-secondary-text max-w-xl mx-auto">
-                  My professional journey in software — from early projects to current focus areas.
+                  Started coding in 2020. Haven&apos;t really stopped.
                 </p>
               </div>
               <ResumeSection />
@@ -97,11 +97,10 @@ export default function AboutPage() {
                   OFF THE CLOCK
                 </p>
                 <h2 className="text-3xl tracking-tight md:text-4xl">
-                  Tools, apps & things I enjoy
+                  Stuff I like
                 </h2>
                 <p className="text-secondary-text max-w-xl mx-auto">
-                  The software I reach for daily, the hobbies that keep me balanced, 
-                  and a few opinions I hold loosely.
+                  Apps I use, hobbies I have, opinions I&apos;ll probably change.
                 </p>
               </div>
               <HobbiesSection />

@@ -159,11 +159,10 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
       <header className="mb-16 space-y-6">
         <p className="text-sm font-medium tracking-[0.2em] text-accent">PROJECTS</p>
         <h1 className="text-4xl tracking-tight md:text-5xl">
-          Things I&apos;ve built
+          Stuff I&apos;ve shipped
         </h1>
         <p className="max-w-xl text-secondary-text">
-          A selection of software, tooling, and experiments across AI, games, 
-          and developer experience.
+          Games, tools, and the occasional experiment that actually worked.
         </p>
       </header>
 
