@@ -20,15 +20,22 @@ const getMessageForTime = (seconds: number): string => {
   if (seconds < 5) return "This page doesn't exist. But you do. That's nice.";
   if (seconds < 10) return "Still here? The page isn't coming back, I promise.";
   if (seconds < 20) return "Okay, you're committed. I respect that.";
-  if (seconds < 30) return "At this point you're just seeing what happens next, aren't you?";
-  if (seconds < 45) return "Fun fact: The average person leaves a 404 page in under 5 seconds. You're built different.";
+  if (seconds < 30)
+    return "At this point you're just seeing what happens next, aren't you?";
+  if (seconds < 45)
+    return "Fun fact: The average person leaves a 404 page in under 5 seconds. You're built different.";
   if (seconds < 60) return "One minute of your life, spent here. No refunds.";
   if (seconds < 90) return "You could've made a sandwich by now. Just saying.";
   if (seconds < 120) return "I'm genuinely impressed. And slightly concerned.";
-  if (seconds < 180) return "Almost 3 minutes. You're in the top 0.01% of 404 page visitors.";
+  if (seconds < 180)
+    return "Almost 3 minutes. You're in the top 0.01% of 404 page visitors.";
   if (seconds < 300) return "At five minutes, I'll tell you a secret...";
   if (seconds < 301) return "The secret is: there is no secret. Go outside.";
-  return "You've been here for " + Math.floor(seconds / 60) + " minutes. We should probably both move on.";
+  return (
+    "You've been here for " +
+    Math.floor(seconds / 60) +
+    " minutes. We should probably both move on."
+  );
 };
 
 // Easter egg: different 404 "error codes"
@@ -72,28 +79,31 @@ export default function NotFoundPage() {
 
   // Swap favicon to skull emoji on 404 page
   useEffect(() => {
-    const originalFavicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+    const originalFavicon =
+      document.querySelector<HTMLLinkElement>('link[rel="icon"]');
     const originalHref = originalFavicon?.href;
-    
+
     // Create emoji favicon
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     canvas.width = 32;
     canvas.height = 32;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (ctx) {
-      ctx.font = '28px serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('💀', 16, 18);
-      
-      const link = document.querySelector<HTMLLinkElement>('link[rel="icon"]') || document.createElement('link');
-      link.rel = 'icon';
+      ctx.font = "28px serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("💀", 16, 18);
+
+      const link =
+        document.querySelector<HTMLLinkElement>('link[rel="icon"]') ||
+        document.createElement("link");
+      link.rel = "icon";
       link.href = canvas.toDataURL();
       if (!document.querySelector('link[rel="icon"]')) {
         document.head.appendChild(link);
       }
     }
-    
+
     // Restore original on unmount
     return () => {
       if (originalFavicon && originalHref) {
@@ -134,11 +144,14 @@ export default function NotFoundPage() {
   };
 
   // After 10 clicks, show a special message
-  const clickMessage = clicks >= 10 
-    ? "You clicked it " + clicks + " times. It's not a button. Well, technically it is, but..." 
-    : clicks >= 5 
-    ? "(" + clicks + " clicks... keep going?)" 
-    : null;
+  const clickMessage =
+    clicks >= 10
+      ? "You clicked it " +
+        clicks +
+        " times. It's not a button. Well, technically it is, but..."
+      : clicks >= 5
+        ? "(" + clicks + " clicks... keep going?)"
+        : null;
 
   return (
     <div className="relative flex min-h-screen flex-col">
@@ -158,9 +171,15 @@ export default function NotFoundPage() {
             >
               <span className="text-2xl">{achievement.icon}</span>
               <div className="flex-1">
-                <p className="text-xs text-accent font-medium uppercase tracking-wider">Achievement Unlocked</p>
-                <p className="text-sm text-primary-text font-semibold">{achievement.title}</p>
-                <p className="text-xs text-muted-text">{achievement.description}</p>
+                <p className="text-xs text-accent font-medium uppercase tracking-wider">
+                  Achievement Unlocked
+                </p>
+                <p className="text-sm text-primary-text font-semibold">
+                  {achievement.title}
+                </p>
+                <p className="text-xs text-muted-text">
+                  {achievement.description}
+                </p>
               </div>
               <button
                 onClick={() => dismissAchievement(achievement.id)}
@@ -175,15 +194,15 @@ export default function NotFoundPage() {
 
       <main className="flex-1 flex flex-col items-center justify-center text-center px-4 sm:px-6 space-y-6">
         {/* Clickable 404 that cycles through error codes */}
-        <motion.h1 
+        <motion.h1
           className="text-8xl font-extrabold cursor-pointer select-none"
           onClick={handleErrorClick}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95, rotate: [0, -5, 5, 0] }}
-          animate={{ 
+          animate={{
             color: seconds > 60 ? ["#7c8aff", "#ff7c8a", "#7c8aff"] : "#7c8aff",
           }}
-          transition={{ 
+          transition={{
             color: { duration: 2, repeat: Infinity },
           }}
         >
@@ -191,7 +210,7 @@ export default function NotFoundPage() {
         </motion.h1>
 
         {clickMessage && (
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-xs text-accent"
@@ -201,7 +220,7 @@ export default function NotFoundPage() {
         )}
 
         {/* Escalating message */}
-        <motion.p 
+        <motion.p
           key={message}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -213,31 +232,37 @@ export default function NotFoundPage() {
         {/* Time counter */}
         <div className="text-sm text-muted-text space-y-1">
           <p>
-            Time on this page: <span className="tabular-nums text-accent font-mono">{String(Math.floor(seconds / 60)).padStart(2, "0")}:{String(seconds % 60).padStart(2, "0")}</span>
+            Time on this page:{" "}
+            <span className="tabular-nums text-accent font-mono">
+              {String(Math.floor(seconds / 60)).padStart(2, "0")}:
+              {String(seconds % 60).padStart(2, "0")}
+            </span>
           </p>
           {seconds >= 30 && (
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="text-xs text-muted-text/60"
             >
-              (That&apos;s {seconds.toLocaleString()} seconds you&apos;ll never get back)
+              (That&apos;s {seconds.toLocaleString()} seconds you&apos;ll never
+              get back)
             </motion.p>
           )}
         </div>
 
         {/* Call to Action - grows over time */}
         <motion.div
-          animate={{ 
-            scale: 1 + (seconds * 0.01),
+          animate={{
+            scale: 1 + seconds * 0.01,
           }}
           transition={{ type: "spring", stiffness: 100 }}
         >
-          <Link 
-            href="/" 
-            className="btn btn-primary inline-block"
-          >
-            {seconds < 30 ? "Go Back Home" : seconds < 60 ? "Please Go Home" : "I'm Begging You"}
+          <Link href="/" className="btn btn-primary inline-block">
+            {seconds < 30
+              ? "Go Back Home"
+              : seconds < 60
+                ? "Please Go Home"
+                : "I'm Begging You"}
           </Link>
         </motion.div>
       </main>

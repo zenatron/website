@@ -15,7 +15,7 @@ export default function HomeHero() {
         <p className="text-sm font-medium tracking-[0.2em] text-accent">
           SOFTWARE ENGINEER
         </p>
-        
+
         <h1 className="text-5xl leading-[1.1] tracking-tight md:text-6xl lg:text-7xl">
           <VariableProximity
             label="Phil Vishnevsky"
@@ -27,10 +27,10 @@ export default function HomeHero() {
             containerRef={headingRef}
           />
         </h1>
-        
+
         <p className="max-w-lg text-lg leading-relaxed text-secondary-text">
-          Building things at the intersection of AI and games. 
-          I like code that&apos;s easy to delete and deploys that don&apos;t wake anyone up.
+          Building things at the intersection of AI and games. I like code
+          that&apos;s easy to delete and deploys that don&apos;t wake anyone up.
         </p>
       </div>
 
@@ -44,16 +44,16 @@ export default function HomeHero() {
           About me
         </Link>
         <div className="flex items-center gap-3 pl-2">
-          <Link 
-            href="https://github.com/zenatron" 
+          <Link
+            href="https://github.com/zenatron"
             target="_blank"
             className="text-muted-text transition-colors hover:text-primary-text"
             aria-label="GitHub"
           >
             <FaGithub className="h-5 w-5" />
           </Link>
-          <Link 
-            href="https://linkedin.com/in/philipvishnevsky" 
+          <Link
+            href="https://linkedin.com/in/philipvishnevsky"
             target="_blank"
             className="text-muted-text transition-colors hover:text-primary-text"
             aria-label="LinkedIn"

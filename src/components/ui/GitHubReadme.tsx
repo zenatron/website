@@ -18,9 +18,9 @@ interface GitHubReadmeProps {
   processSections?: boolean; // Whether to process sections between separators
 }
 
-export default function GitHubReadme({ 
+export default function GitHubReadme({
   repo = "zenatron/zenatron", // Default to your profile README
-  processSections = false 
+  processSections = false,
 }: GitHubReadmeProps) {
   const [readmeData, setReadmeData] = useState<GitHubReadmeData>({
     htmlContent: "",

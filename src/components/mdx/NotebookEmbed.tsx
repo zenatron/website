@@ -12,10 +12,10 @@ interface NotebookEmbedProps {
   defaultOpen?: boolean; // Whether to start expanded
 }
 
-export default function NotebookEmbed({ 
-  notebookHtml, 
+export default function NotebookEmbed({
+  notebookHtml,
   title = "View Full Jupyter Notebook",
-  defaultOpen = false 
+  defaultOpen = false,
 }: NotebookEmbedProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [htmlContent, setHtmlContent] = useState<string>("");

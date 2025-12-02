@@ -61,11 +61,7 @@ export default function HobbiesSection() {
           {filteredItems.map((item) => (
             <div key={item.name}>
               {item.url ? (
-                <Link
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <Link href={item.url} target="_blank" rel="noopener noreferrer">
                   <FavoriteItemRow item={item} />
                 </Link>
               ) : (

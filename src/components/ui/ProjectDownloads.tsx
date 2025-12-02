@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { FaDownload, FaChevronDown, FaFile, FaFileArchive } from "react-icons/fa";
+import {
+  FaDownload,
+  FaChevronDown,
+  FaFile,
+  FaFileArchive,
+} from "react-icons/fa";
 
 interface Download {
   filename: string;
@@ -14,15 +19,23 @@ interface ProjectDownloadsProps {
   projectTitle: string;
 }
 
-export default function ProjectDownloads({ downloads, projectTitle }: ProjectDownloadsProps) {
+export default function ProjectDownloads({
+  downloads,
+  projectTitle,
+}: ProjectDownloadsProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set(downloads.map(d => d.filename)));
+  const [selectedFiles, setSelectedFiles] = useState<Set<string>>(
+    new Set(downloads.map((d) => d.filename))
+  );
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     }
@@ -46,7 +59,7 @@ export default function ProjectDownloads({ downloads, projectTitle }: ProjectDow
     if (selectedFiles.size === downloads.length) {
       setSelectedFiles(new Set());
     } else {
-      setSelectedFiles(new Set(downloads.map(d => d.filename)));
+      setSelectedFiles(new Set(downloads.map((d) => d.filename)));
     }
   };
 
@@ -111,7 +124,9 @@ export default function ProjectDownloads({ downloads, projectTitle }: ProjectDow
         <span>
           Downloads ({selectedFiles.size}/{downloads.length})
         </span>
-        <FaChevronDown className={`h-3 w-3 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+        <FaChevronDown
+          className={`h-3 w-3 transition-transform ${isOpen ? "rotate-180" : ""}`}
+        />
       </button>
 
       {isOpen && (
@@ -119,12 +134,16 @@ export default function ProjectDownloads({ downloads, projectTitle }: ProjectDow
           {/* Header */}
           <div className="border-b border-white/[0.06] bg-white/[0.02] p-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-primary-text">Select Files</span>
+              <span className="text-sm font-medium text-primary-text">
+                Select Files
+              </span>
               <button
                 onClick={toggleAll}
                 className="text-xs text-accent transition-colors hover:text-accent/80"
               >
-                {selectedFiles.size === downloads.length ? "Deselect All" : "Select All"}
+                {selectedFiles.size === downloads.length
+                  ? "Deselect All"
+                  : "Select All"}
               </button>
             </div>
           </div>
@@ -173,7 +192,8 @@ export default function ProjectDownloads({ downloads, projectTitle }: ProjectDow
                 </>
               ) : (
                 <>
-                  <FaFileArchive className="h-3.5 w-3.5" /> Download {selectedFiles.size} Files
+                  <FaFileArchive className="h-3.5 w-3.5" /> Download{" "}
+                  {selectedFiles.size} Files
                 </>
               )}
             </button>

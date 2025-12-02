@@ -102,22 +102,22 @@ export default function ResumeSection() {
                     <span className="text-2xl font-bold tabular-nums text-primary-text transition-colors group-hover:text-accent">
                       {event.year}
                     </span>
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${
-                      event.type === "education" 
-                        ? "bg-blue-500/10 text-blue-400" 
-                        : event.type === "milestone"
-                        ? "bg-amber-500/10 text-amber-400"
-                        : "bg-accent/10 text-accent"
-                    }`}>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${
+                        event.type === "education"
+                          ? "bg-blue-500/10 text-blue-400"
+                          : event.type === "milestone"
+                            ? "bg-amber-500/10 text-amber-400"
+                            : "bg-accent/10 text-accent"
+                      }`}
+                    >
                       {event.type}
                     </span>
                   </div>
                   <h4 className="mb-1 font-medium text-primary-text">
                     {event.title}
                   </h4>
-                  <p className="text-sm text-muted-text">
-                    {event.description}
-                  </p>
+                  <p className="text-sm text-muted-text">{event.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -136,7 +136,9 @@ export default function ResumeSection() {
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent/40 [animation-delay:150ms]" />
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent/20 [animation-delay:300ms]" />
             </div>
-            <span className="text-sm italic text-muted-text">More chapters loading...</span>
+            <span className="text-sm italic text-muted-text">
+              More chapters loading...
+            </span>
           </motion.div>
         </div>
       </motion.div>
@@ -150,9 +152,7 @@ export default function ResumeSection() {
         className="space-y-4"
       >
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-medium text-primary-text">
-            Full Resume
-          </h3>
+          <h3 className="text-lg font-medium text-primary-text">Full Resume</h3>
           {/* Always visible download button for mobile */}
           <button
             type="button"
@@ -165,7 +165,7 @@ export default function ResumeSection() {
         </div>
 
         {/* PDF Embed Container */}
-        <div 
+        <div
           className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] shadow-2xl shadow-black/20"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
@@ -185,7 +185,7 @@ export default function ResumeSection() {
           </div>
 
           {/* Overlay with buttons - desktop only */}
-          <div 
+          <div
             className={`absolute inset-0 hidden items-end justify-center bg-gradient-to-t from-black/80 via-black/40 to-transparent p-8 transition-all duration-300 lg:flex ${
               isHovered ? "opacity-100" : "opacity-0"
             }`}

@@ -98,8 +98,7 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>(
         const letterCenterY = rect.top + rect.height / 2 - containerRect.top;
 
         const distance = Math.sqrt(
-          (localX - letterCenterX) ** 2 +
-            (localY - letterCenterY) ** 2
+          (localX - letterCenterX) ** 2 + (localY - letterCenterY) ** 2
         );
 
         if (distance >= radius) {

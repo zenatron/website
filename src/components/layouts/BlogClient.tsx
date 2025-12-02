@@ -16,7 +16,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const initialTag = searchParams.get("tag");
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [idleTime, setIdleTime] = useState(0);
   const [wordCountClicks, setWordCountClicks] = useState(0);
@@ -24,7 +24,8 @@ export default function BlogClient({ posts }: BlogClientProps) {
   // Calculate total words across all posts
   const totalWords = useMemo(() => {
     return posts.reduce((acc, post) => {
-      const wordCount = post.searchableContent?.split(/\s+/).filter(Boolean).length || 0;
+      const wordCount =
+        post.searchableContent?.split(/\s+/).filter(Boolean).length || 0;
       return acc + wordCount;
     }, 0);
   }, [posts]);
@@ -57,7 +58,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
   useEffect(() => {
     let interval: NodeJS.Timeout;
     const input = searchInputRef.current;
-    
+
     const startIdleTimer = () => {
       if (searchQuery === "") {
         interval = setInterval(() => {
@@ -65,15 +66,15 @@ export default function BlogClient({ posts }: BlogClientProps) {
         }, 1000);
       }
     };
-    
+
     const stopIdleTimer = () => {
       clearInterval(interval);
       setIdleTime(0);
     };
-    
+
     input?.addEventListener("focus", startIdleTimer);
     input?.addEventListener("blur", stopIdleTimer);
-    
+
     return () => {
       clearInterval(interval);
       input?.removeEventListener("focus", startIdleTimer);
@@ -100,17 +101,21 @@ export default function BlogClient({ posts }: BlogClientProps) {
 
   // Easter egg: Check for "42" search
   const is42Search = searchQuery.trim() === "42";
-  
+
   // Easter egg: Check for "bug" search
   const isBugSearch = searchQuery.trim().toLowerCase() === "bug";
 
   // Word count click easter egg messages
   const getWordCountMessage = () => {
     if (wordCountClicks === 0) return null;
-    if (wordCountClicks < 3) return `That's ${Math.round(totalWords / 280)} tweets worth`;
-    if (wordCountClicks < 5) return `Or ${Math.round(totalWords / 250)} pages in a book`;
-    if (wordCountClicks < 7) return `About ${Math.round(totalWords / 150)} minutes to read it all`;
-    if (wordCountClicks < 10) return `${Math.round(totalWords / 5)} average word lengths`;
+    if (wordCountClicks < 3)
+      return `That's ${Math.round(totalWords / 280)} tweets worth`;
+    if (wordCountClicks < 5)
+      return `Or ${Math.round(totalWords / 250)} pages in a book`;
+    if (wordCountClicks < 7)
+      return `About ${Math.round(totalWords / 150)} minutes to read it all`;
+    if (wordCountClicks < 10)
+      return `${Math.round(totalWords / 5)} average word lengths`;
     return "Okay you really like clicking this huh";
   };
 
@@ -201,173 +206,195 @@ export default function BlogClient({ posts }: BlogClientProps) {
   return (
     <div className="px-4 pb-24 pt-32 sm:px-6">
       <div className="mx-auto max-w-5xl">
-      {/* Header */}
-      <header className="mb-16 space-y-6">
-        <p className="text-sm font-medium tracking-[0.2em] text-accent">WRITING</p>
-        <h1 className="text-4xl tracking-tight md:text-5xl">
-          Blog: Barely Legible Organized Gibberish
-        </h1>
-        <p className="max-w-xl text-secondary-text">
-          Thoughts on code, learning, and whatever else I&apos;m figuring out.{" "}
-          <span 
-            className="tabular-nums text-accent cursor-pointer hover:underline"
-            onClick={() => setWordCountClicks((c) => c + 1)}
-            title="Click me!"
-          >
-            {totalWords.toLocaleString()}
-          </span>{" "}
-          words written so far.
-          {getWordCountMessage() && (
-            <span className="block text-xs text-muted-text mt-1 italic">
-              ({getWordCountMessage()})
+        {/* Header */}
+        <header className="mb-16 space-y-6">
+          <p className="text-sm font-medium tracking-[0.2em] text-accent">
+            WRITING
+          </p>
+          <h1 className="text-4xl tracking-tight md:text-5xl">
+            Blog: Barely Legible Organized Gibberish
+          </h1>
+          <p className="max-w-xl text-secondary-text">
+            Thoughts on code, learning, and whatever else I&apos;m figuring out.{" "}
+            <span
+              className="tabular-nums text-accent cursor-pointer hover:underline"
+              onClick={() => setWordCountClicks((c) => c + 1)}
+              title="Click me!"
+            >
+              {totalWords.toLocaleString()}
+            </span>{" "}
+            words written so far.
+            {getWordCountMessage() && (
+              <span className="block text-xs text-muted-text mt-1 italic">
+                ({getWordCountMessage()})
+              </span>
+            )}
+          </p>
+        </header>
+
+        {/* Filters */}
+        <div className="mb-12 space-y-6">
+          {/* Search */}
+          <div className="relative max-w-md">
+            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-text" />
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder={getPlaceholder()}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full rounded-full border border-white/[0.06] bg-white/[0.02] py-3 pl-11 pr-12 text-base sm:text-sm text-primary-text placeholder-muted-text outline-none transition-colors focus:border-accent/30 focus:bg-white/[0.04]"
+            />
+            <kbd className="absolute right-4 top-1/2 -translate-y-1/2 hidden rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-muted-text sm:inline-block">
+              /
+            </kbd>
+          </div>
+
+          {/* 42 Easter Egg */}
+          {is42Search && (
+            <div className="rounded-lg border border-accent/30 bg-accent/5 px-4 py-3 max-w-md">
+              <p className="text-sm text-accent font-medium">
+                🌌 The Answer to Life, the Universe, and Everything
+              </p>
+              <p className="text-xs text-muted-text mt-1">
+                But what was the question? - Douglas Adams
+              </p>
+            </div>
+          )}
+
+          {/* Bug Easter Egg */}
+          {isBugSearch && (
+            <div className="rounded-lg border border-accent/30 bg-accent/5 px-4 py-3 max-w-md">
+              <p className="text-sm text-accent font-medium">
+                🐛 No bugs here!
+              </p>
+              <p className="text-xs text-muted-text mt-1">
+                Only &quot;undocumented features&quot; and &quot;creative
+                interpretations of the spec.&quot;
+              </p>
+            </div>
+          )}
+
+          {/* Tags */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="mr-2 text-xs uppercase tracking-wider text-muted-text">
+              Topics:
             </span>
-          )}
-        </p>
-      </header>
-
-      {/* Filters */}
-      <div className="mb-12 space-y-6">
-        {/* Search */}
-        <div className="relative max-w-md">
-          <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-text" />
-          <input
-            ref={searchInputRef}
-            type="text"
-            placeholder={getPlaceholder()}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-full border border-white/[0.06] bg-white/[0.02] py-3 pl-11 pr-12 text-base sm:text-sm text-primary-text placeholder-muted-text outline-none transition-colors focus:border-accent/30 focus:bg-white/[0.04]"
-          />
-          <kbd className="absolute right-4 top-1/2 -translate-y-1/2 hidden rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-muted-text sm:inline-block">/</kbd>
+            {allTags.slice(0, 8).map((tag) => (
+              <button
+                key={tag}
+                onClick={() =>
+                  handleTagSelect(selectedTag === tag ? null : tag)
+                }
+                className={cn(
+                  "tag-bubble",
+                  selectedTag === tag
+                    ? "!bg-accent/30"
+                    : "opacity-80 hover:opacity-100"
+                )}
+              >
+                #{tag}
+              </button>
+            ))}
+            {hasActiveFilters && (
+              <button
+                onClick={clearFilters}
+                className="ml-2 flex items-center gap-1 rounded-full px-3 py-1.5 text-xs text-muted-text transition-colors hover:text-primary-text"
+              >
+                <X className="h-3 w-3" />
+                Clear
+              </button>
+            )}
+          </div>
         </div>
 
-        {/* 42 Easter Egg */}
-        {is42Search && (
-          <div className="rounded-lg border border-accent/30 bg-accent/5 px-4 py-3 max-w-md">
-            <p className="text-sm text-accent font-medium">🌌 The Answer to Life, the Universe, and Everything</p>
-            <p className="text-xs text-muted-text mt-1">But what was the question? - Douglas Adams</p>
-          </div>
-        )}
+        {/* Posts */}
+        <div className="space-y-16">
+          {filteredPosts.length === 0 ? (
+            <div className="py-16 text-center">
+              <p className="text-secondary-text">
+                No posts found matching your criteria.
+              </p>
+              <button
+                onClick={clearFilters}
+                className="mt-4 text-sm text-accent hover:underline"
+              >
+                Clear filters
+              </button>
+            </div>
+          ) : (
+            groupedPosts.map((group) => (
+              <section key={group.year} className="relative">
+                {/* Year marker */}
+                <div className="sticky top-24 z-10 mb-6 flex items-center gap-4">
+                  <span className="rounded-full bg-accent/10 px-3 py-1 text-sm font-medium text-accent">
+                    {group.year}
+                  </span>
+                  <div className="h-px flex-1 bg-gradient-to-r from-accent/20 to-transparent" />
+                </div>
 
-        {/* Bug Easter Egg */}
-        {isBugSearch && (
-          <div className="rounded-lg border border-accent/30 bg-accent/5 px-4 py-3 max-w-md">
-            <p className="text-sm text-accent font-medium">🐛 No bugs here!</p>
-            <p className="text-xs text-muted-text mt-1">Only &quot;undocumented features&quot; and &quot;creative interpretations of the spec.&quot;</p>
-          </div>
-        )}
+                {/* Posts list */}
+                <div className="space-y-2">
+                  {group.posts.map((post) => (
+                    <Link
+                      key={post.slug}
+                      href={`/blog/${post.slug}`}
+                      className="group relative block rounded-xl py-5 px-4 transition-colors hover:bg-white/[0.02] sm:pl-8"
+                    >
+                      {/* Timeline dot - hidden on mobile */}
+                      <span className="absolute left-3 top-7 hidden h-2 w-2 rounded-full border-2 border-accent/40 bg-primary-bg transition-colors group-hover:border-accent group-hover:bg-accent sm:block" />
 
-        {/* Tags */}
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="mr-2 text-xs uppercase tracking-wider text-muted-text">
-            Topics:
-          </span>
-          {allTags.slice(0, 8).map((tag) => (
-            <button
-              key={tag}
-              onClick={() => handleTagSelect(selectedTag === tag ? null : tag)}
-              className={cn(
-                "tag-bubble",
-                selectedTag === tag
-                  ? "!bg-accent/30"
-                  : "opacity-80 hover:opacity-100"
-              )}
-            >
-              #{tag}
-            </button>
-          ))}
-          {hasActiveFilters && (
-            <button
-              onClick={clearFilters}
-              className="ml-2 flex items-center gap-1 rounded-full px-3 py-1.5 text-xs text-muted-text transition-colors hover:text-primary-text"
-            >
-              <X className="h-3 w-3" />
-              Clear
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Posts */}
-      <div className="space-y-16">
-        {filteredPosts.length === 0 ? (
-          <div className="py-16 text-center">
-            <p className="text-secondary-text">No posts found matching your criteria.</p>
-            <button
-              onClick={clearFilters}
-              className="mt-4 text-sm text-accent hover:underline"
-            >
-              Clear filters
-            </button>
-          </div>
-        ) : (
-          groupedPosts.map((group) => (
-            <section key={group.year} className="relative">
-              {/* Year marker */}
-              <div className="sticky top-24 z-10 mb-6 flex items-center gap-4">
-                <span className="rounded-full bg-accent/10 px-3 py-1 text-sm font-medium text-accent">
-                  {group.year}
-                </span>
-                <div className="h-px flex-1 bg-gradient-to-r from-accent/20 to-transparent" />
-              </div>
-
-              {/* Posts list */}
-              <div className="space-y-2">
-                {group.posts.map((post) => (
-                  <Link
-                    key={post.slug}
-                    href={`/blog/${post.slug}`}
-                    className="group relative block rounded-xl py-5 px-4 transition-colors hover:bg-white/[0.02] sm:pl-8"
-                  >
-                    {/* Timeline dot - hidden on mobile */}
-                    <span className="absolute left-3 top-7 hidden h-2 w-2 rounded-full border-2 border-accent/40 bg-primary-bg transition-colors group-hover:border-accent group-hover:bg-accent sm:block" />
-                    
-                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                      <div className="flex-1 space-y-2">
-                        <h2 className="text-lg font-medium text-primary-text transition-colors group-hover:text-accent">
-                          {post.metadata.title}
-                        </h2>
-                        {post.metadata.excerpt && (
-                          <p className="text-sm text-secondary-text line-clamp-2">
-                            {post.metadata.excerpt}
-                          </p>
-                        )}
-                        <div className="flex flex-wrap items-center gap-3 text-xs text-muted-text">
-                          <time>
-                            {dateFormatter({
-                              date: post.metadata.date,
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </time>
-                          {post.metadata.readingTime && (
-                            <>
-                              <span className="h-1 w-1 rounded-full bg-white/20" />
-                              <span>{post.metadata.readingTime}</span>
-                            </>
+                      <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                        <div className="flex-1 space-y-2">
+                          <h2 className="text-lg font-medium text-primary-text transition-colors group-hover:text-accent">
+                            {post.metadata.title}
+                          </h2>
+                          {post.metadata.excerpt && (
+                            <p className="text-sm text-secondary-text line-clamp-2">
+                              {post.metadata.excerpt}
+                            </p>
                           )}
-                          {post.metadata.tags && post.metadata.tags.length > 0 && (
-                            <>
-                              <span className="h-1 w-1 rounded-full bg-white/20" />
-                              <div className="flex gap-2">
-                                {post.metadata.tags.slice(0, 2).map((tag) => (
-                                  <span key={tag} className="tag">{tag}</span>
-                                ))}
-                              </div>
-                            </>
-                          )}
+                          <div className="flex flex-wrap items-center gap-3 text-xs text-muted-text">
+                            <time>
+                              {dateFormatter({
+                                date: post.metadata.date,
+                                month: "short",
+                                day: "numeric",
+                              })}
+                            </time>
+                            {post.metadata.readingTime && (
+                              <>
+                                <span className="h-1 w-1 rounded-full bg-white/20" />
+                                <span>{post.metadata.readingTime}</span>
+                              </>
+                            )}
+                            {post.metadata.tags &&
+                              post.metadata.tags.length > 0 && (
+                                <>
+                                  <span className="h-1 w-1 rounded-full bg-white/20" />
+                                  <div className="flex gap-2">
+                                    {post.metadata.tags
+                                      .slice(0, 2)
+                                      .map((tag) => (
+                                        <span key={tag} className="tag">
+                                          {tag}
+                                        </span>
+                                      ))}
+                                  </div>
+                                </>
+                              )}
+                          </div>
                         </div>
+
+                        <ArrowRight className="mt-1 hidden h-4 w-4 shrink-0 text-muted-text opacity-0 transition-all group-hover:translate-x-1 group-hover:text-accent group-hover:opacity-100 sm:block" />
                       </div>
-                      
-                      <ArrowRight className="mt-1 hidden h-4 w-4 shrink-0 text-muted-text opacity-0 transition-all group-hover:translate-x-1 group-hover:text-accent group-hover:opacity-100 sm:block" />
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          ))
-        )}
-      </div>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

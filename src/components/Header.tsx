@@ -20,7 +20,9 @@ export default function Header() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [draggedLink, setDraggedLink] = useState<string | null>(null);
-  const [wobblyLinks, setWobblyLinks] = useState<Record<string, { x: number; y: number }>>({});
+  const [wobblyLinks, setWobblyLinks] = useState<
+    Record<string, { x: number; y: number }>
+  >({});
   const linkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
 
   useEffect(() => {
@@ -31,7 +33,7 @@ export default function Header() {
   const handleDragStart = (e: React.DragEvent, href: string) => {
     e.preventDefault();
     setDraggedLink(href);
-    
+
     // Random wobble for all links
     const newWobbles: Record<string, { x: number; y: number }> = {};
     NAV_LINKS.forEach((link) => {
@@ -41,7 +43,7 @@ export default function Header() {
       };
     });
     setWobblyLinks(newWobbles);
-    
+
     // Snap back after a moment
     setTimeout(() => {
       setWobblyLinks({});
@@ -70,20 +72,23 @@ export default function Header() {
           {/* Navigation */}
           <nav className="hidden items-center gap-1 rounded-full border border-white/[0.06] bg-white/[0.02] px-1.5 py-1.5 backdrop-blur-sm md:flex">
             {NAV_LINKS.map((link) => {
-              const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+              const isActive =
+                pathname === link.href || pathname.startsWith(link.href + "/");
               const wobble = wobblyLinks[link.href] || { x: 0, y: 0 };
               return (
                 <motion.div
                   key={link.href}
-                  animate={{ 
-                    x: wobble.x, 
+                  animate={{
+                    x: wobble.x,
                     y: wobble.y,
                     rotate: wobble.x * 0.5,
                   }}
                   transition={{ type: "spring", stiffness: 500, damping: 15 }}
                 >
                   <Link
-                    ref={(el) => { linkRefs.current[link.href] = el; }}
+                    ref={(el) => {
+                      linkRefs.current[link.href] = el;
+                    }}
                     href={link.href}
                     draggable
                     onDragStart={(e) => handleDragStart(e, link.href)}
@@ -117,10 +122,15 @@ export default function Header() {
       </header>
 
       {/* Contact Modal */}
-      {mounted && isModalOpen && createPortal(
-        <ContactModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />,
-        document.body
-      )}
+      {mounted &&
+        isModalOpen &&
+        createPortal(
+          <ContactModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          />,
+          document.body
+        )}
     </>
   );
 }

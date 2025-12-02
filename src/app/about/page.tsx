@@ -54,14 +54,18 @@ export default function AboutPage() {
                   Phil Vishnevsky
                 </h1>
                 <p className="mx-auto max-w-2xl text-lg leading-relaxed text-secondary-text">
-                  I write code, break things, and occasionally ship something useful.
+                  I write code, break things, and occasionally ship something
+                  useful.
                 </p>
               </div>
 
               {/* Quick facts row */}
               <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
                 {QUICK_FACTS.map((fact, i) => (
-                  <div key={fact.label} className="flex items-center gap-2 text-secondary-text">
+                  <div
+                    key={fact.label}
+                    className="flex items-center gap-2 text-secondary-text"
+                  >
                     <fact.icon className="h-4 w-4 text-muted-text" />
                     <span>{fact.value}</span>
                     {i < QUICK_FACTS.length - 1 && (
@@ -76,7 +80,6 @@ export default function AboutPage() {
 
         {/* Content Sections */}
         <div className="mx-auto max-w-5xl px-4 space-y-32 pb-24 sm:px-6">
-          
           {/* Resume Section */}
           <section id="resume" className="scroll-mt-24">
             <div className="space-y-8">
@@ -88,7 +91,16 @@ export default function AboutPage() {
                   The story so far
                 </h2>
                 <p className="text-secondary-text max-w-xl mx-auto">
-                  Started coding in 2019. Haven&apos;t really stopped. That&apos;s, like, <span className="tabular-nums text-accent">{getDaysOfExperience().toLocaleString()}</span> days of experience. Or <span className="tabular-nums text-accent">{seconds.toLocaleString()}</span> seconds.
+                  Started coding in 2019. Haven&apos;t really stopped.
+                  That&apos;s, like,{" "}
+                  <span className="tabular-nums text-accent">
+                    {getDaysOfExperience().toLocaleString()}
+                  </span>{" "}
+                  days of experience. Or{" "}
+                  <span className="tabular-nums text-accent">
+                    {seconds.toLocaleString()}
+                  </span>{" "}
+                  seconds.
                 </p>
               </div>
               <ResumeSection />
@@ -121,7 +133,8 @@ export default function AboutPage() {
                   Stuff I like
                 </h2>
                 <p className="text-secondary-text max-w-xl mx-auto">
-                  Apps I use, hobbies I have, opinions I&apos;ll probably change.
+                  Apps I use, hobbies I have, opinions I&apos;ll probably
+                  change.
                 </p>
               </div>
               <HobbiesSection />

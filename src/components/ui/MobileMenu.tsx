@@ -26,7 +26,11 @@ export default function MobileMenu() {
         aria-expanded={menuOpen}
         title="Toggle Menu"
       >
-        {menuOpen ? <FaTimes className="h-4 w-4" /> : <FaBars className="h-4 w-4" />}
+        {menuOpen ? (
+          <FaTimes className="h-4 w-4" />
+        ) : (
+          <FaBars className="h-4 w-4" />
+        )}
       </button>
 
       {/* Backdrop */}
@@ -44,7 +48,9 @@ export default function MobileMenu() {
         }`}
       >
         <div className="flex items-center justify-between">
-          <p className="text-xs uppercase tracking-[0.26em] text-muted-text">Menu</p>
+          <p className="text-xs uppercase tracking-[0.26em] text-muted-text">
+            Menu
+          </p>
           <button
             type="button"
             className="flex h-9 w-9 items-center justify-center rounded-md border border-white/10 text-secondary-text transition-colors duration-150 hover:border-white/20 hover:text-primary-text"
@@ -64,7 +70,9 @@ export default function MobileMenu() {
                 className="flex items-center justify-between rounded-lg border border-white/10 px-4 py-3 text-sm font-medium text-primary-text transition-colors duration-150 hover:border-white/20 hover:bg-white/5"
               >
                 <span>{item.label}</span>
-                <span className="text-xs uppercase tracking-[0.18em] text-muted-text">Go</span>
+                <span className="text-xs uppercase tracking-[0.18em] text-muted-text">
+                  Go
+                </span>
               </Link>
             </li>
           ))}

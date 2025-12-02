@@ -5,7 +5,14 @@ import { ProjectCard } from "@/types/types";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import dateFormatter from "@/utils/dateFormatter";
-import { ArrowUpRight, Search, X, Grid3X3, List, ExternalLink } from "lucide-react";
+import {
+  ArrowUpRight,
+  Search,
+  X,
+  Grid3X3,
+  List,
+  ExternalLink,
+} from "lucide-react";
 import { FaGithub, FaGlobe, FaGamepad, FaCode } from "react-icons/fa";
 import { SiJupyter } from "react-icons/si";
 import { cn } from "@/lib/utils";
@@ -39,7 +46,9 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
   const router = useRouter();
   const initialTag = searchParams.get("tag");
 
-  const [searchQuery, setSearchQuery] = useState(initialTag ? `#${initialTag}` : "");
+  const [searchQuery, setSearchQuery] = useState(
+    initialTag ? `#${initialTag}` : ""
+  );
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -82,8 +91,8 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
   const filteredProjects = useMemo(() => {
     return projects.filter((project) => {
       // Check type filter first
-      const projectType = project.links.github 
-        ? "github" 
+      const projectType = project.links.github
+        ? "github"
         : (project.metadata.type ?? "other").toLowerCase();
       if (selectedType !== null && projectType !== selectedType) {
         return false;
@@ -108,7 +117,8 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
             const tagQuery = term.slice(1).toLowerCase();
             if (!tagQuery) return true;
             const itemTagsLower =
-              project.metadata.tags?.map((tag) => tag.toLowerCase().trim()) || [];
+              project.metadata.tags?.map((tag) => tag.toLowerCase().trim()) ||
+              [];
             return itemTagsLower.some((tag) => tag.includes(tagQuery));
           }
 
@@ -155,154 +165,166 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
   return (
     <div className="px-4 pb-24 pt-32 sm:px-6">
       <div className="mx-auto max-w-5xl">
-      {/* Header */}
-      <header className="mb-16 space-y-6">
-        <p className="text-sm font-medium tracking-[0.2em] text-accent">PROJECTS</p>
-        <h1 className="text-4xl tracking-tight md:text-5xl">
-          Stuff I&apos;ve shipped
-        </h1>
-        <p className="max-w-xl text-secondary-text">
-          Games, tools, and the occasional experiment that actually worked.
-        </p>
-      </header>
+        {/* Header */}
+        <header className="mb-16 space-y-6">
+          <p className="text-sm font-medium tracking-[0.2em] text-accent">
+            PROJECTS
+          </p>
+          <h1 className="text-4xl tracking-tight md:text-5xl">
+            Stuff I&apos;ve shipped
+          </h1>
+          <p className="max-w-xl text-secondary-text">
+            Games, tools, and the occasional experiment that actually worked.
+          </p>
+        </header>
 
-      {/* Filters */}
-      <div className="mb-12 space-y-4">
-        {/* Search row with view toggle */}
-        <div className="flex items-center gap-3">
-          {/* Search */}
-          <div className="relative flex-1 sm:flex-none">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-text" />
-            <input
-              ref={searchInputRef}
-              type="text"
-              placeholder="Search... (# for tags)"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-full border border-white/[0.06] bg-white/[0.02] py-2 pl-9 pr-10 text-sm text-primary-text placeholder-muted-text outline-none transition-colors focus:border-accent/30 sm:w-56"
-            />
-            <kbd className="absolute right-3 top-1/2 -translate-y-1/2 hidden rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-muted-text sm:inline-block">/</kbd>
+        {/* Filters */}
+        <div className="mb-12 space-y-4">
+          {/* Search row with view toggle */}
+          <div className="flex items-center gap-3">
+            {/* Search */}
+            <div className="relative flex-1 sm:flex-none">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-text" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Search... (# for tags)"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full rounded-full border border-white/[0.06] bg-white/[0.02] py-2 pl-9 pr-10 text-sm text-primary-text placeholder-muted-text outline-none transition-colors focus:border-accent/30 sm:w-56"
+              />
+              <kbd className="absolute right-3 top-1/2 -translate-y-1/2 hidden rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-muted-text sm:inline-block">
+                /
+              </kbd>
+            </div>
+
+            {/* View toggle */}
+            <div className="flex shrink-0 items-center gap-1 rounded-full border border-white/[0.06] p-1">
+              <button
+                type="button"
+                onClick={() => setViewMode("grid")}
+                className={cn(
+                  "rounded-full p-2 transition-colors",
+                  viewMode === "grid"
+                    ? "bg-white/[0.08] text-primary-text"
+                    : "text-muted-text hover:text-secondary-text"
+                )}
+                aria-label="Grid view"
+              >
+                <Grid3X3 className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("list")}
+                className={cn(
+                  "rounded-full p-2 transition-colors",
+                  viewMode === "list"
+                    ? "bg-white/[0.08] text-primary-text"
+                    : "text-muted-text hover:text-secondary-text"
+                )}
+                aria-label="List view"
+              >
+                <List className="h-4 w-4" />
+              </button>
+            </div>
           </div>
 
-          {/* View toggle */}
-          <div className="flex shrink-0 items-center gap-1 rounded-full border border-white/[0.06] p-1">
+          {/* Type filters row */}
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
-              onClick={() => setViewMode("grid")}
+              onClick={() => setSelectedType(null)}
               className={cn(
-                "rounded-full p-2 transition-colors",
-                viewMode === "grid"
+                "rounded-full px-3 py-1.5 text-sm transition-colors",
+                selectedType === null
                   ? "bg-white/[0.08] text-primary-text"
                   : "text-muted-text hover:text-secondary-text"
               )}
-              aria-label="Grid view"
             >
-              <Grid3X3 className="h-4 w-4" />
+              All
             </button>
-            <button
-              type="button"
-              onClick={() => setViewMode("list")}
-              className={cn(
-                "rounded-full p-2 transition-colors",
-                viewMode === "list"
-                  ? "bg-white/[0.08] text-primary-text"
-                  : "text-muted-text hover:text-secondary-text"
-              )}
-              aria-label="List view"
-            >
-              <List className="h-4 w-4" />
-            </button>
+            {allTypes.map((type) => (
+              <button
+                type="button"
+                key={type}
+                onClick={() =>
+                  setSelectedType(selectedType === type ? null : type)
+                }
+                className={cn(
+                  "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm capitalize transition-colors",
+                  selectedType === type
+                    ? "bg-accent/20 text-accent"
+                    : "text-muted-text hover:text-secondary-text"
+                )}
+              >
+                {getTypeIcon(type)}
+                <span>{type}</span>
+              </button>
+            ))}
+
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="flex items-center gap-1 text-xs text-muted-text hover:text-primary-text"
+              >
+                <X className="h-3 w-3" />
+                Clear
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Type filters row */}
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setSelectedType(null)}
-            className={cn(
-              "rounded-full px-3 py-1.5 text-sm transition-colors",
-              selectedType === null
-                ? "bg-white/[0.08] text-primary-text"
-                : "text-muted-text hover:text-secondary-text"
-            )}
-          >
-            All
-          </button>
-          {allTypes.map((type) => (
-            <button
-              type="button"
-              key={type}
-              onClick={() => setSelectedType(selectedType === type ? null : type)}
-              className={cn(
-                "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm capitalize transition-colors",
-                selectedType === type
-                  ? "bg-accent/20 text-accent"
-                  : "text-muted-text hover:text-secondary-text"
-              )}
-            >
-              {getTypeIcon(type)}
-              <span>{type}</span>
-            </button>
-          ))}
+        {/* Projects */}
+        <div className="space-y-16">
+          {filteredProjects.length === 0 ? (
+            <div className="py-16 text-center">
+              <p className="text-secondary-text">No projects found.</p>
+              <button
+                onClick={clearFilters}
+                className="mt-4 text-sm text-accent hover:underline"
+              >
+                Clear filters
+              </button>
+            </div>
+          ) : (
+            groupedProjects.map((group) => (
+              <section key={group.year}>
+                {/* Year header */}
+                <div className="mb-6 flex items-center gap-4">
+                  <span className="text-2xl font-medium text-primary-text">
+                    {group.year}
+                  </span>
+                  <span className="rounded-full bg-white/[0.04] px-2.5 py-0.5 text-xs text-muted-text">
+                    {group.projects.length}
+                  </span>
+                  <div className="h-px flex-1 bg-white/[0.04]" />
+                </div>
 
-          {hasActiveFilters && (
-            <button
-              type="button"
-              onClick={clearFilters}
-              className="flex items-center gap-1 text-xs text-muted-text hover:text-primary-text"
-            >
-              <X className="h-3 w-3" />
-              Clear
-            </button>
+                {/* Projects grid/list */}
+                {viewMode === "grid" ? (
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {group.projects.map((project) => (
+                      <ProjectGridCard
+                        key={project.metadata.slug ?? project.metadata.title}
+                        project={project}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {group.projects.map((project) => (
+                      <ProjectListItem
+                        key={project.metadata.slug ?? project.metadata.title}
+                        project={project}
+                      />
+                    ))}
+                  </div>
+                )}
+              </section>
+            ))
           )}
         </div>
-      </div>
-
-      {/* Projects */}
-      <div className="space-y-16">
-        {filteredProjects.length === 0 ? (
-          <div className="py-16 text-center">
-            <p className="text-secondary-text">No projects found.</p>
-            <button
-              onClick={clearFilters}
-              className="mt-4 text-sm text-accent hover:underline"
-            >
-              Clear filters
-            </button>
-          </div>
-        ) : (
-          groupedProjects.map((group) => (
-            <section key={group.year}>
-              {/* Year header */}
-              <div className="mb-6 flex items-center gap-4">
-                <span className="text-2xl font-medium text-primary-text">
-                  {group.year}
-                </span>
-                <span className="rounded-full bg-white/[0.04] px-2.5 py-0.5 text-xs text-muted-text">
-                  {group.projects.length}
-                </span>
-                <div className="h-px flex-1 bg-white/[0.04]" />
-              </div>
-
-              {/* Projects grid/list */}
-              {viewMode === "grid" ? (
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {group.projects.map((project) => (
-                    <ProjectGridCard key={project.metadata.slug ?? project.metadata.title} project={project} />
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {group.projects.map((project) => (
-                    <ProjectListItem key={project.metadata.slug ?? project.metadata.title} project={project} />
-                  ))}
-                </div>
-              )}
-            </section>
-          ))
-        )}
-      </div>
       </div>
     </div>
   );
@@ -336,7 +358,7 @@ function ProjectGridCard({ project }: { project: ProjectCard }) {
   const isExternal = Boolean(project.links.github);
 
   return (
-    <div 
+    <div
       className="group relative flex flex-col rounded-2xl border border-white/[0.04] bg-white/[0.02] p-5 transition-all hover:border-white/[0.08] hover:bg-white/[0.04]"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
@@ -347,7 +369,7 @@ function ProjectGridCard({ project }: { project: ProjectCard }) {
           👀 Interested?
         </div>
       )}
-      
+
       {/* Clickable overlay for main link */}
       <Link
         href={href}
@@ -356,7 +378,7 @@ function ProjectGridCard({ project }: { project: ProjectCard }) {
         className="absolute inset-0 z-0"
         aria-label={project.metadata.title}
       />
-      
+
       {/* Header with icon inline with title */}
       <div className="mb-2 flex items-center gap-3">
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">

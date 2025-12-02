@@ -168,8 +168,14 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 <Link
                   key={option.name}
                   href={option.href}
-                  target={option.href.startsWith("mailto:") ? "_self" : "_blank"}
-                  rel={option.href.startsWith("mailto:") ? "" : "noopener noreferrer"}
+                  target={
+                    option.href.startsWith("mailto:") ? "_self" : "_blank"
+                  }
+                  rel={
+                    option.href.startsWith("mailto:")
+                      ? ""
+                      : "noopener noreferrer"
+                  }
                   onClick={onClose}
                   className="flex items-center gap-4 px-4 py-3 rounded-xl transition-colors hover:bg-white/[0.04] group"
                 >

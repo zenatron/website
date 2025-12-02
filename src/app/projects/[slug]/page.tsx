@@ -31,7 +31,8 @@ export default async function ProjectPage({
     redirect("/projects");
   }
 
-  const { metadata, content, htmlContent, readmeContent, links, downloads } = project;
+  const { metadata, content, htmlContent, readmeContent, links, downloads } =
+    project;
 
   return (
     <div className="relative flex min-h-screen flex-col">
@@ -80,7 +81,10 @@ export default async function ProjectPage({
                 </a>
               )}
               {downloads && downloads.length > 0 && (
-                <ProjectDownloads downloads={downloads} projectTitle={metadata.title} />
+                <ProjectDownloads
+                  downloads={downloads}
+                  projectTitle={metadata.title}
+                />
               )}
             </div>
           </div>
@@ -130,7 +134,8 @@ export default async function ProjectPage({
           {/* Featured Video */}
           {metadata.video && (
             <div className="mb-8 rounded-lg overflow-hidden shadow-lg aspect-video">
-              {metadata.video.includes("youtube.com") || metadata.video.includes("youtu.be") ? (
+              {metadata.video.includes("youtube.com") ||
+              metadata.video.includes("youtu.be") ? (
                 <iframe
                   src={metadata.video.replace("watch?v=", "embed/")}
                   title={metadata.title}
@@ -138,11 +143,7 @@ export default async function ProjectPage({
                   allowFullScreen
                 />
               ) : (
-                <video
-                  src={metadata.video}
-                  controls
-                  className="w-full h-full"
-                >
+                <video src={metadata.video} controls className="w-full h-full">
                   Your browser does not support the video tag.
                 </video>
               )}
@@ -151,21 +152,25 @@ export default async function ProjectPage({
 
           {/* Content Based on Source Type */}
           {/* MDX Content (including notebooks with custom MDX) */}
-          {(metadata.contentSource === "mdx" || metadata.contentSource === "notebook") && content && (
-            <>
-              <div className="mdx-content w-full max-w-3xl mx-auto mb-8">
-                {content}
-              </div>
-              
-              {/* If this is an enhanced GitHub project, also show the README */}
-              {metadata.githubRepo && (
-                <div className="mt-8 w-full">
-                  <h2 className="text-3xl font-bold mb-4">Repository README</h2>
-                  <GitHubReadme repo={metadata.githubRepo} />
+          {(metadata.contentSource === "mdx" ||
+            metadata.contentSource === "notebook") &&
+            content && (
+              <>
+                <div className="mdx-content w-full max-w-3xl mx-auto mb-8">
+                  {content}
                 </div>
-              )}
-            </>
-          )}
+
+                {/* If this is an enhanced GitHub project, also show the README */}
+                {metadata.githubRepo && (
+                  <div className="mt-8 w-full">
+                    <h2 className="text-3xl font-bold mb-4">
+                      Repository README
+                    </h2>
+                    <GitHubReadme repo={metadata.githubRepo} />
+                  </div>
+                )}
+              </>
+            )}
 
           {/* GitHub README Only (no MDX file) */}
           {metadata.contentSource === "github" && metadata.githubRepo && (
@@ -177,10 +182,7 @@ export default async function ProjectPage({
           {/* Raw HTML (for legacy or non-MDX HTML content) */}
           {metadata.contentSource === "html" && htmlContent && (
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-              <HtmlRenderer
-                htmlContent={htmlContent}
-                title={metadata.title}
-              />
+              <HtmlRenderer htmlContent={htmlContent} title={metadata.title} />
             </div>
           )}
 
@@ -190,7 +192,10 @@ export default async function ProjectPage({
               <h2 className="text-2xl font-bold mb-4">Gallery</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {metadata.images.map((image, index) => (
-                  <div key={index} className="rounded-lg overflow-hidden shadow-lg">
+                  <div
+                    key={index}
+                    className="rounded-lg overflow-hidden shadow-lg"
+                  >
                     <Image
                       src={image}
                       alt={`${metadata.title} - Image ${index + 1}`}
@@ -210,8 +215,12 @@ export default async function ProjectPage({
               <h2 className="text-2xl font-bold mb-4">Videos</h2>
               <div className="grid grid-cols-1 gap-4">
                 {metadata.videos.map((video, index) => (
-                  <div key={index} className="rounded-lg overflow-hidden shadow-lg aspect-video">
-                    {video.includes("youtube.com") || video.includes("youtu.be") ? (
+                  <div
+                    key={index}
+                    className="rounded-lg overflow-hidden shadow-lg aspect-video"
+                  >
+                    {video.includes("youtube.com") ||
+                    video.includes("youtu.be") ? (
                       <iframe
                         src={video.replace("watch?v=", "embed/")}
                         title={`${metadata.title} - Video ${index + 1}`}
@@ -219,11 +228,7 @@ export default async function ProjectPage({
                         allowFullScreen
                       />
                     ) : (
-                      <video
-                        src={video}
-                        controls
-                        className="w-full h-full"
-                      >
+                      <video src={video} controls className="w-full h-full">
                         Your browser does not support the video tag.
                       </video>
                     )}

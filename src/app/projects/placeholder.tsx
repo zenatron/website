@@ -15,7 +15,9 @@ export default function ProjectsPage() {
             Work in flight
           </h1>
           <p className="mx-auto max-w-xl text-sm text-secondary-text">
-            This space is getting a quieter, more focused showcase of the things I’m shipping. Until then, the highlights on the home page and blog capture the current story.
+            This space is getting a quieter, more focused showcase of the things
+            I’m shipping. Until then, the highlights on the home page and blog
+            capture the current story.
           </p>
         </div>
 

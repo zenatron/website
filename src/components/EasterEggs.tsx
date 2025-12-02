@@ -79,27 +79,30 @@ export default function EasterEggs() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [konamiIndex, setKonamiIndex] = useState(0);
   const [konamiUnlocked, setKonamiUnlocked] = useState(false);
-  
+
   // Use refs to avoid stale closure issues and duplicate triggers
   const typedCharsRef = useRef("");
   const lastCommandTimeRef = useRef(0);
 
-  const showToast = useCallback((icon: string, title: string, message: string) => {
-    // Debounce: prevent duplicate toasts within 100ms
-    const now = Date.now();
-    if (now - lastCommandTimeRef.current < 100) {
-      return;
-    }
-    lastCommandTimeRef.current = now;
-    
-    const id = `toast-${now}-${++toastCounter}`;
-    setToasts((prev) => [...prev, { id, icon, title, message }]);
-    
-    // Auto-dismiss after 5 seconds
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 5000);
-  }, []);
+  const showToast = useCallback(
+    (icon: string, title: string, message: string) => {
+      // Debounce: prevent duplicate toasts within 100ms
+      const now = Date.now();
+      if (now - lastCommandTimeRef.current < 100) {
+        return;
+      }
+      lastCommandTimeRef.current = now;
+
+      const id = `toast-${now}-${++toastCounter}`;
+      setToasts((prev) => [...prev, { id, icon, title, message }]);
+
+      // Auto-dismiss after 5 seconds
+      setTimeout(() => {
+        setToasts((prev) => prev.filter((t) => t.id !== id));
+      }, 5000);
+    },
+    []
+  );
 
   const dismissToast = (id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -107,7 +110,8 @@ export default function EasterEggs() {
 
   // Console easter egg - runs once on mount
   useEffect(() => {
-    console.log(`
+    console.log(
+      `
 %c  ____  _     _ _  __     ___     _                          _          
 %c |  _ \| |__ (_) | \ \   / (_)___| |__  _ __   _____   _____ | | ___   _ 
 %c | |_) | '_ \| | |  \ \ / /| / __| '_ \| '_ \ / _ \ \ / / __|| |/ / | | |
@@ -115,17 +119,29 @@ export default function EasterEggs() {
 %c |_|   |_| |_|_|_|    \_/  |_|___/_| |_|_| |_|\___| \_/ |___/|_|\_\\__, |
 %c                                                                   |___/ 
 `,
-      'color: #7c8aff',
-      'color: #8a7cff',
-      'color: #9c7cff',
-      'color: #7c9aff',
-      'color: #7cbfff',
-      'color: #7cdfff'
+      "color: #7c8aff",
+      "color: #8a7cff",
+      "color: #9c7cff",
+      "color: #7c9aff",
+      "color: #7cbfff",
+      "color: #7cdfff"
     );
-    console.log('%c👋 Hey, fellow developer!', 'font-size: 16px; font-weight: bold;');
-    console.log('%c🔍 Curious about the code? Check it out: https://github.com/zenatron/portfolio', 'font-size: 12px;');
-    console.log('%c💼 Open to opportunities! Let\'s chat.', 'font-size: 12px; color: #7c8aff;');
-    console.log('%c🥚 Psst... try typing "help" anywhere on the site.', 'font-size: 11px; color: #888;');
+    console.log(
+      "%c👋 Hey, fellow developer!",
+      "font-size: 16px; font-weight: bold;"
+    );
+    console.log(
+      "%c🔍 Curious about the code? Check it out: https://github.com/zenatron/portfolio",
+      "font-size: 12px;"
+    );
+    console.log(
+      "%c💼 Open to opportunities! Let's chat.",
+      "font-size: 12px; color: #7c8aff;"
+    );
+    console.log(
+      '%c🥚 Psst... try typing "help" anywhere on the site.',
+      "font-size: 11px; color: #888;"
+    );
   }, []);
 
   useEffect(() => {
@@ -145,7 +161,11 @@ export default function EasterEggs() {
 
         if (newIndex === KONAMI_CODE.length && !konamiUnlocked) {
           setKonamiUnlocked(true);
-          showToast("🎮", "Konami Code Activated!", "You found the secret. Here's some confetti... 🎊");
+          showToast(
+            "🎮",
+            "Konami Code Activated!",
+            "You found the secret. Here's some confetti... 🎊"
+          );
           triggerConfetti();
           setKonamiIndex(0);
         }
@@ -157,8 +177,10 @@ export default function EasterEggs() {
 
       // Track typed characters for command detection
       if (e.key.length === 1 && e.key.match(/[a-z]/i)) {
-        typedCharsRef.current = (typedCharsRef.current + e.key.toLowerCase()).slice(-10);
-        
+        typedCharsRef.current = (
+          typedCharsRef.current + e.key.toLowerCase()
+        ).slice(-10);
+
         // Check if any command matches
         for (const cmd of Object.keys(SECRET_COMMANDS)) {
           if (typedCharsRef.current.endsWith(cmd)) {
@@ -232,8 +254,12 @@ export default function EasterEggs() {
               <p className="text-xs text-accent font-medium uppercase tracking-wider">
                 Easter Egg Found
               </p>
-              <p className="text-sm text-primary-text font-semibold">{toast.title}</p>
-              <p className="text-xs text-muted-text font-mono break-all">{toast.message}</p>
+              <p className="text-sm text-primary-text font-semibold">
+                {toast.title}
+              </p>
+              <p className="text-xs text-muted-text font-mono break-all">
+                {toast.message}
+              </p>
             </div>
             <button
               onClick={() => dismissToast(toast.id)}

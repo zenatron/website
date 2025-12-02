@@ -33,7 +33,11 @@ export default function CalendarPopup({ className = "" }: CalendarPopupProps) {
       className={`text-muted-text transition-colors duration-200 hover:text-accent ${className}`}
       title="Book a Meeting"
     >
-      <FaCalendarAlt className="h-4 w-4" style={{ pointerEvents: "none" }} aria-hidden />
+      <FaCalendarAlt
+        className="h-4 w-4"
+        style={{ pointerEvents: "none" }}
+        aria-hidden
+      />
     </button>
   );
 }

@@ -14,8 +14,16 @@ const NAV_LINKS = [
 
 const SOCIAL_LINKS = [
   { href: "https://github.com/zenatron", icon: FaGithub, label: "GitHub" },
-  { href: "https://linkedin.com/in/philipvishnevsky", icon: FaLinkedin, label: "LinkedIn" },
-  { href: "https://bsky.app/profile/zenatron.bsky.social", icon: FaBluesky, label: "Bluesky" },
+  {
+    href: "https://linkedin.com/in/philipvishnevsky",
+    icon: FaLinkedin,
+    label: "LinkedIn",
+  },
+  {
+    href: "https://bsky.app/profile/zenatron.bsky.social",
+    icon: FaBluesky,
+    label: "Bluesky",
+  },
 ];
 
 export default function Footer() {

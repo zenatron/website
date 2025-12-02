@@ -48,7 +48,9 @@ function extractPlainText(content: string): string {
 // Get all MDX project files
 async function getMDXProjects(): Promise<ProjectCard[]> {
   const files = fs.readdirSync(projectsDirectory);
-  const mdxFiles = files.filter((file) => file.endsWith(".mdx") || file.endsWith(".md"));
+  const mdxFiles = files.filter(
+    (file) => file.endsWith(".mdx") || file.endsWith(".md")
+  );
 
   const projects = await Promise.all(
     mdxFiles.map(async (file) => {
@@ -72,7 +74,7 @@ async function getMDXProjects(): Promise<ProjectCard[]> {
           videos: data.videos,
           demoUrl: data.demoUrl,
           featured: data.featured || false,
-          contentSource: data.contentSource || "mdx" as const,
+          contentSource: data.contentSource || ("mdx" as const),
           notebookHtml: data.notebookHtml,
         },
         links: {
@@ -99,13 +101,13 @@ export async function getAllProjects(): Promise<ProjectCard[]> {
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
   // Check if it's an MDX project
   let fullPath = path.join(projectsDirectory, `${slug}.mdx`);
-  
+
   if (fs.existsSync(fullPath)) {
     const fileContents = fs.readFileSync(fullPath, "utf8");
     const { data, content } = matter(fileContents);
-    
+
     const searchableContent = extractPlainText(content);
-    
+
     try {
       const { content: compiledContent } = await compileMDX({
         source: content,
@@ -128,8 +130,8 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
       let htmlContent = "";
       if (data.notebookHtml) {
         // Only append .html if it doesn't already end with it
-        const filename = data.notebookHtml.endsWith('.html') 
-          ? data.notebookHtml 
+        const filename = data.notebookHtml.endsWith(".html")
+          ? data.notebookHtml
           : `${data.notebookHtml}.html`;
         const htmlPath = path.join(process.cwd(), "public/downloads", filename);
         if (fs.existsSync(htmlPath)) {
@@ -151,7 +153,7 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
           videos: data.videos,
           demoUrl: data.demoUrl,
           featured: data.featured || false,
-          contentSource: data.contentSource || "mdx" as const,
+          contentSource: data.contentSource || ("mdx" as const),
           notebookHtml: data.notebookHtml,
         },
         content: compiledContent,
@@ -177,9 +179,9 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
       // Enhanced GitHub project with custom content
       const fileContents = fs.readFileSync(mdxPath, "utf8");
       const { data, content } = matter(fileContents);
-      
+
       const searchableContent = extractPlainText(content);
-      
+
       try {
         const { content: compiledContent } = await compileMDX({
           source: content,
@@ -201,12 +203,15 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
         // Get GitHub project data for additional metadata
         const { getGithubRepos } = await import("@/lib/github");
         const githubProjects = await getGithubRepos();
-        const githubProject = githubProjects.find((p) => p.metadata.slug === slug);
+        const githubProject = githubProjects.find(
+          (p) => p.metadata.slug === slug
+        );
 
         return {
           metadata: {
             title: data.title || githubProject?.metadata.title || slug,
-            description: data.description || githubProject?.metadata.description || "",
+            description:
+              data.description || githubProject?.metadata.description || "",
             type: data.type || "web",
             slug,
             date: data.date,
@@ -232,12 +237,12 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
         console.error(`Error compiling MDX for ${slug}:`, error);
       }
     }
-    
+
     // Fallback to basic GitHub project with just README
     const { getGithubRepos } = await import("@/lib/github");
     const githubProjects = await getGithubRepos();
     const githubProject = githubProjects.find((p) => p.metadata.slug === slug);
-    
+
     if (githubProject) {
       return {
         metadata: githubProject.metadata,

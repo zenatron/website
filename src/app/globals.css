@@ -39,14 +39,26 @@
       /* Subtle noise texture via SVG */
       url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E"),
       /* Very subtle gradient accents */
-      radial-gradient(ellipse 80% 50% at 20% -10%, rgba(124, 138, 255, 0.06), transparent),
-      radial-gradient(ellipse 60% 40% at 90% 100%, rgba(167, 139, 250, 0.04), transparent),
-      /* Base gradient */
-      linear-gradient(180deg, #0f1012 0%, #121316 100%);
+        radial-gradient(
+          ellipse 80% 50% at 20% -10%,
+          rgba(124, 138, 255, 0.06),
+          transparent
+        ),
+      radial-gradient(
+        ellipse 60% 40% at 90% 100%,
+        rgba(167, 139, 250, 0.04),
+        transparent
+      ),
+      /* Base gradient */ linear-gradient(180deg, #0f1012 0%, #121316 100%);
     background-attachment: fixed;
     color: var(--primary-text);
-    font-family: var(--font-body-sans), "Plus Jakarta Sans", system-ui,
-      -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family:
+      var(--font-body-sans),
+      "Plus Jakarta Sans",
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      sans-serif;
     font-size: 16px;
     line-height: 1.7;
     letter-spacing: 0.01em;
@@ -59,7 +71,8 @@
   h4,
   h5,
   h6 {
-    font-family: var(--font-display-sans), "Space Grotesk", system-ui, sans-serif;
+    font-family:
+      var(--font-display-sans), "Space Grotesk", system-ui, sans-serif;
     font-weight: 500;
     letter-spacing: -0.02em;
     line-height: 1.2;
@@ -82,8 +95,8 @@
 }
 
 .font-atkinson {
-  font-family: var(--font-atkinson), "Atkinson Hyperlegible", system-ui,
-    sans-serif;
+  font-family:
+    var(--font-atkinson), "Atkinson Hyperlegible", system-ui, sans-serif;
 }
 
 @layer utilities {
@@ -105,11 +118,20 @@
 
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+    background-image: linear-gradient(
+      135deg,
+      var(--accent) 0%,
+      var(--accent-secondary) 100%
+    );
   }
-  
+
   .border-gradient {
-    border-image: linear-gradient(135deg, var(--accent), var(--accent-secondary)) 1;
+    border-image: linear-gradient(
+        135deg,
+        var(--accent),
+        var(--accent-secondary)
+      )
+      1;
   }
 }
 
@@ -118,15 +140,15 @@
   .link-subtle {
     @apply relative text-secondary-text transition-colors duration-150;
   }
-  
+
   .link-subtle::after {
     @apply absolute bottom-0 left-0 h-px w-0 bg-accent transition-all duration-200 content-[''];
   }
-  
+
   .link-subtle:hover {
     @apply text-primary-text;
   }
-  
+
   .link-subtle:hover::after {
     @apply w-full;
   }
@@ -140,7 +162,7 @@
     @apply rounded-full text-accent;
     background-color: rgba(124, 138, 255, 0.1);
   }
-  
+
   .btn-primary:hover {
     background-color: rgba(124, 138, 255, 0.2);
   }
@@ -157,9 +179,9 @@
   .tag {
     @apply inline-flex items-center text-xs text-muted-text transition-colors duration-150 hover:text-secondary-text;
   }
-  
+
   .tag::before {
-    content: '#';
+    content: "#";
     @apply mr-0.5;
     color: rgba(124, 138, 255, 0.6);
   }
@@ -170,7 +192,7 @@
     background-color: rgba(124, 138, 255, 0.15);
     color: var(--accent);
   }
-  
+
   .tag-bubble:hover {
     background-color: rgba(124, 138, 255, 0.25);
   }
@@ -185,7 +207,7 @@
     @apply relative rounded-2xl border border-white/[0.04] p-6 transition-all duration-200;
     background-color: var(--surface-1);
   }
-  
+
   .card:hover {
     @apply border-white/[0.08];
     background-color: var(--surface-2);
@@ -195,11 +217,11 @@
   .status-dot {
     @apply relative flex h-2 w-2;
   }
-  
+
   .status-dot::before {
     @apply absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75 content-[''];
   }
-  
+
   .status-dot::after {
     @apply relative inline-flex h-2 w-2 rounded-full bg-accent content-[''];
   }
@@ -218,8 +240,12 @@
 }
 
 @keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .animate-fade-up {
