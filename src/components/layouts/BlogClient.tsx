@@ -18,6 +18,8 @@ export default function BlogClient({ posts }: BlogClientProps) {
   const initialTag = searchParams.get("tag");
   
   const [searchQuery, setSearchQuery] = useState("");
+  const [idleTime, setIdleTime] = useState(0);
+  const [wordCountClicks, setWordCountClicks] = useState(0);
 
   // Calculate total words across all posts
   const totalWords = useMemo(() => {
@@ -50,6 +52,64 @@ export default function BlogClient({ posts }: BlogClientProps) {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  // Impatient placeholder - track idle time when focused on empty search
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    const input = searchInputRef.current;
+    
+    const startIdleTimer = () => {
+      if (searchQuery === "") {
+        interval = setInterval(() => {
+          setIdleTime((t) => t + 1);
+        }, 1000);
+      }
+    };
+    
+    const stopIdleTimer = () => {
+      clearInterval(interval);
+      setIdleTime(0);
+    };
+    
+    input?.addEventListener("focus", startIdleTimer);
+    input?.addEventListener("blur", stopIdleTimer);
+    
+    return () => {
+      clearInterval(interval);
+      input?.removeEventListener("focus", startIdleTimer);
+      input?.removeEventListener("blur", stopIdleTimer);
+    };
+  }, [searchQuery]);
+
+  // Reset idle time when user types
+  useEffect(() => {
+    if (searchQuery !== "") {
+      setIdleTime(0);
+    }
+  }, [searchQuery]);
+
+  // Dynamic placeholder based on idle time
+  const getPlaceholder = () => {
+    if (idleTime < 5) return "Search posts... (use # for tags)";
+    if (idleTime < 10) return "Still thinking?";
+    if (idleTime < 15) return "Just type something...";
+    if (idleTime < 20) return "Literally anything...";
+    if (idleTime < 30) return "I'm getting lonely here...";
+    return "Fine. I'll wait. Forever, I guess.";
+  };
+
+  // Easter egg: Check for "42" search
+  const is42Search = searchQuery.trim() === "42";
+
+  // Word count click easter egg messages
+  const getWordCountMessage = () => {
+    if (wordCountClicks === 0) return null;
+    if (wordCountClicks < 3) return `That's ${Math.round(totalWords / 280)} tweets worth`;
+    if (wordCountClicks < 5) return `Or ${Math.round(totalWords / 250)} pages in a book`;
+    if (wordCountClicks < 7) return `About ${Math.round(totalWords / 150)} minutes to read it all`;
+    if (wordCountClicks < 10) return `${Math.round(totalWords / 5)} average word lengths`;
+    return "Okay you really like clicking this huh";
+  };
 
   // Handle tag selection - update URL
   const handleTagSelect = (tag: string | null) => {
@@ -145,7 +205,20 @@ export default function BlogClient({ posts }: BlogClientProps) {
           Blog: Barely Legible Organized Gibberish
         </h1>
         <p className="max-w-xl text-secondary-text">
-          Thoughts on code, learning, and whatever else I&apos;m figuring out. <span className="tabular-nums text-accent">{totalWords.toLocaleString()}</span> words written so far.
+          Thoughts on code, learning, and whatever else I&apos;m figuring out.{" "}
+          <span 
+            className="tabular-nums text-accent cursor-pointer hover:underline"
+            onClick={() => setWordCountClicks((c) => c + 1)}
+            title="Click me!"
+          >
+            {totalWords.toLocaleString()}
+          </span>{" "}
+          words written so far.
+          {getWordCountMessage() && (
+            <span className="block text-xs text-muted-text mt-1 italic">
+              ({getWordCountMessage()})
+            </span>
+          )}
         </p>
       </header>
 
@@ -157,13 +230,21 @@ export default function BlogClient({ posts }: BlogClientProps) {
           <input
             ref={searchInputRef}
             type="text"
-            placeholder="Search posts... (use # for tags)"
+            placeholder={getPlaceholder()}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full rounded-full border border-white/[0.06] bg-white/[0.02] py-3 pl-11 pr-12 text-sm text-primary-text placeholder-muted-text outline-none transition-colors focus:border-accent/30 focus:bg-white/[0.04]"
           />
           <kbd className="absolute right-4 top-1/2 -translate-y-1/2 hidden rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-muted-text sm:inline-block">/</kbd>
         </div>
+
+        {/* 42 Easter Egg */}
+        {is42Search && (
+          <div className="rounded-lg border border-accent/30 bg-accent/5 px-4 py-3 max-w-md">
+            <p className="text-sm text-accent font-medium">🌌 The Answer to Life, the Universe, and Everything</p>
+            <p className="text-xs text-muted-text mt-1">But what was the question? - Douglas Adams</p>
+          </div>
+        )}
 
         {/* Tags */}
         <div className="flex flex-wrap items-center gap-2">

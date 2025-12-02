@@ -3,10 +3,11 @@
 import Link from "next/link";
 import MobileMenu from "@/components/ui/MobileMenu";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import ContactModal from "@/components/ui/ContactModal";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 const NAV_LINKS = [
   { href: "/projects", label: "Projects" },
@@ -18,10 +19,35 @@ export default function Header() {
   const pathname = usePathname();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [draggedLink, setDraggedLink] = useState<string | null>(null);
+  const [wobblyLinks, setWobblyLinks] = useState<Record<string, { x: number; y: number }>>({});
+  const linkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Handle drag attempt on nav links
+  const handleDragStart = (e: React.DragEvent, href: string) => {
+    e.preventDefault();
+    setDraggedLink(href);
+    
+    // Random wobble for all links
+    const newWobbles: Record<string, { x: number; y: number }> = {};
+    NAV_LINKS.forEach((link) => {
+      newWobbles[link.href] = {
+        x: (Math.random() - 0.5) * 20,
+        y: (Math.random() - 0.5) * 10,
+      };
+    });
+    setWobblyLinks(newWobbles);
+    
+    // Snap back after a moment
+    setTimeout(() => {
+      setWobblyLinks({});
+      setDraggedLink(null);
+    }, 500);
+  };
 
   return (
     <>
@@ -45,19 +71,33 @@ export default function Header() {
           <nav className="hidden items-center gap-1 rounded-full border border-white/[0.06] bg-white/[0.02] px-1.5 py-1.5 backdrop-blur-sm md:flex">
             {NAV_LINKS.map((link) => {
               const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+              const wobble = wobblyLinks[link.href] || { x: 0, y: 0 };
               return (
-                <Link
+                <motion.div
                   key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "rounded-full px-4 py-1.5 text-sm transition-colors duration-150",
-                    isActive
-                      ? "bg-white/[0.08] text-primary-text"
-                      : "text-secondary-text hover:text-primary-text"
-                  )}
+                  animate={{ 
+                    x: wobble.x, 
+                    y: wobble.y,
+                    rotate: wobble.x * 0.5,
+                  }}
+                  transition={{ type: "spring", stiffness: 500, damping: 15 }}
                 >
-                  {link.label}
-                </Link>
+                  <Link
+                    ref={(el) => { linkRefs.current[link.href] = el; }}
+                    href={link.href}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, link.href)}
+                    className={cn(
+                      "rounded-full px-4 py-1.5 text-sm transition-colors duration-150 block cursor-pointer",
+                      isActive
+                        ? "bg-white/[0.08] text-primary-text"
+                        : "text-secondary-text hover:text-primary-text",
+                      draggedLink === link.href && "opacity-70"
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                </motion.div>
               );
             })}
           </nav>

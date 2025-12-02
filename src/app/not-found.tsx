@@ -109,7 +109,7 @@ export default function NotFoundPage() {
     : null;
 
   return (
-    <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
+    <div className="relative flex min-h-screen flex-col">
       <Header />
 
       {/* Achievement Toasts */}

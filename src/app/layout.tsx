@@ -6,6 +6,7 @@ import {
 } from "next/font/google";
 import "./globals.css";
 import "./markdown.css";
+import EasterEggs from "@/components/EasterEggs";
 
 // Optimize font loading with preload and display swap
 const bodySans = Plus_Jakarta_Sans({
@@ -58,6 +59,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
       </head>
       <body className="antialiased bg-primary-bg text-primary-text">
+        <EasterEggs />
         {children}
       </body>
     </html>
