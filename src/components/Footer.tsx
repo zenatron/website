@@ -63,7 +63,7 @@ export default function Footer() {
                 <social.icon className="h-4 w-4" />
               </Link>
             ))}
-            <CalendarPopup className="!h-7 !w-7" />
+            <CalendarPopup />
           </div>
         </div>
       </div>

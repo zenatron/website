@@ -101,9 +101,14 @@ export default async function ProjectPage({
             {metadata.tags && metadata.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 justify-center">
                 {metadata.tags.map((tag) => (
-                  <span key={tag} className="tag-bubble text-sm">
-                    {tag}
-                  </span>
+                  <Link
+                    key={tag}
+                    href={`/projects?tag=${encodeURIComponent(tag)}`}
+                    className="tag-bubble text-sm"
+                    title={`View projects with tag: ${tag}`}
+                  >
+                    #{tag}
+                  </Link>
                 ))}
               </div>
             )}

@@ -3,6 +3,7 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { ProjectCard } from "@/types/types";
 import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
 import dateFormatter from "@/utils/dateFormatter";
 import { ArrowUpRight, Search, X, Grid3X3, List, ExternalLink } from "lucide-react";
 import { FaGithub, FaGlobe, FaGamepad, FaCode } from "react-icons/fa";
@@ -34,10 +35,22 @@ const getTypeIcon = (type: string | undefined) => {
 };
 
 export default function ProjectsClient({ projects }: ProjectsClientProps) {
-  const [searchQuery, setSearchQuery] = useState("");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const initialTag = searchParams.get("tag");
+
+  const [searchQuery, setSearchQuery] = useState(initialTag ? `#${initialTag}` : "");
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Sync URL tag param with search query
+  useEffect(() => {
+    const urlTag = searchParams.get("tag");
+    if (urlTag) {
+      setSearchQuery(`#${urlTag}`);
+    }
+  }, [searchParams]);
 
   // Slash-to-focus keyboard shortcut
   useEffect(() => {
@@ -134,6 +147,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
   const clearFilters = () => {
     setSearchQuery("");
     setSelectedType(null);
+    router.push("/projects", { scroll: false });
   };
 
   const hasActiveFilters = searchQuery !== "" || selectedType !== null;
@@ -292,12 +306,16 @@ function ProjectGridCard({ project }: { project: ProjectCard }) {
   const isExternal = Boolean(project.links.github);
 
   return (
-    <Link
-      href={href}
-      target={isExternal ? "_blank" : undefined}
-      rel={isExternal ? "noopener noreferrer" : undefined}
-      className="group relative flex flex-col rounded-2xl border border-white/[0.04] bg-white/[0.02] p-5 transition-all hover:border-white/[0.08] hover:bg-white/[0.04]"
-    >
+    <div className="group relative flex flex-col rounded-2xl border border-white/[0.04] bg-white/[0.02] p-5 transition-all hover:border-white/[0.08] hover:bg-white/[0.04]">
+      {/* Clickable overlay for main link */}
+      <Link
+        href={href}
+        target={isExternal ? "_blank" : undefined}
+        rel={isExternal ? "noopener noreferrer" : undefined}
+        className="absolute inset-0 z-0"
+        aria-label={project.metadata.title}
+      />
+      
       {/* Header */}
       <div className="mb-3 flex items-start justify-between">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
@@ -320,13 +338,19 @@ function ProjectGridCard({ project }: { project: ProjectCard }) {
 
       {/* Tags */}
       {project.metadata.tags && project.metadata.tags.length > 0 && (
-        <div className="mt-auto flex flex-wrap gap-2 pt-3">
+        <div className="relative z-10 mt-auto flex flex-wrap gap-2 pt-3">
           {project.metadata.tags.slice(0, 3).map((tag) => (
-            <span key={tag} className="tag">{tag}</span>
+            <Link
+              key={tag}
+              href={`/projects?tag=${encodeURIComponent(tag)}`}
+              className="tag hover:text-accent"
+            >
+              {tag}
+            </Link>
           ))}
         </div>
       )}
-    </Link>
+    </div>
   );
 }
 
@@ -335,12 +359,16 @@ function ProjectListItem({ project }: { project: ProjectCard }) {
   const isExternal = Boolean(project.links.github);
 
   return (
-    <Link
-      href={href}
-      target={isExternal ? "_blank" : undefined}
-      rel={isExternal ? "noopener noreferrer" : undefined}
-      className="group flex items-center gap-4 rounded-xl px-4 py-4 transition-colors hover:bg-white/[0.02]"
-    >
+    <div className="group relative flex items-center gap-4 rounded-xl px-4 py-4 transition-colors hover:bg-white/[0.02]">
+      {/* Clickable overlay for main link */}
+      <Link
+        href={href}
+        target={isExternal ? "_blank" : undefined}
+        rel={isExternal ? "noopener noreferrer" : undefined}
+        className="absolute inset-0 z-0"
+        aria-label={project.metadata.title}
+      />
+
       {/* Icon */}
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
         {getTypeIcon(project.links.github ? "github" : project.metadata.type)}
@@ -359,9 +387,15 @@ function ProjectListItem({ project }: { project: ProjectCard }) {
       </div>
 
       {/* Tags */}
-      <div className="hidden shrink-0 items-center gap-2 md:flex">
+      <div className="relative z-10 hidden shrink-0 items-center gap-2 md:flex">
         {project.metadata.tags?.slice(0, 2).map((tag) => (
-          <span key={tag} className="tag">{tag}</span>
+          <Link
+            key={tag}
+            href={`/projects?tag=${encodeURIComponent(tag)}`}
+            className="tag hover:text-accent"
+          >
+            {tag}
+          </Link>
         ))}
       </div>
 
@@ -374,6 +408,6 @@ function ProjectListItem({ project }: { project: ProjectCard }) {
 
       {/* Arrow */}
       <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-text opacity-0 transition-all group-hover:text-accent group-hover:opacity-100" />
-    </Link>
+    </div>
   );
 }

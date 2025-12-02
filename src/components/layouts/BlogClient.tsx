@@ -3,6 +3,7 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { BlogPost } from "@/types/types";
 import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
 import dateFormatter from "@/utils/dateFormatter";
 import { ArrowRight, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -12,9 +13,19 @@ interface BlogClientProps {
 }
 
 export default function BlogClient({ posts }: BlogClientProps) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const initialTag = searchParams.get("tag");
+  
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [selectedTag, setSelectedTag] = useState<string | null>(initialTag);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Sync URL tag param with state
+  useEffect(() => {
+    const urlTag = searchParams.get("tag");
+    setSelectedTag(urlTag);
+  }, [searchParams]);
 
   // Slash-to-focus keyboard shortcut
   useEffect(() => {
@@ -31,6 +42,15 @@ export default function BlogClient({ posts }: BlogClientProps) {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  // Handle tag selection - update URL
+  const handleTagSelect = (tag: string | null) => {
+    if (tag) {
+      router.push(`/blog?tag=${encodeURIComponent(tag)}`, { scroll: false });
+    } else {
+      router.push("/blog", { scroll: false });
+    }
+  };
 
   // Get all unique tags
   const allTags = useMemo(() => {
@@ -102,7 +122,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
 
   const clearFilters = () => {
     setSearchQuery("");
-    setSelectedTag(null);
+    router.push("/blog", { scroll: false });
   };
 
   const hasActiveFilters = searchQuery !== "" || selectedTag !== null;
@@ -145,7 +165,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
           {allTags.slice(0, 8).map((tag) => (
             <button
               key={tag}
-              onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
+              onClick={() => handleTagSelect(selectedTag === tag ? null : tag)}
               className={cn(
                 "tag-bubble",
                 selectedTag === tag
