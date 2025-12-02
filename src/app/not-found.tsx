@@ -10,7 +10,7 @@ export default function NotFoundPage() {
       <Header />
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center justify-center text-center px-6 space-y-6">
+      <main className="flex-1 flex flex-col items-center justify-center text-center px-4 sm:px-6 space-y-6">
         {/* Animated 404 Text */}
         <h1 className="text-8xl font-extrabold animate-pulse">404</h1>
 

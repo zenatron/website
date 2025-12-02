@@ -22,7 +22,7 @@ export default function AboutPage() {
       <main className="flex-1">
         {/* Hero Section - matching home page style */}
         <section className="px-4 pb-24 pt-32 sm:px-6 md:pt-40">
-          <div className="mx-auto max-w-4xl">
+          <div className="mx-auto max-w-5xl">
             <div className="space-y-8">
               <div className="space-y-6">
                 <p className="text-sm font-medium tracking-[0.2em] text-accent">
@@ -54,7 +54,7 @@ export default function AboutPage() {
         </section>
 
         {/* Content Sections */}
-        <div className="mx-auto max-w-4xl px-4 space-y-32 pb-24 sm:px-6">
+        <div className="mx-auto max-w-5xl px-4 space-y-32 pb-24 sm:px-6">
           
           {/* Resume Section */}
           <section id="resume" className="scroll-mt-24">

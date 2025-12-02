@@ -153,7 +153,8 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
   const hasActiveFilters = searchQuery !== "" || selectedType !== null;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 pb-24 pt-32 sm:px-6">
+    <div className="px-4 pb-24 pt-32 sm:px-6">
+      <div className="mx-auto max-w-5xl">
       {/* Header */}
       <header className="mb-16 space-y-6">
         <p className="text-sm font-medium tracking-[0.2em] text-accent">PROJECTS</p>
@@ -303,6 +304,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
           ))
         )}
       </div>
+      </div>
     </div>
   );
 }
@@ -322,20 +324,20 @@ function ProjectGridCard({ project }: { project: ProjectCard }) {
         aria-label={project.metadata.title}
       />
       
-      {/* Header */}
-      <div className="mb-3 flex items-start justify-between">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
+      {/* Header with icon inline with title */}
+      <div className="mb-2 flex items-center gap-3">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
           {getTypeIcon(project.links.github ? "github" : project.metadata.type)}
         </div>
+        <h3 className="flex-1 font-medium text-primary-text transition-colors group-hover:text-accent line-clamp-1">
+          {project.metadata.title}
+        </h3>
         {isExternal && (
-          <ExternalLink className="h-4 w-4 text-muted-text opacity-0 transition-opacity group-hover:opacity-100" />
+          <ExternalLink className="h-4 w-4 shrink-0 text-muted-text opacity-0 transition-opacity group-hover:opacity-100" />
         )}
       </div>
 
-      {/* Content */}
-      <h3 className="mb-2 font-medium text-primary-text transition-colors group-hover:text-accent">
-        {project.metadata.title}
-      </h3>
+      {/* Description */}
       {project.metadata.description && (
         <p className="mb-4 text-sm text-secondary-text line-clamp-2">
           {project.metadata.description}

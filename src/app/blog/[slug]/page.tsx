@@ -27,7 +27,7 @@ export default async function BlogPage({
     return (
       <div className="relative flex min-h-screen flex-col">
         <Header />
-        <main className="flex-1 flex flex-col items-center justify-center text-center px-6">
+        <main className="flex-1 flex flex-col items-center justify-center text-center px-4 sm:px-6">
           <h1 className="text-6xl font-bold">404</h1>
           <p className="text-lg mt-4 text-muted-text">
             {"The blog post you're looking for doesn't exist."}
@@ -50,9 +50,9 @@ export default async function BlogPage({
       <KatexStyles />
       <Header />
 
-      <main className="px-6 py-10 pt-20">
+      <main className="px-4 py-10 pt-20 sm:px-6">
         {/* Back to Blog Link */}
-        <div className="max-w-7xl mx-auto mb-6">
+        <div className="max-w-5xl mx-auto mb-6">
           <Link
             href="/blog"
             className="inline-flex items-center gap-2 text-muted-text hover:text-foreground text-sm"
@@ -64,7 +64,7 @@ export default async function BlogPage({
         </div>
 
         {/* Main Layout Container */}
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <div className="lg:flex lg:gap-8 lg:items-start">
             {/* Desktop Table of Contents - Sidebar */}
             <aside className="hidden lg:block lg:w-64 lg:flex-shrink-0 lg:sticky lg:top-24">

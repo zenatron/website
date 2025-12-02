@@ -128,7 +128,8 @@ export default function BlogClient({ posts }: BlogClientProps) {
   const hasActiveFilters = searchQuery !== "" || selectedTag !== null;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 pb-24 pt-32 sm:px-6">
+    <div className="px-4 pb-24 pt-32 sm:px-6">
+      <div className="mx-auto max-w-5xl">
       {/* Header */}
       <header className="mb-16 space-y-6">
         <p className="text-sm font-medium tracking-[0.2em] text-accent">WRITING</p>
@@ -136,8 +137,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
           Notes & field reports
         </h1>
         <p className="max-w-xl text-secondary-text">
-          Longer-form thinking on engineering craft, teams, and the creative edges 
-          where AI, tooling, and games intersect.
+          Longer-form thinking on engineering craft.
         </p>
       </header>
 
@@ -267,6 +267,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
             </section>
           ))
         )}
+      </div>
       </div>
     </div>
   );

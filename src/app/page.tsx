@@ -168,8 +168,7 @@ export default async function HomePage() {
                   Notes on building
                 </h2>
                 <p className="text-secondary-text">
-                  Longer-form thinking on engineering craft, teams, and the intersections 
-                  of AI, tooling, and games. Updated occasionally when something clicks.
+                  Longer-form thinking on engineering craft. Updated occasionally when something clicks.
                 </p>
                 <Link 
                   href="/blog" 

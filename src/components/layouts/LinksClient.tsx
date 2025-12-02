@@ -13,7 +13,8 @@ export default function LinksClient({ links }: LinksClientProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="mx-auto max-w-4xl px-6 pb-24 pt-24">
+    <div className="px-4 pb-24 pt-24 sm:px-6">
+      <div className="mx-auto max-w-5xl">
       {/* Header Section */}
       <header className="mb-16 space-y-6 text-center">
         <p className="text-sm font-medium tracking-[0.2em] text-accent">LINKS</p>
@@ -45,6 +46,7 @@ export default function LinksClient({ links }: LinksClientProps) {
         {links.map((link) => (
           <LinkCard key={link.url} item={link} />
         ))}
+      </div>
       </div>
     </div>
   );

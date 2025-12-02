@@ -37,8 +37,8 @@ export default async function ProjectPage({
     <div className="relative flex min-h-screen flex-col">
       <KatexStyles />
       <Header />
-      <main className="flex-1 px-6 py-10 pt-20">
-        <div className="max-w-4xl mx-auto">
+      <main className="flex-1 px-4 py-10 pt-20 sm:px-6">
+        <div className="max-w-5xl mx-auto">
           {/* Header Navigation */}
           <div className="flex justify-between items-center mb-6">
             <Link
