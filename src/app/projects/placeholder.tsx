@@ -1,34 +1,39 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { FaHardHat, FaHammer, FaWrench } from "react-icons/fa";
 import Link from "next/link";
 
 export default function ProjectsPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
+    <div className="flex min-h-screen flex-col bg-primary-bg text-primary-text">
       <Header />
-      <main className="flex-1 flex flex-col items-center justify-center text-center px-6 py-6">
-        {/* Animated Icon */}
-        <div className="flex flex-col items-center lg:space-y-3 animate-fade-in">
-          <div className="flex space-x-4 text-accent animate-bounce">
-            <FaHammer className="text-6xl md:text-8xl" />
-            <FaWrench className="text-6xl md:text-8xl" />
-            <FaHardHat className="text-6xl md:text-8xl" />
-          </div>
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-gradient-slide p-2">
-            {"Projects Under Construction"}
+      <main className="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center">
+        <div className="space-y-4">
+          <p className="text-xs uppercase tracking-[0.24em] text-muted-text">
+            Projects
+          </p>
+          <h1 className="text-3xl font-semibold text-primary-text md:text-4xl">
+            Work in flight
           </h1>
-          <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-            {
-              "I'm building something amazing! Check back soon for updates on my latest projects."
-            }
+          <p className="mx-auto max-w-xl text-sm text-secondary-text">
+            This space is getting a quieter, more focused showcase of the things
+            I’m shipping. Until then, the highlights on the home page and blog
+            capture the current story.
           </p>
         </div>
 
-        {/* Call to Action */}
-        <div className="mt-8 space-y-4 sm:space-y-0 sm:space-x-4 flex flex-col sm:flex-row">
-          <Link href="/" className="btn btn-primary">
-            {"Return Home"}
+        <div className="mt-8 flex flex-col items-center gap-3 text-sm text-secondary-text sm:flex-row">
+          <Link
+            href="/"
+            className="underline decoration-white/20 underline-offset-4 transition-colors duration-150 hover:text-primary-text"
+          >
+            Return home
+          </Link>
+          <span className="hidden text-muted-text sm:inline">/</span>
+          <Link
+            href="/blog"
+            className="underline decoration-white/20 underline-offset-4 transition-colors duration-150 hover:text-primary-text"
+          >
+            Read the latest notes
           </Link>
         </div>
       </main>

@@ -1,56 +1,114 @@
-/* Global CSS: src/styles/globals.css */
-
-/* Fonts are now loaded via next/font/google in layout.tsx for better performance */
-
 @import "./markdown.css";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  color-scheme: dark;
+  --primary-bg: #0f1012;
+  --secondary-bg: #141518;
+  --surface-1: rgba(24, 25, 28, 0.95);
+  --surface-2: rgba(32, 34, 38, 0.88);
+  --surface-3: rgba(48, 50, 56, 0.5);
+  --primary-text: #eff0f3;
+  --secondary-text: #9599a3;
+  --muted-text: #6b6f7a;
+  --accent: #7c8aff;
+  --accent-secondary: #a78bfa;
+  --btn-primary: rgba(124, 138, 255, 0.12);
+  --btn-primary-hover: rgba(124, 138, 255, 0.22);
+  --border-light: rgba(255, 255, 255, 0.06);
+  --border-dark: rgba(0, 0, 0, 0.5);
+  --shadow-soft: 0 24px 48px rgba(0, 0, 0, 0.4);
+  --shadow-hard: 0 32px 64px rgba(0, 0, 0, 0.55);
+  --code-bg: #1a1b1f;
+  --code-text: #dfe2ea;
+}
+
+@layer base {
+  html {
+    font-display: swap;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-height: 100vh;
+    background-color: var(--primary-bg);
+    background-image:
+      /* Subtle noise texture via SVG */
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E"),
+      /* Very subtle gradient accents */
+        radial-gradient(
+          ellipse 80% 50% at 20% -10%,
+          rgba(124, 138, 255, 0.06),
+          transparent
+        ),
+      radial-gradient(
+        ellipse 60% 40% at 90% 100%,
+        rgba(167, 139, 250, 0.04),
+        transparent
+      ),
+      /* Base gradient */ linear-gradient(180deg, #0f1012 0%, #121316 100%);
+    background-attachment: fixed;
+    color: var(--primary-text);
+    font-family:
+      var(--font-body-sans),
+      "Plus Jakarta Sans",
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family:
+      var(--font-display-sans), "Space Grotesk", system-ui, sans-serif;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  a:hover {
+    color: var(--accent);
+  }
+
+  ::selection {
+    background-color: rgba(124, 138, 255, 0.3);
+    color: var(--primary-text);
+  }
+}
+
+.font-atkinson {
+  font-family:
+    var(--font-atkinson), "Atkinson Hyperlegible", system-ui, sans-serif;
+}
+
 @layer utilities {
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-}
 
-/* Font display configuration */
-@layer base {
-  html {
-    font-display: swap;
-  }
-}
-
-:root {
-  --primary-text: #e6e6e6;
-  --primary-bg: #080808;
-  --primary-bg-rgb: 8, 8, 8;
-  --secondary-bg: #252525;
-  --accent: #227be0;
-  --btn-primary: #227be0;
-  --btn-primary-hover: #60a5fa;
-  --secondary-text: #a3a3a3;
-  --code-bg: #2d2d2d;
-  --code-text: #e6e6e6;
-}
-
-/* Base styles */
-body {
-  background-color: var(--primary-bg);
-  color: var(--primary-text);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-/* Font utility classes */
-.font-atkinson {
-  font-family: var(--font-atkinson), ui-sans-serif, system-ui, sans-serif;
-}
-
-@layer utilities {
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -58,88 +116,122 @@ body {
     overflow: hidden;
   }
 
-  .animate-gradient-slide {
-    background-size: 200% 200%;
-    animation: gradient 15s ease infinite;
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      135deg,
+      var(--accent) 0%,
+      var(--accent-secondary) 100%
+    );
   }
 
-  .bg-gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent via-purple-500 to-pink-500;
-    background-size: 200% auto;
-    animation: gradient 5s ease infinite;
-  }
-}
-
-@keyframes gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
+  .border-gradient {
+    border-image: linear-gradient(
+        135deg,
+        var(--accent),
+        var(--accent-secondary)
+      )
+      1;
   }
 }
 
 @layer components {
+  /* Refined link with subtle underline animation */
+  .link-subtle {
+    @apply relative text-secondary-text transition-colors duration-150;
+  }
+
+  .link-subtle::after {
+    @apply absolute bottom-0 left-0 h-px w-0 bg-accent transition-all duration-200 content-[''];
+  }
+
+  .link-subtle:hover {
+    @apply text-primary-text;
+  }
+
+  .link-subtle:hover::after {
+    @apply w-full;
+  }
+
+  /* Clean button styles */
   .btn {
-    @apply px-4 py-2 rounded-lg font-medium 
-    flex items-center justify-center gap-2 shadow-sm hover:shadow-md text-center;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium transition-all duration-150;
   }
 
-  .btn.btn-primary {
-    @apply bg-btn-primary border border-accent border-opacity-20 text-white;
+  .btn-primary {
+    @apply rounded-full text-accent;
+    background-color: rgba(124, 138, 255, 0.1);
   }
 
-  .btn.btn-primary:hover {
-    @apply bg-btn-primary-hover text-white;
+  .btn-primary:hover {
+    background-color: rgba(124, 138, 255, 0.2);
   }
 
   .btn-secondary {
-    @apply bg-white/5 backdrop-blur-md text-primary-text border border-white/10 rounded-lg
-    hover:bg-white/10 hover:border-white/20 shadow-lg transition-all duration-300;
+    @apply rounded-full border border-white/10 text-secondary-text hover:border-white/20 hover:text-primary-text;
   }
 
-  .btn-icon {
-    @apply p-2 rounded-lg
-    hover:bg-accent hover:bg-opacity-10;
+  .btn-ghost {
+    @apply text-secondary-text hover:text-primary-text;
   }
 
-  .btn-small {
-    @apply px-3 py-1 text-sm;
+  /* Minimal tag styling */
+  .tag {
+    @apply inline-flex items-center text-xs text-muted-text transition-colors duration-150 hover:text-secondary-text;
   }
 
-  .btn-large {
-    @apply px-6 py-3 text-lg;
+  .tag::before {
+    content: "#";
+    @apply mr-0.5;
+    color: rgba(124, 138, 255, 0.6);
   }
 
-  .btn-disabled {
-    @apply bg-secondary-bg text-secondary-text opacity-50 cursor-not-allowed;
-  }
-
-  .btn-nav {
-    @apply text-secondary-text px-3 py-1.5 text-sm font-medium
-    hover:text-accent transition-colors duration-100;
-  }
-
+  /* Tag bubble - purple background variant */
   .tag-bubble {
-    @apply inline-flex items-center text-sm px-3 py-1 rounded-full
-    bg-blue-500/10 text-blue-500
-    border border-blue-500/20
-    hover:bg-blue-500/15 hover:border-blue-500/30
-    transition-all duration-300;
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium transition-all duration-150;
+    background-color: rgba(124, 138, 255, 0.15);
+    color: var(--accent);
   }
 
-  .text-muted-text {
-    @apply text-secondary-text;
+  .tag-bubble:hover {
+    background-color: rgba(124, 138, 255, 0.25);
+  }
+
+  /* Section divider */
+  .divider {
+    @apply h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent;
+  }
+
+  /* Card base */
+  .card {
+    @apply relative rounded-2xl border border-white/[0.04] p-6 transition-all duration-200;
+    background-color: var(--surface-1);
+  }
+
+  .card:hover {
+    @apply border-white/[0.08];
+    background-color: var(--surface-2);
+  }
+
+  /* Status indicator */
+  .status-dot {
+    @apply relative flex h-2 w-2;
+  }
+
+  .status-dot::before {
+    @apply absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75 content-[''];
+  }
+
+  .status-dot::after {
+    @apply relative inline-flex h-2 w-2 rounded-full bg-accent content-[''];
   }
 }
 
-@keyframes fade-in {
+/* Custom animations */
+@keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -147,6 +239,19 @@ body {
   }
 }
 
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.5s ease-out forwards;
+}
+
 .animate-fade-in {
-  animation: fade-in 1s ease-in-out;
+  animation: fade-in 0.4s ease-out forwards;
 }

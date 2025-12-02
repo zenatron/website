@@ -5,11 +5,11 @@ import {
   FaGithub,
   FaEnvelope,
   FaLinkedin,
-  FaTimes,
   FaDiscord,
   FaCalendarAlt,
 } from "react-icons/fa";
 import { FaBluesky } from "react-icons/fa6";
+import { X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useCallback, useMemo } from "react";
 import UgIcon from "@/components/icons/UgIcon";
@@ -19,7 +19,6 @@ interface ContactOption {
   icon: React.ReactNode;
   href: string;
   description: string;
-  color: string;
 }
 
 interface ContactModalProps {
@@ -31,63 +30,48 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Memoize contact options to prevent recreation on every render
   const contactOptions: ContactOption[] = useMemo(
     () => [
       {
-        name: "GitHub",
-        icon: <FaGithub className="text-2xl" />,
-        href: "https://github.com/zenatron",
-        description: "Check out my code and projects",
-        color: "hover:bg-gray-600/20 hover:border-gray-400/50",
+        name: "Email",
+        icon: <FaEnvelope className="text-xl" />,
+        href: "mailto:phil@underscore.games",
+        description: "Send a message",
       },
       {
-        name: "Email",
-        icon: <FaEnvelope className="text-2xl" />,
-        href: "mailto:phil@underscore.games",
-        description: "Send me a message directly",
-        color: "hover:bg-red-600/20 hover:border-red-400/50",
+        name: "GitHub",
+        icon: <FaGithub className="text-xl" />,
+        href: "https://github.com/zenatron",
+        description: "View my code",
       },
       {
         name: "LinkedIn",
-        icon: <FaLinkedin className="text-2xl" />,
+        icon: <FaLinkedin className="text-xl" />,
         href: "https://www.linkedin.com/in/philipvishnevsky/",
         description: "Connect professionally",
-        color: "hover:bg-blue-600/20 hover:border-blue-400/50",
-      },
-      {
-        name: "Bluesky",
-        icon: <FaBluesky className="text-2xl" />,
-        href: "https://bsky.app/profile/zenatron.bsky.social",
-        description: "Follow me on social",
-        color: "hover:bg-sky-600/20 hover:border-sky-400/50",
-      },
-      {
-        name: "Discord",
-        icon: <FaDiscord className="text-2xl" />,
-        href: "https://discord.com/users/492872848025583616",
-        description: "Chat with me on Discord",
-        color: "hover:bg-indigo-600/20 hover:border-indigo-400/50",
       },
       {
         name: "Book a Call",
-        icon: <FaCalendarAlt className="text-2xl" />,
+        icon: <FaCalendarAlt className="text-xl" />,
         href: "https://z3n.me/phil",
-        description: "Schedule a meeting",
-        color: "hover:bg-green-600/20 hover:border-green-400/50",
+        description: "Schedule time",
       },
       {
-        name: "Underscore Games",
-        icon: <UgIcon className="w-7 h-7" />,
-        href: "https://underscore.games",
-        description: "Visit my game studio",
-        color: "hover:bg-purple-600/20 hover:border-purple-400/50",
+        name: "Bluesky",
+        icon: <FaBluesky className="text-xl" />,
+        href: "https://bsky.app/profile/zenatron.bsky.social",
+        description: "Follow me",
+      },
+      {
+        name: "Discord",
+        icon: <FaDiscord className="text-xl" />,
+        href: "https://discord.com/users/492872848025583616",
+        description: "Chat with me",
       },
     ],
     []
   );
 
-  // Optimized keyboard handler with useCallback
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -95,7 +79,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         return;
       }
 
-      // Simplified focus trap - only run when Tab is pressed
       if (event.key === "Tab" && modalRef.current) {
         const focusableElements = modalRef.current.querySelectorAll(
           'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
@@ -121,13 +104,11 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     [onClose]
   );
 
-  // Handle keyboard events and body scroll lock
   useEffect(() => {
     if (isOpen) {
       document.addEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "hidden";
 
-      // Focus the close button when modal opens
       const timeoutId = setTimeout(() => {
         closeButtonRef.current?.focus();
       }, 150);
@@ -147,52 +128,42 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          transition={{ duration: 0.15 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
           onClick={onClose}
         >
           <motion.div
             ref={modalRef}
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            initial={{ opacity: 0, scale: 0.96, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            transition={{
-              type: "spring",
-              damping: 30,
-              stiffness: 400,
-              duration: 0.3,
-            }}
-            className="relative w-full max-w-md sm:max-w-lg bg-neutral-900/90 backdrop-blur-md border border-neutral-700/50 rounded-3xl shadow-2xl overflow-hidden"
+            exit={{ opacity: 0, scale: 0.96, y: 8 }}
+            transition={{ type: "spring", damping: 25, stiffness: 350 }}
+            className="relative w-full max-w-sm rounded-2xl border border-white/[0.08] bg-[#161719] shadow-2xl"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
             aria-labelledby="modal-title"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-neutral-700/40">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-white/[0.06]">
               <h2
                 id="modal-title"
-                className="text-xl font-bold text-primary-text"
+                className="text-lg font-medium text-primary-text"
               >
-                {"Let's Connect!"}
+                Get in touch
               </h2>
               <button
                 ref={closeButtonRef}
                 onClick={onClose}
-                className="p-2 hover:bg-neutral-700/50 rounded-lg transition-colors duration-200"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-muted-text transition-colors hover:bg-white/[0.06] hover:text-primary-text"
                 aria-label="Close modal"
               >
-                <FaTimes className="text-sm text-muted-text hover:text-primary-text transition-colors" />
+                <X className="h-4 w-4" />
               </button>
             </div>
 
-            {/* Contact Options Grid - Optimized */}
-            <motion.div
-              className="p-4 grid grid-cols-2 gap-3"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1, duration: 0.3 }}
-            >
+            {/* Contact Options */}
+            <div className="p-4 space-y-1">
               {contactOptions.map((option) => (
                 <Link
                   key={option.name}
@@ -206,26 +177,29 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       : "noopener noreferrer"
                   }
                   onClick={onClose}
-                  className="block group"
+                  className="flex items-center gap-4 px-4 py-3 rounded-xl transition-colors hover:bg-white/[0.04] group"
                 >
-                  <div className="p-3 h-full bg-neutral-800/30 border border-neutral-600/30 rounded-2xl shadow-lg hover:bg-neutral-700/40 hover:border-neutral-500/50 hover:-translate-y-1 transition-all duration-200 ease-out">
-                    <div className="flex flex-col items-center text-center space-y-2">
-                      <div className="text-accent group-hover:scale-110 transition-transform duration-200">
-                        {option.icon}
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-semibold text-primary-text group-hover:text-white transition-colors duration-200">
-                          {option.name}
-                        </h3>
-                        <p className="text-xs text-muted-text group-hover:text-gray-300 transition-colors duration-200 leading-tight">
-                          {option.description}
-                        </p>
-                      </div>
-                    </div>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.04] text-accent transition-colors group-hover:bg-accent/15">
+                    {option.icon}
+                  </span>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-primary-text">
+                      {option.name}
+                    </p>
+                    <p className="text-xs text-muted-text">
+                      {option.description}
+                    </p>
                   </div>
                 </Link>
               ))}
-            </motion.div>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-4 border-t border-white/[0.06]">
+              <p className="text-xs text-center text-muted-text">
+                Based in Charlotte, NC · Open to remote
+              </p>
+            </div>
           </motion.div>
         </motion.div>
       )}

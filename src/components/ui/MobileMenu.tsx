@@ -1,11 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { FaProjectDiagram, FaLightbulb, FaUser } from "react-icons/fa";
-import GlassCard from "./GlassCard";
+import { FaBars, FaTimes } from "react-icons/fa";
 import Link from "next/link";
-import ShinyText from "./ShinyText";
 import pkg from "../../../package.json";
+
+const NAV_ITEMS = [
+  { href: "/projects", label: "Projects" },
+  { href: "/blog", label: "Blog" },
+  { href: "/about", label: "About" },
+];
 
 export default function MobileMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -15,138 +19,69 @@ export default function MobileMenu() {
     <>
       {/* Hamburger Button */}
       <button
-        className="md:hidden flex items-center justify-center p-2 text-primary-text hover:text-accent transition-colors"
+        type="button"
+        className="flex h-10 w-10 items-center justify-center rounded-md border border-white/10 text-secondary-text transition-colors duration-150 hover:border-white/20 hover:text-primary-text md:hidden"
         onClick={() => setMenuOpen(!menuOpen)}
         aria-label="Toggle Menu"
         aria-expanded={menuOpen}
         title="Toggle Menu"
       >
         {menuOpen ? (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 animate-fade-in"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <FaTimes className="h-4 w-4" />
         ) : (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 animate-fade-in"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16m-7 6h7"
-            />
-          </svg>
+          <FaBars className="h-4 w-4" />
         )}
       </button>
 
-      {/* Mobile Menu */}
-      <>
-        {/* Backdrop */}
-        <div
-          className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-20 transition-opacity duration-300 ${
-            menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
-          onClick={() => setMenuOpen(false)}
-        ></div>
+      {/* Backdrop */}
+      <div
+        className={`fixed inset-0 z-30 bg-black/65 transition-opacity duration-200 ${
+          menuOpen ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        onClick={() => setMenuOpen(false)}
+      />
 
-        {/* Menu */}
-        <nav
-          className={`fixed top-0 right-0 h-full sm:w-3/5 md:w-1/2 lg:w-96 
-            bg-secondary-bg/30 backdrop-blur-xl
-            border-l border-white/5
-            flex flex-col items-start space-y-6 py-6 px-6 z-30
-            shadow-[0_0_15px_rgba(0,0,0,0.2)]
-            transition-transform transform duration-300
-            ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
-        >
-          {/* Back Button */}
+      {/* Menu Drawer */}
+      <nav
+        className={`fixed top-0 right-0 z-40 flex h-full w-[78vw] max-w-xs flex-col gap-6 border-l border-white/10 bg-primary-bg px-5 py-8 transition-transform duration-200 md:hidden ${
+          menuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="flex items-center justify-between">
+          <p className="text-xs uppercase tracking-[0.26em] text-muted-text">
+            Menu
+          </p>
           <button
-            className="text-primary-text hover:text-accent flex items-center space-x-2"
+            type="button"
+            className="flex h-9 w-9 items-center justify-center rounded-md border border-white/10 text-secondary-text transition-colors duration-150 hover:border-white/20 hover:text-primary-text"
             onClick={() => setMenuOpen(false)}
-            aria-label="Close Menu"
-            title="Close Menu"
+            aria-label="Close menu"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-            <span>Close</span>
+            <FaTimes className="h-4 w-4" />
           </button>
+        </div>
 
-          {/* Links */}
-          {/* Icon Section */}
-          <section className="flex flex-col mt-12 gap-4 md:gap-6 w-full max-w-2xl">
-            <GlassCard
-              href="/projects"
-              onClick={() => setMenuOpen(false)}
-              className="p-4 md:p-6"
-            >
-              <div className="group flex items-center justify-center gap-4 h-full">
-                <FaProjectDiagram className="text-xl md:text-2xl text-accent" />
-                <h3 className="text-sm md:text-lg font-bold">Projects</h3>
-              </div>
-            </GlassCard>
-            <GlassCard
-              href="/blog"
-              onClick={() => setMenuOpen(false)}
-              className="p-4 md:p-6"
-            >
-              <div className="group flex items-center justify-center gap-4 h-full">
-                <FaLightbulb className="text-xl md:text-2xl text-accent" />
-                <h3 className="text-sm md:text-lg font-bold">Blog</h3>
-              </div>
-            </GlassCard>
-            <GlassCard
-              href="/about"
-              onClick={() => setMenuOpen(false)}
-              className="p-4 md:p-6"
-            >
-              <div className="group flex items-center justify-center gap-4 h-full">
-                <FaUser className="text-xl md:text-2xl text-accent" />
-                <h3 className="text-sm md:text-lg font-bold">About</h3>
-              </div>
-            </GlassCard>
-          </section>
-          <Link
-            href="https://github.com/zenatron/portfolio/deployments"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="absolute bottom-4 left-0 right-0 flex justify-center"
-          >
-            <ShinyText
-              text={versionText}
-              disabled={false}
-              speed={3}
-              className="tag-bubble text-xs border-gray-600 hover:border-gray-400"
-            />
-          </Link>
-        </nav>
-      </>
+        <ul className="flex flex-col gap-2">
+          {NAV_ITEMS.map((item) => (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center justify-between rounded-lg border border-white/10 px-4 py-3 text-sm font-medium text-primary-text transition-colors duration-150 hover:border-white/20 hover:bg-white/5"
+              >
+                <span>{item.label}</span>
+                <span className="text-xs uppercase tracking-[0.18em] text-muted-text">
+                  Go
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-auto space-y-1 text-xs text-muted-text">
+          <span className="text-secondary-text">{versionText}</span>
+        </div>
+      </nav>
     </>
   );
 }

@@ -208,13 +208,13 @@ export default function TableOfContents({
       {/* Mobile Version - Dropdown */}
       {!showDesktopOnly && (
         <div
-          className={`lg:hidden sticky top-8 z-40 mb-8 ${className}`}
+          className={`lg:hidden z-20 mb-8 ${className}`}
           ref={dropdownRef}
         >
           <div className="relative max-w-4xl mx-auto px-4">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="w-full bg-neutral-800/60 backdrop-blur-md border border-neutral-600/40 rounded-xl p-4 flex items-center justify-between text-left transition-colors duration-200 hover:bg-neutral-800/70 shadow-lg"
+              className="w-full bg-neutral-800/60 backdrop-blur-md border border-neutral-600/40 rounded-xl p-4 flex items-center justify-between text-left transition-colors duration-200 hover:bg-neutral-800/70 active:bg-neutral-800/80 shadow-lg cursor-pointer touch-manipulation"
               aria-expanded={isDropdownOpen}
               aria-label="Toggle table of contents"
             >
@@ -238,7 +238,7 @@ export default function TableOfContents({
 
             {/* Dropdown Menu */}
             {isDropdownOpen && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-neutral-800/90 backdrop-blur-md border border-neutral-600/40 rounded-xl shadow-lg max-h-80 overflow-y-auto z-50">
+              <div className="absolute top-full left-0 right-0 mt-2 bg-neutral-800/90 backdrop-blur-md border border-neutral-600/40 rounded-xl shadow-lg max-h-80 overflow-y-auto z-30">
                 <div className="p-4">
                   <nav aria-label="Mobile table of contents navigation">
                     <ul className="space-y-1" role="list">

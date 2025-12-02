@@ -18,9 +18,9 @@ interface GitHubReadmeProps {
   processSections?: boolean; // Whether to process sections between separators
 }
 
-export default function GitHubReadme({ 
+export default function GitHubReadme({
   repo = "zenatron/zenatron", // Default to your profile README
-  processSections = false 
+  processSections = false,
 }: GitHubReadmeProps) {
   const [readmeData, setReadmeData] = useState<GitHubReadmeData>({
     htmlContent: "",
@@ -96,7 +96,7 @@ export default function GitHubReadme({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-3xl overflow-hidden shadow-lg"
+          className="relative border border-white/[0.06] rounded-2xl overflow-hidden"
         >
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent mx-auto mb-4"></div>
@@ -114,7 +114,7 @@ export default function GitHubReadme({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-3xl overflow-hidden shadow-lg"
+          className="relative border border-white/[0.06] rounded-2xl overflow-hidden"
         >
           <div className="p-8 text-center">
             <p className="text-red-400 mb-4">
@@ -141,10 +141,10 @@ export default function GitHubReadme({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="relative bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-3xl overflow-hidden shadow-lg"
+        className="relative border border-white/[0.06] rounded-2xl overflow-hidden"
       >
         {/* Header Bar */}
-        <div className="flex items-center justify-between p-4 bg-neutral-900/50 border-b border-neutral-600/30">
+        <div className="flex items-center justify-between p-4 bg-white/[0.02] border-b border-white/[0.06]">
           <div className="flex items-center gap-3">
             <FaGithub className="text-xl text-accent" />
             <span className="font-semibold text-primary-text">{repo}</span>
@@ -169,9 +169,9 @@ export default function GitHubReadme({
             [&_img]:inline-block [&_img]:w-8 md:[&_img]:w-10 [&_img]:h-8 md:[&_img]:h-10 [&_img]:mx-1 [&_img]:my-1 [&_img]:rounded-md
             [&_a]:text-accent [&_a]:no-underline hover:[&_a]:text-accent/80 [&_a]:transition-colors
             [&_table]:w-full [&_table]:border-collapse [&_table]:mb-6 [&_table]:min-w-[500px]
-            [&_thead]:bg-neutral-800/50
-            [&_tbody]:divide-y [&_tbody]:divide-neutral-600/30
-            [&_tr]:hover:bg-neutral-800/25 [&_tr]:transition-colors
+            [&_thead]:bg-white/[0.02]
+            [&_tbody]:divide-y [&_tbody]:divide-white/[0.06]
+            [&_tr]:hover:bg-white/[0.02] [&_tr]:transition-colors
             [&_td]:px-4 [&_td]:py-3 [&_td]:text-center [&_td]:whitespace-nowrap
             [&_th]:px-4 [&_th]:py-3 [&_th]:text-center [&_th]:font-semibold [&_th]:text-primary-text [&_th]:whitespace-nowrap"
           dangerouslySetInnerHTML={{ __html: readmeData.htmlContent }}

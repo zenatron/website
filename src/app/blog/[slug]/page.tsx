@@ -2,12 +2,11 @@ import { getBlogPostBySlug } from "@/lib/blog";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
-import { FaHashtag, FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa";
 import dateFormatter from "@/utils/dateFormatter";
 import BackToTopButton from "@/components/BackToTopButton";
 import TableOfContents from "@/components/blog/TableOfContents";
 import KatexStyles from "@/components/KatexStyles";
-import GrainBackground from "@/components/GrainBackground";
 
 export async function generateStaticParams() {
   const params = await import("@/lib/blog").then((mod) =>
@@ -26,9 +25,9 @@ export default async function BlogPage({
 
   if (!post) {
     return (
-      <div className="min-h-screen flex flex-col bg-transparent">
+      <div className="relative flex min-h-screen flex-col">
         <Header />
-        <main className="flex-1 flex flex-col items-center justify-center text-center px-6">
+        <main className="flex-1 flex flex-col items-center justify-center text-center px-4 sm:px-6">
           <h1 className="text-6xl font-bold">404</h1>
           <p className="text-lg mt-4 text-muted-text">
             {"The blog post you're looking for doesn't exist."}
@@ -47,14 +46,13 @@ export default async function BlogPage({
   }
 
   return (
-    <div className="min-h-screen bg-transparent relative">
-      <GrainBackground />
+    <div className="relative flex min-h-screen flex-col">
       <KatexStyles />
       <Header />
 
-      <main className="px-6 py-10 pt-20">
+      <main className="px-4 py-10 pt-20 sm:px-6">
         {/* Back to Blog Link */}
-        <div className="max-w-7xl mx-auto mb-6">
+        <div className="max-w-5xl mx-auto mb-6">
           <Link
             href="/blog"
             className="inline-flex items-center gap-2 text-muted-text hover:text-foreground text-sm"
@@ -66,7 +64,7 @@ export default async function BlogPage({
         </div>
 
         {/* Main Layout Container */}
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <div className="lg:flex lg:gap-8 lg:items-start">
             {/* Desktop Table of Contents - Sidebar */}
             <aside className="hidden lg:block lg:w-64 lg:flex-shrink-0 lg:sticky lg:top-24">
@@ -95,8 +93,7 @@ export default async function BlogPage({
                           className="tag-bubble"
                           title={`View posts with tag: ${tag}`}
                         >
-                          <FaHashtag className="mr-1 text-xs opacity-70" />
-                          {tag}
+                          #{tag}
                         </Link>
                       ))}
                     </div>

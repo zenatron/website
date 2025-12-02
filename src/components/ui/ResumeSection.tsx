@@ -1,18 +1,54 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   FaDownload,
   FaExternalLinkAlt,
-  FaCode,
+  FaBriefcase,
   FaGraduationCap,
-  FaMapMarkerAlt,
+  FaRocket,
+  FaGamepad,
+  FaLaptopCode,
 } from "react-icons/fa";
-import ContactButton from "./ContactButton";
+
+const currentYear = new Date().getFullYear();
+
+const TIMELINE_EVENTS = [
+  {
+    year: `${currentYear}`,
+    title: "AI & Game Development",
+    description: "Building AI-powered tools and indie games",
+    icon: FaGamepad,
+    type: "work",
+  },
+  {
+    year: "2023-Present",
+    title: "Full-Stack Engineering",
+    description: "Web applications, APIs, and cloud infrastructure",
+    icon: FaLaptopCode,
+    type: "work",
+  },
+  {
+    year: "2022-2025",
+    title: "UNC Charlotte",
+    description: "BS, Computer Science",
+    icon: FaGraduationCap,
+    type: "education",
+  },
+  {
+    year: "2019",
+    title: "First Lines of Code",
+    description: "Self-taught programming journey begins",
+    icon: FaRocket,
+    type: "milestone",
+  },
+];
 
 export default function ResumeSection() {
+  const [isHovered, setIsHovered] = useState(false);
+
   const handleDownload = () => {
-    // Create a link element and trigger download
     const link = document.createElement("a");
     link.href = "/downloads/Resume_Phil_Vishnevsky.pdf";
     link.download = "Resume_Phil_Vishnevsky.pdf";
@@ -26,129 +62,169 @@ export default function ResumeSection() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-      {/* Left Side: Resume Embed */}
+    <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr,1.2fr] lg:gap-16">
+      {/* Left Side: Interactive Timeline */}
       <motion.div
-        initial={{ opacity: 0, x: -30 }}
-        whileInView={{ opacity: 1, x: 0 }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="space-y-4"
+        transition={{ duration: 0.5 }}
+        className="relative"
       >
-        <h3 className="text-xl font-semibold text-primary-text text-center lg:text-left">
-          {"Resume Preview"}
+        <h3 className="mb-8 text-lg font-medium text-primary-text">
+          The Journey So Far
         </h3>
 
+        {/* Timeline */}
+        <div className="relative">
+          {/* Vertical line */}
+          <div className="absolute left-[19px] top-2 bottom-2 w-px bg-gradient-to-b from-accent/50 via-accent/20 to-transparent" />
+
+          {/* Events */}
+          <div className="space-y-8">
+            {TIMELINE_EVENTS.map((event, index) => (
+              <motion.div
+                key={event.year}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+                className="group relative flex gap-6"
+              >
+                {/* Icon node */}
+                <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/[0.08] bg-primary-bg transition-all duration-300 group-hover:border-accent/50 group-hover:bg-accent/10">
+                  <event.icon className="h-4 w-4 text-muted-text transition-colors group-hover:text-accent" />
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 pb-2">
+                  <div className="mb-1 flex items-baseline gap-3">
+                    <span className="text-2xl font-bold tabular-nums text-primary-text transition-colors group-hover:text-accent">
+                      {event.year}
+                    </span>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${
+                        event.type === "education"
+                          ? "bg-blue-500/10 text-blue-400"
+                          : event.type === "milestone"
+                            ? "bg-amber-500/10 text-amber-400"
+                            : "bg-accent/10 text-accent"
+                      }`}
+                    >
+                      {event.type}
+                    </span>
+                  </div>
+                  <h4 className="mb-1 font-medium text-primary-text">
+                    {event.title}
+                  </h4>
+                  <p className="text-sm text-muted-text">{event.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* "More to come" indicator */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="mt-8 flex items-center gap-4 pl-[52px]"
+          >
+            <div className="flex gap-1">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent/60" />
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent/40 [animation-delay:150ms]" />
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent/20 [animation-delay:300ms]" />
+            </div>
+            <span className="text-sm italic text-muted-text">
+              More chapters loading...
+            </span>
+          </motion.div>
+        </div>
+      </motion.div>
+
+      {/* Right Side: Resume Preview */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="space-y-4"
+      >
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-medium text-primary-text">Full Resume</h3>
+          {/* Always visible download button for mobile */}
+          <button
+            type="button"
+            onClick={handleDownload}
+            className="flex items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.02] px-3 py-1.5 text-xs text-secondary-text transition-colors hover:border-accent/30 hover:bg-accent/10 hover:text-accent lg:hidden"
+          >
+            <FaDownload className="h-3 w-3" />
+            Download
+          </button>
+        </div>
+
         {/* PDF Embed Container */}
-        <div className="relative bg-neutral-800/30 backdrop-blur-sm border border-neutral-600/30 rounded-2xl overflow-hidden shadow-lg">
+        <div
+          className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] shadow-2xl shadow-black/20"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {/* Decorative corner accents */}
+          <div className="pointer-events-none absolute left-0 top-0 h-16 w-16 border-l-2 border-t-2 border-accent/20 rounded-tl-2xl" />
+          <div className="pointer-events-none absolute right-0 bottom-0 h-16 w-16 border-r-2 border-b-2 border-accent/20 rounded-br-2xl" />
+
           {/* PDF Embed */}
-          <div className="aspect-[8.5/11] sm:aspect-[8.5/11] md:aspect-[8.5/11] w-full">
+          <div className="aspect-[8.5/11] w-full">
             <iframe
               src="/downloads/Resume_Phil_Vishnevsky.pdf#toolbar=0&navpanes=0&zoom=FitH"
-              className="w-full h-full border-0"
+              className="h-full w-full border-0"
               title="Resume Preview"
               loading="lazy"
             />
           </div>
 
-          {/* Overlay with buttons */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-2 sm:p-4">
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+          {/* Overlay with buttons - desktop only */}
+          <div
+            className={`absolute inset-0 hidden items-end justify-center bg-gradient-to-t from-black/80 via-black/40 to-transparent p-8 transition-all duration-300 lg:flex ${
+              isHovered ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <div className="flex gap-4">
+              <button
+                type="button"
                 onClick={handlePreview}
-                className="px-3 py-2 sm:px-4 sm:py-2 bg-white/20 backdrop-blur-md text-white rounded-lg font-medium hover:bg-white/30 transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
+                className="flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-medium text-white backdrop-blur-sm transition-all hover:bg-white/20"
               >
-                <FaExternalLinkAlt className="text-xs sm:text-sm" />
-                <span className="hidden sm:inline">Open Full Size</span>
-                <span className="sm:hidden">Open</span>
-              </motion.button>
+                <FaExternalLinkAlt className="h-3.5 w-3.5" />
+                Open Full Size
+              </button>
 
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              <button
+                type="button"
                 onClick={handleDownload}
-                className="px-3 py-2 sm:px-4 sm:py-2 bg-accent/80 backdrop-blur-md text-white rounded-lg font-medium hover:bg-accent transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
+                className="flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-medium text-white shadow-lg shadow-accent/25 transition-all hover:bg-accent/90 hover:shadow-accent/40"
               >
-                <FaDownload className="text-xs sm:text-sm" />
-                <span>Download</span>
-              </motion.button>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Right Side: Quick Profile */}
-      <motion.div
-        initial={{ opacity: 0, x: 30 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className="space-y-6"
-      >
-        {/* Key Highlights */}
-        <div className="space-y-3">
-          <h4 className="text-lg font-medium text-primary-text">Highlights</h4>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 p-3 bg-neutral-800/20 backdrop-blur-sm rounded-xl border border-neutral-600/20">
-              <FaCode className="text-accent text-lg flex-shrink-0" />
-              <div>
-                <div className="text-sm font-medium text-primary-text">
-                  {"Multi-Paradigm Programming"}
-                </div>
-                <div className="text-xs text-muted-text">
-                  {"C++, Java, Rust, Python, TypeScript"}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 p-3 bg-neutral-800/20 backdrop-blur-sm rounded-xl border border-neutral-600/20">
-              <FaGraduationCap className="text-accent text-lg flex-shrink-0" />
-              <div>
-                <div className="text-sm font-medium text-primary-text">
-                  {"Wide Background"}
-                </div>
-                <div className="text-xs text-muted-text">
-                  {"SWE, AI/ML, Game Dev, Business"}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 p-3 bg-neutral-800/20 backdrop-blur-sm rounded-xl border border-neutral-600/20">
-              <FaMapMarkerAlt className="text-accent text-lg flex-shrink-0" />
-              <div>
-                <div className="text-sm font-medium text-primary-text">
-                  {"Based in Charlotte, USA"}
-                </div>
-                <div className="text-xs text-muted-text">
-                  {"Open to remote opportunities"}
-                </div>
-              </div>
+                <FaDownload className="h-3.5 w-3.5" />
+                Download PDF
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Contact CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="text-center p-4 bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-2xl"
-        >
-          <h4 className="text-lg font-semibold mb-2 text-primary-text">
-            {"Want to Chat?"}
-          </h4>
-          <p className="text-muted-text mb-4 text-sm">
-            {"I'm always open to new opportunities and connections."}
-          </p>
-          <ContactButton
-            variant="compact"
-            showDescription={false}
-            className="mx-auto"
-          />
-        </motion.div>
+        {/* Stats row */}
+        <div className="grid grid-cols-3 gap-4 pt-4">
+          {[
+            { label: "Years Coding", value: `${currentYear - 2019}+` },
+            { label: "Projects", value: "15+" },
+            { label: "Technologies", value: "11+" },
+          ].map((stat) => (
+            <div key={stat.label} className="text-center">
+              <div className="text-2xl font-bold text-accent">{stat.value}</div>
+              <div className="text-xs text-muted-text">{stat.label}</div>
+            </div>
+          ))}
+        </div>
       </motion.div>
     </div>
   );
