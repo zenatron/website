@@ -23,7 +23,7 @@ export default function AboutPage() {
         {/* Hero Section - matching home page style */}
         <section className="px-4 pb-24 pt-32 sm:px-6 md:pt-40">
           <div className="mx-auto max-w-5xl">
-            <div className="space-y-8">
+            <div className="space-y-8 text-center">
               <div className="space-y-6">
                 <p className="text-sm font-medium tracking-[0.2em] text-accent">
                   ABOUT
@@ -31,14 +31,14 @@ export default function AboutPage() {
                 <h1 className="text-4xl tracking-tight md:text-5xl lg:text-6xl">
                   Phil Vishnevsky
                 </h1>
-                <p className="max-w-2xl text-lg leading-relaxed text-secondary-text">
+                <p className="mx-auto max-w-2xl text-lg leading-relaxed text-secondary-text">
                   Software engineer with a bias toward maintainable systems and clear handoffs. 
                   I care about boring deploys, inclusive teams, and tooling that respects the humans operating it.
                 </p>
               </div>
 
               {/* Quick facts row */}
-              <div className="flex flex-wrap items-center gap-6 text-sm">
+              <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
                 {QUICK_FACTS.map((fact, i) => (
                   <div key={fact.label} className="flex items-center gap-2 text-secondary-text">
                     <fact.icon className="h-4 w-4 text-muted-text" />
@@ -59,14 +59,14 @@ export default function AboutPage() {
           {/* Resume Section */}
           <section id="resume" className="scroll-mt-24">
             <div className="space-y-8">
-              <div className="space-y-4">
+              <div className="space-y-4 text-center">
                 <p className="text-sm font-medium tracking-[0.2em] text-accent">
                   EXPERIENCE
                 </p>
                 <h2 className="text-3xl tracking-tight md:text-4xl">
                   Background & credentials
                 </h2>
-                <p className="text-secondary-text max-w-xl">
+                <p className="text-secondary-text max-w-xl mx-auto">
                   My professional journey in software — from early projects to current focus areas.
                 </p>
               </div>
@@ -77,7 +77,7 @@ export default function AboutPage() {
           {/* Skills & Tech Section */}
           <section id="skills" className="scroll-mt-24">
             <div className="space-y-8">
-              <div className="space-y-4">
+              <div className="space-y-4 text-center">
                 <p className="text-sm font-medium tracking-[0.2em] text-accent">
                   SKILLS
                 </p>
