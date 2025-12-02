@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import SpotlightCard from "./SpotlightCard";
 import { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 interface GlassCardProps {
   href: string;
@@ -19,7 +19,7 @@ export default function GlassCard({
   children,
   className = "",
   external = false,
-  spotlightColor = "rgba(255, 255, 255, 0.1)",
+  spotlightColor: _spotlightColor,
 }: GlassCardProps) {
   const linkProps = external
     ? {
@@ -29,15 +29,22 @@ export default function GlassCard({
     : {};
 
   return (
-    <Link href={href} {...linkProps} className="block" onClick={onClick}>
-      <SpotlightCard
-        className={`p-4 md:p-6 h-full bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 shadow-lg ${className}`}
-        spotlightColor={spotlightColor}
+    <Link
+      href={href}
+      {...linkProps}
+      onClick={onClick}
+      className="group relative block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+    >
+      <div
+        className={cn(
+          "relative h-full overflow-hidden rounded-xl border border-white/10 bg-primary-bg/40 p-5 transition-colors duration-150 hover:border-white/20",
+          className
+        )}
       >
-        <div className="group flex flex-col h-full transition-all duration-300 transform hover:-translate-y-2">
+        <div className="relative z-10 flex h-full flex-col gap-4">
           {children}
         </div>
-      </SpotlightCard>
+      </div>
     </Link>
   );
 }

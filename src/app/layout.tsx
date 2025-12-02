@@ -1,31 +1,25 @@
 import type { Metadata } from "next";
 import {
-  Geist,
-  Geist_Mono,
-  Roboto_Flex,
+  Plus_Jakarta_Sans,
+  Space_Grotesk,
   Atkinson_Hyperlegible,
 } from "next/font/google";
 import "./globals.css";
 import "./markdown.css";
 
 // Optimize font loading with preload and display swap
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const bodySans = Plus_Jakarta_Sans({
+  variable: "--font-body-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
   preload: true,
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const displaySans = Space_Grotesk({
+  variable: "--font-display-sans",
   subsets: ["latin"],
-  display: "swap",
-  preload: true,
-});
-
-const robotoFlex = Roboto_Flex({
-  variable: "--font-roboto-flex",
-  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
   preload: true,
 });
@@ -51,7 +45,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${robotoFlex.variable} ${atkinson.variable}`}
+      className={`${bodySans.variable} ${displaySans.variable} ${atkinson.variable}`}
     >
       <head>
         {/* Preconnect to font and CDN origins for faster loading */}

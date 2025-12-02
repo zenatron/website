@@ -1,6 +1,5 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { FaExternalLinkAlt, FaImage } from "react-icons/fa";
 import Link from "next/link";
@@ -10,10 +9,10 @@ import {
   type FavoriteItem,
 } from "@/lib/favoriteItems";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 export default function HobbiesSection() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [, setIsTransitioning] = useState(false);
 
   const categories = Array.from(
     new Set(favoriteItems.map((item) => item.category))
@@ -22,98 +21,58 @@ export default function HobbiesSection() {
     ? favoriteItems.filter((item) => item.category === selectedCategory)
     : favoriteItems;
 
-  const handleCategoryChange = (category: string) => {
-    if (category === selectedCategory) return;
-
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setSelectedCategory(category);
-      setIsTransitioning(false);
-    }, 150); // Small delay to ensure smooth transition
-  };
-
   return (
     <div className="space-y-8">
       {/* Category Filter */}
       <div className="flex justify-center">
-        <div className="inline-flex flex-wrap gap-1.5 p-1.5 bg-neutral-900/50 backdrop-blur-sm border border-neutral-700/50 rounded-lg">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => {
-              if (selectedCategory !== null) {
-                setIsTransitioning(true);
-                setTimeout(() => {
-                  setSelectedCategory(null);
-                  setIsTransitioning(false);
-                }, 150);
-              }
-            }}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 ${
+        <div className="flex flex-wrap justify-center gap-1">
+          <button
+            onClick={() => setSelectedCategory(null)}
+            className={cn(
+              "px-4 py-2 text-sm transition-colors duration-150",
               selectedCategory === null
-                ? "bg-accent text-white shadow-lg"
-                : "text-muted-text hover:text-primary-text hover:bg-neutral-800/50"
-            }`}
+                ? "text-primary-text"
+                : "text-muted-text hover:text-secondary-text"
+            )}
           >
             All
-          </motion.button>
+          </button>
 
           {categories.map((category) => (
-            <motion.button
+            <button
               key={category}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleCategoryChange(category)}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 ${
+              onClick={() => setSelectedCategory(category)}
+              className={cn(
+                "px-4 py-2 text-sm transition-colors duration-150",
                 selectedCategory === category
-                  ? "bg-accent text-white shadow-lg"
-                  : "text-muted-text hover:text-primary-text hover:bg-neutral-800/50"
-              }`}
+                  ? "text-primary-text"
+                  : "text-muted-text hover:text-secondary-text"
+              )}
             >
               {categoryLabels[category as keyof typeof categoryLabels]}
-            </motion.button>
+            </button>
           ))}
         </div>
       </div>
 
       {/* Items List */}
-      <div className="max-w-xl mx-auto">
-        <div className="space-y-0.5">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={selectedCategory || "all"}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="space-y-0.5"
-            >
-              {filteredItems.map((item, index) => (
-                <motion.div
-                  key={item.name}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{
-                    delay: index * 0.02,
-                    duration: 0.2,
-                    ease: "easeOut",
-                  }}
+      <div className="max-w-2xl mx-auto">
+        <div className="divide-y divide-white/5">
+          {filteredItems.map((item) => (
+            <div key={item.name}>
+              {item.url ? (
+                <Link
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  {item.url ? (
-                    <Link
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <FavoriteItemRow item={item} />
-                    </Link>
-                  ) : (
-                    <FavoriteItemRow item={item} />
-                  )}
-                </motion.div>
-              ))}
-            </motion.div>
-          </AnimatePresence>
+                  <FavoriteItemRow item={item} />
+                </Link>
+              ) : (
+                <FavoriteItemRow item={item} />
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -135,14 +94,9 @@ function FavoriteItemRow({ item }: FavoriteItemRowProps) {
   };
 
   return (
-    <motion.div
-      whileHover={{ x: 4, backgroundColor: "rgba(23, 23, 23, 0.2)" }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ duration: 0.15, ease: "easeOut" }}
-      className="flex gap-3 py-2 px-3 rounded-md cursor-pointer group min-h-[2.5rem]"
-    >
+    <div className="flex items-center gap-4 py-3 px-2 rounded-lg cursor-pointer group transition-colors duration-150 hover:bg-white/[0.02]">
       {/* Icon */}
-      <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center mt-0.5 md:mt-0">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/5">
         {isImageIcon ? (
           imageError ? (
             <FaImage
@@ -169,40 +123,27 @@ function FavoriteItemRow({ item }: FavoriteItemRowProps) {
         )}
       </div>
 
-      {/* Content - Responsive Layout */}
-      <div className="flex-grow min-w-0">
-        {/* Desktop/Tablet Layout - Single Line */}
-        <div className="hidden md:flex items-center gap-2">
-          <h4 className="font-medium text-primary-text group-hover:text-accent transition-colors">
+      {/* Content */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <span className="font-medium text-primary-text transition-colors group-hover:text-accent">
             {item.name}
-          </h4>
-          {item.description && (
-            <span className="text-sm text-muted-text">
-              — {item.description}
-            </span>
-          )}
+          </span>
           {item.url && (
-            <FaExternalLinkAlt className="w-3 h-3 text-muted-text opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+            <FaExternalLinkAlt className="w-3 h-3 text-muted-text opacity-0 transition-opacity group-hover:opacity-100" />
           )}
         </div>
-
-        {/* Mobile Layout - Stacked */}
-        <div className="md:hidden">
-          <div className="flex items-center gap-2">
-            <h4 className="font-medium text-primary-text group-hover:text-accent transition-colors">
-              {item.name}
-            </h4>
-            {item.url && (
-              <FaExternalLinkAlt className="w-3 h-3 text-muted-text opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-            )}
-          </div>
-          {item.description && (
-            <p className="text-xs text-muted-text mt-0.5 leading-tight">
-              {item.description}
-            </p>
-          )}
-        </div>
+        {item.description && (
+          <p className="text-sm text-secondary-text truncate">
+            {item.description}
+          </p>
+        )}
       </div>
-    </motion.div>
+
+      {/* Category badge on larger screens */}
+      <span className="hidden shrink-0 text-xs text-muted-text md:block">
+        {categoryLabels[item.category as keyof typeof categoryLabels]}
+      </span>
+    </div>
   );
 }

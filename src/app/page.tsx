@@ -1,260 +1,234 @@
-"use client";
-
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import {
-  FaProjectDiagram,
-  FaUser,
-  FaLightbulb,
-  FaCode,
-  FaRocket,
-} from "react-icons/fa";
-import { useRef, useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import VariableProximity from "@/components/ui/VariableProximity";
-import GradientText from "@/components/ui/GradientText";
-import GlassCard from "@/components/ui/GlassCard";
-import ShinyText from "@/components/ui/ShinyText";
-import dynamic from "next/dynamic";
-import GrainBackground from "@/components/GrainBackground";
-import PixelBlast from '@/components/ui/PixelBlast';
+import Link from "next/link";
+import { ArrowUpRight, MapPin, Briefcase, Clock } from "lucide-react";
+import { getAllProjects } from "@/lib/projects";
+import { getAllBlogPosts } from "@/lib/blog";
+import dateFormatter from "@/utils/dateFormatter";
+import HomeHero from "@/components/home/HomeHero";
 
-// Lazy load DotGrid with no SSR for better performance
-// const DotGrid = dynamic(() => import("@/components/ui/Dots"), {
-//   ssr: false,
-//   loading: () => (
-//     <div className="fixed inset-0 w-screen h-screen bg-primary-bg" />
-//   ),
-// });
+const QUICK_FACTS = [
+  { label: "Location", value: "Charlotte, NC", icon: MapPin },
+  { label: "Foci", value: "SWE · AI · Games", icon: Briefcase },
+  { label: "Status", value: "Open to opportunities", icon: Clock },
+];
 
-export default function HomePage() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
+export default async function HomePage() {
+  // Fetch real data
+  const [projects, posts] = await Promise.all([
+    getAllProjects(),
+    getAllBlogPosts(),
+  ]);
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  // Get 3 most recent projects (sorted by date)
+  const recentProjects = projects
+    .filter((p) => p.metadata.date)
+    .sort((a, b) => new Date(b.metadata.date!).getTime() - new Date(a.metadata.date!).getTime())
+    .slice(0, 3);
+
+  // Get most recent blog post
+  const latestPost = posts
+    .sort((a, b) => new Date(b.metadata.date).getTime() - new Date(a.metadata.date).getTime())[0];
 
   return (
-    <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
-      <GrainBackground />
-      {/* <div className="fixed inset-0 w-screen h-screen">
-        <div style={{ width: "100%", height: "100vh", position: "relative" }}>
-          <DotGrid
-            dotSize={isMobile ? 6 : 4}
-            gap={isMobile ? 25 : 15}
-            baseColor="#161616"
-            activeColor="#242424"
-            proximity={isMobile ? 80 : 120}
-            shockRadius={isMobile ? 150 : 250}
-            useFixedDimensions={true}
-            shockStrength={5}
-            resistance={750}
-            returnDuration={1.5}
-          />
-        </div>
-      </div> */}
+    <div className="relative flex min-h-screen flex-col">
+      <Header />
 
-      <div className="fixed inset-0 w-screen h-screen">
-        <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-          <PixelBlast
-            variant="square"
-            pixelSize={8}
-            color="#0F253E"
-            patternScale={4}
-            patternDensity={1.2}
-            pixelSizeJitter={0.5}
-            liquid
-            liquidStrength={0.12}
-            liquidRadius={1.2}
-            liquidWobbleSpeed={5}
-            speed={0.6}
-            edgeFade={0.25}
-            transparent
-          />
-        </div>
-      </div>
+      <main className="flex-1">
+        {/* Hero Section - Editorial style */}
+        <section className="relative overflow-hidden px-6 pb-24 pt-32 md:pt-40">
+          {/* Subtle accent line */}
+          <div className="absolute left-1/2 top-0 h-32 w-px -translate-x-1/2 bg-gradient-to-b from-accent/40 to-transparent" />
+          
+          <div className="mx-auto max-w-5xl">
+            <div className="grid gap-16 lg:grid-cols-[1fr,320px]">
+              {/* Main content */}
+              <HomeHero />
 
-      {/* Scrollable content */}
-      <div className="relative z-20 flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-1 flex flex-col items-center justify-center text-center px-6 pt-20">
-          {/* Hero Section */}
-          <motion.section
-            className="max-w-4xl py-12"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-          >
-            {/* Main title with enhanced effects */}
-            <div className="relative mb-8">
-              <div
-                ref={containerRef}
-                style={{
-                  position: "relative",
-                  minHeight: "120px",
-                  width: "100%",
-                  padding: "20px",
-                }}
-              >
-                <GradientText
-                  className="mb-6"
-                  animationSpeed={24}
-                  transparent={true}
-                  colors={["#00d4ff", "#0099ff", "#0047ff", "#00d4ff"]}
-                >
-                  <div className="flex flex-col items-center gap-2">
-                    <VariableProximity
-                      label="Hey,"
-                      className="text-6xl md:text-8xl font-bold tracking-tight"
-                      fromFontVariationSettings="'wght' 100, 'opsz' 8"
-                      toFontVariationSettings="'wght' 900, 'opsz' 48"
-                      containerRef={
-                        containerRef as unknown as React.RefObject<HTMLElement>
-                      }
-                      radius={120}
-                      falloff="gaussian"
-                    />
-                    <VariableProximity
-                      label="I'm Phil!"
-                      className="text-6xl md:text-8xl font-bold tracking-tight"
-                      fromFontVariationSettings="'wght' 100, 'opsz' 8"
-                      toFontVariationSettings="'wght' 900, 'opsz' 48"
-                      containerRef={
-                        containerRef as unknown as React.RefObject<HTMLElement>
-                      }
-                      radius={120}
-                      falloff="gaussian"
-                    />
+              {/* Sidebar card */}
+              <aside className="relative">
+                <div className="sticky top-32 space-y-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-sm">
+                  <div className="flex items-center gap-3">
+                    <span className="status-dot" />
+                    <span className="text-sm text-secondary-text">Available for work</span>
                   </div>
-                </GradientText>
+                  
+                  <div className="divider" />
+                  
+                  <ul className="space-y-4">
+                    {QUICK_FACTS.map((fact) => (
+                      <li key={fact.label} className="flex items-start gap-3">
+                        <fact.icon className="mt-0.5 h-4 w-4 text-muted-text" />
+                        <div>
+                          <p className="text-xs uppercase tracking-wider text-muted-text">{fact.label}</p>
+                          <p className="text-sm text-primary-text">{fact.value}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                  
+                  <div className="divider" />
+                  
+                  <Link 
+                    href="mailto:phil@underscore.games"
+                    className="link-subtle block text-sm"
+                  >
+                    phil@underscore.games
+                  </Link>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </section>
+
+        {/* Recent Projects Section */}
+        <section className="px-6 py-24">
+          <div className="mx-auto max-w-5xl">
+            <div className="mb-12 flex items-end justify-between">
+              <div>
+                <p className="mb-2 text-sm font-medium tracking-[0.2em] text-accent">
+                  RECENT WORK
+                </p>
+                <h2 className="text-3xl tracking-tight md:text-4xl">
+                  Latest projects
+                </h2>
               </div>
-
-              {/* Floating accent elements */}
-              <motion.div
-                className="absolute -top-4 -right-4 text-accent/20"
-                animate={{
-                  rotate: [0, 360],
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{
-                  duration: 8,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
+              <Link 
+                href="/projects" 
+                className="link-subtle hidden text-sm md:inline-flex md:items-center md:gap-2"
               >
-                <FaCode size={24} />
-              </motion.div>
-
-              <motion.div
-                className="absolute -bottom-4 -left-4 text-accent/20"
-                animate={{
-                  rotate: [360, 0],
-                  scale: [1, 1.3, 1],
-                }}
-                transition={{
-                  duration: 6,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-              >
-                <FaRocket size={20} />
-              </motion.div>
+                View all
+                <ArrowUpRight className="h-3 w-3" />
+              </Link>
             </div>
 
-            {/* Enhanced subtitle */}
-            <motion.div
-              className="space-y-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25, duration: 0.25 }}
-            >
-              <ShinyText
-                text={"Let's build something amazing together."}
-                disabled={false}
-                speed={3}
-                className="tag-bubble text-sm md:text-xl border-gray-600 hover:border-gray-400 transition-all duration-300 hover:scale-105"
-              />
-
-              <motion.p
-                className="text-secondary-text text-sm md:text-base max-w-2xl mx-auto leading-relaxed"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.25, duration: 0.25 }}
-              >
-                {"SWE • AI/ML • Games"}
-              </motion.p>
-            </motion.div>
-          </motion.section>
-
-          {/* Enhanced Navigation Cards */}
-          <motion.section
-            className="mt-4 grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-3 mx-auto max-w-3xl w-full px-4 py-4"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-          >
-            {[
-              {
-                href: "/projects",
-                icon: FaProjectDiagram,
-                title: "Projects",
-                description: "Explore my latest work",
-                spotlightColor: "rgba(59, 130, 246, 0.15)",
-              },
-              {
-                href: "/blog",
-                icon: FaLightbulb,
-                title: "Blog",
-                description: "Thoughts and insights",
-                spotlightColor: "rgba(245, 158, 11, 0.15)",
-              },
-              {
-                href: "/about",
-                icon: FaUser,
-                title: "About",
-                description: "Get to know me",
-                spotlightColor: "rgba(16, 185, 129, 0.15)",
-              },
-            ].map((item, index) => (
-              <motion.div
-                key={item.href}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <GlassCard
-                  href={item.href}
-                  className="p-4 md:p-6 h-full relative overflow-hidden group hover:border-accent/30"
-                  spotlightColor={item.spotlightColor}
+            <div className="space-y-1">
+              {recentProjects.map((project, index) => (
+                <Link
+                  key={project.metadata.slug}
+                  href={`/projects/${project.metadata.slug}`}
+                  className="group relative block"
                 >
-                  <div className="relative z-10 flex flex-col items-center justify-center h-full text-center space-y-3">
-                    <div className="text-2xl md:text-3xl text-accent">
-                      <item.icon />
-                    </div>
-                    <div>
-                      <h3 className="text-base md:text-lg font-bold mb-1 group-hover:text-accent transition-colors">
-                        {item.title}
-                      </h3>
-                      <p className="text-xs md:text-sm text-secondary-text group-hover:text-primary-text transition-colors">
-                        {item.description}
+                  <div className="flex items-start gap-6 rounded-xl px-4 py-6 transition-colors duration-150 hover:bg-white/[0.02] md:items-center">
+                    {/* Index number */}
+                    <span className="hidden w-8 text-sm tabular-nums text-muted-text md:block">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    
+                    {/* Main content */}
+                    <div className="flex-1 space-y-2">
+                      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                        <h3 className="text-lg font-medium text-primary-text transition-colors group-hover:text-accent">
+                          {project.metadata.title}
+                        </h3>
+                        <span className="text-sm capitalize text-muted-text">
+                          {project.metadata.type}
+                        </span>
+                      </div>
+                      <p className="text-sm text-secondary-text line-clamp-1">
+                        {project.metadata.description}
                       </p>
                     </div>
+                    
+                    {/* Tags */}
+                    <div className="hidden items-center gap-3 md:flex">
+                      {project.metadata.tags?.slice(0, 3).map((tag) => (
+                        <span key={tag} className="tag">{tag}</span>
+                      ))}
+                    </div>
+                    
+                    {/* Year */}
+                    <span className="text-sm tabular-nums text-muted-text">
+                      {project.metadata.date ? new Date(project.metadata.date).getFullYear() : ""}
+                    </span>
+                    
+                    {/* Arrow */}
+                    <ArrowUpRight className="h-4 w-4 text-muted-text opacity-0 transition-all duration-150 group-hover:text-accent group-hover:opacity-100" />
                   </div>
-                </GlassCard>
-              </motion.div>
-            ))}
-          </motion.section>
-        </main>
-        <Footer />
-      </div>
+                  
+                  {/* Divider */}
+                  {index < recentProjects.length - 1 && (
+                    <div className="mx-4 h-px bg-white/[0.04]" />
+                  )}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Writing preview */}
+        <section className="px-6 py-24">
+          <div className="mx-auto max-w-5xl">
+            <div className="grid gap-12 lg:grid-cols-2">
+              <div className="space-y-6">
+                <p className="text-sm font-medium tracking-[0.2em] text-accent">
+                  WRITING
+                </p>
+                <h2 className="text-3xl tracking-tight md:text-4xl">
+                  Notes on building
+                </h2>
+                <p className="text-secondary-text">
+                  Longer-form thinking on engineering craft, teams, and the intersections 
+                  of AI, tooling, and games. Updated occasionally when something clicks.
+                </p>
+                <Link 
+                  href="/blog" 
+                  className="btn btn-secondary inline-flex"
+                >
+                  Read the blog
+                  <ArrowUpRight className="h-4 w-4" />
+                </Link>
+              </div>
+              
+              {latestPost && (
+                <Link 
+                  href={`/blog/${latestPost.slug}`}
+                  className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 transition-colors hover:border-white/[0.1] hover:bg-white/[0.03]"
+                >
+                  <div className="absolute -top-3 left-6 bg-primary-bg px-2 text-xs uppercase tracking-wider text-muted-text">
+                    Latest
+                  </div>
+                  <div className="space-y-4">
+                    <p className="text-xs text-muted-text">
+                      {dateFormatter({ date: latestPost.metadata.date, month: "long", year: "numeric" })}
+                    </p>
+                    <h3 className="text-xl font-medium text-primary-text transition-colors group-hover:text-accent">
+                      {latestPost.metadata.title}
+                    </h3>
+                    {latestPost.metadata.excerpt && (
+                      <p className="text-sm text-secondary-text line-clamp-3">
+                        {latestPost.metadata.excerpt}
+                      </p>
+                    )}
+                    <span className="link-subtle inline-flex items-center gap-2 text-sm">
+                      Continue reading
+                      <ArrowUpRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </span>
+                  </div>
+                </Link>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Philosophy section */}
+        <section className="px-6 py-24">
+          <div className="mx-auto max-w-3xl text-center">
+            <blockquote className="relative">
+              <span className="absolute -top-4 left-0 text-6xl leading-none text-accent/20">&ldquo;</span>
+              <p className="text-2xl font-medium leading-relaxed tracking-tight text-primary-text md:text-3xl">
+                Good software is built by people who care about the humans operating it 
+                as much as the humans using it.
+              </p>
+              <footer className="mt-6 text-sm text-muted-text">
+                — My engineering philosophy, more or less
+              </footer>
+            </blockquote>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
     </div>
   );
 }

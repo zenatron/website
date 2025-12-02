@@ -1,458 +1,379 @@
-import { useState, useRef, Suspense, useMemo } from "react";
+"use client";
+
+import { useState, useMemo, useRef, useEffect } from "react";
 import { ProjectCard } from "@/types/types";
-import SearchBar from "../ui/SearchBar";
-import { motion } from "framer-motion";
-import {
-  FaHashtag,
-  FaGithub,
-  FaCalendarAlt,
-  FaSortAlphaDown,
-  FaSortAlphaUp,
-  FaSort,
-  FaGlobe,
-  FaGamepad,
-  FaCode,
-} from "react-icons/fa";
-import { SiJupyter } from "react-icons/si";
-import GlassCard from "../ui/GlassCard";
+import Link from "next/link";
 import dateFormatter from "@/utils/dateFormatter";
-import GradientText from "../ui/GradientText";
-import VariableProximity from "../ui/VariableProximity";
-type SortField = "title" | "date";
-type SortDirection = "asc" | "desc";
+import { ArrowUpRight, Search, X, Grid3X3, List, ExternalLink } from "lucide-react";
+import { FaGithub, FaGlobe, FaGamepad, FaCode } from "react-icons/fa";
+import { SiJupyter } from "react-icons/si";
+import { cn } from "@/lib/utils";
 
 interface ProjectsClientProps {
   projects: ProjectCard[];
 }
 
+type ViewMode = "grid" | "list";
+
+const getTypeIcon = (type: string | undefined) => {
+  const normalized = type?.toLowerCase() ?? "other";
+  const iconClass = "h-4 w-4";
+
+  switch (normalized) {
+    case "data":
+      return <SiJupyter className={iconClass} />;
+    case "github":
+      return <FaGithub className={iconClass} />;
+    case "web":
+      return <FaGlobe className={iconClass} />;
+    case "game":
+      return <FaGamepad className={iconClass} />;
+    default:
+      return <FaCode className={iconClass} />;
+  }
+};
+
 export default function ProjectsClient({ projects }: ProjectsClientProps) {
-  const [filteredProjects, setFilteredProjects] =
-    useState<ProjectCard[]>(projects);
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<string | null>(null);
-  const [sortField, setSortField] = useState<SortField>("date");
-  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
-  const containerRef = useRef(null);
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Get icon for project type
-  const getTypeIcon = (type: string) => {
-    switch (type.toLowerCase()) {
-      case "data":
-        return <SiJupyter className="text-accent" />;
-      case "github":
-        return <FaGithub className="text-accent" />;
-      case "web":
-        return <FaGlobe className="text-accent" />;
-      case "game":
-        return <FaGamepad className="text-accent" />;
-      case "other":
-        return <FaCode className="text-accent" />;
-      default:
-        return <FaCode className="text-accent" />;
-    }
-  };
+  // Slash-to-focus keyboard shortcut
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.key === "/" &&
+        document.activeElement?.tagName !== "INPUT" &&
+        document.activeElement?.tagName !== "TEXTAREA"
+      ) {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
-  const allTypes = Array.from(
-    new Set(
-      projects.map((project) =>
-        project.links.github ? "github" : project.metadata.type
-      )
-    )
-  ).sort();
+  // Get all unique types
+  const allTypes = useMemo(() => {
+    const types = new Set<string>();
+    projects.forEach((p) => {
+      if (p.links.github) types.add("github");
+      else types.add((p.metadata.type ?? "other").toLowerCase());
+    });
+    return Array.from(types).sort();
+  }, [projects]);
 
-  // Handle sort button click
-  const handleSortClick = (field: SortField) => {
-    if (field === sortField) {
-      // Toggle direction if same field
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      // Set default direction for new field (asc for title, desc for date)
-      setSortField(field);
-      setSortDirection(field === "title" ? "asc" : "desc");
-    }
-  };
+  // Filter projects with hashtag support
+  const filteredProjects = useMemo(() => {
+    return projects.filter((project) => {
+      // Check type filter first
+      const projectType = project.links.github 
+        ? "github" 
+        : (project.metadata.type ?? "other").toLowerCase();
+      if (selectedType !== null && projectType !== selectedType) {
+        return false;
+      }
 
-  // Get the appropriate icon based on current sort state
-  const getSortIcon = (field: SortField) => {
-    if (field !== sortField) {
-      return <FaSort className="opacity-50" />;
-    }
+      // Check search query
+      if (searchQuery) {
+        const itemContent =
+          (project.metadata.title?.toLowerCase() || "") +
+          " " +
+          (project.metadata.description?.toLowerCase() || "");
 
-    if (field === "title") {
-      return sortDirection === "asc" ? <FaSortAlphaDown /> : <FaSortAlphaUp />;
-    } else {
-      // Date icons (newest first is desc, oldest first is asc)
-      return sortDirection === "desc" ? (
-        <FaCalendarAlt />
-      ) : (
-        <FaCalendarAlt className="rotate-180" />
-      );
-    }
-  };
+        // Split search query into terms
+        const terms = searchQuery.toLowerCase().split(" ");
 
-  // Filter by type and sort
-  const sortedProjects = useMemo(() => {
-    return (
-      [...filteredProjects]
-        // Filter by type
-        .filter(
-          (project) =>
-            !selectedType ||
-            (selectedType === "github"
-              ? !!project.links.github
-              : project.metadata.type === selectedType)
-        )
-        // Sort by field and direction
-        .sort((a, b) => {
-          if (sortField === "title") {
-            const comparison = a.metadata.title.localeCompare(b.metadata.title);
-            return sortDirection === "asc" ? comparison : -comparison;
-          } else {
-            // Sort by date - handle missing dates
-            if (!a.metadata.date) return sortDirection === "asc" ? -1 : 1;
-            if (!b.metadata.date) return sortDirection === "asc" ? 1 : -1;
+        // Check if all terms match
+        const matchesSearch = terms.every((term) => {
+          if (term === "") return true;
 
-            const dateA = new Date(a.metadata.date).getTime();
-            const dateB = new Date(b.metadata.date).getTime();
-            return sortDirection === "asc" ? dateA - dateB : dateB - dateA;
+          // If term is a tag search (starts with #)
+          if (term.startsWith("#")) {
+            const tagQuery = term.slice(1).toLowerCase();
+            if (!tagQuery) return true;
+            const itemTagsLower =
+              project.metadata.tags?.map((tag) => tag.toLowerCase().trim()) || [];
+            return itemTagsLower.some((tag) => tag.includes(tagQuery));
           }
-        })
-    );
-  }, [filteredProjects, selectedType, sortField, sortDirection]);
 
-  // Group projects by year
+          // For regular search terms
+          return itemContent.includes(term);
+        });
+
+        if (!matchesSearch) return false;
+      }
+
+      return true;
+    });
+  }, [projects, searchQuery, selectedType]);
+
+  // Group by year
   const groupedProjects = useMemo(() => {
-    const groups: { [year: string]: ProjectCard[] } = {};
+    const groups = new Map<string, ProjectCard[]>();
 
-    sortedProjects.forEach((project) => {
+    filteredProjects.forEach((project) => {
       const year = project.metadata.date
         ? new Date(project.metadata.date).getFullYear().toString()
         : "Undated";
-
-      if (!groups[year]) {
-        groups[year] = [];
-      }
-      groups[year].push(project);
+      if (!groups.has(year)) groups.set(year, []);
+      groups.get(year)!.push(project);
     });
 
-    // Convert to array and sort years (newest first, but 'Undated' last)
-    return Object.entries(groups)
-      .map(([year, projects]) => ({ year, projects }))
-      .sort((a, b) => {
-        if (a.year === "Undated") return 1;
-        if (b.year === "Undated") return -1;
-        return parseInt(b.year) - parseInt(a.year);
-      });
-  }, [sortedProjects]);
+    return Array.from(groups.entries())
+      .sort(([a], [b]) => {
+        if (a === "Undated") return 1;
+        if (b === "Undated") return -1;
+        return parseInt(b) - parseInt(a);
+      })
+      .map(([year, projects]) => ({ year, projects }));
+  }, [filteredProjects]);
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setSelectedType(null);
+  };
+
+  const hasActiveFilters = searchQuery !== "" || selectedType !== null;
 
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Header Section */}
-      <section className="flex flex-col items-center justify-center text-center animate-fade-in mb-10">
-        <div
-          ref={containerRef}
-          style={{
-            position: "relative",
-            minHeight: "100px",
-            width: "100%",
-            padding: "10px",
-          }}
-        >
-          <GradientText
-            animationSpeed={24}
-            transparent={true}
-            colors={["#00d4ff", "#0099ff", "#0047ff", "#00d4ff"]}
-          >
-            <VariableProximity
-              label="Projects"
-              className="text-6xl md:text-6xl font-bold"
-              fromFontVariationSettings="'wght' 100, 'opsz' 8"
-              toFontVariationSettings="'wght' 900, 'opsz' 48"
-              containerRef={
-                containerRef as unknown as React.RefObject<HTMLElement>
-              }
-              radius={100}
-              falloff="linear"
-            />
-          </GradientText>
-        </div>
-        <p className="text-lg md:text-xl text-muted-text leading-relaxed">
-          {'Philosophy: "Build Smarter. Solve Faster"'}
+    <div className="mx-auto max-w-5xl px-6 pb-24 pt-32">
+      {/* Header */}
+      <header className="mb-16 space-y-6">
+        <p className="text-sm font-medium tracking-[0.2em] text-accent">PROJECTS</p>
+        <h1 className="text-4xl tracking-tight md:text-5xl">
+          Things I&apos;ve built
+        </h1>
+        <p className="max-w-xl text-secondary-text">
+          A selection of software, tooling, and experiments across AI, games, 
+          and developer experience.
         </p>
-      </section>
+      </header>
 
-      {/* Search and Filter Section */}
-      <div className="flex flex-col items-center gap-4 mb-8">
-        {/* Desktop Layout - Centered */}
-        <div className="hidden md:flex flex-col items-center gap-4 w-full max-w-2xl">
-          {/* Search Bar on top, centered */}
-          <div className="w-full">
-            <Suspense fallback={<div>Loading...</div>}>
-              <SearchBar
-                items={projects}
-                onFilteredItems={setFilteredProjects}
-                className="w-full"
-              />
-            </Suspense>
+      {/* Filters */}
+      <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-wrap items-center gap-4">
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-text" />
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder="Search... (# for tags)"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-56 rounded-full border border-white/[0.06] bg-white/[0.02] py-2 pl-9 pr-10 text-sm text-primary-text placeholder-muted-text outline-none transition-colors focus:border-accent/30"
+            />
+            <kbd className="absolute right-3 top-1/2 -translate-y-1/2 hidden rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-muted-text sm:inline-block">/</kbd>
           </div>
 
-          {/* Controls below in a row */}
-          <div className="flex items-center gap-4">
-            {/* Sort Controls */}
-            <div className="overflow-hidden rounded-lg bg-white/5 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center">
-              <button
-                onClick={() => handleSortClick("title")}
-                className={`px-3 py-1.5 flex items-center gap-2 border-r border-white/5 transition-colors hover:bg-white/5
-                  ${sortField === "title" ? "text-accent" : "text-muted-text"}`}
-                aria-label={`Sort by title ${
-                  sortField === "title" && sortDirection === "asc"
-                    ? "descending"
-                    : "ascending"
-                }`}
-                title={`Sort by title: ${
-                  sortField === "title" && sortDirection === "asc"
-                    ? "descending"
-                    : "ascending"
-                }`}
-              >
-                {getSortIcon("title")}
-                <span className="text-sm">Title</span>
-              </button>
-
-              <button
-                onClick={() => handleSortClick("date")}
-                className={`px-3 py-1.5 flex items-center gap-2 transition-colors hover:bg-white/5
-                  ${sortField === "date" ? "text-accent" : "text-muted-text"}`}
-                aria-label={`Sort by date ${
-                  sortField === "date" && sortDirection === "desc"
-                    ? "oldest first"
-                    : "newest first"
-                }`}
-                title={`Sort by date: ${
-                  sortField === "date" && sortDirection === "desc"
-                    ? "oldest first"
-                    : "newest first"
-                }`}
-              >
-                {getSortIcon("date")}
-                <span className="text-sm">Date</span>
-              </button>
-            </div>
-
-            {/* Type Filter */}
-            <div className="overflow-hidden rounded-lg bg-white/5 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center">
-              {allTypes.map((type) => (
-                <button
-                  key={type}
-                  onClick={() =>
-                    setSelectedType(selectedType === type ? null : type)
-                  }
-                  className={`px-3 py-1.5 flex items-center gap-2 border-r border-white/5 transition-colors hover:bg-white/5 capitalize
-                    ${
-                      selectedType === type ? "text-accent" : "text-muted-text"
-                    }`}
-                  title={`Filter by type: ${type}`}
-                >
-                  {getTypeIcon(type)}
-                  <span className="text-sm">{type}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Layout */}
-        <div className="flex flex-col w-full gap-4 md:hidden">
-          {/* Search Bar on top */}
-          <SearchBar
-            items={projects}
-            onFilteredItems={setFilteredProjects}
-            className="w-full"
-          />
-
-          {/* Sort Controls below, not full width */}
-          <div className="self-center overflow-hidden rounded-lg bg-white/5 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center">
+          {/* Type filters */}
+          <div className="flex items-center gap-1">
             <button
-              onClick={() => handleSortClick("title")}
-              className={`px-3 py-1.5 flex items-center gap-2 border-r border-white/5 transition-colors hover:bg-white/5
-                ${sortField === "title" ? "text-accent" : "text-muted-text"}`}
-              aria-label={`Sort by title ${
-                sortField === "title" && sortDirection === "asc"
-                  ? "descending"
-                  : "ascending"
-              }`}
-              title={`Sort by title: ${
-                sortField === "title" && sortDirection === "asc"
-                  ? "descending"
-                  : "ascending"
-              }`}
+              onClick={() => setSelectedType(null)}
+              className={cn(
+                "rounded-full px-3 py-1.5 text-sm transition-colors",
+                selectedType === null
+                  ? "bg-white/[0.08] text-primary-text"
+                  : "text-muted-text hover:text-secondary-text"
+              )}
             >
-              {getSortIcon("title")}
-              <span className="text-sm">Title</span>
+              All
             </button>
-
-            <button
-              onClick={() => handleSortClick("date")}
-              className={`px-3 py-1.5 flex items-center gap-2 transition-colors hover:bg-white/5
-                ${sortField === "date" ? "text-accent" : "text-muted-text"}`}
-              aria-label={`Sort by date ${
-                sortField === "date" && sortDirection === "desc"
-                  ? "oldest first"
-                  : "newest first"
-              }`}
-              title={`Sort by date: ${
-                sortField === "date" && sortDirection === "desc"
-                  ? "oldest first"
-                  : "newest first"
-              }`}
-            >
-              {getSortIcon("date")}
-              <span className="text-sm">Date</span>
-            </button>
-          </div>
-
-          {/* Type Filter */}
-          <div className="self-center overflow-hidden rounded-lg bg-white/5 backdrop-blur-md border border-white/5 shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center">
             {allTypes.map((type) => (
               <button
                 key={type}
-                onClick={() =>
-                  setSelectedType(selectedType === type ? null : type)
-                }
-                className={`px-3 py-1.5 flex items-center gap-2 border-r border-white/5 transition-colors hover:bg-white/5 capitalize
-                  ${selectedType === type ? "text-accent" : "text-muted-text"}`}
-                title={`Filter by type: ${type}`}
+                onClick={() => setSelectedType(selectedType === type ? null : type)}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm capitalize transition-colors",
+                  selectedType === type
+                    ? "bg-accent/20 text-accent"
+                    : "text-muted-text hover:text-secondary-text"
+                )}
               >
                 {getTypeIcon(type)}
-                <span className="text-sm">{type}</span>
+                <span>{type}</span>
               </button>
             ))}
           </div>
+
+          {hasActiveFilters && (
+            <button
+              onClick={clearFilters}
+              className="flex items-center gap-1 text-xs text-muted-text hover:text-primary-text"
+            >
+              <X className="h-3 w-3" />
+              Clear
+            </button>
+          )}
+        </div>
+
+        {/* View toggle */}
+        <div className="flex items-center gap-1 rounded-full border border-white/[0.06] p-1">
+          <button
+            onClick={() => setViewMode("grid")}
+            className={cn(
+              "rounded-full p-2 transition-colors",
+              viewMode === "grid"
+                ? "bg-white/[0.08] text-primary-text"
+                : "text-muted-text hover:text-secondary-text"
+            )}
+            aria-label="Grid view"
+          >
+            <Grid3X3 className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => setViewMode("list")}
+            className={cn(
+              "rounded-full p-2 transition-colors",
+              viewMode === "list"
+                ? "bg-white/[0.08] text-primary-text"
+                : "text-muted-text hover:text-secondary-text"
+            )}
+            aria-label="List view"
+          >
+            <List className="h-4 w-4" />
+          </button>
         </div>
       </div>
 
-      {/* Projects with Year Grouping */}
-      <motion.div
-        className="space-y-8"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        {sortedProjects.length === 0 ? (
-          <div className="text-center text-muted-text py-12">
-            No projects found matching your search criteria.
+      {/* Projects */}
+      <div className="space-y-16">
+        {filteredProjects.length === 0 ? (
+          <div className="py-16 text-center">
+            <p className="text-secondary-text">No projects found.</p>
+            <button
+              onClick={clearFilters}
+              className="mt-4 text-sm text-accent hover:underline"
+            >
+              Clear filters
+            </button>
           </div>
         ) : (
-          groupedProjects.map((yearGroup, yearIndex) => (
-            <motion.div
-              key={yearGroup.year}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: yearIndex * 0.1 }}
-              className="space-y-6"
-            >
-              {/* Year Header */}
-              <div className="flex items-center gap-4 mb-6">
-                <motion.h2
-                  className="text-3xl font-bold text-accent"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {yearGroup.year}
-                </motion.h2>
-                <div className="flex-1 h-px bg-gradient-to-r from-accent/50 to-transparent" />
-                <span className="text-sm text-secondary-text bg-secondary-bg/50 px-3 py-1 rounded-full">
-                  {yearGroup.projects.length} project
-                  {yearGroup.projects.length !== 1 ? "s" : ""}
+          groupedProjects.map((group) => (
+            <section key={group.year}>
+              {/* Year header */}
+              <div className="mb-6 flex items-center gap-4">
+                <span className="text-2xl font-medium text-primary-text">
+                  {group.year}
                 </span>
+                <span className="rounded-full bg-white/[0.04] px-2.5 py-0.5 text-xs text-muted-text">
+                  {group.projects.length}
+                </span>
+                <div className="h-px flex-1 bg-white/[0.04]" />
               </div>
 
-              {/* Projects Grid */}
-              <div className="grid gap-4 md:grid-cols-2">
-                {yearGroup.projects.map((project, projectIndex) => (
-                  <motion.div
-                    key={project.metadata.title}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.4,
-                      delay: yearIndex * 0.1 + projectIndex * 0.05,
-                    }}
-                    whileHover={{ y: -4 }}
-                  >
-                    <GlassCard
-                      href={
-                        project.links.github ||
-                        `/projects/${project.metadata.slug}`
-                      }
-                      external={!!project.links.github}
-                      className="h-full p-4 hover:border-accent/30 transition-all duration-300"
-                      spotlightColor="rgba(34, 123, 224, 0.1)"
-                    >
-                      <div className="relative z-10 h-full flex flex-col">
-                        {/* Title and Type */}
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            {getTypeIcon(project.metadata.type)}
-                            <h3 className="text-lg font-bold group-hover:text-accent transition-colors line-clamp-2">
-                              {project.metadata.title}
-                            </h3>
-                          </div>
-                          {project.links.github && (
-                            <FaGithub className="text-muted-text text-lg flex-shrink-0" />
-                          )}
-                        </div>
-
-                        {/* Date */}
-                        {project.metadata.date && (
-                          <div className="flex items-center text-secondary-text text-sm mb-3">
-                            <FaCalendarAlt className="mr-2" />
-                            <time>
-                              {dateFormatter({
-                                date: project.metadata.date,
-                                month: "short",
-                                day: "numeric",
-                                year: "numeric",
-                              })}
-                            </time>
-                          </div>
-                        )}
-
-                        {/* Description */}
-                        <p className="text-muted-text mb-4 line-clamp-3 flex-grow">
-                          {project.metadata.description}
-                        </p>
-
-                        {/* Tags */}
-                        {project.metadata.tags &&
-                          project.metadata.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mt-auto">
-                              {project.metadata.tags
-                                .slice(0, 3)
-                                .map((tag, index) => (
-                                  <span
-                                    key={index}
-                                    className="flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-accent/10 text-accent"
-                                  >
-                                    <FaHashtag className="w-3 h-3" />
-                                    {tag}
-                                  </span>
-                                ))}
-                              {project.metadata.tags.length > 3 && (
-                                <span className="text-xs text-secondary-text px-2 py-1">
-                                  +{project.metadata.tags.length - 3} more
-                                </span>
-                              )}
-                            </div>
-                          )}
-                      </div>
-                    </GlassCard>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
+              {/* Projects grid/list */}
+              {viewMode === "grid" ? (
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {group.projects.map((project) => (
+                    <ProjectGridCard key={project.metadata.slug ?? project.metadata.title} project={project} />
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {group.projects.map((project) => (
+                    <ProjectListItem key={project.metadata.slug ?? project.metadata.title} project={project} />
+                  ))}
+                </div>
+              )}
+            </section>
           ))
         )}
-      </motion.div>
+      </div>
     </div>
+  );
+}
+
+function ProjectGridCard({ project }: { project: ProjectCard }) {
+  const href = project.links.github || `/projects/${project.metadata.slug}`;
+  const isExternal = Boolean(project.links.github);
+
+  return (
+    <Link
+      href={href}
+      target={isExternal ? "_blank" : undefined}
+      rel={isExternal ? "noopener noreferrer" : undefined}
+      className="group relative flex flex-col rounded-2xl border border-white/[0.04] bg-white/[0.02] p-5 transition-all hover:border-white/[0.08] hover:bg-white/[0.04]"
+    >
+      {/* Header */}
+      <div className="mb-3 flex items-start justify-between">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
+          {getTypeIcon(project.links.github ? "github" : project.metadata.type)}
+        </div>
+        {isExternal && (
+          <ExternalLink className="h-4 w-4 text-muted-text opacity-0 transition-opacity group-hover:opacity-100" />
+        )}
+      </div>
+
+      {/* Content */}
+      <h3 className="mb-2 font-medium text-primary-text transition-colors group-hover:text-accent">
+        {project.metadata.title}
+      </h3>
+      {project.metadata.description && (
+        <p className="mb-4 text-sm text-secondary-text line-clamp-2">
+          {project.metadata.description}
+        </p>
+      )}
+
+      {/* Tags */}
+      {project.metadata.tags && project.metadata.tags.length > 0 && (
+        <div className="mt-auto flex flex-wrap gap-2 pt-3">
+          {project.metadata.tags.slice(0, 3).map((tag) => (
+            <span key={tag} className="tag">{tag}</span>
+          ))}
+        </div>
+      )}
+    </Link>
+  );
+}
+
+function ProjectListItem({ project }: { project: ProjectCard }) {
+  const href = project.links.github || `/projects/${project.metadata.slug}`;
+  const isExternal = Boolean(project.links.github);
+
+  return (
+    <Link
+      href={href}
+      target={isExternal ? "_blank" : undefined}
+      rel={isExternal ? "noopener noreferrer" : undefined}
+      className="group flex items-center gap-4 rounded-xl px-4 py-4 transition-colors hover:bg-white/[0.02]"
+    >
+      {/* Icon */}
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
+        {getTypeIcon(project.links.github ? "github" : project.metadata.type)}
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 min-w-0">
+        <h3 className="font-medium text-primary-text transition-colors group-hover:text-accent">
+          {project.metadata.title}
+        </h3>
+        {project.metadata.description && (
+          <p className="text-sm text-secondary-text line-clamp-1">
+            {project.metadata.description}
+          </p>
+        )}
+      </div>
+
+      {/* Tags */}
+      <div className="hidden shrink-0 items-center gap-2 md:flex">
+        {project.metadata.tags?.slice(0, 2).map((tag) => (
+          <span key={tag} className="tag">{tag}</span>
+        ))}
+      </div>
+
+      {/* Date */}
+      {project.metadata.date && (
+        <span className="hidden shrink-0 text-sm text-muted-text md:block">
+          {dateFormatter({ date: project.metadata.date, month: "short" })}
+        </span>
+      )}
+
+      {/* Arrow */}
+      <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-text opacity-0 transition-all group-hover:text-accent group-hover:opacity-100" />
+    </Link>
   );
 }

@@ -6,7 +6,6 @@ import { getProjectBySlug } from "@/lib/projects";
 import HtmlRenderer from "@/components/HtmlRenderer";
 import { redirect } from "next/navigation";
 import BackToTopButton from "@/components/BackToTopButton";
-import GrainBackground from "@/components/GrainBackground";
 import KatexStyles from "@/components/KatexStyles";
 import GitHubReadme from "@/components/ui/GitHubReadme";
 import ProjectDownloads from "@/components/ui/ProjectDownloads";
@@ -35,8 +34,7 @@ export default async function ProjectPage({
   const { metadata, content, htmlContent, readmeContent, links, downloads } = project;
 
   return (
-    <div className="min-h-screen flex flex-col bg-primary-bg text-primary-text">
-      <GrainBackground />
+    <div className="relative flex min-h-screen flex-col">
       <KatexStyles />
       <Header />
       <main className="flex-1 px-6 py-10 pt-20">

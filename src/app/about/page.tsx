@@ -3,236 +3,111 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BackToTopButton from "@/components/BackToTopButton";
-import { motion } from "framer-motion";
-import GradientText from "@/components/ui/GradientText";
-import VariableProximity from "@/components/ui/VariableProximity";
-import PhotoCarousel from "@/components/ui/PhotoCarousel";
-import PersonalBio from "@/components/ui/PersonalBio";
 import GitHubReadme from "@/components/ui/GitHubReadme";
 import HobbiesSection from "@/components/ui/HobbiesSection";
 import ResumeSection from "@/components/ui/ResumeSection";
-import ContactButton from "@/components/ui/ContactButton";
-import { useRef } from "react";
-import { aboutPhotos } from "@/lib/aboutPhotos";
-import GrainBackground from "@/components/GrainBackground";
+import { ArrowUpRight, MapPin, Briefcase, Clock } from "lucide-react";
+import Link from "next/link";
 
-// Define sections array outside component to maintain stable reference
-const sections = [
-  //{ id: "photos-bio", title: "About Me", component: PersonalBio },
-  { id: "resume", title: "Resume", component: ResumeSection },
-  { id: "github", title: "Skills & Tech", component: GitHubReadme },
-  { id: "hobbies", title: "Apps & Life", component: HobbiesSection },
+const QUICK_FACTS = [
+  { label: "Location", value: "Charlotte, NC", icon: MapPin },
+  { label: "Focus", value: "AI · Games · DevEx", icon: Briefcase },
+  { label: "Status", value: "Open to opportunities", icon: Clock },
 ];
 
 export default function AboutPage() {
-  const containerRef = useRef(null);
-
   return (
-    <div className="min-h-screen flex flex-col bg-transparent">
-      <GrainBackground />
+    <div className="relative flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1 mb-8 relative z-10">
-        {/* Hero Section */}
-        <section className="flex flex-col items-center justify-center text-center px-6 pb-20 pt-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-4xl mx-auto"
-          >
-            <div
-              ref={containerRef}
-              style={{
-                position: "relative",
-                minHeight: "120px",
-                width: "100%",
-                padding: "20px",
-              }}
-            >
-              <GradientText
-                animationSpeed={24}
-                transparent={true}
-                colors={["#00d4ff", "#0099ff", "#0047ff", "#00d4ff"]}
-              >
-                <VariableProximity
-                  label="About Me"
-                  className="text-5xl md:text-7xl font-bold"
-                  fromFontVariationSettings="'wght' 100, 'opsz' 8"
-                  toFontVariationSettings="'wght' 900, 'opsz' 48"
-                  containerRef={
-                    containerRef as unknown as React.RefObject<HTMLElement>
-                  }
-                  radius={120}
-                  falloff="gaussian"
-                />
-              </GradientText>
-            </div>
+      <main className="flex-1">
+        {/* Hero Section - matching home page style */}
+        <section className="px-6 pb-24 pt-32 md:pt-40">
+          <div className="mx-auto max-w-4xl">
+            <div className="space-y-8">
+              <div className="space-y-6">
+                <p className="text-sm font-medium tracking-[0.2em] text-accent">
+                  ABOUT
+                </p>
+                <h1 className="text-4xl tracking-tight md:text-5xl lg:text-6xl">
+                  Phil Vishnevsky
+                </h1>
+                <p className="max-w-2xl text-lg leading-relaxed text-secondary-text">
+                  Software engineer with a bias toward maintainable systems and clear handoffs. 
+                  I care about boring deploys, inclusive teams, and tooling that respects the humans operating it.
+                </p>
+              </div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="text-lg md:text-xl text-muted-text leading-relaxed max-w-2xl mx-auto"
-            >
-              {
-                "Discover my journey, skills, passions, and what drives me as a software engineer and creative problem solver."
-              }
-            </motion.p>
-          </motion.div>
-        </section>
-
-        {/* Navigation Pills */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.6 }}
-          className="sticky top-4 z-20 px-6 mb-8"
-        >
-          <div className="flex justify-center">
-            <div className="inline-flex flex-wrap justify-center gap-1 p-1 bg-neutral-800/60 backdrop-blur-md border border-neutral-600/40 rounded-xl shadow-lg">
-              {sections.map((section) => (
-                <motion.a
-                  key={section.id}
-                  href={`#${section.id}`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${"text-muted-text hover:text-primary-text hover:bg-neutral-700/50"}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.getElementById(section.id)?.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    });
-                  }}
-                >
-                  {section.title}
-                </motion.a>
-              ))}
+              {/* Quick facts row */}
+              <div className="flex flex-wrap items-center gap-6 text-sm">
+                {QUICK_FACTS.map((fact, i) => (
+                  <div key={fact.label} className="flex items-center gap-2 text-secondary-text">
+                    <fact.icon className="h-4 w-4 text-muted-text" />
+                    <span>{fact.value}</span>
+                    {i < QUICK_FACTS.length - 1 && (
+                      <span className="ml-4 h-1 w-1 rounded-full bg-white/20" />
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </motion.section>
+        </section>
 
         {/* Content Sections */}
-        <div className="max-w-7xl mx-auto px-6 space-y-24 pb-8">
-          {/* Top Section: Photos + Bio Side by Side */}
-          {/*
-          <motion.section
-            id="photos-bio"
-            data-section
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8 }}
-            className="space-y-8"
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-              <motion.div
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="space-y-4"
-              >
-                <div className="flex justify-center lg:justify-start">
-                  <code className="inline-block px-3 py-1.5 bg-neutral-900/80 border border-neutral-700/50 rounded-md text-green-400 font-mono text-lg font-medium">
-                    ~ whoami
-                  </code>
-                </div>
-                <PhotoCarousel
-                  photos={aboutPhotos}
-                  className="w-full"
-                  autoPlay={true}
-                  autoPlayInterval={6000}
-                />
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="space-y-4"
-              >
-                <div className="flex justify-center lg:justify-start">
-                  <code className="inline-block px-3 py-1.5 bg-neutral-900/80 border border-neutral-700/50 rounded-md text-green-400 font-mono text-lg font-medium">
-                    ~ history | tail -20
-                  </code>
-                </div>
-                <PersonalBio />
-              </motion.div>
-            </div>
-          </motion.section>
-          */}
-
-          {/* Resume Section - Glass Card */}
-          <motion.section
-            id="resume"
-            data-section
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8 }}
-            className="relative"
-          >
-            <div className="bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-3xl overflow-hidden shadow-lg">
-              <div className="p-8 md:p-12">
-                <div className="text-center mb-8">
-                  <div className="flex justify-center mb-4">
-                    <code className="inline-block px-4 py-2 bg-neutral-900/80 border border-neutral-700/50 rounded-md text-green-400 font-mono text-2xl md:text-3xl font-medium">
-                      ~ which skills
-                    </code>
-                  </div>
-                  <p className="text-muted-text max-w-2xl mx-auto">
-                    {
-                      "Download my resume or connect with me to discuss opportunities and collaborations."
-                    }
-                  </p>
-                </div>
-                <ResumeSection />
+        <div className="mx-auto max-w-4xl px-6 space-y-32 pb-24">
+          
+          {/* Resume Section */}
+          <section id="resume" className="scroll-mt-24">
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <p className="text-sm font-medium tracking-[0.2em] text-accent">
+                  EXPERIENCE
+                </p>
+                <h2 className="text-3xl tracking-tight md:text-4xl">
+                  Background & credentials
+                </h2>
+                <p className="text-secondary-text max-w-xl">
+                  My professional journey in software — from early projects to current focus areas.
+                </p>
               </div>
+              <ResumeSection />
             </div>
-          </motion.section>
+          </section>
 
           {/* Skills & Tech Section */}
-          <motion.section
-            id="github"
-            data-section
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8 }}
-            className="space-y-8"
-          >
-            <GitHubReadme repo="zenatron/zenatron" processSections={true} />
-          </motion.section>
+          <section id="skills" className="scroll-mt-24">
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <p className="text-sm font-medium tracking-[0.2em] text-accent">
+                  SKILLS
+                </p>
+                <h2 className="text-3xl tracking-tight md:text-4xl">
+                  Tech & expertise
+                </h2>
+              </div>
+              <GitHubReadme repo="zenatron/zenatron" processSections={true} />
+            </div>
+          </section>
 
           {/* Apps, Tools & Hobbies Section */}
-          <motion.section
-            id="hobbies"
-            data-section
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8 }}
-            className="space-y-8"
-          >
-            <div className="text-center">
-              <div className="flex justify-center mb-4">
-                <code className="inline-block px-4 py-2 bg-neutral-900/80 border border-neutral-700/50 rounded-md text-green-400 font-mono text-2xl md:text-3xl font-medium">
-                  ~ top -u phil
-                </code>
+          <section id="hobbies" className="scroll-mt-24">
+            <div className="space-y-8">
+              <div className="space-y-4 text-center">
+                <p className="text-sm font-medium tracking-[0.2em] text-accent">
+                  OFF THE CLOCK
+                </p>
+                <h2 className="text-3xl tracking-tight md:text-4xl">
+                  Tools, apps & things I enjoy
+                </h2>
+                <p className="text-secondary-text max-w-xl mx-auto">
+                  The software I reach for daily, the hobbies that keep me balanced, 
+                  and a few opinions I hold loosely.
+                </p>
               </div>
-              <p className="text-muted-text max-w-2xl mx-auto">
-                The apps, tools, and hobbies that shape my daily routine and
-                creative process.
-              </p>
+              <HobbiesSection />
             </div>
-            <HobbiesSection />
-          </motion.section>
+          </section>
         </div>
-
-        {/* Contact Button at bottom of page */}
-        <ContactButton />
       </main>
 
       <Footer />

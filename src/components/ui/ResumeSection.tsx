@@ -40,7 +40,7 @@ export default function ResumeSection() {
         </h3>
 
         {/* PDF Embed Container */}
-        <div className="relative bg-neutral-800/30 backdrop-blur-sm border border-neutral-600/30 rounded-2xl overflow-hidden shadow-lg">
+        <div className="relative border border-white/[0.06] rounded-2xl overflow-hidden">
           {/* PDF Embed */}
           <div className="aspect-[8.5/11] sm:aspect-[8.5/11] md:aspect-[8.5/11] w-full">
             <iframe
@@ -91,7 +91,7 @@ export default function ResumeSection() {
         <div className="space-y-3">
           <h4 className="text-lg font-medium text-primary-text">Highlights</h4>
           <div className="space-y-3">
-            <div className="flex items-center gap-3 p-3 bg-neutral-800/20 backdrop-blur-sm rounded-xl border border-neutral-600/20">
+            <div className="flex items-center gap-3 p-3 border border-white/[0.06] rounded-xl hover:bg-white/[0.02] transition-colors">
               <FaCode className="text-accent text-lg flex-shrink-0" />
               <div>
                 <div className="text-sm font-medium text-primary-text">
@@ -103,7 +103,7 @@ export default function ResumeSection() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-3 bg-neutral-800/20 backdrop-blur-sm rounded-xl border border-neutral-600/20">
+            <div className="flex items-center gap-3 p-3 border border-white/[0.06] rounded-xl hover:bg-white/[0.02] transition-colors">
               <FaGraduationCap className="text-accent text-lg flex-shrink-0" />
               <div>
                 <div className="text-sm font-medium text-primary-text">
@@ -115,7 +115,7 @@ export default function ResumeSection() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-3 bg-neutral-800/20 backdrop-blur-sm rounded-xl border border-neutral-600/20">
+            <div className="flex items-center gap-3 p-3 border border-white/[0.06] rounded-xl hover:bg-white/[0.02] transition-colors">
               <FaMapMarkerAlt className="text-accent text-lg flex-shrink-0" />
               <div>
                 <div className="text-sm font-medium text-primary-text">
@@ -135,7 +135,7 @@ export default function ResumeSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.4, duration: 0.6 }}
-          className="text-center p-4 bg-neutral-800/25 backdrop-blur-md border border-neutral-600/30 rounded-2xl"
+          className="text-center p-4 border border-white/[0.06] rounded-2xl"
         >
           <h4 className="text-lg font-semibold mb-2 text-primary-text">
             {"Want to Chat?"}

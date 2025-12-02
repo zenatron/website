@@ -2,91 +2,50 @@
 
 import { useRef } from "react";
 import { LinkItem } from "@/types/types";
-import { motion } from "framer-motion";
-import GradientText from "../ui/GradientText";
 import VariableProximity from "../ui/VariableProximity";
 import LinkCard from "../ui/LinkCard";
-import ShinyText from "../ui/ShinyText";
 
 interface LinksClientProps {
   links: LinkItem[];
 }
 
 export default function LinksClient({ links }: LinksClientProps) {
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="mx-auto max-w-4xl px-6 pb-24 pt-24">
       {/* Header Section */}
-      <section className="flex flex-col items-center justify-center text-center animate-fade-in mb-10">
-        <div
-          ref={containerRef}
-          style={{
-            position: "relative",
-            minHeight: "100px",
-            width: "100%",
-            padding: "10px",
-          }}
-        >
-          <GradientText
-            animationSpeed={24}
-            transparent={true}
-            colors={["#00d4ff", "#0099ff", "#0047ff", "#00d4ff"]}
-          >
+      <header className="mb-16 space-y-6 text-center">
+        <p className="text-sm font-medium tracking-[0.2em] text-accent">LINKS</p>
+        <div ref={containerRef} className="relative">
+          <h1 className="text-4xl tracking-tight md:text-5xl">
             <VariableProximity
               label="Phil Vishnevsky"
-              className="text-6xl md:text-6xl font-bold"
-              fromFontVariationSettings="'wght' 100, 'opsz' 8"
-              toFontVariationSettings="'wght' 900, 'opsz' 48"
-              containerRef={
-                containerRef as unknown as React.RefObject<HTMLElement>
-              }
-              radius={100}
-              falloff="linear"
+              className="inline-block"
+              fromFontVariationSettings="'wght' 400"
+              toFontVariationSettings="'wght' 600"
+              containerRef={containerRef}
+              radius={150}
+              falloff="gaussian"
             />
-          </GradientText>
+          </h1>
         </div>
-        <motion.div
-          className="mt-2 space-y-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-        >
-          <ShinyText
-            text="Connect with me across platforms!"
-            disabled={false}
-            speed={3}
-            className="tag-bubble text-sm md:text-lg border-gray-600 hover:border-gray-400 transition-all duration-300"
-          />
-          <motion.p
-            className="text-secondary-text text-sm md:text-base max-w-2xl mx-auto leading-relaxed"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-          >
-            {"SWE • AI/ML • Games"}
-          </motion.p>
-        </motion.div>
-      </section>
+        <p className="mx-auto max-w-md text-secondary-text">
+          Connect with me across platforms
+        </p>
+        <div className="flex items-center justify-center gap-2">
+          <span className="tag-bubble">SWE</span>
+          <span className="tag-bubble">AI/ML</span>
+          <span className="tag-bubble">Games</span>
+        </div>
+      </header>
 
       {/* Links */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="flex flex-col gap-2 max-w-md mx-auto"
-      >
+      <div className="mx-auto flex max-w-md flex-col gap-3">
         {links.map((link) => (
-          <motion.div
-            key={link.url}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <LinkCard item={link} />
-          </motion.div>
+          <LinkCard key={link.url} item={link} />
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 }

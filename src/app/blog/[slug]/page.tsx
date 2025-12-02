@@ -2,12 +2,11 @@ import { getBlogPostBySlug } from "@/lib/blog";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
-import { FaHashtag, FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa";
 import dateFormatter from "@/utils/dateFormatter";
 import BackToTopButton from "@/components/BackToTopButton";
 import TableOfContents from "@/components/blog/TableOfContents";
 import KatexStyles from "@/components/KatexStyles";
-import GrainBackground from "@/components/GrainBackground";
 
 export async function generateStaticParams() {
   const params = await import("@/lib/blog").then((mod) =>
@@ -26,7 +25,7 @@ export default async function BlogPage({
 
   if (!post) {
     return (
-      <div className="min-h-screen flex flex-col bg-transparent">
+      <div className="relative flex min-h-screen flex-col">
         <Header />
         <main className="flex-1 flex flex-col items-center justify-center text-center px-6">
           <h1 className="text-6xl font-bold">404</h1>
@@ -47,8 +46,7 @@ export default async function BlogPage({
   }
 
   return (
-    <div className="min-h-screen bg-transparent relative">
-      <GrainBackground />
+    <div className="relative flex min-h-screen flex-col">
       <KatexStyles />
       <Header />
 
@@ -95,8 +93,7 @@ export default async function BlogPage({
                           className="tag-bubble"
                           title={`View posts with tag: ${tag}`}
                         >
-                          <FaHashtag className="mr-1 text-xs opacity-70" />
-                          {tag}
+                          #{tag}
                         </Link>
                       ))}
                     </div>

@@ -6,7 +6,6 @@ import { getAllProjects } from "@/lib/projects";
 import BackToTopButton from "@/components/BackToTopButton";
 import { Suspense } from "react";
 import ClientSkeletonLoader from "@/components/ui/ClientSkeletonLoader";
-import GrainBackground from "@/components/GrainBackground";
 
 export default async function ProjectsPage() {
   const githubProjects = await getGithubRepos();
@@ -14,14 +13,11 @@ export default async function ProjectsPage() {
   const allProjects = [...dataProjects, ...githubProjects];
 
   return (
-    <div className="min-h-screen flex flex-col bg-transparent">
-      <GrainBackground />
+    <div className="relative flex min-h-screen flex-col">
       <Header />
-      <div className="pt-4">
-        <Suspense fallback={<ClientSkeletonLoader layout="grid" />}>
-          <ProjectsLayout projects={allProjects} />
-        </Suspense>
-      </div>
+      <Suspense fallback={<ClientSkeletonLoader layout="grid" />}>
+        <ProjectsLayout projects={allProjects} />
+      </Suspense>
       <Footer />
       <BackToTopButton />
     </div>
