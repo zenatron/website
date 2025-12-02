@@ -32,8 +32,7 @@ export default function AboutPage() {
                   Phil Vishnevsky
                 </h1>
                 <p className="mx-auto max-w-2xl text-lg leading-relaxed text-secondary-text">
-                  I write code, break things, and occasionally ship something useful. 
-                  CS student at UNC Charlotte. Making games and AI tools on the side.
+                  I write code, break things, and occasionally ship something useful.
                 </p>
               </div>
 
