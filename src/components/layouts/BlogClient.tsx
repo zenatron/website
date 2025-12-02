@@ -18,6 +18,14 @@ export default function BlogClient({ posts }: BlogClientProps) {
   const initialTag = searchParams.get("tag");
   
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Calculate total words across all posts
+  const totalWords = useMemo(() => {
+    return posts.reduce((acc, post) => {
+      const wordCount = post.searchableContent?.split(/\s+/).filter(Boolean).length || 0;
+      return acc + wordCount;
+    }, 0);
+  }, [posts]);
   const [selectedTag, setSelectedTag] = useState<string | null>(initialTag);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -137,7 +145,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
           Blog: Barely Legible Organized Gibberish
         </h1>
         <p className="max-w-xl text-secondary-text">
-          Thoughts on code, learning, and whatever else I&apos;m figuring out.
+          Thoughts on code, learning, and whatever else I&apos;m figuring out. <span className="tabular-nums text-accent">{totalWords.toLocaleString()}</span> words written so far.
         </p>
       </header>
 

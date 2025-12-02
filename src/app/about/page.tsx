@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BackToTopButton from "@/components/BackToTopButton";
@@ -15,7 +16,28 @@ const QUICK_FACTS = [
   { label: "Status", value: "Open to opportunities", icon: Clock },
 ];
 
+const CODING_START_DATE = new Date("2019-06-01");
+const getDaysOfExperience = () => {
+  const now = new Date();
+  const diffTime = Math.abs(now.getTime() - CODING_START_DATE.getTime());
+  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+};
+const getSecondsOfExperience = () => {
+  const now = new Date();
+  const diffTime = Math.abs(now.getTime() - CODING_START_DATE.getTime());
+  return Math.floor(diffTime / 1000);
+};
+
 export default function AboutPage() {
+  const [seconds, setSeconds] = useState(getSecondsOfExperience());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSeconds(getSecondsOfExperience());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="relative flex min-h-screen flex-col">
       <Header />
@@ -66,7 +88,7 @@ export default function AboutPage() {
                   The story so far
                 </h2>
                 <p className="text-secondary-text max-w-xl mx-auto">
-                  Started coding in 2020. Haven&apos;t really stopped.
+                  Started coding in 2019. Haven&apos;t really stopped. That&apos;s, like, <span className="tabular-nums text-accent">{getDaysOfExperience().toLocaleString()}</span> days of experience. Or <span className="tabular-nums text-accent">{seconds.toLocaleString()}</span> seconds.
                 </p>
               </div>
               <ResumeSection />
