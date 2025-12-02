@@ -309,11 +309,45 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
 }
 
 function ProjectGridCard({ project }: { project: ProjectCard }) {
+  const [isHovering, setIsHovering] = useState(false);
+  const [showCurious, setShowCurious] = useState(false);
+  const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Show "Interested?" after 3 seconds of hovering
+  useEffect(() => {
+    if (isHovering) {
+      hoverTimerRef.current = setTimeout(() => {
+        setShowCurious(true);
+      }, 3000);
+    } else {
+      if (hoverTimerRef.current) {
+        clearTimeout(hoverTimerRef.current);
+      }
+      setShowCurious(false);
+    }
+    return () => {
+      if (hoverTimerRef.current) {
+        clearTimeout(hoverTimerRef.current);
+      }
+    };
+  }, [isHovering]);
+
   const href = project.links.github || `/projects/${project.metadata.slug}`;
   const isExternal = Boolean(project.links.github);
 
   return (
-    <div className="group relative flex flex-col rounded-2xl border border-white/[0.04] bg-white/[0.02] p-5 transition-all hover:border-white/[0.08] hover:bg-white/[0.04]">
+    <div 
+      className="group relative flex flex-col rounded-2xl border border-white/[0.04] bg-white/[0.02] p-5 transition-all hover:border-white/[0.08] hover:bg-white/[0.04]"
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
+      {/* Curious easter egg */}
+      {showCurious && (
+        <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-accent/20 border border-accent/30 rounded-md text-xs text-accent whitespace-nowrap z-20 animate-fade-in">
+          👀 Interested?
+        </div>
+      )}
+      
       {/* Clickable overlay for main link */}
       <Link
         href={href}

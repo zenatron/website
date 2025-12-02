@@ -100,6 +100,9 @@ export default function BlogClient({ posts }: BlogClientProps) {
 
   // Easter egg: Check for "42" search
   const is42Search = searchQuery.trim() === "42";
+  
+  // Easter egg: Check for "bug" search
+  const isBugSearch = searchQuery.trim().toLowerCase() === "bug";
 
   // Word count click easter egg messages
   const getWordCountMessage = () => {
@@ -233,7 +236,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
             placeholder={getPlaceholder()}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-full border border-white/[0.06] bg-white/[0.02] py-3 pl-11 pr-12 text-sm text-primary-text placeholder-muted-text outline-none transition-colors focus:border-accent/30 focus:bg-white/[0.04]"
+            className="w-full rounded-full border border-white/[0.06] bg-white/[0.02] py-3 pl-11 pr-12 text-base sm:text-sm text-primary-text placeholder-muted-text outline-none transition-colors focus:border-accent/30 focus:bg-white/[0.04]"
           />
           <kbd className="absolute right-4 top-1/2 -translate-y-1/2 hidden rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-muted-text sm:inline-block">/</kbd>
         </div>
@@ -243,6 +246,14 @@ export default function BlogClient({ posts }: BlogClientProps) {
           <div className="rounded-lg border border-accent/30 bg-accent/5 px-4 py-3 max-w-md">
             <p className="text-sm text-accent font-medium">🌌 The Answer to Life, the Universe, and Everything</p>
             <p className="text-xs text-muted-text mt-1">But what was the question? - Douglas Adams</p>
+          </div>
+        )}
+
+        {/* Bug Easter Egg */}
+        {isBugSearch && (
+          <div className="rounded-lg border border-accent/30 bg-accent/5 px-4 py-3 max-w-md">
+            <p className="text-sm text-accent font-medium">🐛 No bugs here!</p>
+            <p className="text-xs text-muted-text mt-1">Only &quot;undocumented features&quot; and &quot;creative interpretations of the spec.&quot;</p>
           </div>
         )}
 

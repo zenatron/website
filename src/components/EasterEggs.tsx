@@ -52,6 +52,18 @@ const SECRET_COMMANDS: Record<string, { title: string; message: string }> = {
     title: "Change Directory",
     message: "You're already where you need to be ✨",
   },
+  rm: {
+    title: "rm -rf /",
+    message: "Nice try. This isn't a real terminal... or is it? 😈",
+  },
+  cat: {
+    title: "cat",
+    message: "🐱 meow",
+  },
+  git: {
+    title: "git",
+    message: "fatal: not a git repository (or any of the parent directories)",
+  },
 };
 
 type Toast = {
@@ -92,6 +104,29 @@ export default function EasterEggs() {
   const dismissToast = (id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
+
+  // Console easter egg - runs once on mount
+  useEffect(() => {
+    console.log(`
+%c  ____  _     _ _  __     ___     _                          _          
+%c |  _ \| |__ (_) | \ \   / (_)___| |__  _ __   _____   _____ | | ___   _ 
+%c | |_) | '_ \| | |  \ \ / /| / __| '_ \| '_ \ / _ \ \ / / __|| |/ / | | |
+%c |  __/| | | | | |   \ V / | \__ \ | | | | | |  __/\ V /\__ \|   <| |_| |
+%c |_|   |_| |_|_|_|    \_/  |_|___/_| |_|_| |_|\___| \_/ |___/|_|\_\\__, |
+%c                                                                   |___/ 
+`,
+      'color: #7c8aff',
+      'color: #8a7cff',
+      'color: #9c7cff',
+      'color: #7c9aff',
+      'color: #7cbfff',
+      'color: #7cdfff'
+    );
+    console.log('%c👋 Hey, fellow developer!', 'font-size: 16px; font-weight: bold;');
+    console.log('%c🔍 Curious about the code? Check it out: https://github.com/zenatron/portfolio', 'font-size: 12px;');
+    console.log('%c💼 Open to opportunities! Let\'s chat.', 'font-size: 12px; color: #7c8aff;');
+    console.log('%c🥚 Psst... try typing "help" anywhere on the site.', 'font-size: 11px; color: #888;');
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

@@ -1,11 +1,35 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { FaGithub, FaGlobe, FaExternalLinkAlt } from "react-icons/fa";
 import Link from "next/link";
 import { ProjectCard as Project } from "@/types/types";
 
 export default function ProjectCard({ project }: { project: Project }) {
+  const [isHovering, setIsHovering] = useState(false);
+  const [showCurious, setShowCurious] = useState(false);
+  const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Show "Interested?" after 3 seconds of hovering
+  useEffect(() => {
+    if (isHovering) {
+      hoverTimerRef.current = setTimeout(() => {
+        setShowCurious(true);
+      }, 3000);
+    } else {
+      if (hoverTimerRef.current) {
+        clearTimeout(hoverTimerRef.current);
+      }
+      setShowCurious(false);
+    }
+    return () => {
+      if (hoverTimerRef.current) {
+        clearTimeout(hoverTimerRef.current);
+      }
+    };
+  }, [isHovering]);
+
   // All projects now link to their individual slug pages
   const cardLink = `/projects/${project.metadata.slug}`;
 
@@ -39,14 +63,30 @@ export default function ProjectCard({ project }: { project: Project }) {
   );
 
   const cardClasses =
-    "bg-secondary-bg p-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer";
+    "relative bg-secondary-bg p-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer";
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className={cardClasses}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
     >
+      {/* Curious easter egg */}
+      <AnimatePresence>
+        {showCurious && (
+          <motion.div
+            initial={{ opacity: 0, y: -10, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -5, scale: 0.95 }}
+            className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-accent/20 border border-accent/30 rounded-md text-xs text-accent whitespace-nowrap z-10"
+          >
+            👀 Interested?
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
       <Link
         href={cardLink}
         className="group block"

@@ -70,6 +70,38 @@ export default function NotFoundPage() {
     return () => clearInterval(interval);
   }, []);
 
+  // Swap favicon to skull emoji on 404 page
+  useEffect(() => {
+    const originalFavicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+    const originalHref = originalFavicon?.href;
+    
+    // Create emoji favicon
+    const canvas = document.createElement('canvas');
+    canvas.width = 32;
+    canvas.height = 32;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.font = '28px serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('💀', 16, 18);
+      
+      const link = document.querySelector<HTMLLinkElement>('link[rel="icon"]') || document.createElement('link');
+      link.rel = 'icon';
+      link.href = canvas.toDataURL();
+      if (!document.querySelector('link[rel="icon"]')) {
+        document.head.appendChild(link);
+      }
+    }
+    
+    // Restore original on unmount
+    return () => {
+      if (originalFavicon && originalHref) {
+        originalFavicon.href = originalHref;
+      }
+    };
+  }, []);
+
   // Check for time-based achievement
   useEffect(() => {
     if (seconds >= 120) {
