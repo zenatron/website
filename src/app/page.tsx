@@ -43,7 +43,7 @@ export default async function HomePage() {
 
       <main className="flex-1">
         {/* Hero Section - Editorial style */}
-        <section className="relative overflow-hidden px-4 pb-24 pt-32 sm:px-6 md:pt-40">
+        <section className="relative overflow-hidden px-4 pb-12 pt-28 sm:pb-16 sm:px-6 md:pt-40">
           {/* Subtle accent line */}
           <div className="absolute left-1/2 top-0 h-32 w-px -translate-x-1/2 bg-gradient-to-b from-accent/40 to-transparent" />
 
@@ -95,7 +95,7 @@ export default async function HomePage() {
         </section>
 
         {/* Recent Projects Section */}
-        <section className="px-4 py-24 sm:px-6">
+        <section className="px-4 py-12 sm:py-16 sm:px-6">
           <div className="mx-auto max-w-5xl">
             <div className="mb-12 flex items-end justify-between">
               <div>
@@ -174,7 +174,7 @@ export default async function HomePage() {
         </section>
 
         {/* Writing preview */}
-        <section className="px-4 py-24 sm:px-6">
+        <section className="px-4 py-12 sm:py-16 sm:px-6">
           <div className="mx-auto max-w-5xl">
             <div className="grid gap-12 lg:grid-cols-2">
               <div className="space-y-6">
@@ -227,7 +227,7 @@ export default async function HomePage() {
         </section>
 
         {/* Philosophy section */}
-        <section className="px-4 py-24 sm:px-6">
+        <section className="px-4 py-12 sm:py-16 sm:px-6">
           <div className="mx-auto max-w-3xl text-center">
             <QuoteCarousel />
           </div>

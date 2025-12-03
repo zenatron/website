@@ -365,7 +365,13 @@ function ProjectGridCard({ project }: { project: ProjectCard }) {
     >
       {/* Curious easter egg */}
       {showCurious && (
-        <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-accent/20 border border-accent/30 rounded-md text-xs text-accent whitespace-nowrap z-20 animate-fade-in">
+        <div 
+          className="absolute -top-8 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs text-accent whitespace-nowrap z-20 animate-fade-in"
+          style={{
+            backgroundColor: "rgba(124, 138, 255, 0.15)",
+            border: "1px solid rgba(124, 138, 255, 0.3)",
+          }}
+        >
           👀 Interested?
         </div>
       )}

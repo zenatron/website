@@ -43,43 +43,40 @@ export default function MobileMenu() {
 
       {/* Menu Drawer */}
       <nav
-        className={`fixed top-0 right-0 z-40 flex h-full w-[78vw] max-w-xs flex-col gap-6 border-l border-white/10 bg-primary-bg px-5 py-8 transition-transform duration-200 md:hidden ${
+        className={`fixed top-0 right-0 z-40 flex h-full w-[65vw] max-w-[240px] flex-col gap-8 border-l border-white/[0.06] bg-primary-bg/95 backdrop-blur-md px-5 py-8 transition-transform duration-200 md:hidden ${
           menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex items-center justify-between">
-          <p className="text-xs uppercase tracking-[0.26em] text-muted-text">
+          <p className="text-xs uppercase tracking-[0.2em] text-muted-text">
             Menu
           </p>
           <button
             type="button"
-            className="flex h-9 w-9 items-center justify-center rounded-md border border-white/10 text-secondary-text transition-colors duration-150 hover:border-white/20 hover:text-primary-text"
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-white/[0.06] bg-white/[0.02] text-secondary-text transition-colors duration-150 hover:border-white/[0.1] hover:text-primary-text"
             onClick={() => setMenuOpen(false)}
             aria-label="Close menu"
           >
-            <FaTimes className="h-4 w-4" />
+            <FaTimes className="h-3.5 w-3.5" />
           </button>
         </div>
 
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-1">
           {NAV_ITEMS.map((item) => (
             <li key={item.href}>
               <Link
                 href={item.href}
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-between rounded-lg border border-white/10 px-4 py-3 text-sm font-medium text-primary-text transition-colors duration-150 hover:border-white/20 hover:bg-white/5"
+                className="block rounded-lg px-3 py-2.5 text-base font-medium text-primary-text transition-colors duration-150 hover:bg-white/[0.04] hover:text-accent"
               >
-                <span>{item.label}</span>
-                <span className="text-xs uppercase tracking-[0.18em] text-muted-text">
-                  Go
-                </span>
+                {item.label}
               </Link>
             </li>
           ))}
         </ul>
 
-        <div className="mt-auto space-y-1 text-xs text-muted-text">
-          <span className="text-secondary-text">{versionText}</span>
+        <div className="mt-auto pt-4 border-t border-white/[0.06]">
+          <span className="text-xs text-muted-text">{versionText}</span>
         </div>
       </nav>
     </>

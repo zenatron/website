@@ -17,15 +17,15 @@ const currentYear = new Date().getFullYear();
 const TIMELINE_EVENTS = [
   {
     year: `${currentYear}`,
-    title: "AI & Game Development",
-    description: "Building AI-powered tools and indie games",
+    title: "Embedded, AI & Game Development",
+    description: "Building AI tools and indie games",
     icon: FaGamepad,
     type: "work",
   },
   {
     year: "2023-Present",
     title: "Full-Stack Engineering",
-    description: "Web applications, APIs, and cloud infrastructure",
+    description: "Web apps, containers, and embedded",
     icon: FaLaptopCode,
     type: "work",
   },
