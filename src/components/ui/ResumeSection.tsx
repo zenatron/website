@@ -72,7 +72,7 @@ export default function ResumeSection() {
         className="relative"
       >
         <h3 className="mb-8 text-lg font-medium text-primary-text">
-          The Journey So Far
+          My Journey
         </h3>
 
         {/* Timeline */}

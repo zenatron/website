@@ -9,14 +9,8 @@ import GitHubReadme from "@/components/ui/GitHubReadme";
 import HobbiesSection from "@/components/ui/HobbiesSection";
 import ResumeSection from "@/components/ui/ResumeSection";
 import ContactModal from "@/components/ui/ContactModal";
-import { MapPin, Briefcase, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const QUICK_FACTS = [
-  { label: "Location", value: "Charlotte, NC", icon: MapPin },
-  { label: "Focus", value: "SWE · AI · Games", icon: Briefcase },
-  { label: "Status", value: "Open to opportunities", icon: Clock },
-];
+import { QUICK_FACTS } from "@/lib/config";
 
 const CTA_TEXTS = [
   "Get in touch",
@@ -106,7 +100,7 @@ export default function AboutPage() {
   return (
     <div className="relative flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         {/* Hero Section - matching home page style */}
         <section className="px-4 pb-12 pt-28 sm:pb-16 sm:px-6 md:pt-40">
           <div className="mx-auto max-w-5xl">

@@ -37,9 +37,11 @@ const QUOTES = [
 export default function QuoteCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const startAutoPlay = () => {
+    if (isPaused) return;
     intervalRef.current = setInterval(() => {
       setDirection(1);
       setCurrentIndex((prev) => (prev + 1) % QUOTES.length);
@@ -53,16 +55,28 @@ export default function QuoteCarousel() {
   };
 
   useEffect(() => {
-    startAutoPlay();
+    if (!isPaused) {
+      startAutoPlay();
+    }
     return () => stopAutoPlay();
-  }, []);
+  }, [isPaused]);
+
+  // Pause on hover/focus for accessibility
+  const handleMouseEnter = () => {
+    setIsPaused(true);
+    stopAutoPlay();
+  };
+
+  const handleMouseLeave = () => {
+    setIsPaused(false);
+  };
 
   const goToIndex = (index: number) => {
     setDirection(index > currentIndex ? 1 : -1);
     setCurrentIndex(index);
     // Reset autoplay timer
     stopAutoPlay();
-    startAutoPlay();
+    if (!isPaused) startAutoPlay();
   };
 
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
@@ -72,13 +86,13 @@ export default function QuoteCarousel() {
       setDirection(1);
       setCurrentIndex((prev) => (prev + 1) % QUOTES.length);
       stopAutoPlay();
-      startAutoPlay();
+      if (!isPaused) startAutoPlay();
     } else if (info.offset.x > threshold) {
       // Swiped right - go prev
       setDirection(-1);
       setCurrentIndex((prev) => (prev - 1 + QUOTES.length) % QUOTES.length);
       stopAutoPlay();
-      startAutoPlay();
+      if (!isPaused) startAutoPlay();
     }
   };
 
@@ -100,7 +114,13 @@ export default function QuoteCarousel() {
   };
 
   return (
-    <div className="relative min-h-[180px] md:min-h-[160px] touch-pan-y">
+    <div 
+      className="relative min-h-[180px] md:min-h-[160px] touch-pan-y"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onFocus={handleMouseEnter}
+      onBlur={handleMouseLeave}
+    >
       <AnimatePresence mode="wait" custom={direction}>
         <motion.blockquote
           key={currentIndex}

@@ -1,18 +1,13 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
-import { ArrowUpRight, MapPin, Briefcase, Clock } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { getAllProjects } from "@/lib/projects";
 import { getAllBlogPosts } from "@/lib/blog";
 import dateFormatter from "@/utils/dateFormatter";
 import HomeHero from "@/components/home/HomeHero";
 import QuoteCarousel from "@/components/home/QuoteCarousel";
-
-const QUICK_FACTS = [
-  { label: "Location", value: "Charlotte, NC", icon: MapPin },
-  { label: "Foci", value: "SWE · AI · Games", icon: Briefcase },
-  { label: "Status", value: "Open to opportunities", icon: Clock },
-];
+import { QUICK_FACTS } from "@/lib/config";
 
 export default async function HomePage() {
   // Fetch real data
@@ -41,7 +36,7 @@ export default async function HomePage() {
     <div className="relative flex min-h-screen flex-col">
       <Header />
 
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         {/* Hero Section - Editorial style */}
         <section className="relative overflow-hidden px-4 pb-12 pt-28 sm:pb-16 sm:px-6 md:pt-40">
           {/* Subtle accent line */}
@@ -56,7 +51,7 @@ export default async function HomePage() {
               <aside className="relative">
                 <div className="sticky top-32 space-y-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-sm">
                   <div className="flex items-center gap-3">
-                    <span className="status-dot" />
+                    <span className="status-dot" aria-hidden="true" />
                     <span className="text-sm text-secondary-text">
                       Available for work
                     </span>

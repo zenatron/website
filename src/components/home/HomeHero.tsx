@@ -47,6 +47,7 @@ export default function HomeHero() {
           <Link
             href="https://github.com/zenatron"
             target="_blank"
+            rel="noopener noreferrer"
             className="text-muted-text transition-colors hover:text-primary-text"
             aria-label="GitHub"
           >
@@ -55,6 +56,7 @@ export default function HomeHero() {
           <Link
             href="https://linkedin.com/in/philipvishnevsky"
             target="_blank"
+            rel="noopener noreferrer"
             className="text-muted-text transition-colors hover:text-primary-text"
             aria-label="LinkedIn"
           >
