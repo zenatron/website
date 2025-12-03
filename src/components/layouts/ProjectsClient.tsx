@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { ProjectCard } from "@/types/types";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -16,6 +17,7 @@ import {
 import { FaGithub, FaGlobe, FaGamepad, FaCode } from "react-icons/fa";
 import { SiJupyter } from "react-icons/si";
 import { cn } from "@/lib/utils";
+import ContactModal from "@/components/ui/ContactModal";
 
 interface ProjectsClientProps {
   projects: ProjectCard[];
@@ -51,7 +53,13 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
   );
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Sync URL tag param with search query
   useEffect(() => {
@@ -325,7 +333,33 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
             ))
           )}
         </div>
+
+        {/* Mobile CTA */}
+        <div className="mt-8 text-center sm:hidden">
+          <button
+            type="button"
+            onClick={() => setIsModalOpen(true)}
+            className="rounded-full px-5 py-2 text-sm font-medium text-accent transition-colors"
+            style={{
+              backgroundColor: "rgba(124, 138, 255, 0.15)",
+              border: "1px solid rgba(124, 138, 255, 0.3)",
+            }}
+          >
+            Get in touch
+          </button>
+        </div>
       </div>
+
+      {/* Contact Modal */}
+      {mounted &&
+        isModalOpen &&
+        createPortal(
+          <ContactModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          />,
+          document.body
+        )}
     </div>
   );
 }
@@ -365,7 +399,13 @@ function ProjectGridCard({ project }: { project: ProjectCard }) {
     >
       {/* Curious easter egg */}
       {showCurious && (
-        <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-accent/20 border border-accent/30 rounded-md text-xs text-accent whitespace-nowrap z-20 animate-fade-in">
+        <div 
+          className="absolute -top-8 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs text-accent whitespace-nowrap z-20 animate-fade-in"
+          style={{
+            backgroundColor: "rgba(124, 138, 255, 0.15)",
+            border: "1px solid rgba(124, 138, 255, 0.3)",
+          }}
+        >
           👀 Interested?
         </div>
       )}

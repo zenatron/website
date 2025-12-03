@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useMemo, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { BlogPost } from "@/types/types";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import dateFormatter from "@/utils/dateFormatter";
 import { ArrowRight, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import ContactModal from "@/components/ui/ContactModal";
 
 interface BlogClientProps {
   posts: BlogPost[];
@@ -20,6 +22,12 @@ export default function BlogClient({ posts }: BlogClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [idleTime, setIdleTime] = useState(0);
   const [wordCountClicks, setWordCountClicks] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Calculate total words across all posts
   const totalWords = useMemo(() => {
@@ -108,15 +116,33 @@ export default function BlogClient({ posts }: BlogClientProps) {
   // Word count click easter egg messages
   const getWordCountMessage = () => {
     if (wordCountClicks === 0) return null;
-    if (wordCountClicks < 3)
+    if (wordCountClicks < 2)
       return `That's ${Math.round(totalWords / 280)} tweets worth`;
-    if (wordCountClicks < 5)
+    if (wordCountClicks < 3)
       return `Or ${Math.round(totalWords / 250)} pages in a book`;
-    if (wordCountClicks < 7)
+    if (wordCountClicks < 4)
       return `About ${Math.round(totalWords / 150)} minutes to read it all`;
+    if (wordCountClicks < 5)
+      return `${Math.round(totalWords / 11)} average sentences`;
+    if (wordCountClicks < 6)
+      return `Approximately ${(totalWords / 1320).toFixed(2)} Declarations of Independence`;
+    if (wordCountClicks < 7)
+      return `Around ${Math.round(totalWords * (4 / 3))} LLM tokens`;
+    if (wordCountClicks < 8)
+      return "Okay you really like clicking this huh";
     if (wordCountClicks < 10)
-      return `${Math.round(totalWords / 5)} average word lengths`;
-    return "Okay you really like clicking this huh";
+      return "Alright, that's enough clicking for now.";
+    if (wordCountClicks < 12)
+      return "There's nothing more to see here.";
+    if (wordCountClicks < 15)
+      return "I promise";
+    if (wordCountClicks < 16)
+      return "Okay fine...";
+    if (wordCountClicks < 17)
+      return "I'll tell you a joke:";
+    if (wordCountClicks < 18)
+      return "Two types of programmers exist: those who can extrapolate from incomplete data.";
+    return "pls read my blog";
   };
 
   // Handle tag selection - update URL
@@ -209,10 +235,10 @@ export default function BlogClient({ posts }: BlogClientProps) {
         {/* Header */}
         <header className="mb-16 space-y-6">
           <p className="text-sm font-medium tracking-[0.2em] text-accent">
-            WRITING
+            BLOG
           </p>
           <h1 className="text-4xl tracking-tight md:text-5xl">
-            Blog: Barely Legible Organized Gibberish
+            Barely Legible Organized Gibberish
           </h1>
           <p className="max-w-xl text-secondary-text">
             Thoughts on code, learning, and whatever else I&apos;m figuring out.{" "}
@@ -395,7 +421,33 @@ export default function BlogClient({ posts }: BlogClientProps) {
             ))
           )}
         </div>
+
+        {/* Mobile CTA */}
+        <div className="mt-8 text-center sm:hidden">
+          <button
+            type="button"
+            onClick={() => setIsModalOpen(true)}
+            className="rounded-full px-5 py-2 text-sm font-medium text-accent transition-colors"
+            style={{
+              backgroundColor: "rgba(124, 138, 255, 0.15)",
+              border: "1px solid rgba(124, 138, 255, 0.3)",
+            }}
+          >
+            Get in touch
+          </button>
+        </div>
       </div>
+
+      {/* Contact Modal */}
+      {mounted &&
+        isModalOpen &&
+        createPortal(
+          <ContactModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          />,
+          document.body
+        )}
     </div>
   );
 }

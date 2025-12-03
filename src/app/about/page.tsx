@@ -1,19 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
+import { createPortal } from "react-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BackToTopButton from "@/components/BackToTopButton";
 import GitHubReadme from "@/components/ui/GitHubReadme";
 import HobbiesSection from "@/components/ui/HobbiesSection";
 import ResumeSection from "@/components/ui/ResumeSection";
-import { ArrowUpRight, MapPin, Briefcase, Clock } from "lucide-react";
-import Link from "next/link";
+import ContactModal from "@/components/ui/ContactModal";
+import { motion, AnimatePresence } from "framer-motion";
+import { QUICK_FACTS } from "@/lib/config";
 
-const QUICK_FACTS = [
-  { label: "Location", value: "Charlotte, NC", icon: MapPin },
-  { label: "Focus", value: "SWE · AI · Games", icon: Briefcase },
-  { label: "Status", value: "Open to opportunities", icon: Clock },
+const CTA_TEXTS = [
+  "Get in touch",
+  "Reach out",
+  "Say hello",
+  "Shoot your shot",
+  "Let's talk",
+  "Slide into my inbox",
+  "Make my day",
 ];
 
 const CODING_START_DATE = new Date("2019-06-01");
@@ -28,8 +34,50 @@ const getSecondsOfExperience = () => {
   return Math.floor(diffTime / 1000);
 };
 
+// Memoized CTA button to prevent re-render when seconds counter updates
+const CTAButton = memo(({ ctaIndex, onClick }: { ctaIndex: number; onClick: () => void }) => (
+  <button
+    onClick={onClick}
+    className="group inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium text-accent transition-all duration-200 hover:scale-105"
+    style={{
+      backgroundColor: "rgba(124, 138, 255, 0.15)",
+      border: "1px solid rgba(124, 138, 255, 0.3)",
+    }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.backgroundColor = "rgba(124, 138, 255, 0.25)";
+      e.currentTarget.style.borderColor = "rgba(124, 138, 255, 0.5)";
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.backgroundColor = "rgba(124, 138, 255, 0.15)";
+      e.currentTarget.style.borderColor = "rgba(124, 138, 255, 0.3)";
+    }}
+  >
+    <AnimatePresence mode="wait">
+      <motion.span
+        key={ctaIndex}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.2 }}
+      >
+        {CTA_TEXTS[ctaIndex]}
+      </motion.span>
+    </AnimatePresence>
+    <span className="transition-transform duration-200 group-hover:translate-x-0.5">→</span>
+  </button>
+));
+CTAButton.displayName = "CTAButton";
+
 export default function AboutPage() {
   const [seconds, setSeconds] = useState(getSecondsOfExperience());
+  const [ctaIndex1, setCtaIndex1] = useState(0);
+  const [ctaIndex2, setCtaIndex2] = useState(3); // Start with different text
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -38,12 +86,23 @@ export default function AboutPage() {
     return () => clearInterval(interval);
   }, []);
 
+  // Rotate CTA texts
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCtaIndex1((prev) => (prev + 1) % CTA_TEXTS.length);
+      setCtaIndex2((prev) => (prev + 1) % CTA_TEXTS.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const openModal = () => setIsModalOpen(true);
+
   return (
     <div className="relative flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         {/* Hero Section - matching home page style */}
-        <section className="px-4 pb-24 pt-32 sm:px-6 md:pt-40">
+        <section className="px-4 pb-12 pt-28 sm:pb-16 sm:px-6 md:pt-40">
           <div className="mx-auto max-w-5xl">
             <div className="space-y-8 text-center">
               <div className="space-y-6">
@@ -74,12 +133,17 @@ export default function AboutPage() {
                   </div>
                 ))}
               </div>
+
+              {/* CTA Button - Top */}
+              <div className="pt-4">
+                <CTAButton ctaIndex={ctaIndex1} onClick={openModal} />
+              </div>
             </div>
           </div>
         </section>
 
         {/* Content Sections */}
-        <div className="mx-auto max-w-5xl px-4 space-y-32 pb-24 sm:px-6">
+        <div className="mx-auto max-w-5xl px-4 space-y-16 sm:space-y-24 pb-16 sm:pb-24 sm:px-6">
           {/* Resume Section */}
           <section id="resume" className="scroll-mt-24">
             <div className="space-y-8">
@@ -140,11 +204,32 @@ export default function AboutPage() {
               <HobbiesSection />
             </div>
           </section>
+
+          {/* Bottom CTA Section */}
+          <section className="text-center pt-4">
+            <div className="space-y-2">
+              <p className="text-secondary-text text-sm">
+                Made it this far? I&apos;m impressed.
+              </p>
+              <CTAButton ctaIndex={ctaIndex2} onClick={openModal} />
+            </div>
+          </section>
         </div>
       </main>
 
       <Footer />
       <BackToTopButton />
+
+      {/* Contact Modal */}
+      {mounted &&
+        isModalOpen &&
+        createPortal(
+          <ContactModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          />,
+          document.body
+        )}
     </div>
   );
 }
