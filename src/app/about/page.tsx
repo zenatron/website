@@ -102,7 +102,7 @@ export default function AboutPage() {
       <Header />
       <main id="main-content" className="flex-1">
         {/* Hero Section - matching home page style */}
-        <section className="px-4 pb-12 pt-28 sm:pb-16 sm:px-6 md:pt-40">
+        <section className="px-4 pb-12 pt-24 sm:pb-16 sm:px-6">
           <div className="mx-auto max-w-5xl">
             <div className="space-y-8 text-center">
               <div className="space-y-6">
@@ -206,7 +206,7 @@ export default function AboutPage() {
           </section>
 
           {/* Bottom CTA Section */}
-          <section className="text-center pt-4">
+          <section className="text-center">
             <div className="space-y-2">
               <p className="text-secondary-text text-sm">
                 Made it this far? I&apos;m impressed.

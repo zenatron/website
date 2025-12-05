@@ -38,7 +38,7 @@ export default async function HomePage() {
 
       <main id="main-content" className="flex-1">
         {/* Hero Section - Editorial style */}
-        <section className="relative overflow-hidden px-4 pb-12 pt-28 sm:pb-16 sm:px-6 md:pt-40">
+        <section className="relative overflow-hidden px-4 pb-12 pt-24 sm:pb-16 sm:px-6 md:pt-32">
           {/* Subtle accent line */}
           <div className="absolute left-1/2 top-0 h-32 w-px -translate-x-1/2 bg-gradient-to-b from-accent/40 to-transparent" />
 

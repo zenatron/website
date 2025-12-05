@@ -29,8 +29,7 @@ export default function HomeHero() {
         </h1>
 
         <p className="max-w-lg text-lg leading-relaxed text-secondary-text">
-          Building things at the intersection of AI and games. I like code
-          that&apos;s easy to delete and deploys that don&apos;t wake anyone up.
+          Mostly building tools, games and AI stuff. I try to write code I can actually read later and avoid 3am incident pages.
         </p>
       </div>
 

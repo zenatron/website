@@ -328,10 +328,10 @@ export default function BlogClient({ posts }: BlogClientProps) {
   const hasActiveFilters = searchQuery !== "" || selectedTag !== null;
 
   return (
-    <div className="px-4 pb-24 pt-32 sm:px-6">
+    <div className="px-4 pb-8 pt-24 sm:px-6">
       <div className="mx-auto max-w-5xl">
         {/* Header */}
-        <header className="mb-16 space-y-6">
+        <header className="mb-8 sm:mb-16 space-y-6">
           <p className="text-sm font-medium tracking-[0.2em] text-accent">
             BLOG
           </p>
