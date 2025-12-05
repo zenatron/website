@@ -351,12 +351,15 @@ export default function BlogClient({ posts }: BlogClientProps) {
           ) : (
             groupedPosts.map((group) => (
               <section key={group.year} className="relative">
-                {/* Year marker */}
+                {/* Year header */}
                 <div className="sticky top-24 z-10 mb-6 flex items-center gap-4">
-                  <span className="rounded-full bg-accent/10 px-3 py-1 text-sm font-medium text-accent">
+                  <span className="text-2xl font-medium text-primary-text">
                     {group.year}
                   </span>
-                  <div className="h-px flex-1 bg-gradient-to-r from-accent/20 to-transparent" />
+                  <span className="rounded-full bg-white/[0.04] px-2.5 py-0.5 text-xs text-muted-text">
+                    {group.posts.length}
+                  </span>
+                  <div className="h-px flex-1 bg-white/[0.04]" />
                 </div>
 
                 {/* Posts list */}
