@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { BlogPost } from "@/types/types";
 import Link from "next/link";
@@ -24,6 +24,19 @@ export default function BlogClient({ posts }: BlogClientProps) {
   const [wordCountClicks, setWordCountClicks] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [selectedTag, setSelectedTag] = useState<string | null>(initialTag);
+  
+  // Tag autocomplete state
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestionIndex, setSuggestionIndex] = useState(0);
+  const [tagQuery, setTagQuery] = useState(""); // tracks partial tag after #
+  
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const chipRef = useRef<HTMLSpanElement>(null);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+  
+  // Track if we're currently updating the URL to avoid race conditions
+  const isUpdatingUrl = useRef(false);
 
   useEffect(() => {
     setMounted(true);
@@ -37,14 +50,18 @@ export default function BlogClient({ posts }: BlogClientProps) {
       return acc + wordCount;
     }, 0);
   }, [posts]);
-  const [selectedTag, setSelectedTag] = useState<string | null>(initialTag);
-  const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Sync URL tag param with state
+  // Only sync URL → state on initial load or external navigation (not our own updates)
   useEffect(() => {
+    if (isUpdatingUrl.current) {
+      isUpdatingUrl.current = false;
+      return;
+    }
     const urlTag = searchParams.get("tag");
-    setSelectedTag(urlTag);
-  }, [searchParams]);
+    if (urlTag !== selectedTag) {
+      setSelectedTag(urlTag);
+    }
+  }, [searchParams]); // Intentionally exclude selectedTag to avoid loops
 
   // Slash-to-focus keyboard shortcut
   useEffect(() => {
@@ -145,15 +162,6 @@ export default function BlogClient({ posts }: BlogClientProps) {
     return "pls read my blog";
   };
 
-  // Handle tag selection - update URL
-  const handleTagSelect = (tag: string | null) => {
-    if (tag) {
-      router.push(`/blog?tag=${encodeURIComponent(tag)}`, { scroll: false });
-    } else {
-      router.push("/blog", { scroll: false });
-    }
-  };
-
   // Get all unique tags
   const allTags = useMemo(() => {
     const tags = new Set<string>();
@@ -163,16 +171,117 @@ export default function BlogClient({ posts }: BlogClientProps) {
     return Array.from(tags).sort();
   }, [posts]);
 
-  // Filter posts with hashtag support
+  // Filtered tag suggestions based on what user is typing after #
+  const filteredSuggestions = useMemo(() => {
+    if (!tagQuery) return allTags;
+    const query = tagQuery.toLowerCase();
+    return allTags.filter((tag) => tag.toLowerCase().includes(query));
+  }, [allTags, tagQuery]);
+
+  // Handle input change - detect # for tag autocomplete
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    
+    // Check if user is typing a tag (starts with # or has # after space)
+    const hashIndex = value.lastIndexOf("#");
+    if (hashIndex !== -1) {
+      const afterHash = value.slice(hashIndex + 1);
+      // Only show suggestions if there's no space after the hash (still typing the tag)
+      if (!afterHash.includes(" ")) {
+        setTagQuery(afterHash);
+        setShowSuggestions(true);
+        setSuggestionIndex(0);
+        return;
+      }
+    }
+    setShowSuggestions(false);
+    setTagQuery("");
+  }, []);
+
+  // Handle selecting a tag from suggestions or clicking a topic
+  const handleTagSelect = useCallback((tag: string | null) => {
+    setSelectedTag(tag);
+    setSearchQuery(""); // Clear search when selecting/deselecting tag
+    setShowSuggestions(false);
+    setTagQuery("");
+    
+    // Mark that we're updating the URL to prevent the sync effect from fighting us
+    isUpdatingUrl.current = true;
+    if (tag) {
+      router.push(`/blog?tag=${encodeURIComponent(tag)}`, { scroll: false });
+    } else {
+      router.push("/blog", { scroll: false });
+    }
+    // Focus back on input
+    setTimeout(() => searchInputRef.current?.focus(), 0);
+  }, [router]);
+
+  // Complete the tag from suggestions
+  const completeTag = useCallback((tag: string) => {
+    handleTagSelect(tag);
+  }, [handleTagSelect]);
+
+  // Handle keyboard in search input
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (showSuggestions && filteredSuggestions.length > 0) {
+      if (e.key === "Tab" || e.key === "Enter") {
+        e.preventDefault();
+        completeTag(filteredSuggestions[suggestionIndex]);
+        return;
+      }
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setSuggestionIndex((prev) => 
+          prev < filteredSuggestions.length - 1 ? prev + 1 : prev
+        );
+        return;
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setSuggestionIndex((prev) => (prev > 0 ? prev - 1 : 0));
+        return;
+      }
+      if (e.key === "Escape") {
+        setShowSuggestions(false);
+        return;
+      }
+    }
+    
+    // Handle backspace to delete chip
+    if (e.key === "Backspace" && selectedTag && searchQuery === "") {
+      e.preventDefault();
+      handleTagSelect(null);
+    }
+  }, [showSuggestions, filteredSuggestions, suggestionIndex, completeTag, selectedTag, searchQuery, handleTagSelect]);
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(e.target as Node) &&
+        searchInputRef.current &&
+        !searchInputRef.current.contains(e.target as Node)
+      ) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Filter posts with chip tag and text search
   const filteredPosts = useMemo(() => {
     return posts.filter((post) => {
-      // Check selected tag first
+      // Check selected tag first (from chip)
       if (selectedTag !== null && !post.metadata.tags?.includes(selectedTag)) {
         return false;
       }
 
-      // Check search query
-      if (searchQuery) {
+      // Check search query (text only, no hashtag parsing needed since we use chips)
+      const query = searchQuery.trim().toLowerCase();
+      if (query) {
         const itemContent =
           post.metadata.title.toLowerCase() +
           " " +
@@ -180,27 +289,12 @@ export default function BlogClient({ posts }: BlogClientProps) {
           " " +
           (post.searchableContent?.toLowerCase() || "");
 
-        // Split search query into terms
-        const terms = searchQuery.toLowerCase().split(" ");
-
-        // Check if all terms match
-        const matchesSearch = terms.every((term) => {
-          if (term === "") return true;
-
-          // If term is a tag search (starts with #)
-          if (term.startsWith("#")) {
-            const tagQuery = term.slice(1).toLowerCase();
-            if (!tagQuery) return true;
-            const itemTagsLower =
-              post.metadata.tags?.map((tag) => tag.toLowerCase().trim()) || [];
-            return itemTagsLower.some((tag) => tag.includes(tagQuery));
-          }
-
-          // For regular search terms
-          return itemContent.includes(term);
-        });
-
-        if (!matchesSearch) return false;
+        // Split into terms and check each (ignore any # terms as they're being typed)
+        const terms = query.split(/\s+/).filter(t => t && !t.startsWith("#"));
+        if (terms.length > 0) {
+          const matchesSearch = terms.every((term) => itemContent.includes(term));
+          if (!matchesSearch) return false;
+        }
       }
 
       return true;
@@ -224,6 +318,10 @@ export default function BlogClient({ posts }: BlogClientProps) {
 
   const clearFilters = () => {
     setSearchQuery("");
+    setSelectedTag(null);
+    setShowSuggestions(false);
+    setTagQuery("");
+    isUpdatingUrl.current = true;
     router.push("/blog", { scroll: false });
   };
 
@@ -260,20 +358,88 @@ export default function BlogClient({ posts }: BlogClientProps) {
 
         {/* Filters */}
         <div className="mb-12 space-y-6">
-          {/* Search */}
+          {/* Search with chip + autocomplete */}
           <div className="relative max-w-md">
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-text" />
-            <input
-              ref={searchInputRef}
-              type="text"
-              placeholder={getPlaceholder()}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-full border border-white/[0.06] bg-white/[0.02] py-3 pl-11 pr-12 text-base sm:text-sm text-primary-text placeholder-muted-text outline-none transition-colors focus:border-accent/30 focus:bg-white/[0.04]"
-            />
+            <Search className="absolute left-4 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-muted-text" />
+            
+            {/* Container with chip + input */}
+            <div className="flex w-full items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.02] py-2 pl-11 pr-12 transition-colors focus-within:border-accent/30 focus-within:bg-white/[0.04]">
+              {/* Tag chip */}
+              {selectedTag && (
+                <span
+                  ref={chipRef}
+                  className="inline-flex shrink-0 items-center gap-1 rounded-full bg-accent/20 px-2.5 py-1 text-sm text-accent"
+                >
+                  #{selectedTag}
+                  <button
+                    type="button"
+                    onClick={() => handleTagSelect(null)}
+                    className="ml-0.5 rounded-full p-0.5 hover:bg-white/10"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              
+              {/* Input */}
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder={selectedTag ? "Add search terms..." : getPlaceholder()}
+                value={searchQuery}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                onFocus={() => {
+                  // Show suggestions if user had typed a partial tag
+                  if (searchQuery.includes("#")) {
+                    setShowSuggestions(true);
+                  }
+                }}
+                className="min-w-0 flex-1 bg-transparent text-base text-primary-text placeholder-muted-text outline-none"
+              />
+            </div>
+            
+            {/* Keyboard hint */}
             <kbd className="absolute right-4 top-1/2 -translate-y-1/2 hidden rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-muted-text sm:inline-block">
               /
             </kbd>
+            
+            {/* Suggestions dropdown - scrollable with max 5 visible */}
+            {showSuggestions && filteredSuggestions.length > 0 && (
+              <div
+                ref={suggestionsRef}
+                className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-xl border border-white/[0.06] bg-[#0c0c10]/95 shadow-xl backdrop-blur-sm"
+              >
+                <div className="p-1.5">
+                  <div className="mb-1.5 px-2 text-[10px] uppercase tracking-wider text-muted-text">
+                    Tags {tagQuery && `matching "${tagQuery}"`}
+                  </div>
+                  <div className="max-h-[180px] overflow-y-auto">
+                    {filteredSuggestions.map((tag, index) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => completeTag(tag)}
+                        className={cn(
+                          "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition-colors",
+                          index === suggestionIndex
+                            ? "bg-accent/20 text-accent"
+                            : "text-secondary-text hover:bg-white/[0.04]"
+                        )}
+                      >
+                        <span className="text-muted-text">#</span>
+                        {tag}
+                        {index === suggestionIndex && (
+                          <span className="ml-auto text-[10px] text-muted-text">
+                            Tab ↹
+                          </span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* 42 Easter Egg */}

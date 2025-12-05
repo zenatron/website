@@ -68,6 +68,7 @@ async function getMDXProjects(): Promise<ProjectCard[]> {
           slug,
           date: data.date,
           tags: data.tags || [],
+          thumbnail: data.thumbnail,
           image: data.image,
           images: data.images,
           video: data.video,

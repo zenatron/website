@@ -30,7 +30,8 @@ export type ProjectMetadata = {
   slug: string; // Now required for all projects
   date?: string;
   // New metadata fields for enhanced content
-  image?: string; // Featured image URL or path
+  thumbnail?: string; // Thumbnail image for project cards (smaller, optimized)
+  image?: string; // Featured/hero image URL or path (full size for detail page)
   images?: string[]; // Gallery images
   video?: string; // Video URL (YouTube, local, etc.)
   videos?: string[]; // Multiple videos

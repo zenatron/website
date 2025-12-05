@@ -1,0 +1,65 @@
+---
+title: "Image Demo Project"
+date: "2025-12-04"
+description: "A sample project demonstrating all the image functionality currently available in the projects system."
+type: "web"
+slug: "image-demo-project"
+tags: ["demo", "images", "sample"]
+featured: true
+thumbnail: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=500&fit=crop"
+image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&h=800&fit=crop"
+images:
+  - "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=600&fit=crop"
+  - "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=600&fit=crop"
+  - "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=600&fit=crop"
+video: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+---
+
+import Callout from '@/components/mdx/Callout';
+
+# Image Demo Project
+
+This project demonstrates all the current image functionality in the projects system.
+
+<Callout type="info">
+The `image` field in frontmatter should display as a hero image at the top of this page (if that feature is implemented in the project layout).
+</Callout>
+
+## Inline Images in MDX
+
+You can embed images directly in your MDX content using standard markdown syntax:
+
+![A beautiful code setup](https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=800&h=500&fit=crop)
+
+Or with HTML for more control:
+
+<img 
+  src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=600&h=400&fit=crop" 
+  alt="Developer workspace" 
+  style={{ borderRadius: '12px', marginTop: '1rem', marginBottom: '1rem' }}
+/>
+
+## Multiple Inline Images
+
+Here's a coding screenshot:
+
+![Coding](https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=700&h=450&fit=crop)
+
+And another one showing a different angle:
+
+![More coding](https://images.unsplash.com/photo-1537432376769-00f5c2f4c8d2?w=700&h=450&fit=crop)
+
+## Project Features
+
+- Hero image via `image` frontmatter field
+- Gallery images via `images` array
+- Inline images using markdown or HTML
+- Video embed via `video` field
+
+<Callout type="warning">
+The `images` array in frontmatter should create a gallery below the content (if that feature is implemented).
+</Callout>
+
+## Conclusion
+
+This demo shows all the ways you can include images in a project. Check the frontmatter of this file to see how each is configured.
