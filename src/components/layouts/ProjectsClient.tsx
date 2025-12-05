@@ -1,17 +1,14 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { ProjectCard } from "@/types/types";
 import Link from "next/link";
+import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
-import dateFormatter from "@/utils/dateFormatter";
 import {
-  ArrowUpRight,
   Search,
   X,
-  Grid3X3,
-  List,
   ExternalLink,
 } from "lucide-react";
 import { FaGithub, FaGlobe, FaGamepad, FaCode } from "react-icons/fa";
@@ -22,8 +19,6 @@ import ContactModal from "@/components/ui/ContactModal";
 interface ProjectsClientProps {
   projects: ProjectCard[];
 }
-
-type ViewMode = "grid" | "list";
 
 const getTypeIcon = (type: string | undefined) => {
   const normalized = type?.toLowerCase() ?? "other";
@@ -48,26 +43,39 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
   const router = useRouter();
   const initialTag = searchParams.get("tag");
 
-  const [searchQuery, setSearchQuery] = useState(
-    initialTag ? `#${initialTag}` : ""
-  );
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [selectedTag, setSelectedTag] = useState<string | null>(initialTag);
+  
+  // Tag autocomplete state
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestionIndex, setSuggestionIndex] = useState(0);
+  const [tagQuery, setTagQuery] = useState(""); // tracks partial tag after #
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const chipRef = useRef<HTMLSpanElement>(null);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+  
+  // Track if we're currently updating the URL to avoid race conditions
+  const isUpdatingUrl = useRef(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Sync URL tag param with search query
+  // Only sync URL → state on initial load or external navigation (not our own updates)
   useEffect(() => {
-    const urlTag = searchParams.get("tag");
-    if (urlTag) {
-      setSearchQuery(`#${urlTag}`);
+    if (isUpdatingUrl.current) {
+      isUpdatingUrl.current = false;
+      return;
     }
-  }, [searchParams]);
+    const urlTag = searchParams.get("tag");
+    // Sync from URL only if different from current state
+    if (urlTag !== selectedTag) {
+      setSelectedTag(urlTag);
+    }
+  }, [searchParams]); // Intentionally exclude selectedTag to avoid loops
 
   // Slash-to-focus keyboard shortcut
   useEffect(() => {
@@ -95,7 +103,117 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
     return Array.from(types).sort();
   }, [projects]);
 
-  // Filter projects with hashtag support
+  // Get all unique tags
+  const allTags = useMemo(() => {
+    const tags = new Set<string>();
+    projects.forEach((project) => {
+      project.metadata.tags?.forEach((tag) => tags.add(tag));
+    });
+    return Array.from(tags).sort();
+  }, [projects]);
+
+  // Filtered tag suggestions based on what user is typing after #
+  const filteredSuggestions = useMemo(() => {
+    if (!tagQuery) return allTags;
+    const query = tagQuery.toLowerCase();
+    return allTags.filter((tag) => tag.toLowerCase().includes(query));
+  }, [allTags, tagQuery]);
+
+  // Handle input change - detect # for tag autocomplete
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    
+    // Check if user is typing a tag (starts with # or has # after space)
+    const hashIndex = value.lastIndexOf("#");
+    if (hashIndex !== -1) {
+      const afterHash = value.slice(hashIndex + 1);
+      // Only show suggestions if there's no space after the hash (still typing the tag)
+      if (!afterHash.includes(" ")) {
+        setTagQuery(afterHash);
+        setShowSuggestions(true);
+        setSuggestionIndex(0);
+        return;
+      }
+    }
+    setShowSuggestions(false);
+    setTagQuery("");
+  }, []);
+
+  // Handle selecting a tag from suggestions or clicking a topic
+  const handleTagSelect = useCallback((tag: string | null) => {
+    setSelectedTag(tag);
+    setSearchQuery(""); // Clear search when selecting/deselecting tag
+    setShowSuggestions(false);
+    setTagQuery("");
+    
+    // Mark that we're updating the URL to prevent the sync effect from fighting us
+    isUpdatingUrl.current = true;
+    if (tag) {
+      router.push(`/projects?tag=${encodeURIComponent(tag)}`, { scroll: false });
+    } else {
+      router.push("/projects", { scroll: false });
+    }
+    // Focus back on input
+    setTimeout(() => searchInputRef.current?.focus(), 0);
+  }, [router]);
+
+  // Complete the tag from suggestions
+  const completeTag = useCallback((tag: string) => {
+    // Replace the #partial with full tag chip
+    handleTagSelect(tag);
+  }, [handleTagSelect]);
+
+  // Handle keyboard in search input
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (showSuggestions && filteredSuggestions.length > 0) {
+      if (e.key === "Tab" || e.key === "Enter") {
+        e.preventDefault();
+        completeTag(filteredSuggestions[suggestionIndex]);
+        return;
+      }
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setSuggestionIndex((prev) => 
+          prev < filteredSuggestions.length - 1 ? prev + 1 : prev
+        );
+        return;
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setSuggestionIndex((prev) => (prev > 0 ? prev - 1 : 0));
+        return;
+      }
+      if (e.key === "Escape") {
+        setShowSuggestions(false);
+        return;
+      }
+    }
+    
+    // Handle backspace to delete chip
+    if (e.key === "Backspace" && selectedTag && searchQuery === "") {
+      e.preventDefault();
+      handleTagSelect(null);
+    }
+  }, [showSuggestions, filteredSuggestions, suggestionIndex, completeTag, selectedTag, searchQuery, handleTagSelect]);
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(e.target as Node) &&
+        searchInputRef.current &&
+        !searchInputRef.current.contains(e.target as Node)
+      ) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Filter projects with chip tag and text search
   const filteredProjects = useMemo(() => {
     return projects.filter((project) => {
       // Check type filter first
@@ -106,40 +224,33 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
         return false;
       }
 
-      // Check search query
-      if (searchQuery) {
+      // Check selected tag (from chip)
+      if (selectedTag !== null) {
+        const hasTag = project.metadata.tags?.some(
+          (tag) => tag.toLowerCase() === selectedTag.toLowerCase()
+        );
+        if (!hasTag) return false;
+      }
+
+      // Check search query (text only, no hashtag parsing)
+      const query = searchQuery.trim().toLowerCase();
+      if (query) {
         const itemContent =
           (project.metadata.title?.toLowerCase() || "") +
           " " +
           (project.metadata.description?.toLowerCase() || "");
-
-        // Split search query into terms
-        const terms = searchQuery.toLowerCase().split(" ");
-
-        // Check if all terms match
-        const matchesSearch = terms.every((term) => {
-          if (term === "") return true;
-
-          // If term is a tag search (starts with #)
-          if (term.startsWith("#")) {
-            const tagQuery = term.slice(1).toLowerCase();
-            if (!tagQuery) return true;
-            const itemTagsLower =
-              project.metadata.tags?.map((tag) => tag.toLowerCase().trim()) ||
-              [];
-            return itemTagsLower.some((tag) => tag.includes(tagQuery));
-          }
-
-          // For regular search terms
-          return itemContent.includes(term);
-        });
-
-        if (!matchesSearch) return false;
+        
+        // Split into terms and check each
+        const terms = query.split(/\s+/).filter(t => t && !t.startsWith("#"));
+        if (terms.length > 0) {
+          const matchesSearch = terms.every((term) => itemContent.includes(term));
+          if (!matchesSearch) return false;
+        }
       }
 
       return true;
     });
-  }, [projects, searchQuery, selectedType]);
+  }, [projects, searchQuery, selectedType, selectedTag]);
 
   // Group by year
   const groupedProjects = useMemo(() => {
@@ -165,16 +276,17 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
   const clearFilters = () => {
     setSearchQuery("");
     setSelectedType(null);
+    setSelectedTag(null);
     router.push("/projects", { scroll: false });
   };
 
-  const hasActiveFilters = searchQuery !== "" || selectedType !== null;
+  const hasActiveFilters = searchQuery !== "" || selectedType !== null || selectedTag !== null;
 
   return (
-    <div className="px-4 pb-24 pt-32 sm:px-6">
+    <div className="px-4 pb-8 pt-24 sm:px-6">
       <div className="mx-auto max-w-5xl">
         {/* Header */}
-        <header className="mb-16 space-y-6">
+        <header className="mb-8 sm:mb-16 space-y-6">
           <p className="text-sm font-medium tracking-[0.2em] text-accent">
             PROJECTS
           </p>
@@ -187,58 +299,96 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
         </header>
 
         {/* Filters */}
-        <div className="mb-12 space-y-4">
-          {/* Search row with view toggle */}
-          <div className="flex items-center gap-3">
-            {/* Search */}
-            <div className="relative flex-1 sm:flex-none">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-text" />
+        <div className="mb-12 space-y-6">
+          {/* Search with chip + autocomplete */}
+          <div className="relative max-w-md">
+            <Search className="absolute left-4 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-muted-text" />
+            
+            {/* Container with chip + input */}
+            <div className="flex w-full items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.02] py-2 pl-11 pr-12 transition-colors focus-within:border-accent/30 focus-within:bg-white/[0.04]">
+              {/* Tag chip */}
+              {selectedTag && (
+                <span
+                  ref={chipRef}
+                  className="inline-flex shrink-0 items-center gap-1 rounded-full bg-accent/20 px-2.5 py-1 text-sm text-accent"
+                >
+                  #{selectedTag}
+                  <button
+                    type="button"
+                    onClick={() => handleTagSelect(null)}
+                    className="ml-0.5 rounded-full p-0.5 hover:bg-white/10"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              
+              {/* Input */}
               <input
                 ref={searchInputRef}
                 type="text"
-                placeholder="Search... (# for tags)"
+                placeholder={selectedTag ? "Add search terms..." : "Search or type # for tags..."}
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-full border border-white/[0.06] bg-white/[0.02] py-2 pl-9 pr-10 text-sm text-primary-text placeholder-muted-text outline-none transition-colors focus:border-accent/30 sm:w-56"
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                onFocus={() => {
+                  // Show suggestions if user had typed a partial tag
+                  if (searchQuery.includes("#")) {
+                    setShowSuggestions(true);
+                  }
+                }}
+                className="min-w-0 flex-1 bg-transparent text-base text-primary-text placeholder-muted-text outline-none"
               />
-              <kbd className="absolute right-3 top-1/2 -translate-y-1/2 hidden rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-muted-text sm:inline-block">
-                /
-              </kbd>
             </div>
-
-            {/* View toggle */}
-            <div className="flex shrink-0 items-center gap-1 rounded-full border border-white/[0.06] p-1">
-              <button
-                type="button"
-                onClick={() => setViewMode("grid")}
-                className={cn(
-                  "rounded-full p-2 transition-colors",
-                  viewMode === "grid"
-                    ? "bg-white/[0.08] text-primary-text"
-                    : "text-muted-text hover:text-secondary-text"
-                )}
-                aria-label="Grid view"
+            
+            {/* Keyboard hint */}
+            <kbd className="absolute right-4 top-1/2 -translate-y-1/2 hidden rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-muted-text sm:inline-block">
+              /
+            </kbd>
+            
+            {/* Suggestions dropdown - scrollable with max 5 visible */}
+            {showSuggestions && filteredSuggestions.length > 0 && (
+              <div
+                ref={suggestionsRef}
+                className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-xl border border-white/[0.06] bg-[#0c0c10]/95 shadow-xl backdrop-blur-sm"
               >
-                <Grid3X3 className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode("list")}
-                className={cn(
-                  "rounded-full p-2 transition-colors",
-                  viewMode === "list"
-                    ? "bg-white/[0.08] text-primary-text"
-                    : "text-muted-text hover:text-secondary-text"
-                )}
-                aria-label="List view"
-              >
-                <List className="h-4 w-4" />
-              </button>
-            </div>
+                <div className="p-1.5">
+                  <div className="mb-1.5 px-2 text-[10px] uppercase tracking-wider text-muted-text">
+                    Tags {tagQuery && `matching "${tagQuery}"`}
+                  </div>
+                  <div className="max-h-[180px] overflow-y-auto">
+                    {filteredSuggestions.map((tag, index) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => completeTag(tag)}
+                        className={cn(
+                          "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition-colors",
+                          index === suggestionIndex
+                            ? "bg-accent/20 text-accent"
+                            : "text-secondary-text hover:bg-white/[0.04]"
+                        )}
+                      >
+                        <span className="text-muted-text">#</span>
+                        {tag}
+                        {index === suggestionIndex && (
+                          <span className="ml-auto text-[10px] text-muted-text">
+                            Tab ↹
+                          </span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Type filters row */}
           <div className="flex flex-wrap items-center gap-2">
+            <span className="mr-2 text-xs uppercase tracking-wider text-muted-text">
+              Type:
+            </span>
             <button
               type="button"
               onClick={() => setSelectedType(null)}
@@ -269,12 +419,31 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                 <span>{type}</span>
               </button>
             ))}
+          </div>
 
+          {/* Tags row */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="mr-2 text-xs uppercase tracking-wider text-muted-text">
+              Topics:
+            </span>
+            {allTags.slice(0, 8).map((tag) => (
+              <button
+                key={tag}
+                onClick={() => handleTagSelect(selectedTag === tag ? null : tag)}
+                className={cn(
+                  "tag-bubble",
+                  selectedTag === tag
+                    ? "!bg-accent/30"
+                    : "opacity-80 hover:opacity-100"
+                )}
+              >
+                #{tag}
+              </button>
+            ))}
             {hasActiveFilters && (
               <button
-                type="button"
                 onClick={clearFilters}
-                className="flex items-center gap-1 text-xs text-muted-text hover:text-primary-text"
+                className="ml-2 flex items-center gap-1 rounded-full px-3 py-1.5 text-xs text-muted-text transition-colors hover:text-primary-text"
               >
                 <X className="h-3 w-3" />
                 Clear
@@ -309,26 +478,15 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                   <div className="h-px flex-1 bg-white/[0.04]" />
                 </div>
 
-                {/* Projects grid/list */}
-                {viewMode === "grid" ? (
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {group.projects.map((project) => (
-                      <ProjectGridCard
-                        key={project.metadata.slug ?? project.metadata.title}
-                        project={project}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {group.projects.map((project) => (
-                      <ProjectListItem
-                        key={project.metadata.slug ?? project.metadata.title}
-                        project={project}
-                      />
-                    ))}
-                  </div>
-                )}
+                {/* Projects grid */}
+                <div className="grid gap-6 sm:grid-cols-2">
+                  {group.projects.map((project) => (
+                    <ProjectGridCard
+                      key={project.metadata.slug ?? project.metadata.title}
+                      project={project}
+                    />
+                  ))}
+                </div>
               </section>
             ))
           )}
@@ -364,9 +522,52 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
   );
 }
 
+// Placeholder messages based on project type - adds personality!
+const placeholderMessages: Record<string, string[]> = {
+  data: [
+    "Imagine a beautiful chart here",
+    "Data goes brrr",
+    "Trust me, the graphs are gorgeous",
+    "Too busy crunching numbers",
+  ],
+  web: [
+    "Picture a stunning UI here",
+    "The real thing is prettier",
+    "CSS magic awaits inside",
+    "Click to see the actual site",
+  ],
+  game: [
+    "It's not a bug, it's a feature",
+    "Insert gameplay here",
+    "The fun is on the inside",
+    "Achievement unlocked: Curiosity",
+  ],
+  github: [
+    "Code speaks louder than images",
+    "README.md is the real hero",
+    "10,000 lines of pure poetry",
+    "\"It works on my machine\"",
+  ],
+  other: [
+    "No preview, just mysteries",
+    "What's in the box?",
+    "Surprise! Click to find out",
+    "The preview is in another castle",
+  ],
+};
+
+// Get a consistent "random" message based on project title (so it doesn't change on re-render)
+const getPlaceholderMessage = (type: string, title: string): string => {
+  const messages = placeholderMessages[type] || placeholderMessages.other;
+  // Use title length as a simple hash to pick a consistent message
+  const index = title.length % messages.length;
+  return messages[index];
+};
+
 function ProjectGridCard({ project }: { project: ProjectCard }) {
   const [isHovering, setIsHovering] = useState(false);
   const [showCurious, setShowCurious] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Show "Interested?" after 3 seconds of hovering
@@ -390,10 +591,18 @@ function ProjectGridCard({ project }: { project: ProjectCard }) {
 
   const href = project.links.github || `/projects/${project.metadata.slug}`;
   const isExternal = Boolean(project.links.github);
+  
+  // Get thumbnail: prefer thumbnail, fallback to image, then null
+  const thumbnailSrc = project.metadata.thumbnail || project.metadata.image;
+  const hasValidImage = thumbnailSrc && !imageError;
+  
+  // Determine project type for placeholder
+  const projectType = project.links.github ? "github" : (project.metadata.type || "other");
+  const placeholderMessage = getPlaceholderMessage(projectType, project.metadata.title);
 
   return (
     <div
-      className="group relative flex flex-col rounded-2xl border border-white/[0.04] bg-white/[0.02] p-5 transition-all hover:border-white/[0.08] hover:bg-white/[0.04]"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.04] bg-white/[0.02] transition-all hover:border-white/[0.08] hover:bg-white/[0.04]"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
@@ -415,102 +624,98 @@ function ProjectGridCard({ project }: { project: ProjectCard }) {
         href={href}
         target={isExternal ? "_blank" : undefined}
         rel={isExternal ? "noopener noreferrer" : undefined}
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-10"
         aria-label={project.metadata.title}
       />
 
-      {/* Header with icon inline with title */}
-      <div className="mb-2 flex items-center gap-3">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
-          {getTypeIcon(project.links.github ? "github" : project.metadata.type)}
-        </div>
-        <h3 className="flex-1 font-medium text-primary-text transition-colors group-hover:text-accent line-clamp-1">
-          {project.metadata.title}
-        </h3>
-        {isExternal && (
-          <ExternalLink className="h-4 w-4 shrink-0 text-muted-text opacity-0 transition-opacity group-hover:opacity-100" />
+      {/* Thumbnail / Placeholder */}
+      <div className="relative aspect-[16/10] w-full overflow-hidden">
+        {hasValidImage ? (
+          <Image
+            src={thumbnailSrc}
+            alt={project.metadata.title}
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, 50vw"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          // Thematic placeholder with message
+          <div className="absolute inset-0 bg-white/[0.02]">
+            {/* Dot pattern background */}
+            <div 
+              className="absolute inset-0 opacity-40"
+              style={{
+                backgroundImage: `radial-gradient(circle at 1px 1px, rgba(124, 138, 255, 0.3) 1px, transparent 0)`,
+                backgroundSize: '20px 20px',
+              }}
+            />
+            {/* Centered content */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                {getTypeIcon(projectType)}
+              </div>
+              <p className="text-center text-sm text-muted-text italic">
+                {placeholderMessage}
+              </p>
+            </div>
+            {/* Subtle vignette */}
+            <div className="absolute inset-0 bg-gradient-to-t from-primary-bg/50 via-transparent to-primary-bg/30" />
+          </div>
         )}
-      </div>
-
-      {/* Description */}
-      {project.metadata.description && (
-        <p className="mb-4 text-sm text-secondary-text line-clamp-2">
-          {project.metadata.description}
-        </p>
-      )}
-
-      {/* Tags */}
-      {project.metadata.tags && project.metadata.tags.length > 0 && (
-        <div className="relative z-10 mt-auto flex flex-wrap gap-2 pt-3">
-          {project.metadata.tags.slice(0, 3).map((tag) => (
-            <Link
-              key={tag}
-              href={`/projects?tag=${encodeURIComponent(tag)}`}
-              className="tag hover:text-accent"
-            >
-              {tag}
-            </Link>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function ProjectListItem({ project }: { project: ProjectCard }) {
-  const href = project.links.github || `/projects/${project.metadata.slug}`;
-  const isExternal = Boolean(project.links.github);
-
-  return (
-    <div className="group relative flex items-center gap-4 rounded-xl px-4 py-4 transition-colors hover:bg-white/[0.02]">
-      {/* Clickable overlay for main link */}
-      <Link
-        href={href}
-        target={isExternal ? "_blank" : undefined}
-        rel={isExternal ? "noopener noreferrer" : undefined}
-        className="absolute inset-0 z-0"
-        aria-label={project.metadata.title}
-      />
-
-      {/* Icon */}
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
-        {getTypeIcon(project.links.github ? "github" : project.metadata.type)}
+        
+        {/* Overlay gradient for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+        
+        {/* External link indicator on image */}
+        {isExternal && (
+          <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
+            <ExternalLink className="h-4 w-4" />
+          </div>
+        )}
+        
+        {/* Featured badge */}
+        {project.metadata.featured && (
+          <div className="absolute left-3 top-3 rounded-full bg-accent/90 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
+            Featured
+          </div>
+        )}
       </div>
 
       {/* Content */}
-      <div className="flex-1 min-w-0">
-        <h3 className="font-medium text-primary-text transition-colors group-hover:text-accent">
-          {project.metadata.title}
-        </h3>
+      <div className="flex flex-1 flex-col p-5">
+        {/* Header with icon inline with title */}
+        <div className="mb-2 flex items-center gap-3">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
+            {getTypeIcon(projectType)}
+          </div>
+          <h3 className="flex-1 font-medium text-primary-text transition-colors group-hover:text-accent line-clamp-1">
+            {project.metadata.title}
+          </h3>
+        </div>
+
+        {/* Description */}
         {project.metadata.description && (
-          <p className="text-sm text-secondary-text line-clamp-1">
+          <p className="mb-4 text-sm text-secondary-text line-clamp-2">
             {project.metadata.description}
           </p>
         )}
+
+        {/* Tags */}
+        {project.metadata.tags && project.metadata.tags.length > 0 && (
+          <div className="relative z-20 mt-auto flex flex-wrap gap-2 pt-3">
+            {project.metadata.tags.slice(0, 3).map((tag) => (
+              <Link
+                key={tag}
+                href={`/projects?tag=${encodeURIComponent(tag)}`}
+                className="tag hover:text-accent"
+              >
+                {tag}
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
-
-      {/* Tags */}
-      <div className="relative z-10 hidden shrink-0 items-center gap-2 md:flex">
-        {project.metadata.tags?.slice(0, 2).map((tag) => (
-          <Link
-            key={tag}
-            href={`/projects?tag=${encodeURIComponent(tag)}`}
-            className="tag hover:text-accent"
-          >
-            {tag}
-          </Link>
-        ))}
-      </div>
-
-      {/* Date */}
-      {project.metadata.date && (
-        <span className="hidden shrink-0 text-sm text-muted-text md:block">
-          {dateFormatter({ date: project.metadata.date, month: "short" })}
-        </span>
-      )}
-
-      {/* Arrow */}
-      <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-text opacity-0 transition-all group-hover:text-accent group-hover:opacity-100" />
     </div>
   );
 }

@@ -51,12 +51,17 @@ tags: ["react", "typescript", "nextjs"]  # Array of strings, creates tag bubbles
 
 #### Images
 ```yaml
+thumbnail: "/images/projects/thumbs/my-project.webp"  # Card thumbnail (600x400 recommended)
 image: "/images/projects/hero.jpg"    # Main featured image (full width at top)
 images:                                # Image gallery (shown below content)
   - "/images/projects/screenshot1.jpg"
   - "/images/projects/screenshot2.jpg"
   - "/images/projects/screenshot3.jpg"
 ```
+
+<Callout type="info">
+**Thumbnail vs Image**: Use `thumbnail` for the small card image on the projects listing page (optimized, ~600x400). Use `image` for the larger hero image on the project detail page. If no thumbnail is set, the system falls back to `image`.
+</Callout>
 
 <Callout type="warning">
 **Image Paths**: All images should be in `public/images/projects/` and referenced with absolute paths starting with `/images/...`
