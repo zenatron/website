@@ -5,7 +5,7 @@ import { FaArrowLeft, FaGithub, FaExternalLinkAlt } from "react-icons/fa";
 import { getProjectBySlug } from "@/lib/projects";
 import HtmlRenderer from "@/components/HtmlRenderer";
 import { redirect } from "next/navigation";
-import BackToTopButton from "@/components/BackToTopButton";
+import BackToTopButton from "@/components/ui/BackToTopButton";
 import KatexStyles from "@/components/KatexStyles";
 import GitHubReadme from "@/components/ui/GitHubReadme";
 import ProjectDownloads from "@/components/ui/ProjectDownloads";

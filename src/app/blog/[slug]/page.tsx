@@ -4,9 +4,10 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa";
 import dateFormatter from "@/utils/dateFormatter";
-import BackToTopButton from "@/components/BackToTopButton";
+import BackToTopButton from "@/components/ui/BackToTopButton";
 import TableOfContents from "@/components/blog/TableOfContents";
 import KatexStyles from "@/components/KatexStyles";
+import { redirect } from "next/navigation";
 
 export async function generateStaticParams() {
   const params = await import("@/lib/blog").then((mod) =>
@@ -24,25 +25,7 @@ export default async function BlogPage({
   const post = await getBlogPostBySlug(slug);
 
   if (!post) {
-    return (
-      <div className="relative flex min-h-screen flex-col">
-        <Header />
-        <main className="flex-1 flex flex-col items-center justify-center text-center px-4 sm:px-6">
-          <h1 className="text-6xl font-bold">404</h1>
-          <p className="text-lg mt-4 text-muted-text">
-            {"The blog post you're looking for doesn't exist."}
-          </p>
-          <Link
-            href="/blog"
-            className="btn btn-primary mt-6"
-            title="Back to Blog"
-          >
-            Back to Blog
-          </Link>
-        </main>
-        <Footer />
-      </div>
-    );
+    redirect("/blog");
   }
 
   return (

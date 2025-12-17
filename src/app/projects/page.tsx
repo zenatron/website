@@ -3,7 +3,7 @@ import { getGithubRepos } from "@/lib/github";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getAllProjects } from "@/lib/projects";
-import BackToTopButton from "@/components/BackToTopButton";
+import BackToTopButton from "@/components/ui/BackToTopButton";
 import { Suspense } from "react";
 import ClientSkeletonLoader from "@/components/ui/ClientSkeletonLoader";
 

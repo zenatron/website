@@ -2,7 +2,7 @@ import { getAllBlogPosts } from "@/lib/blog";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BlogLayout from "@/components/layouts/BlogLayout";
-import BackToTopButton from "@/components/BackToTopButton";
+import BackToTopButton from "@/components/ui/BackToTopButton";
 import { Suspense } from "react";
 import ClientSkeletonLoader from "@/components/ui/ClientSkeletonLoader";
 
