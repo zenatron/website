@@ -76,7 +76,7 @@ export default function Header() {
           </Link>
 
           {/* Navigation */}
-          <nav className="hidden items-center gap-1 rounded-full border border-white/[0.06] bg-white/[0.02] px-1.5 py-1.5 backdrop-blur-sm md:flex">
+          <nav className="hidden items-center gap-1 rounded-full border border-white/[0.06] bg-white/[0.02] px-1 py-[3px] backdrop-blur-sm md:flex">
             {NAV_LINKS.map((link) => {
               const isActive =
                 pathname === link.href || pathname.startsWith(link.href + "/");
@@ -99,10 +99,10 @@ export default function Header() {
                     draggable
                     onDragStart={(e) => handleDragStart(e, link.href)}
                     className={cn(
-                      "rounded-full px-4 py-1.5 text-sm transition-colors duration-150 block cursor-pointer",
+                      "rounded-full px-4 py-2 text-sm leading-none transition-all duration-200 block cursor-pointer",
                       isActive
                         ? "bg-white/[0.08] text-primary-text"
-                        : "text-secondary-text hover:text-primary-text",
+                        : "text-secondary-text hover:bg-white/[0.06] hover:text-primary-text",
                       draggedLink === link.href && "opacity-70"
                     )}
                   >

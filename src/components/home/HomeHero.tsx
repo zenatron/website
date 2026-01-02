@@ -29,7 +29,8 @@ export default function HomeHero() {
         </h1>
 
         <p className="max-w-lg text-lg leading-relaxed text-secondary-text">
-          Mostly building tools, games and AI stuff. I try to write code I can actually read later and avoid 3am incident pages.
+          Mostly building tools, games and AI stuff. I try to write code I can
+          actually read later and avoid 3am incident pages.
         </p>
       </div>
 

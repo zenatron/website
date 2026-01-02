@@ -35,37 +35,41 @@ const getSecondsOfExperience = () => {
 };
 
 // Memoized CTA button to prevent re-render when seconds counter updates
-const CTAButton = memo(({ ctaIndex, onClick }: { ctaIndex: number; onClick: () => void }) => (
-  <button
-    onClick={onClick}
-    className="group inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium text-accent transition-all duration-200 hover:scale-105"
-    style={{
-      backgroundColor: "rgba(124, 138, 255, 0.15)",
-      border: "1px solid rgba(124, 138, 255, 0.3)",
-    }}
-    onMouseEnter={(e) => {
-      e.currentTarget.style.backgroundColor = "rgba(124, 138, 255, 0.25)";
-      e.currentTarget.style.borderColor = "rgba(124, 138, 255, 0.5)";
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.backgroundColor = "rgba(124, 138, 255, 0.15)";
-      e.currentTarget.style.borderColor = "rgba(124, 138, 255, 0.3)";
-    }}
-  >
-    <AnimatePresence mode="wait">
-      <motion.span
-        key={ctaIndex}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.2 }}
-      >
-        {CTA_TEXTS[ctaIndex]}
-      </motion.span>
-    </AnimatePresence>
-    <span className="transition-transform duration-200 group-hover:translate-x-0.5">→</span>
-  </button>
-));
+const CTAButton = memo(
+  ({ ctaIndex, onClick }: { ctaIndex: number; onClick: () => void }) => (
+    <button
+      onClick={onClick}
+      className="group inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium text-accent transition-all duration-200 hover:scale-105"
+      style={{
+        backgroundColor: "rgba(124, 138, 255, 0.15)",
+        border: "1px solid rgba(124, 138, 255, 0.3)",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = "rgba(124, 138, 255, 0.25)";
+        e.currentTarget.style.borderColor = "rgba(124, 138, 255, 0.5)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = "rgba(124, 138, 255, 0.15)";
+        e.currentTarget.style.borderColor = "rgba(124, 138, 255, 0.3)";
+      }}
+    >
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={ctaIndex}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+        >
+          {CTA_TEXTS[ctaIndex]}
+        </motion.span>
+      </AnimatePresence>
+      <span className="transition-transform duration-200 group-hover:translate-x-0.5">
+        →
+      </span>
+    </button>
+  )
+);
 CTAButton.displayName = "CTAButton";
 
 export default function AboutPage() {

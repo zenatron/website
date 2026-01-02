@@ -38,7 +38,7 @@ export default async function HomePage() {
 
       <main id="main-content" className="flex-1">
         {/* Hero Section - Editorial style */}
-        <section className="relative overflow-hidden px-4 pb-12 pt-24 sm:pb-16 sm:px-6 md:pt-32">
+        <section className="relative overflow-hidden px-4 pb-12 pt-20 sm:pb-20 sm:pt-24 sm:px-6 md:pt-32">
           {/* Subtle accent line */}
           <div className="absolute left-1/2 top-0 h-32 w-px -translate-x-1/2 bg-gradient-to-b from-accent/40 to-transparent" />
 
@@ -90,11 +90,11 @@ export default async function HomePage() {
         </section>
 
         {/* Recent Projects Section */}
-        <section className="px-4 py-12 sm:py-16 sm:px-6">
+        <section className="px-4 py-8 sm:py-20 sm:px-6">
           <div className="mx-auto max-w-5xl">
             <div className="mb-12 flex items-end justify-between">
-              <div>
-                <p className="mb-2 text-sm font-medium tracking-[0.2em] text-accent">
+              <div className="space-y-3">
+                <p className="text-sm font-medium tracking-[0.2em] text-accent">
                   RECENT WORK
                 </p>
                 <h2 className="text-3xl tracking-tight md:text-4xl">
@@ -169,17 +169,19 @@ export default async function HomePage() {
         </section>
 
         {/* Writing preview */}
-        <section className="px-4 py-12 sm:py-16 sm:px-6">
+        <section className="px-4 py-8 sm:py-20 sm:px-6">
           <div className="mx-auto max-w-5xl">
             <div className="grid gap-12 lg:grid-cols-2">
-              <div className="space-y-6">
-                <p className="text-sm font-medium tracking-[0.2em] text-accent">
-                  WRITING
-                </p>
-                <h2 className="text-3xl tracking-tight md:text-4xl">Writing</h2>
-                <p className="text-secondary-text">
-                  Sometimes I write things down. Mostly about code.
-                </p>
+              <div>
+                <div className="mb-8 space-y-3">
+                  <p className="text-sm font-medium tracking-[0.2em] text-accent">
+                    WRITING
+                  </p>
+                  <h2 className="text-3xl tracking-tight md:text-4xl">Blog</h2>
+                  <p className="text-secondary-text">
+                    Sometimes I write things down. Mostly about code.
+                  </p>
+                </div>
                 <Link href="/blog" className="btn btn-secondary inline-flex">
                   Read the blog
                   <ArrowUpRight className="h-4 w-4" />
@@ -222,7 +224,7 @@ export default async function HomePage() {
         </section>
 
         {/* Philosophy section */}
-        <section className="px-4 py-12 sm:py-16 sm:px-6">
+        <section className="px-4 py-8 sm:py-20 sm:px-6">
           <div className="mx-auto max-w-3xl text-center">
             <QuoteCarousel />
           </div>

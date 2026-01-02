@@ -207,10 +207,7 @@ export default function TableOfContents({
     <>
       {/* Mobile Version - Dropdown */}
       {!showDesktopOnly && (
-        <div
-          className={`lg:hidden z-20 mb-8 ${className}`}
-          ref={dropdownRef}
-        >
+        <div className={`lg:hidden z-20 mb-8 ${className}`} ref={dropdownRef}>
           <div className="relative max-w-4xl mx-auto px-4">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}

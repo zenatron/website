@@ -79,7 +79,10 @@ export default function QuoteCarousel() {
     if (!isPaused) startAutoPlay();
   };
 
-  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+  const handleDragEnd = (
+    event: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
+  ) => {
     const threshold = 50;
     if (info.offset.x < -threshold) {
       // Swiped left - go next
@@ -114,7 +117,7 @@ export default function QuoteCarousel() {
   };
 
   return (
-    <div 
+    <div
       className="relative min-h-[180px] md:min-h-[160px] touch-pan-y"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

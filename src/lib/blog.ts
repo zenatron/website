@@ -232,3 +232,61 @@ export async function generateStaticParams() {
       slug: file.replace(/\.(md|mdx)$/, ""),
     }));
 }
+
+// Get suggested/related blog posts based on shared tags and recency
+export async function getSuggestedPosts(
+  currentSlug: string,
+  count: number = 3
+): Promise<BlogPost[]> {
+  const allPosts = await getAllBlogPosts();
+
+  // Exclude the current post
+  const otherPosts = allPosts.filter((post) => post.slug !== currentSlug);
+
+  if (otherPosts.length === 0) {
+    return [];
+  }
+
+  // Get the current post to compare tags
+  const currentPost = allPosts.find((post) => post.slug === currentSlug);
+  const currentTags = currentPost?.metadata.tags || [];
+
+  // Score each post based on shared tags
+  const scoredPosts = otherPosts.map((post) => {
+    const postTags = post.metadata.tags || [];
+
+    // Count shared tags
+    const sharedTags = postTags.filter((tag) =>
+      currentTags.includes(tag)
+    ).length;
+
+    // Calculate recency score (newer posts get higher scores)
+    const postDate = new Date(post.metadata.date).getTime();
+    const currentDate = new Date().getTime();
+    const daysSincePost = (currentDate - postDate) / (1000 * 60 * 60 * 24);
+    const recencyScore = Math.max(0, 1 - daysSincePost / 365); // Decay over a year
+
+    // Combined score: prioritize shared tags, then recency
+    const score = sharedTags * 10 + recencyScore;
+
+    return {
+      post,
+      score,
+      sharedTags,
+    };
+  });
+
+  // Sort by score (highest first), then by date (newest first)
+  scoredPosts.sort((a, b) => {
+    if (b.score !== a.score) {
+      return b.score - a.score;
+    }
+    return (
+      new Date(b.post.metadata.date).getTime() -
+      new Date(a.post.metadata.date).getTime()
+    );
+  });
+
+  // Return the top N posts
+  return scoredPosts.slice(0, count).map((item) => item.post);
+}

@@ -62,10 +62,7 @@ export default function MobileMenu() {
           menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between">
-          <p className="text-xs uppercase tracking-[0.2em] text-muted-text">
-            Menu
-          </p>
+        <div className="flex items-center justify-end">
           <button
             type="button"
             className="flex h-8 w-8 items-center justify-center rounded-full border border-white/[0.06] bg-white/[0.02] text-secondary-text transition-colors duration-150 hover:border-white/[0.1] hover:text-primary-text"

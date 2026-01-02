@@ -6,11 +6,7 @@ import { ProjectCard } from "@/types/types";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
-import {
-  Search,
-  X,
-  ExternalLink,
-} from "lucide-react";
+import { Search, X, ExternalLink } from "lucide-react";
 import { FaGithub, FaGlobe, FaGamepad, FaCode } from "react-icons/fa";
 import { SiJupyter } from "react-icons/si";
 import { cn } from "@/lib/utils";
@@ -46,7 +42,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(initialTag);
-  
+
   // Tag autocomplete state
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestionIndex, setSuggestionIndex] = useState(0);
@@ -56,7 +52,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const chipRef = useRef<HTMLSpanElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
-  
+
   // Track if we're currently updating the URL to avoid race conditions
   const isUpdatingUrl = useRef(false);
 
@@ -120,82 +116,104 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
   }, [allTags, tagQuery]);
 
   // Handle input change - detect # for tag autocomplete
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-    
-    // Check if user is typing a tag (starts with # or has # after space)
-    const hashIndex = value.lastIndexOf("#");
-    if (hashIndex !== -1) {
-      const afterHash = value.slice(hashIndex + 1);
-      // Only show suggestions if there's no space after the hash (still typing the tag)
-      if (!afterHash.includes(" ")) {
-        setTagQuery(afterHash);
-        setShowSuggestions(true);
-        setSuggestionIndex(0);
-        return;
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setSearchQuery(value);
+
+      // Check if user is typing a tag (starts with # or has # after space)
+      const hashIndex = value.lastIndexOf("#");
+      if (hashIndex !== -1) {
+        const afterHash = value.slice(hashIndex + 1);
+        // Only show suggestions if there's no space after the hash (still typing the tag)
+        if (!afterHash.includes(" ")) {
+          setTagQuery(afterHash);
+          setShowSuggestions(true);
+          setSuggestionIndex(0);
+          return;
+        }
       }
-    }
-    setShowSuggestions(false);
-    setTagQuery("");
-  }, []);
+      setShowSuggestions(false);
+      setTagQuery("");
+    },
+    []
+  );
 
   // Handle selecting a tag from suggestions or clicking a topic
-  const handleTagSelect = useCallback((tag: string | null) => {
-    setSelectedTag(tag);
-    setSearchQuery(""); // Clear search when selecting/deselecting tag
-    setShowSuggestions(false);
-    setTagQuery("");
-    
-    // Mark that we're updating the URL to prevent the sync effect from fighting us
-    isUpdatingUrl.current = true;
-    if (tag) {
-      router.push(`/projects?tag=${encodeURIComponent(tag)}`, { scroll: false });
-    } else {
-      router.push("/projects", { scroll: false });
-    }
-    // Focus back on input
-    setTimeout(() => searchInputRef.current?.focus(), 0);
-  }, [router]);
+  const handleTagSelect = useCallback(
+    (tag: string | null) => {
+      setSelectedTag(tag);
+      setSearchQuery(""); // Clear search when selecting/deselecting tag
+      setShowSuggestions(false);
+      setTagQuery("");
+
+      // Mark that we're updating the URL to prevent the sync effect from fighting us
+      isUpdatingUrl.current = true;
+      if (tag) {
+        router.push(`/projects?tag=${encodeURIComponent(tag)}`, {
+          scroll: false,
+        });
+      } else {
+        router.push("/projects", { scroll: false });
+      }
+      // Focus back on input
+      setTimeout(() => searchInputRef.current?.focus(), 0);
+    },
+    [router]
+  );
 
   // Complete the tag from suggestions
-  const completeTag = useCallback((tag: string) => {
-    // Replace the #partial with full tag chip
-    handleTagSelect(tag);
-  }, [handleTagSelect]);
+  const completeTag = useCallback(
+    (tag: string) => {
+      // Replace the #partial with full tag chip
+      handleTagSelect(tag);
+    },
+    [handleTagSelect]
+  );
 
   // Handle keyboard in search input
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (showSuggestions && filteredSuggestions.length > 0) {
-      if (e.key === "Tab" || e.key === "Enter") {
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (showSuggestions && filteredSuggestions.length > 0) {
+        if (e.key === "Tab" || e.key === "Enter") {
+          e.preventDefault();
+          completeTag(filteredSuggestions[suggestionIndex]);
+          return;
+        }
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          setSuggestionIndex((prev) =>
+            prev < filteredSuggestions.length - 1 ? prev + 1 : prev
+          );
+          return;
+        }
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          setSuggestionIndex((prev) => (prev > 0 ? prev - 1 : 0));
+          return;
+        }
+        if (e.key === "Escape") {
+          setShowSuggestions(false);
+          return;
+        }
+      }
+
+      // Handle backspace to delete chip
+      if (e.key === "Backspace" && selectedTag && searchQuery === "") {
         e.preventDefault();
-        completeTag(filteredSuggestions[suggestionIndex]);
-        return;
+        handleTagSelect(null);
       }
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        setSuggestionIndex((prev) => 
-          prev < filteredSuggestions.length - 1 ? prev + 1 : prev
-        );
-        return;
-      }
-      if (e.key === "ArrowUp") {
-        e.preventDefault();
-        setSuggestionIndex((prev) => (prev > 0 ? prev - 1 : 0));
-        return;
-      }
-      if (e.key === "Escape") {
-        setShowSuggestions(false);
-        return;
-      }
-    }
-    
-    // Handle backspace to delete chip
-    if (e.key === "Backspace" && selectedTag && searchQuery === "") {
-      e.preventDefault();
-      handleTagSelect(null);
-    }
-  }, [showSuggestions, filteredSuggestions, suggestionIndex, completeTag, selectedTag, searchQuery, handleTagSelect]);
+    },
+    [
+      showSuggestions,
+      filteredSuggestions,
+      suggestionIndex,
+      completeTag,
+      selectedTag,
+      searchQuery,
+      handleTagSelect,
+    ]
+  );
 
   // Close suggestions when clicking outside
   useEffect(() => {
@@ -239,11 +257,13 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
           (project.metadata.title?.toLowerCase() || "") +
           " " +
           (project.metadata.description?.toLowerCase() || "");
-        
+
         // Split into terms and check each
-        const terms = query.split(/\s+/).filter(t => t && !t.startsWith("#"));
+        const terms = query.split(/\s+/).filter((t) => t && !t.startsWith("#"));
         if (terms.length > 0) {
-          const matchesSearch = terms.every((term) => itemContent.includes(term));
+          const matchesSearch = terms.every((term) =>
+            itemContent.includes(term)
+          );
           if (!matchesSearch) return false;
         }
       }
@@ -280,7 +300,8 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
     router.push("/projects", { scroll: false });
   };
 
-  const hasActiveFilters = searchQuery !== "" || selectedType !== null || selectedTag !== null;
+  const hasActiveFilters =
+    searchQuery !== "" || selectedType !== null || selectedTag !== null;
 
   return (
     <div className="px-4 pb-8 pt-24 sm:px-6">
@@ -303,7 +324,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
           {/* Search with chip + autocomplete */}
           <div className="relative max-w-md">
             <Search className="absolute left-4 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-muted-text" />
-            
+
             {/* Container with chip + input */}
             <div className="flex w-full items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.02] py-2 pl-11 pr-12 transition-colors focus-within:border-accent/30 focus-within:bg-white/[0.04]">
               {/* Tag chip */}
@@ -322,12 +343,16 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                   </button>
                 </span>
               )}
-              
+
               {/* Input */}
               <input
                 ref={searchInputRef}
                 type="text"
-                placeholder={selectedTag ? "Add search terms..." : "Search or type # for tags..."}
+                placeholder={
+                  selectedTag
+                    ? "Add search terms..."
+                    : "Search or type # for tags..."
+                }
                 value={searchQuery}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
@@ -340,12 +365,12 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                 className="min-w-0 flex-1 bg-transparent text-base text-primary-text placeholder-muted-text outline-none"
               />
             </div>
-            
+
             {/* Keyboard hint */}
             <kbd className="absolute right-4 top-1/2 -translate-y-1/2 hidden rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-muted-text sm:inline-block">
               /
             </kbd>
-            
+
             {/* Suggestions dropdown - scrollable with max 5 visible */}
             {showSuggestions && filteredSuggestions.length > 0 && (
               <div
@@ -429,7 +454,9 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
             {allTags.slice(0, 8).map((tag) => (
               <button
                 key={tag}
-                onClick={() => handleTagSelect(selectedTag === tag ? null : tag)}
+                onClick={() =>
+                  handleTagSelect(selectedTag === tag ? null : tag)
+                }
                 className={cn(
                   "tag-bubble",
                   selectedTag === tag
@@ -546,7 +573,7 @@ const placeholderMessages: Record<string, string[]> = {
     "Code speaks louder than images",
     "README.md is the real hero",
     "10,000 lines of pure poetry",
-    "\"It works on my machine\"",
+    '"It works on my machine"',
   ],
   other: [
     "No preview, just mysteries",
@@ -591,14 +618,19 @@ function ProjectGridCard({ project }: { project: ProjectCard }) {
 
   const href = project.links.github || `/projects/${project.metadata.slug}`;
   const isExternal = Boolean(project.links.github);
-  
+
   // Get thumbnail: prefer thumbnail, fallback to image, then null
   const thumbnailSrc = project.metadata.thumbnail || project.metadata.image;
   const hasValidImage = thumbnailSrc && !imageError;
-  
+
   // Determine project type for placeholder
-  const projectType = project.links.github ? "github" : (project.metadata.type || "other");
-  const placeholderMessage = getPlaceholderMessage(projectType, project.metadata.title);
+  const projectType = project.links.github
+    ? "github"
+    : project.metadata.type || "other";
+  const placeholderMessage = getPlaceholderMessage(
+    projectType,
+    project.metadata.title
+  );
 
   return (
     <div
@@ -608,7 +640,7 @@ function ProjectGridCard({ project }: { project: ProjectCard }) {
     >
       {/* Curious easter egg */}
       {showCurious && (
-        <div 
+        <div
           className="absolute -top-8 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs text-accent whitespace-nowrap z-20 animate-fade-in"
           style={{
             backgroundColor: "rgba(124, 138, 255, 0.15)",
@@ -643,11 +675,11 @@ function ProjectGridCard({ project }: { project: ProjectCard }) {
           // Thematic placeholder with message
           <div className="absolute inset-0 bg-white/[0.02]">
             {/* Dot pattern background */}
-            <div 
+            <div
               className="absolute inset-0 opacity-40"
               style={{
                 backgroundImage: `radial-gradient(circle at 1px 1px, rgba(124, 138, 255, 0.3) 1px, transparent 0)`,
-                backgroundSize: '20px 20px',
+                backgroundSize: "20px 20px",
               }}
             />
             {/* Centered content */}
@@ -663,17 +695,17 @@ function ProjectGridCard({ project }: { project: ProjectCard }) {
             <div className="absolute inset-0 bg-gradient-to-t from-primary-bg/50 via-transparent to-primary-bg/30" />
           </div>
         )}
-        
+
         {/* Overlay gradient for text readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-        
+
         {/* External link indicator on image */}
         {isExternal && (
           <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
             <ExternalLink className="h-4 w-4" />
           </div>
         )}
-        
+
         {/* Featured badge */}
         {project.metadata.featured && (
           <div className="absolute left-3 top-3 rounded-full bg-accent/90 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">

@@ -25,16 +25,16 @@ export default function BlogClient({ posts }: BlogClientProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [selectedTag, setSelectedTag] = useState<string | null>(initialTag);
-  
+
   // Tag autocomplete state
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestionIndex, setSuggestionIndex] = useState(0);
   const [tagQuery, setTagQuery] = useState(""); // tracks partial tag after #
-  
+
   const searchInputRef = useRef<HTMLInputElement>(null);
   const chipRef = useRef<HTMLSpanElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
-  
+
   // Track if we're currently updating the URL to avoid race conditions
   const isUpdatingUrl = useRef(false);
 
@@ -145,18 +145,12 @@ export default function BlogClient({ posts }: BlogClientProps) {
       return `Approximately ${(totalWords / 1320).toFixed(2)} Declarations of Independence`;
     if (wordCountClicks < 7)
       return `Around ${Math.round(totalWords * (4 / 3))} LLM tokens`;
-    if (wordCountClicks < 8)
-      return "Okay you really like clicking this huh";
-    if (wordCountClicks < 10)
-      return "Alright, that's enough clicking for now.";
-    if (wordCountClicks < 12)
-      return "There's nothing more to see here.";
-    if (wordCountClicks < 15)
-      return "I promise";
-    if (wordCountClicks < 16)
-      return "Okay fine...";
-    if (wordCountClicks < 17)
-      return "I'll tell you a joke:";
+    if (wordCountClicks < 8) return "Okay you really like clicking this huh";
+    if (wordCountClicks < 10) return "Alright, that's enough clicking for now.";
+    if (wordCountClicks < 12) return "There's nothing more to see here.";
+    if (wordCountClicks < 15) return "I promise";
+    if (wordCountClicks < 16) return "Okay fine...";
+    if (wordCountClicks < 17) return "I'll tell you a joke:";
     if (wordCountClicks < 18)
       return "Two types of programmers exist: those who can extrapolate from incomplete data.";
     return "pls read my blog";
@@ -179,81 +173,101 @@ export default function BlogClient({ posts }: BlogClientProps) {
   }, [allTags, tagQuery]);
 
   // Handle input change - detect # for tag autocomplete
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-    
-    // Check if user is typing a tag (starts with # or has # after space)
-    const hashIndex = value.lastIndexOf("#");
-    if (hashIndex !== -1) {
-      const afterHash = value.slice(hashIndex + 1);
-      // Only show suggestions if there's no space after the hash (still typing the tag)
-      if (!afterHash.includes(" ")) {
-        setTagQuery(afterHash);
-        setShowSuggestions(true);
-        setSuggestionIndex(0);
-        return;
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setSearchQuery(value);
+
+      // Check if user is typing a tag (starts with # or has # after space)
+      const hashIndex = value.lastIndexOf("#");
+      if (hashIndex !== -1) {
+        const afterHash = value.slice(hashIndex + 1);
+        // Only show suggestions if there's no space after the hash (still typing the tag)
+        if (!afterHash.includes(" ")) {
+          setTagQuery(afterHash);
+          setShowSuggestions(true);
+          setSuggestionIndex(0);
+          return;
+        }
       }
-    }
-    setShowSuggestions(false);
-    setTagQuery("");
-  }, []);
+      setShowSuggestions(false);
+      setTagQuery("");
+    },
+    []
+  );
 
   // Handle selecting a tag from suggestions or clicking a topic
-  const handleTagSelect = useCallback((tag: string | null) => {
-    setSelectedTag(tag);
-    setSearchQuery(""); // Clear search when selecting/deselecting tag
-    setShowSuggestions(false);
-    setTagQuery("");
-    
-    // Mark that we're updating the URL to prevent the sync effect from fighting us
-    isUpdatingUrl.current = true;
-    if (tag) {
-      router.push(`/blog?tag=${encodeURIComponent(tag)}`, { scroll: false });
-    } else {
-      router.push("/blog", { scroll: false });
-    }
-    // Focus back on input
-    setTimeout(() => searchInputRef.current?.focus(), 0);
-  }, [router]);
+  const handleTagSelect = useCallback(
+    (tag: string | null) => {
+      setSelectedTag(tag);
+      setSearchQuery(""); // Clear search when selecting/deselecting tag
+      setShowSuggestions(false);
+      setTagQuery("");
+
+      // Mark that we're updating the URL to prevent the sync effect from fighting us
+      isUpdatingUrl.current = true;
+      if (tag) {
+        router.push(`/blog?tag=${encodeURIComponent(tag)}`, { scroll: false });
+      } else {
+        router.push("/blog", { scroll: false });
+      }
+      // Focus back on input
+      setTimeout(() => searchInputRef.current?.focus(), 0);
+    },
+    [router]
+  );
 
   // Complete the tag from suggestions
-  const completeTag = useCallback((tag: string) => {
-    handleTagSelect(tag);
-  }, [handleTagSelect]);
+  const completeTag = useCallback(
+    (tag: string) => {
+      handleTagSelect(tag);
+    },
+    [handleTagSelect]
+  );
 
   // Handle keyboard in search input
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (showSuggestions && filteredSuggestions.length > 0) {
-      if (e.key === "Tab" || e.key === "Enter") {
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (showSuggestions && filteredSuggestions.length > 0) {
+        if (e.key === "Tab" || e.key === "Enter") {
+          e.preventDefault();
+          completeTag(filteredSuggestions[suggestionIndex]);
+          return;
+        }
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          setSuggestionIndex((prev) =>
+            prev < filteredSuggestions.length - 1 ? prev + 1 : prev
+          );
+          return;
+        }
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          setSuggestionIndex((prev) => (prev > 0 ? prev - 1 : 0));
+          return;
+        }
+        if (e.key === "Escape") {
+          setShowSuggestions(false);
+          return;
+        }
+      }
+
+      // Handle backspace to delete chip
+      if (e.key === "Backspace" && selectedTag && searchQuery === "") {
         e.preventDefault();
-        completeTag(filteredSuggestions[suggestionIndex]);
-        return;
+        handleTagSelect(null);
       }
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        setSuggestionIndex((prev) => 
-          prev < filteredSuggestions.length - 1 ? prev + 1 : prev
-        );
-        return;
-      }
-      if (e.key === "ArrowUp") {
-        e.preventDefault();
-        setSuggestionIndex((prev) => (prev > 0 ? prev - 1 : 0));
-        return;
-      }
-      if (e.key === "Escape") {
-        setShowSuggestions(false);
-        return;
-      }
-    }
-    
-    // Handle backspace to delete chip
-    if (e.key === "Backspace" && selectedTag && searchQuery === "") {
-      e.preventDefault();
-      handleTagSelect(null);
-    }
-  }, [showSuggestions, filteredSuggestions, suggestionIndex, completeTag, selectedTag, searchQuery, handleTagSelect]);
+    },
+    [
+      showSuggestions,
+      filteredSuggestions,
+      suggestionIndex,
+      completeTag,
+      selectedTag,
+      searchQuery,
+      handleTagSelect,
+    ]
+  );
 
   // Close suggestions when clicking outside
   useEffect(() => {
@@ -290,9 +304,11 @@ export default function BlogClient({ posts }: BlogClientProps) {
           (post.searchableContent?.toLowerCase() || "");
 
         // Split into terms and check each (ignore any # terms as they're being typed)
-        const terms = query.split(/\s+/).filter(t => t && !t.startsWith("#"));
+        const terms = query.split(/\s+/).filter((t) => t && !t.startsWith("#"));
         if (terms.length > 0) {
-          const matchesSearch = terms.every((term) => itemContent.includes(term));
+          const matchesSearch = terms.every((term) =>
+            itemContent.includes(term)
+          );
           if (!matchesSearch) return false;
         }
       }
@@ -361,7 +377,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
           {/* Search with chip + autocomplete */}
           <div className="relative max-w-md">
             <Search className="absolute left-4 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-muted-text" />
-            
+
             {/* Container with chip + input */}
             <div className="flex w-full items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.02] py-2 pl-11 pr-12 transition-colors focus-within:border-accent/30 focus-within:bg-white/[0.04]">
               {/* Tag chip */}
@@ -380,12 +396,14 @@ export default function BlogClient({ posts }: BlogClientProps) {
                   </button>
                 </span>
               )}
-              
+
               {/* Input */}
               <input
                 ref={searchInputRef}
                 type="text"
-                placeholder={selectedTag ? "Add search terms..." : getPlaceholder()}
+                placeholder={
+                  selectedTag ? "Add search terms..." : getPlaceholder()
+                }
                 value={searchQuery}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
@@ -398,12 +416,12 @@ export default function BlogClient({ posts }: BlogClientProps) {
                 className="min-w-0 flex-1 bg-transparent text-base text-primary-text placeholder-muted-text outline-none"
               />
             </div>
-            
+
             {/* Keyboard hint */}
             <kbd className="absolute right-4 top-1/2 -translate-y-1/2 hidden rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-muted-text sm:inline-block">
               /
             </kbd>
-            
+
             {/* Suggestions dropdown - scrollable with max 5 visible */}
             {showSuggestions && filteredSuggestions.length > 0 && (
               <div

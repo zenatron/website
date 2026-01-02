@@ -1,4 +1,4 @@
-import { getBlogPostBySlug } from "@/lib/blog";
+import { getBlogPostBySlug, getSuggestedPosts } from "@/lib/blog";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
@@ -7,6 +7,7 @@ import dateFormatter from "@/utils/dateFormatter";
 import BackToTopButton from "@/components/ui/BackToTopButton";
 import TableOfContents from "@/components/blog/TableOfContents";
 import KatexStyles from "@/components/KatexStyles";
+import SuggestedPosts from "@/components/blog/SuggestedPosts";
 import { redirect } from "next/navigation";
 
 export async function generateStaticParams() {
@@ -27,6 +28,9 @@ export default async function BlogPage({
   if (!post) {
     redirect("/blog");
   }
+
+  // Get suggested posts
+  const suggestedPosts = await getSuggestedPosts(slug, 3);
 
   return (
     <div className="relative flex min-h-screen flex-col">
@@ -109,6 +113,11 @@ export default async function BlogPage({
 
                 <div className="mdx-content w-full max-w-3xl">
                   {post.content}
+                </div>
+
+                {/* Suggested Posts Section */}
+                <div className="w-full max-w-3xl">
+                  <SuggestedPosts posts={suggestedPosts} />
                 </div>
               </div>
             </article>
