@@ -106,7 +106,7 @@ export default function AboutPage() {
       <Header />
       <main id="main-content" className="flex-1">
         {/* Hero Section - matching home page style */}
-        <section className="px-4 pb-12 pt-24 sm:pb-16 sm:px-6">
+        <section className="px-4 pb-16 pt-24 sm:pb-20 sm:px-6">
           <div className="mx-auto max-w-5xl">
             <div className="space-y-8 text-center">
               <div className="space-y-6">
@@ -123,7 +123,7 @@ export default function AboutPage() {
               </div>
 
               {/* Quick facts row */}
-              <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
+              <div className="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-3 sm:gap-6 text-sm">
                 {QUICK_FACTS.map((fact, i) => (
                   <div
                     key={fact.label}
@@ -132,14 +132,14 @@ export default function AboutPage() {
                     <fact.icon className="h-4 w-4 text-muted-text" />
                     <span>{fact.value}</span>
                     {i < QUICK_FACTS.length - 1 && (
-                      <span className="ml-4 h-1 w-1 rounded-full bg-white/20" />
+                      <span className="ml-4 h-1 w-1 rounded-full bg-white/20 hidden sm:inline-block" />
                     )}
                   </div>
                 ))}
               </div>
 
               {/* CTA Button - Top */}
-              <div className="pt-4">
+              <div>
                 <CTAButton ctaIndex={ctaIndex1} onClick={openModal} />
               </div>
             </div>
@@ -211,10 +211,10 @@ export default function AboutPage() {
 
           {/* Bottom CTA Section */}
           <section className="text-center">
-            <div className="space-y-2">
-              <p className="text-secondary-text text-sm">
+            <div className="space-y-8">
+              <h2 className="text-3xl tracking-tight md:text-4xl">
                 Made it this far? I&apos;m impressed.
-              </p>
+              </h2>
               <CTAButton ctaIndex={ctaIndex2} onClick={openModal} />
             </div>
           </section>

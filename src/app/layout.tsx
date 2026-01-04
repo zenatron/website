@@ -34,8 +34,8 @@ const atkinson = Atkinson_Hyperlegible({
 });
 
 export const metadata: Metadata = {
-  title: "Phil Vishnevsky",
-  description: "SWE + AI + Game Dev Portfolio",
+  title: "Phil Vishnevsky | SWE, AI Enthusiast, and Homelabber",
+  description: "I'm a software engineer crafting AI projects, tools, homelabs, and games. Explore my portfolio, technical blog posts, and latest development work.",
 };
 
 export default function RootLayout({
