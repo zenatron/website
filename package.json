@@ -34,7 +34,7 @@
     "liquid-glass-react": "^1.1.1",
     "lucide-react": "^0.540.0",
     "marked": "^15.0.6",
-    "next": "15.1.9",
+    "next": "15.1.11",
     "next-mdx-remote": "^5.0.0",
     "ogl": "^1.0.11",
     "path": "^0.12.7",
