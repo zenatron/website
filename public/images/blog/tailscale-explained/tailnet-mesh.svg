@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
+  <title id="title">Tailnet mesh diagram</title>
+  <desc id="desc">A mesh diagram showing devices connected through a tailnet using Tailscale.</desc>
+  <rect width="1200" height="600" fill="#0b0f1a" />
+  <g font-family="Arial, sans-serif" fill="#e6e6e6">
+    <text x="40" y="60" font-size="32" font-weight="700">Tailnet mesh (simplified)</text>
+  </g>
+
+  <g stroke="#6366f1" stroke-width="3" fill="none">
+    <circle cx="250" cy="220" r="80" />
+    <circle cx="600" cy="150" r="80" />
+    <circle cx="950" cy="220" r="80" />
+    <circle cx="420" cy="420" r="80" />
+    <circle cx="780" cy="420" r="80" />
+  </g>
+
+  <g font-family="Arial, sans-serif" fill="#e6e6e6" font-size="18" text-anchor="middle">
+    <text x="250" y="220">Laptop</text>
+    <text x="600" y="150">Home server</text>
+    <text x="950" y="220">Phone</text>
+    <text x="420" y="420">Work PC</text>
+    <text x="780" y="420">Tablet</text>
+  </g>
+
+  <g stroke="#22c55e" stroke-width="4" fill="none" stroke-dasharray="8 8">
+    <path d="M330 220 L520 170" />
+    <path d="M680 170 L870 220" />
+    <path d="M330 250 L380 370" />
+    <path d="M520 200 L500 360" />
+    <path d="M700 200 L740 360" />
+    <path d="M870 250 L820 370" />
+  </g>
+
+  <g font-family="Arial, sans-serif" fill="#22c55e" font-size="16">
+    <text x="520" y="320">Encrypted peer-to-peer links</text>
+  </g>
+</svg>

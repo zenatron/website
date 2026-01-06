@@ -1,0 +1,173 @@
+---
+title: "What Is a VPN? A Practical, No‑Hype Guide"
+date: "2025-02-15"
+readingTime: "12min"
+excerpt: "A clear, practical explanation of VPNs, what they protect, what they don’t, and how to choose one without the marketing noise."
+tags: ["vpn", "networking", "security", "privacy"]
+---
+
+import Callout from '@/components/mdx/Callout';
+
+# What Is a VPN? A Practical, No‑Hype Guide
+
+You’re on café Wi‑Fi. Your laptop auto‑connects, your bank app loads, and a tiny voice in your head asks: *“Can anyone see this?”* That’s the moment a VPN makes sense — but only if you understand what it **does** and what it **doesn’t** do.
+
+This post explains VPNs like a friend would: plain language, real risks, no over‑promising.
+
+![Diagram showing internet traffic with and without a VPN tunnel](/images/blog/what-is-a-vpn/vpn-tunnel-diagram.svg)
+![Diagram showing metadata visibility shifting to a VPN provider](/images/blog/what-is-a-vpn/traffic-metadata.svg)
+
+## The one‑sentence definition
+
+A **[VPN](https://en.wikipedia.org/wiki/Virtual_private_network)** creates an **[encrypted](https://en.wikipedia.org/wiki/Encryption)** tunnel between your device and a trusted server, so anyone sitting in the middle (like your [ISP](https://en.wikipedia.org/wiki/Internet_service_provider) or a public Wi‑Fi operator) can’t read your traffic in transit.
+
+If you’ve ever used **[HTTPS](https://en.wikipedia.org/wiki/HTTPS)**, you’ve already benefited from encryption. The difference is scope: HTTPS encrypts *a single connection* to a site, while a VPN encrypts **everything leaving your device**, including DNS lookups, app traffic, and background sync.
+
+## What a VPN actually does
+
+### 1. Encrypts traffic between you and the VPN server
+
+When you turn on a VPN, your device builds a secure tunnel to a VPN server. Your ISP can still see *that* you’re connected to a VPN, but not the contents of what you’re sending through it. Think of it like a locked mail tube: the postal service can see where the tube goes, not what’s inside.
+
+### 2. Changes your apparent public IP address
+
+Websites you visit see the **VPN server’s [IP address](https://en.wikipedia.org/wiki/IP_address)**, not your home IP. That can be useful for privacy, geo‑testing, or reducing the amount of location data that sites can infer.
+
+### 3. Helps on untrusted networks
+
+Public Wi‑Fi is the classic example: a VPN protects traffic that might otherwise be sniffed by malicious actors on the same network. It won’t save you from a fake hotspot, but it dramatically reduces passive eavesdropping risk.
+
+### 4. Changes your routing path
+
+When a VPN is active, your device typically installs a new **default route** in your routing table so internet traffic flows through the tunnel first. That’s why your “public IP” changes — your traffic exits through the VPN server instead of your ISP.
+
+## What a VPN does **not** do
+
+<Callout type="warning" title="The big misconception" showEmoji={true}>
+A VPN is not a magic invisibility cloak. It does **not** make you anonymous, and it does **not** prevent you from being tracked by [cookies](https://en.wikipedia.org/wiki/HTTP_cookie), [browser fingerprinting](https://en.wikipedia.org/wiki/Device_fingerprint), or accounts you log into.
+</Callout>
+
+- **A VPN doesn’t hide you from the websites you use.** If you sign into Google, Google still knows it’s you.
+- **A VPN doesn’t protect you from [phishing](https://en.wikipedia.org/wiki/Phishing) or [malware](https://en.wikipedia.org/wiki/Malware).** If you click a bad link, a VPN won’t save you.
+- **A VPN doesn’t make a weak password strong.** That’s still on you.
+
+## The trust trade‑off (who can see what now)
+
+A VPN doesn’t eliminate trust — it **moves** it. Without a VPN, your ISP can see the destinations you connect to. With a VPN, **your VPN provider** can see that metadata instead. That’s why logging policies matter, and why reputable providers publish audits. You’re choosing who you trust with your traffic’s “outside envelope,” not erasing it from existence.
+
+If that trade‑off feels uncomfortable, you’re not wrong. It’s why many power users prefer **self‑hosted VPNs** or mesh tools like Tailscale — you become the provider.
+
+## Common VPN use cases (the legit ones)
+
+1. **Safer public Wi‑Fi** – Your traffic is encrypted from your device to the VPN server, so snooping is much harder.
+2. **Remote access to a home network** – A VPN can let you reach your homelab or NAS without exposing ports publicly.
+3. **Business access** – Companies use VPNs to allow employees to access internal systems securely.
+4. **Testing from another region** – Developers use VPNs to verify localization, pricing, or regional content rules.
+
+## VPNs vs proxies (not the same thing)
+
+A **[proxy server](https://en.wikipedia.org/wiki/Proxy_server)** can forward traffic for a *single app* (usually your browser), but it doesn’t encrypt everything on your device. A VPN works at the **network layer**, so it covers *all* traffic unless you intentionally split it. If you need broad protection, a proxy is the wrong tool.
+
+If you’re curious about modern remote access that *feels* like magic, read my [Tailscale guide](/blog/tailscale-explained) — it’s a newer, more user‑friendly approach built on WireGuard.
+
+## VPN types, in plain English
+
+- **Consumer VPNs** (Nord, Mullvad, Proton, etc.): You connect to a shared server and browse from there.
+- **Corporate VPNs**: Company‑managed servers that only employees can access.
+- **Mesh VPNs** (Tailscale, Headscale): Devices connect directly to each other in a private mesh, often with identity‑based access controls.
+
+### A quick note on corporate VPNs
+
+In many companies, the VPN is really just a **gate** into internal systems — dashboards, staging environments, and file shares. It’s usually combined with **[single sign‑on](https://en.wikipedia.org/wiki/Single_sign-on)** and sometimes **[MFA](https://en.wikipedia.org/wiki/Multi-factor_authentication)**. This is less about privacy and more about *access control*.
+
+## A quick tour of VPN protocols
+
+Different VPNs use different tunnel protocols. You don’t need to memorize these, but recognizing the names helps you avoid outdated tech:
+
+- **[WireGuard](https://en.wikipedia.org/wiki/WireGuard)** – modern, fast, minimal codebase.
+- **[OpenVPN](https://en.wikipedia.org/wiki/OpenVPN)** – battle‑tested and configurable, but heavier.
+- **[IPsec](https://en.wikipedia.org/wiki/IPsec)** – common in enterprise VPNs.
+
+If your provider offers WireGuard, it’s usually a safe bet for performance.
+
+### Quick comparison table
+
+| Protocol | Typical use | Strengths | Tradeoffs |
+| --- | --- | --- | --- |
+| WireGuard | Modern consumer + mesh VPNs | Fast, simple, audited | Newer ecosystem |
+| OpenVPN | Legacy + enterprise | Flexible, widely supported | Heavier, slower |
+| IPsec | Enterprise site‑to‑site | Mature, standardized | Complex to configure |
+
+## Split tunneling vs full tunneling
+
+Some VPNs let you choose **[split tunneling](https://en.wikipedia.org/wiki/Split_tunneling)**, where only certain apps or domains go through the VPN. The rest of your traffic goes out normally. Full tunneling routes *everything* through the VPN, which is simpler and usually more private, but can be slower or break local devices.
+
+## VPN vs HTTPS (and why both matter)
+
+HTTPS protects **browser‑to‑website** traffic. A VPN protects **device‑to‑internet** traffic. The overlap is large, but not total:
+
+- VPNs protect **non‑browser apps** that might not use HTTPS correctly.
+- HTTPS does nothing for DNS requests unless you use **[DoH](https://en.wikipedia.org/wiki/DNS_over_HTTPS)** or **[DoT](https://en.wikipedia.org/wiki/DNS_over_TLS)**.
+- If you already use HTTPS everywhere, the VPN is mostly about metadata, routing, and untrusted networks.
+
+## DNS: the leaky faucet people forget about
+
+Even if your traffic is encrypted, **DNS** requests can reveal what you’re trying to access. A VPN should either run its own **[DNS resolver](https://en.wikipedia.org/wiki/Domain_Name_System)** or tunnel your DNS queries through the VPN. If your DNS queries escape, it’s called a **DNS leak** and it defeats much of the privacy value.
+
+## Kill switches and why they matter
+
+A **[kill switch](https://en.wikipedia.org/wiki/Kill_switch)** is a safety feature that blocks all internet traffic if the VPN disconnects unexpectedly. Without it, your traffic can fall back to the normal route for a few seconds — which is exactly the moment you didn’t want it to.
+
+## Performance: the hidden cost
+
+VPNs add **latency** because your traffic now takes a detour. They also add **CPU overhead** for encryption. On modern hardware it’s usually fine, but on phones or small routers it can be noticeable. If your video calls get choppy, the VPN is a prime suspect.
+
+## MTU, fragmentation, and the occasional weird bug
+
+VPNs can reduce your effective **[MTU](https://en.wikipedia.org/wiki/Maximum_transmission_unit)** because packets are wrapped inside other packets. That overhead can cause fragmentation and lead to odd issues: a site loads but images don’t, or large uploads stall. Some VPN clients auto‑tune MTU; if you’re troubleshooting “mysterious” network bugs, it’s worth checking.
+
+## How to choose a VPN without falling for marketing
+
+Here’s a practical checklist:
+
+- **Threat model**: Do you want privacy from your ISP, or are you trying to safely access your home network?
+- **Logging policy**: Read the provider’s privacy policy and independent audits.
+- **Performance**: VPNs add latency. Look for WireGuard‑based providers if possible.
+- **Jurisdiction**: Different countries have different data retention laws.
+- **DNS behavior**: A good VPN should prevent [DNS leaks](https://en.wikipedia.org/wiki/DNS_leak) (when your DNS queries escape the tunnel).
+- **Transparency**: If a provider won’t explain how it works, that’s a signal.
+
+## Threat model examples (pick the one that sounds like you)
+
+- **“I just want safe café Wi‑Fi.”** A reputable consumer VPN is fine.
+- **“I need access to my NAS from anywhere.”** A mesh VPN (Tailscale) or self‑hosted WireGuard server.
+- **“I’m testing a site from another region.”** A VPN with multiple exit regions.
+- **“I want full privacy.”** Be careful — no VPN gives full anonymity. Combine with good browser hygiene.
+
+<Callout type="info" title="Quick rule of thumb" showEmoji={true}>
+If you want **private remote access**, consider a mesh VPN like Tailscale. If you want **privacy from your ISP**, a reputable consumer VPN is better.
+</Callout>
+
+## A short myth‑busting list
+
+- **“A VPN makes me anonymous.”** → Not really. It changes your IP, but tracking still works.
+- **“VPNs are illegal.”** → Legal in most countries, but rules vary.
+- **“Free VPNs are good enough.”** → Free often means *you* are the product.
+- **“A VPN hides me from my employer.”** → If your employer controls the device, they likely still have visibility.
+
+## Want a visual explanation? (2‑minute video)
+
+<iframe
+  title="VPN explained in 2 minutes"
+  src="https://www.youtube.com/embed/r4zSScX7u6E"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+></iframe>
+
+## Where to go next
+
+- **Tailscale deep dive**: [Tailscale Explained: The Mesh VPN That Feels Like Magic](/blog/tailscale-explained)
+- **Remote access walkthrough**: [Self‑Hosting With Tailscale](/blog/self-hosting-with-tailscale)
+- **Privacy basics**: [EFF Surveillance Self‑Defense](https://ssd.eff.org/)
+
+If you want me to recommend a VPN based on your specific use case, send me a note and I’ll help you pick one that fits your threat model.
