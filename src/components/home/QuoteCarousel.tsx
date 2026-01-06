@@ -10,7 +10,7 @@ const QUOTES = [
   },
   {
     text: "Ship it. Fix it later. Unless it's auth. Don't ship broken auth.",
-    attribution: "me, learning the hard way",
+    attribution: "me, learning from others' mistakes",
   },
   {
     text: "The goal isn't to write clever code. It's to write code the next person can delete.",

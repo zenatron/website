@@ -76,7 +76,7 @@ export default function Header() {
           </Link>
 
           {/* Navigation */}
-          <nav className="hidden items-center gap-1 rounded-full border border-white/[0.06] bg-white/[0.02] px-1 py-[3px] backdrop-blur-sm md:flex">
+          <nav className="hidden items-center gap-1 rounded-full border border-white/[0.06] bg-white/[0.02] px-[3px] py-[3px] backdrop-blur-sm md:flex">
             {NAV_LINKS.map((link) => {
               const isActive =
                 pathname === link.href || pathname.startsWith(link.href + "/");
