@@ -24,7 +24,9 @@ export default function Header() {
   const [wobblyLinks, setWobblyLinks] = useState<
     Record<string, { x: number; y: number }>
   >({});
+  const [hoveredLink, setHoveredLink] = useState<string | null>(null);
   const linkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+  const navRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -60,7 +62,7 @@ export default function Header() {
           <Link
             href="/"
             title="Home"
-            className="group flex items-center gap-2.5 rounded-full border border-white/[0.06] bg-white/[0.02] p-1.5 backdrop-blur-sm transition-colors hover:border-white/[0.1] hover:bg-white/[0.04] sm:px-3"
+            className="group flex items-center gap-2.5 rounded-full border border-white/[0.06] bg-white/[0.02] p-1.5 backdrop-blur-sm transition-colors hover:border-white/[0.1] hover:bg-white/[0.04] sm:pr-3"
           >
             <Image
               src="/images/phil_headshot_scaled.webp"
@@ -76,7 +78,38 @@ export default function Header() {
           </Link>
 
           {/* Navigation */}
-          <nav className="hidden items-center gap-1 rounded-full border border-white/[0.06] bg-white/[0.02] px-[3px] py-[3px] backdrop-blur-sm md:flex">
+          <nav 
+            ref={navRef}
+            className="hidden items-center gap-1 rounded-full border border-white/[0.06] bg-white/[0.02] px-[3px] py-[3px] backdrop-blur-sm md:flex relative"
+            onMouseLeave={() => setHoveredLink(null)}
+          >
+            {/* Animated pill indicator */}
+            {NAV_LINKS.map((link) => {
+              const isActive =
+                pathname === link.href || pathname.startsWith(link.href + "/");
+              const shouldShow = hoveredLink === link.href || (!hoveredLink && isActive);
+              
+              return shouldShow ? (
+                <motion.div
+                  key={`indicator-${link.href}`}
+                  layoutId="nav-indicator"
+                  className="absolute rounded-full bg-white/[0.08]"
+                  style={{
+                    left: linkRefs.current[link.href]?.offsetLeft,
+                    top: linkRefs.current[link.href]?.offsetTop,
+                    width: linkRefs.current[link.href]?.offsetWidth,
+                    height: linkRefs.current[link.href]?.offsetHeight,
+                  }}
+                  initial={false}
+                  transition={{
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 30,
+                  }}
+                />
+              ) : null;
+            })}
+            
             {NAV_LINKS.map((link) => {
               const isActive =
                 pathname === link.href || pathname.startsWith(link.href + "/");
@@ -98,11 +131,12 @@ export default function Header() {
                     href={link.href}
                     draggable
                     onDragStart={(e) => handleDragStart(e, link.href)}
+                    onMouseEnter={() => setHoveredLink(link.href)}
                     className={cn(
-                      "rounded-full px-4 py-2 text-sm leading-none transition-all duration-200 block cursor-pointer",
-                      isActive
-                        ? "bg-white/[0.08] text-primary-text"
-                        : "text-secondary-text hover:bg-white/[0.06] hover:text-primary-text",
+                      "relative rounded-full px-4 py-2 text-sm leading-none transition-colors duration-200 block cursor-pointer z-10",
+                      isActive || hoveredLink === link.href
+                        ? "text-primary-text"
+                        : "text-secondary-text",
                       draggedLink === link.href && "opacity-70"
                     )}
                   >
