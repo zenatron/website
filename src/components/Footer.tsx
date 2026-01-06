@@ -41,7 +41,7 @@ export default function Footer() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm text-secondary-text transition-colors hover:text-primary-text"
+                className="text-sm text-secondary-text transition-colors hover:text-accent"
               >
                 {link.label}
               </Link>
@@ -56,7 +56,7 @@ export default function Footer() {
                 href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-text transition-colors hover:text-primary-text"
+                className="text-muted-text transition-colors hover:text-accent"
                 aria-label={social.label}
               >
                 <social.icon className="h-4 w-4" />
