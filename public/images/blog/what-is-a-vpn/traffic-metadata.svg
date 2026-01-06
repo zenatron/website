@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
+  <title id="title">Traffic metadata with and without VPN</title>
+  <desc id="desc">Diagram showing how metadata visibility shifts from ISP to VPN provider.</desc>
+  <rect width="1200" height="600" fill="#0b0f1a" />
+  <g font-family="Arial, sans-serif" fill="#e6e6e6">
+    <text x="40" y="60" font-size="32" font-weight="700">Who can see what?</text>
+    <text x="40" y="100" font-size="18" fill="#9ca3af">VPN shifts metadata visibility from your ISP to the VPN provider.</text>
+  </g>
+
+  <g stroke="#6366f1" stroke-width="3" fill="none">
+    <rect x="80" y="160" width="440" height="320" rx="18" />
+    <rect x="680" y="160" width="440" height="320" rx="18" />
+  </g>
+
+  <g font-family="Arial, sans-serif" fill="#e6e6e6" font-size="20" text-anchor="middle">
+    <text x="300" y="200">Without VPN</text>
+    <text x="900" y="200">With VPN</text>
+  </g>
+
+  <g font-family="Arial, sans-serif" fill="#e6e6e6" font-size="18">
+    <text x="120" y="260">ISP can see:</text>
+    <text x="120" y="295">• Destinations</text>
+    <text x="120" y="325">• Timing + volume</text>
+    <text x="120" y="355">• Your IP</text>
+
+    <text x="720" y="260">VPN provider can see:</text>
+    <text x="720" y="295">• Destinations</text>
+    <text x="720" y="325">• Timing + volume</text>
+    <text x="720" y="355">• Your IP</text>
+  </g>
+
+  <g font-family="Arial, sans-serif" fill="#9ca3af" font-size="16">
+    <text x="120" y="415">Websites see your real IP</text>
+    <text x="720" y="415">Websites see VPN IP</text>
+  </g>
+</svg>

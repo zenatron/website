@@ -1,0 +1,154 @@
+---
+title: "Self‑Hosting With Tailscale: Secure Access Without Open Ports"
+date: "2025-02-19"
+readingTime: "15min"
+excerpt: "A practical guide to self‑hosting services and reaching them securely with Tailscale, no port forwarding required."
+tags: ["self-hosting", "tailscale", "homelab", "security"]
+---
+
+import Callout from '@/components/mdx/Callout';
+
+# Self‑Hosting With Tailscale: Secure Access Without Open Ports
+
+Self‑hosting is empowering — but opening ports on your router can feel like hanging a neon sign that says “Please scan me.” There’s a better way: **private access via Tailscale**. If you’re new here, [self‑hosting](https://en.wikipedia.org/wiki/Self-hosting_(web_services)) just means running services on hardware you control.
+
+![Remote access diagram showing encrypted tailnet links](/images/blog/self-hosting-with-tailscale/remote-access.svg)
+![Layered security stack for self-hosting](/images/blog/self-hosting-with-tailscale/security-layers.svg)
+
+## Why self‑host in the first place?
+
+- **Control**: Your data stays on *your* hardware.
+- **Customization**: Configure services how you want.
+- **Reliability**: Avoid vendor lock‑in.
+
+If you’re new to the concept of VPNs, start with [What Is a VPN?](/blog/what-is-a-vpn).
+
+## The threat model most people ignore
+
+The average self‑hoster isn’t being targeted by a nation‑state. The real risks are **opportunistic scans**, **default passwords**, and **unpatched services**. Your goal is to make your box a *terrible* target for drive‑by attacks.
+
+## The risk of open ports
+
+Classic self‑hosting guides say: “forward port 443 to your server.” That works, but it exposes your box to the entire internet. A safer default is to **not** expose anything publicly unless you must. If you’re unfamiliar with the term, [port forwarding](https://en.wikipedia.org/wiki/Port_forwarding) is essentially poking a hole through your router’s [NAT](https://en.wikipedia.org/wiki/Network_address_translation).
+
+If you do open ports, you’ve moved from “private” to “internet‑facing.” That’s when you need stronger patching discipline, monitoring, and rate‑limiting.
+
+<Callout type="warning" title="Rule of thumb" showEmoji={true}>
+If the service is just for you (or your household), keep it private. Public exposure should be deliberate, not accidental.
+</Callout>
+
+## The Tailscale pattern (private by default)
+
+Tailscale gives you:
+
+- **Encrypted access** between your devices
+- **Identity‑based access control** (people, groups, tags)
+- **Zero port forwarding** for private services
+
+This makes home services feel like they’re “on the same Wi‑Fi,” even when you’re across the world.
+
+The biggest win is that your services **aren’t visible** to the public internet at all. Most automated scans never even see the box.
+
+## A practical setup flow
+
+### 1) Install Tailscale on your server
+
+- Linux: [Tailscale install guide](https://tailscale.com/download)
+- Docker‑only? You can run the daemon in a container as well.
+
+### 2) Install Tailscale on your laptop/phone
+
+Sign in with the same identity provider to join the tailnet.
+
+### 3) Turn on MagicDNS
+
+This gives you friendly hostnames (e.g., `media.tailnet`) instead of IPs.
+
+### 4) Lock it down with ACLs
+
+Even within your tailnet, you can restrict access by device or user.
+
+```json
+{
+  "acls": [
+    {"action": "accept", "src": ["group:family"], "dst": ["tag:media:*"]}
+  ],
+  "tagOwners": {
+    "tag:media": ["group:admins"]
+  }
+}
+```
+
+### 5) (Optional) Use Tailscale SSH
+
+If you want to avoid copying SSH keys around, enable Tailscale SSH so access is tied to your identity provider and device posture.
+
+### 6) (Optional) Use a subnet router
+
+If you have devices that *can’t* run Tailscale (smart TVs, printers), a subnet router advertises that LAN into your tailnet.
+
+## Example services that are perfect for this
+
+- **Jellyfin** or **Plex** for media
+- **Home Assistant** for smart home dashboards
+- **Paperless‑ngx** for document storage
+- **Grafana** for monitoring your stack
+
+Here’s a favorite self‑hosting resource: [r/selfhosted](https://www.reddit.com/r/selfhosted/)
+
+## Backups are not optional
+
+If it’s worth hosting, it’s worth backing up. A basic rule: **[3‑2‑1 backups](https://en.wikipedia.org/wiki/Backup#3-2-1_rule)** (three copies, two different media, one off‑site). Even a cheap external drive plus an encrypted cloud backup is better than nothing.
+
+## When you *do* need public access
+
+Sometimes a service must be public (a personal site, a demo, a webhook endpoint). In that case, I still prefer a layered setup:
+
+- Put it behind a **[reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy)** (Nginx, Caddy, Traefik).
+- Terminate **TLS** there and keep internal services private.
+- Rate‑limit or require auth for anything that isn’t meant for the world.
+
+If you want a quick, clean way to do this, look into **[Caddy](https://en.wikipedia.org/wiki/Caddy_(web_server))** — it handles HTTPS automatically and is very easy to configure.
+
+## Security layers that still matter
+
+Tailscale solves the **network access** problem, but you still want good app‑level hygiene:
+
+- **[TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security)** for any web UI, even inside your tailnet.
+- **[MFA](https://en.wikipedia.org/wiki/Multi-factor_authentication)** on your identity provider.
+- **App‑level auth** (don’t leave dashboards wide open).
+- A basic **[firewall](https://en.wikipedia.org/wiki/Firewall_(computing))** on the server for defense in depth.
+
+## Updates and patching (the boring part that saves you)
+
+Most real‑world compromises happen because something wasn’t updated. Set a reminder, automate updates where safe, and **subscribe to release notes** for the apps you expose.
+
+## Monitoring and logs (so you notice problems early)
+
+Even a tiny homelab benefits from basic **[logging](https://en.wikipedia.org/wiki/Log_file)** and metrics. At minimum, make sure you can answer: *“Is the service up?”* and *“Did it just restart?”* Tools like Grafana + Prometheus are great, but a simple uptime check and journal logs are often enough.
+
+## Troubleshooting checklist
+
+- **Can’t connect?** Check the Tailscale status page and confirm both devices show “active.”
+- **High latency?** You might be relayed through DERP; try a different network or check NAT settings.
+- **DNS issues?** Confirm MagicDNS is enabled and your device uses the Tailscale DNS settings.
+- **App unreachable?** Check local firewall rules and service bindings (is it listening on `0.0.0.0` or just `localhost`?).
+
+<Callout type="tip" title="Quality of life" showEmoji={true}>
+Give your servers tags and friendly names early. You’ll thank yourself later when you’re SSH‑ing from a phone.
+</Callout>
+
+## Video walkthrough (hands‑on)
+
+<iframe
+  title="Self-hosting with Tailscale"
+  src="https://www.youtube.com/embed/9pJ7b8d8Wk8"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowFullScreen
+></iframe>
+
+## Summary
+
+Tailscale makes private access to self‑hosted services feel effortless — and safer. If you care about remote access without exposing your server to the entire internet, this is the cleanest path I’ve found.
+
+Want the deeper networking explanation? Read [Tailscale Explained](/blog/tailscale-explained).
