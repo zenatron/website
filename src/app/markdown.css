@@ -408,3 +408,39 @@
 .mdx-content .hljs-link {
   text-decoration: underline;
 }
+
+/* Nerd Corner component */
+.mdx-content .nerd-corner-content > *:first-child {
+  margin-top: 0;
+}
+
+.mdx-content .nerd-corner-content > *:last-child {
+  margin-bottom: 0;
+}
+
+.mdx-content .nerd-corner-content h3,
+.mdx-content .nerd-corner-content h4 {
+  font-size: 1.1rem;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.mdx-content .nerd-corner-content h3:first-child,
+.mdx-content .nerd-corner-content h4:first-child {
+  margin-top: 0;
+}
+
+.mdx-content .nerd-corner-content p {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.mdx-content .nerd-corner-content pre {
+  background-color: var(--code-bg);
+  margin: 1rem 0;
+}
+
+.mdx-content .nerd-corner-content ol,
+.mdx-content .nerd-corner-content ul {
+  margin: 0.75rem 0;
+}

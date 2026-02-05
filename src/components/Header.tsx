@@ -78,7 +78,7 @@ export default function Header() {
           </Link>
 
           {/* Navigation */}
-          <nav 
+          <nav
             ref={navRef}
             className="hidden items-center gap-1 rounded-full border border-white/[0.06] bg-white/[0.02] px-[3px] py-[3px] backdrop-blur-sm md:flex relative"
             onMouseLeave={() => setHoveredLink(null)}
@@ -87,8 +87,9 @@ export default function Header() {
             {NAV_LINKS.map((link) => {
               const isActive =
                 pathname === link.href || pathname.startsWith(link.href + "/");
-              const shouldShow = hoveredLink === link.href || (!hoveredLink && isActive);
-              
+              const shouldShow =
+                hoveredLink === link.href || (!hoveredLink && isActive);
+
               return shouldShow ? (
                 <motion.div
                   key={`indicator-${link.href}`}
@@ -109,7 +110,7 @@ export default function Header() {
                 />
               ) : null;
             })}
-            
+
             {NAV_LINKS.map((link) => {
               const isActive =
                 pathname === link.href || pathname.startsWith(link.href + "/");

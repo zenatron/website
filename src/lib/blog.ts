@@ -10,6 +10,7 @@ import rehypeSlug from "rehype-slug";
 import { BlogPost } from "@/types/types";
 import Counter from "@/components/mdx/Counter";
 import Callout from "@/components/mdx/Callout";
+import NerdCorner from "@/components/mdx/NerdCorner";
 import { createElement } from "react";
 import { extractHeadings } from "@/utils/extractHeadings";
 
@@ -19,6 +20,7 @@ const blogDirectory = path.join(process.cwd(), "src/content/blog");
 const components = {
   Counter,
   Callout,
+  NerdCorner,
 };
 
 // Configure rehype-highlight options

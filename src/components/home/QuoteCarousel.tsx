@@ -45,15 +45,15 @@ export default function QuoteCarousel() {
   const startAutoPlay = () => {
     if (isPaused) return;
     setProgress(0);
-    
+
     // Update progress every 60ms for smooth animation
     progressIntervalRef.current = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) return 100;
-        return prev + (100 / (6000 / 60)); // 6000ms total, update every 60ms
+        return prev + 100 / (6000 / 60); // 6000ms total, update every 60ms
       });
     }, 60);
-    
+
     intervalRef.current = setInterval(() => {
       setDirection(1);
       setCurrentIndex((prev) => (prev + 1) % QUOTES.length);
