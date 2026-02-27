@@ -1,0 +1,920 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="I'm a software engineer crafting AI projects, tools, homelabs, and games. Explore my portfolio, technical blog posts, and latest development work."><title>Tailscale Explained: The Mesh VPN That Feels Like Magic | Phil Vishnevsky</title><link rel="icon" href="/favicon.ico"><!-- Preconnect to font and CDN origins for faster loading --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><!-- Google Fonts --><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/about.D-5dzeln.css"></head> <body class="antialiased bg-primary-bg text-primary-text"> <!-- Skip to main content link for accessibility --> <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-primary-bg focus:outline-none">
+Skip to main content
+</a> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="15c4Fn" prefix="r15" component-url="/_astro/EasterEggs.C55T2r_L.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;EasterEggs&quot;,&quot;value&quot;:true}" await-children><div class="fixed top-20 right-4 z-50 flex flex-col gap-3 pointer-events-none"></div><!--astro:end--></astro-island>  <div class="relative flex min-h-screen flex-col"> <astro-island uid="dHWCJ" prefix="r14" component-url="/_astro/KatexStyles.BafW8or2.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;KatexStyles&quot;,&quot;value&quot;:true}"></astro-island> <astro-island uid="Z16tfae" prefix="r8" component-url="/_astro/Header.CgjOm6Vf.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;Header&quot;,&quot;value&quot;:true}" await-children><link rel="preload" as="image" href="/images/phil_headshot_scaled.webp"/><header class="fixed left-0 right-0 top-0 z-40"><div class="mx-auto flex h-20 max-w-5xl items-center justify-between px-6"><a href="/" title="Home" class="group flex items-center gap-2.5 rounded-full border border-white/[0.06] bg-white/[0.02] p-1.5 backdrop-blur-sm transition-colors hover:border-white/[0.1] hover:bg-white/[0.04] sm:pr-3"><img src="/images/phil_headshot_scaled.webp" alt="Phil Vishnevsky" width="48" height="48" class="h-6 w-6 shrink-0 rounded-full object-cover"/><span class="hidden text-sm font-medium text-primary-text sm:block">Phil Vishnevsky</span></a><nav class="hidden items-center gap-1 rounded-full border border-white/[0.06] bg-white/[0.02] px-[3px] py-[3px] backdrop-blur-sm md:flex relative"><div><a href="/projects" draggable="true" class="relative rounded-full px-4 py-2 text-sm leading-none transition-colors duration-200 block cursor-pointer z-10 text-secondary-text">Projects</a></div><div><a href="/blog" draggable="true" class="relative rounded-full px-4 py-2 text-sm leading-none transition-colors duration-200 block cursor-pointer z-10 text-secondary-text">Blog</a></div><div><a href="/about" draggable="true" class="relative rounded-full px-4 py-2 text-sm leading-none transition-colors duration-200 block cursor-pointer z-10 text-secondary-text">About</a></div></nav><div class="flex items-center gap-3"><button type="button" class="hidden rounded-full border border-white/[0.06] bg-white/[0.02] px-4 py-2 text-sm font-medium text-secondary-text backdrop-blur-sm transition-colors hover:border-accent/30 hover:bg-accent/10 hover:text-accent sm:block">Get in touch</button><button type="button" class="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-secondary-text transition-colors duration-150 hover:border-white/20 hover:text-primary-text md:hidden" aria-label="Toggle Menu" aria-expanded="false" title="Toggle Menu"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"></path></svg></button><div class="fixed inset-0 z-30 bg-black/65 transition-opacity duration-200 pointer-events-none opacity-0"></div><nav class="fixed top-0 right-0 z-40 flex h-full w-[65vw] max-w-[240px] flex-col gap-6 border-l border-white/[0.06] bg-primary-bg/95 backdrop-blur-md px-5 py-8 transition-transform duration-200 md:hidden translate-x-full"><div class="flex items-center justify-end"><button type="button" class="flex h-8 w-8 items-center justify-center rounded-full border border-white/[0.06] bg-white/[0.02] text-secondary-text transition-colors duration-150 hover:border-white/[0.1] hover:text-primary-text" aria-label="Close menu"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 352 512" class="h-3.5 w-3.5" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg></button></div><ul class="flex flex-col gap-1"><li><a href="/projects" class="block rounded-lg px-3 py-2.5 text-base font-medium text-primary-text transition-colors duration-150 hover:bg-white/[0.04] hover:text-accent">Projects</a></li><li><a href="/blog" class="block rounded-lg px-3 py-2.5 text-base font-medium text-primary-text transition-colors duration-150 hover:bg-white/[0.04] hover:text-accent">Blog</a></li><li><a href="/about" class="block rounded-lg px-3 py-2.5 text-base font-medium text-primary-text transition-colors duration-150 hover:bg-white/[0.04] hover:text-accent">About</a></li></ul><button type="button" class="rounded-full px-4 py-2.5 text-base font-medium text-accent transition-colors duration-150" style="background-color:rgba(124, 138, 255, 0.15);border:1px solid rgba(124, 138, 255, 0.3)">Get in touch</button><div class="mt-auto pt-4 border-t border-white/[0.06]"><span class="text-xs text-muted-text">v0.8.5</span></div></nav></div></div></header><!--astro:end--></astro-island> <main class="px-4 py-10 pt-20 sm:px-6"> <div class="max-w-5xl mx-auto mb-6"> <a href="/blog" class="inline-flex items-center gap-2 text-muted-text hover:text-foreground text-sm" title="Back to Blog">
+← Back to Blog
+</a> </div> <div class="max-w-5xl mx-auto"> <div class="lg:flex lg:gap-8 lg:items-start"> <aside class="hidden lg:block lg:w-64 lg:flex-shrink-0 lg:sticky lg:top-24"> <astro-island uid="Z1gdl1B" prefix="r9" component-url="/_astro/TableOfContents.DFg0TTA8.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{&quot;headings&quot;:[1,[[0,{&quot;id&quot;:[0,&quot;tailscale-explained-the-mesh-vpn-that-feels-like-magic&quot;],&quot;text&quot;:[0,&quot;Tailscale Explained: The Mesh VPN That Feels Like Magic&quot;],&quot;level&quot;:[0,1]}],[0,{&quot;id&quot;:[0,&quot;what-tailscale-is-and-is-not&quot;],&quot;text&quot;:[0,&quot;What Tailscale is (and is not)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;the-short-version-of-how-it-works&quot;],&quot;text&quot;:[0,&quot;The short version of how it works&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;wireguard-under-the-hood&quot;],&quot;text&quot;:[0,&quot;WireGuard under the hood&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;how-wireguard-key-exchange-actually-works&quot;],&quot;text&quot;:[0,&quot;How WireGuard key exchange actually works&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;control-plane-vs-data-plane-why-its-still-fast&quot;],&quot;text&quot;:[0,&quot;Control plane vs data plane (why it’s still fast)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;tailscale-vs-headscale-quick-breakdown&quot;],&quot;text&quot;:[0,&quot;Tailscale vs Headscale (quick breakdown)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;how-tailscale-compares-to-traditional-vpn-architectures&quot;],&quot;text&quot;:[0,&quot;How Tailscale compares to traditional VPN architectures&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;traditional-hub-and-spoke-vpn-openvpn-ipsec-etc&quot;],&quot;text&quot;:[0,&quot;Traditional hub-and-spoke VPN (OpenVPN, IPsec, etc.)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;tailscales-mesh-architecture&quot;],&quot;text&quot;:[0,&quot;Tailscale’s mesh architecture&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;the-site-to-site-problem&quot;],&quot;text&quot;:[0,&quot;The “site-to-site” problem&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;identity--keys-the-real-security-story&quot;],&quot;text&quot;:[0,&quot;Identity + keys (the real security story)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;a-note-on-identity-provider-trust&quot;],&quot;text&quot;:[0,&quot;A note on identity provider trust&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;nat-traversal--derp-relays-the-how-did-it-work-part&quot;],&quot;text&quot;:[0,&quot;NAT traversal + DERP relays (the “how did it work?” part)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;how-nat-hole-punching-actually-works-step-by-step&quot;],&quot;text&quot;:[0,&quot;How NAT hole-punching actually works (step by step)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;derp-relay-infrastructure-whats-actually-happening&quot;],&quot;text&quot;:[0,&quot;DERP relay infrastructure: what’s actually happening&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;tailscale-funnel-public-access-without-the-port-forwarding-nightmare&quot;],&quot;text&quot;:[0,&quot;Tailscale Funnel: public access without the port forwarding nightmare&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;how-it-works&quot;],&quot;text&quot;:[0,&quot;How it works&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;setting-it-up&quot;],&quot;text&quot;:[0,&quot;Setting it up&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;when-to-use-funnel-vs-other-options&quot;],&quot;text&quot;:[0,&quot;When to use Funnel vs other options&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;exit-nodes-vs-funnel-vs-cloudflare-tunnel-which-do-you-need&quot;],&quot;text&quot;:[0,&quot;Exit nodes vs Funnel vs Cloudflare Tunnel: which do you need?&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;magicdns--acls--sane-networking&quot;],&quot;text&quot;:[0,&quot;MagicDNS + ACLs = sane networking&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;acl-patterns-for-homelabs&quot;],&quot;text&quot;:[0,&quot;ACL patterns for homelabs&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;realworld-use-cases&quot;],&quot;text&quot;:[0,&quot;Real‑world use cases&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;two-power-features-worth-knowing&quot;],&quot;text&quot;:[0,&quot;Two power features worth knowing&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;performance-tips&quot;],&quot;text&quot;:[0,&quot;Performance tips&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;tailscale-ssh-no-more-shared-ssh-keys&quot;],&quot;text&quot;:[0,&quot;Tailscale SSH (no more shared SSH keys)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;file-sharing-taildrop&quot;],&quot;text&quot;:[0,&quot;File sharing: Taildrop&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;troubleshooting-common-tailscale-issues&quot;],&quot;text&quot;:[0,&quot;Troubleshooting common Tailscale issues&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;connection-is-relayed-not-direct&quot;],&quot;text&quot;:[0,&quot;“Connection is relayed” (not direct)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;device-not-showing-up-in-tailnet&quot;],&quot;text&quot;:[0,&quot;Device not showing up in tailnet&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;key-expiry-issues&quot;],&quot;text&quot;:[0,&quot;Key expiry issues&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;magicdns-not-resolving&quot;],&quot;text&quot;:[0,&quot;MagicDNS not resolving&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;subnet-router-not-advertising-routes&quot;],&quot;text&quot;:[0,&quot;Subnet router not advertising routes&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;when-tailscale-is-not-the-right-tool&quot;],&quot;text&quot;:[0,&quot;When Tailscale is not the right tool&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;how-to-evaluate-it-honestly&quot;],&quot;text&quot;:[0,&quot;How to evaluate it honestly&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;quick-demo-video-setup-in-5-minutes&quot;],&quot;text&quot;:[0,&quot;Quick demo video (setup in 5 minutes)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;further-reading&quot;],&quot;text&quot;:[0,&quot;Further reading&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;summary&quot;],&quot;text&quot;:[0,&quot;Summary&quot;],&quot;level&quot;:[0,2]}]]],&quot;className&quot;:[0,&quot;desktop-only&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;TableOfContents&quot;,&quot;value&quot;:true}" await-children><div class="hidden lg:block desktop-only"><div class="z-30"><div class="bg-neutral-800/60 backdrop-blur-md border border-neutral-600/40 rounded-xl p-4 shadow-lg max-h-[calc(100vh-8rem)] overflow-y-auto"><div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="text-xs" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M80 368H16a16 16 0 0 0-16 16v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16v-64a16 16 0 0 0-16-16zm0-320H16A16 16 0 0 0 0 64v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16V64a16 16 0 0 0-16-16zm0 160H16a16 16 0 0 0-16 16v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16v-64a16 16 0 0 0-16-16zm416 176H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16z"></path></svg><h3 class="text-sm font-medium text-foreground">Table of Contents</h3></div><button class="p-1 rounded hover:bg-neutral-700/50 transition-colors duration-200" aria-expanded="true" aria-label="Toggle table of contents"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="text-muted-text transition-transform duration-200 text-xs " height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M207.029 381.476L12.686 187.132c-9.373-9.373-9.373-24.569 0-33.941l22.667-22.667c9.357-9.357 24.522-9.375 33.901-.04L224 284.505l154.745-154.021c9.379-9.335 24.544-9.317 33.901.04l22.667 22.667c9.373 9.373 9.373 24.569 0 33.941L240.971 381.476c-9.373 9.372-24.569 9.372-33.942 0z"></path></svg></button></div><nav aria-label="Table of contents navigation"><ul class="space-y-1" role="list"><li class="mb-1"><a href="#tailscale-explained-the-mesh-vpn-that-feels-like-magic" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    font-semibold text-base
+    
+    
+    
+    
+    
+  ">Tailscale Explained: The Mesh VPN That Feels Like Magic</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#what-tailscale-is-and-is-not" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">What Tailscale is (and is not)</a></li><li class="mb-1"><a href="#the-short-version-of-how-it-works" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">The short version of how it works</a></li><li class="mb-1"><a href="#wireguard-under-the-hood" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">WireGuard under the hood</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#how-wireguard-key-exchange-actually-works" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">How WireGuard key exchange actually works</a></li></ul></li><li class="mb-1"><a href="#control-plane-vs-data-plane-why-its-still-fast" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Control plane vs data plane (why it’s still fast)</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#tailscale-vs-headscale-quick-breakdown" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Tailscale vs Headscale (quick breakdown)</a></li></ul></li><li class="mb-1"><a href="#how-tailscale-compares-to-traditional-vpn-architectures" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">How Tailscale compares to traditional VPN architectures</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#traditional-hub-and-spoke-vpn-openvpn-ipsec-etc" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Traditional hub-and-spoke VPN (OpenVPN, IPsec, etc.)</a></li><li class="mb-1"><a href="#tailscales-mesh-architecture" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Tailscale’s mesh architecture</a></li><li class="mb-1"><a href="#the-site-to-site-problem" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">The “site-to-site” problem</a></li></ul></li><li class="mb-1"><a href="#identity--keys-the-real-security-story" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Identity + keys (the real security story)</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#a-note-on-identity-provider-trust" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">A note on identity provider trust</a></li></ul></li><li class="mb-1"><a href="#nat-traversal--derp-relays-the-how-did-it-work-part" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">NAT traversal + DERP relays (the “how did it work?” part)</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#how-nat-hole-punching-actually-works-step-by-step" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">How NAT hole-punching actually works (step by step)</a></li><li class="mb-1"><a href="#derp-relay-infrastructure-whats-actually-happening" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">DERP relay infrastructure: what’s actually happening</a></li></ul></li><li class="mb-1"><a href="#tailscale-funnel-public-access-without-the-port-forwarding-nightmare" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Tailscale Funnel: public access without the port forwarding nightmare</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#how-it-works" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">How it works</a></li><li class="mb-1"><a href="#setting-it-up" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Setting it up</a></li><li class="mb-1"><a href="#when-to-use-funnel-vs-other-options" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">When to use Funnel vs other options</a></li><li class="mb-1"><a href="#exit-nodes-vs-funnel-vs-cloudflare-tunnel-which-do-you-need" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Exit nodes vs Funnel vs Cloudflare Tunnel: which do you need?</a></li></ul></li><li class="mb-1"><a href="#magicdns--acls--sane-networking" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">MagicDNS + ACLs = sane networking</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#acl-patterns-for-homelabs" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">ACL patterns for homelabs</a></li></ul></li><li class="mb-1"><a href="#realworld-use-cases" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Real‑world use cases</a></li><li class="mb-1"><a href="#two-power-features-worth-knowing" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Two power features worth knowing</a></li><li class="mb-1"><a href="#performance-tips" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Performance tips</a></li><li class="mb-1"><a href="#tailscale-ssh-no-more-shared-ssh-keys" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Tailscale SSH (no more shared SSH keys)</a></li><li class="mb-1"><a href="#file-sharing-taildrop" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">File sharing: Taildrop</a></li><li class="mb-1"><a href="#troubleshooting-common-tailscale-issues" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Troubleshooting common Tailscale issues</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#connection-is-relayed-not-direct" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">“Connection is relayed” (not direct)</a></li><li class="mb-1"><a href="#device-not-showing-up-in-tailnet" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Device not showing up in tailnet</a></li><li class="mb-1"><a href="#key-expiry-issues" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Key expiry issues</a></li><li class="mb-1"><a href="#magicdns-not-resolving" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">MagicDNS not resolving</a></li><li class="mb-1"><a href="#subnet-router-not-advertising-routes" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Subnet router not advertising routes</a></li></ul></li><li class="mb-1"><a href="#when-tailscale-is-not-the-right-tool" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">When Tailscale is not the right tool</a></li><li class="mb-1"><a href="#how-to-evaluate-it-honestly" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">How to evaluate it honestly</a></li><li class="mb-1"><a href="#quick-demo-video-setup-in-5-minutes" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Quick demo video (setup in 5 minutes)</a></li><li class="mb-1"><a href="#further-reading" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Further reading</a></li><li class="mb-1"><a href="#summary" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Summary</a></li></ul></li></ul></nav></div></div></div><!--astro:end--></astro-island> </aside> <article class="w-full max-w-4xl mx-auto lg:mx-0 lg:flex-1"> <div class="flex flex-col items-center"> <h1 class="text-4xl font-bold mb-4 text-center w-full">Tailscale Explained: The Mesh VPN That Feels Like Magic</h1> <div class="flex flex-col items-center gap-4 mb-8 text-muted-text w-full"> <div class="flex flex-wrap gap-2 justify-center"> <a href="/blog?tag=tailscale" class="tag-bubble" title="View posts with tag: tailscale">
+#tailscale </a><a href="/blog?tag=vpn" class="tag-bubble" title="View posts with tag: vpn">
+#vpn </a><a href="/blog?tag=networking" class="tag-bubble" title="View posts with tag: networking">
+#networking </a><a href="/blog?tag=homelab" class="tag-bubble" title="View posts with tag: homelab">
+#homelab </a><a href="/blog?tag=wireguard" class="tag-bubble" title="View posts with tag: wireguard">
+#wireguard </a> </div> <div class="flex flex-row items-center text-muted-text mb-2"> <time>Monday, February 17, 2025</time>  <span class="ml-2">•</span> <span class="ml-2">24min</span>  </div> </div> <astro-island uid="1W9tzV" prefix="r10" component-url="/_astro/TableOfContents.DFg0TTA8.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{&quot;headings&quot;:[1,[[0,{&quot;id&quot;:[0,&quot;tailscale-explained-the-mesh-vpn-that-feels-like-magic&quot;],&quot;text&quot;:[0,&quot;Tailscale Explained: The Mesh VPN That Feels Like Magic&quot;],&quot;level&quot;:[0,1]}],[0,{&quot;id&quot;:[0,&quot;what-tailscale-is-and-is-not&quot;],&quot;text&quot;:[0,&quot;What Tailscale is (and is not)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;the-short-version-of-how-it-works&quot;],&quot;text&quot;:[0,&quot;The short version of how it works&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;wireguard-under-the-hood&quot;],&quot;text&quot;:[0,&quot;WireGuard under the hood&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;how-wireguard-key-exchange-actually-works&quot;],&quot;text&quot;:[0,&quot;How WireGuard key exchange actually works&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;control-plane-vs-data-plane-why-its-still-fast&quot;],&quot;text&quot;:[0,&quot;Control plane vs data plane (why it’s still fast)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;tailscale-vs-headscale-quick-breakdown&quot;],&quot;text&quot;:[0,&quot;Tailscale vs Headscale (quick breakdown)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;how-tailscale-compares-to-traditional-vpn-architectures&quot;],&quot;text&quot;:[0,&quot;How Tailscale compares to traditional VPN architectures&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;traditional-hub-and-spoke-vpn-openvpn-ipsec-etc&quot;],&quot;text&quot;:[0,&quot;Traditional hub-and-spoke VPN (OpenVPN, IPsec, etc.)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;tailscales-mesh-architecture&quot;],&quot;text&quot;:[0,&quot;Tailscale’s mesh architecture&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;the-site-to-site-problem&quot;],&quot;text&quot;:[0,&quot;The “site-to-site” problem&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;identity--keys-the-real-security-story&quot;],&quot;text&quot;:[0,&quot;Identity + keys (the real security story)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;a-note-on-identity-provider-trust&quot;],&quot;text&quot;:[0,&quot;A note on identity provider trust&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;nat-traversal--derp-relays-the-how-did-it-work-part&quot;],&quot;text&quot;:[0,&quot;NAT traversal + DERP relays (the “how did it work?” part)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;how-nat-hole-punching-actually-works-step-by-step&quot;],&quot;text&quot;:[0,&quot;How NAT hole-punching actually works (step by step)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;derp-relay-infrastructure-whats-actually-happening&quot;],&quot;text&quot;:[0,&quot;DERP relay infrastructure: what’s actually happening&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;tailscale-funnel-public-access-without-the-port-forwarding-nightmare&quot;],&quot;text&quot;:[0,&quot;Tailscale Funnel: public access without the port forwarding nightmare&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;how-it-works&quot;],&quot;text&quot;:[0,&quot;How it works&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;setting-it-up&quot;],&quot;text&quot;:[0,&quot;Setting it up&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;when-to-use-funnel-vs-other-options&quot;],&quot;text&quot;:[0,&quot;When to use Funnel vs other options&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;exit-nodes-vs-funnel-vs-cloudflare-tunnel-which-do-you-need&quot;],&quot;text&quot;:[0,&quot;Exit nodes vs Funnel vs Cloudflare Tunnel: which do you need?&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;magicdns--acls--sane-networking&quot;],&quot;text&quot;:[0,&quot;MagicDNS + ACLs = sane networking&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;acl-patterns-for-homelabs&quot;],&quot;text&quot;:[0,&quot;ACL patterns for homelabs&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;realworld-use-cases&quot;],&quot;text&quot;:[0,&quot;Real‑world use cases&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;two-power-features-worth-knowing&quot;],&quot;text&quot;:[0,&quot;Two power features worth knowing&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;performance-tips&quot;],&quot;text&quot;:[0,&quot;Performance tips&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;tailscale-ssh-no-more-shared-ssh-keys&quot;],&quot;text&quot;:[0,&quot;Tailscale SSH (no more shared SSH keys)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;file-sharing-taildrop&quot;],&quot;text&quot;:[0,&quot;File sharing: Taildrop&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;troubleshooting-common-tailscale-issues&quot;],&quot;text&quot;:[0,&quot;Troubleshooting common Tailscale issues&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;connection-is-relayed-not-direct&quot;],&quot;text&quot;:[0,&quot;“Connection is relayed” (not direct)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;device-not-showing-up-in-tailnet&quot;],&quot;text&quot;:[0,&quot;Device not showing up in tailnet&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;key-expiry-issues&quot;],&quot;text&quot;:[0,&quot;Key expiry issues&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;magicdns-not-resolving&quot;],&quot;text&quot;:[0,&quot;MagicDNS not resolving&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;subnet-router-not-advertising-routes&quot;],&quot;text&quot;:[0,&quot;Subnet router not advertising routes&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;when-tailscale-is-not-the-right-tool&quot;],&quot;text&quot;:[0,&quot;When Tailscale is not the right tool&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;how-to-evaluate-it-honestly&quot;],&quot;text&quot;:[0,&quot;How to evaluate it honestly&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;quick-demo-video-setup-in-5-minutes&quot;],&quot;text&quot;:[0,&quot;Quick demo video (setup in 5 minutes)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;further-reading&quot;],&quot;text&quot;:[0,&quot;Further reading&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;summary&quot;],&quot;text&quot;:[0,&quot;Summary&quot;],&quot;level&quot;:[0,2]}]]],&quot;className&quot;:[0,&quot;mobile-only&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;TableOfContents&quot;,&quot;value&quot;:true}" await-children><div class="lg:hidden z-20 mb-8 mobile-only"><div class="relative max-w-4xl mx-auto px-4"><button class="w-full bg-neutral-800/60 backdrop-blur-md border border-neutral-600/40 rounded-xl p-4 flex items-center justify-between text-left transition-colors duration-200 hover:bg-neutral-800/70 active:bg-neutral-800/80 shadow-lg cursor-pointer touch-manipulation" aria-expanded="false" aria-label="Toggle table of contents"><div class="flex items-center gap-3"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="text-sm" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M80 368H16a16 16 0 0 0-16 16v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16v-64a16 16 0 0 0-16-16zm0-320H16A16 16 0 0 0 0 64v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16V64a16 16 0 0 0-16-16zm0 160H16a16 16 0 0 0-16 16v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16v-64a16 16 0 0 0-16-16zm416 176H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16z"></path></svg><div><div class="text-xs uppercase tracking-wide opacity-60 mb-1">Table of Contents</div><div class="text-sm font-medium">Jump to section</div></div></div><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="text-muted-text transition-transform duration-200 " height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M207.029 381.476L12.686 187.132c-9.373-9.373-9.373-24.569 0-33.941l22.667-22.667c9.357-9.357 24.522-9.375 33.901-.04L224 284.505l154.745-154.021c9.379-9.335 24.544-9.317 33.901.04l22.667 22.667c9.373 9.373 9.373 24.569 0 33.941L240.971 381.476c-9.373 9.372-24.569 9.372-33.942 0z"></path></svg></button></div></div><!--astro:end--></astro-island> <div class="mdx-content w-full max-w-3xl"> <h1 id="tailscale-explained-the-mesh-vpn-that-feels-like-magic">Tailscale Explained: The Mesh VPN That Feels Like Magic</h1>
+<p>The first time you SSH into your home server from a coffee shop <strong>without</strong> opening a port on your router, it feels like magic. Tailscale is that kind of magic — but it’s actually just smart networking built on solid cryptography.</p>
+<p><img src="/images/blog/tailscale-explained/tailnet-mesh.svg" alt="A simplified tailnet mesh diagram"/>
+<img src="/images/blog/tailscale-explained/control-plane-data-plane.svg" alt="Diagram showing control plane coordination and direct data plane traffic"/></p>
+<h2 id="what-tailscale-is-and-is-not">What Tailscale is (and is not)</h2>
+<p>Tailscale is a <strong>mesh <a href="https://en.wikipedia.org/wiki/Virtual_private_network">VPN</a></strong> built on <strong><a href="https://en.wikipedia.org/wiki/WireGuard">WireGuard</a></strong>. Instead of routing all your traffic through a single VPN server, it creates <strong>direct, encrypted connections between your devices</strong> whenever possible. Think of it as a private <strong><a href="https://en.wikipedia.org/wiki/Mesh_networking">mesh network</a></strong> with strong identity controls.</p>
+<ul>
+<li><strong>It <em>is</em>:</strong> a secure way to connect devices across the internet.</li>
+<li><strong>It <em>is not</em>:</strong> a traditional VPN for hiding your browsing from websites (though you can route traffic that way if you want).</li>
+</ul>
+<p>If you’re new to VPNs entirely, start here: <a href="/blog/what-is-a-vpn">What Is a VPN?</a></p>
+<h2 id="the-short-version-of-how-it-works">The short version of how it works</h2>
+<ol>
+<li><strong>You install the app</strong> on devices you own.</li>
+<li><strong>You log in</strong> with an identity provider (Google, GitHub, etc.).</li>
+<li><strong>Tailscale brokers the connection</strong> so your devices can find each other.</li>
+<li><strong>Devices connect directly</strong> (<a href="https://en.wikipedia.org/wiki/Peer-to-peer">peer‑to‑peer</a>) whenever possible.</li>
+</ol>
+<p>Under the hood, it uses a mix of <strong><a href="https://en.wikipedia.org/wiki/STUN">STUN</a></strong> and NAT traversal to discover how each device can be reached. If the network won’t allow it, Tailscale falls back to relays (DERP).</p>
+<h2 id="wireguard-under-the-hood">WireGuard under the hood</h2>
+<p>Tailscale uses WireGuard, which is fast, minimal, and audited. WireGuard gives you:</p>
+<ul>
+<li>Strong modern cryptography (<a href="https://en.wikipedia.org/wiki/ChaCha20-Poly1305">ChaCha20-Poly1305</a> for encryption, <a href="https://en.wikipedia.org/wiki/Curve25519">Curve25519</a> for key exchange)</li>
+<li>Low overhead (great for laptops and mobile)</li>
+<li>Simple key management</li>
+<li>~4,000 lines of code vs 100,000+ for OpenVPN — less code means fewer bugs</li>
+</ul>
+<p>Here’s WireGuard’s official paper for the curious: <a href="https://www.wireguard.com/papers/wireguard.pdf">WireGuard: Next Generation Kernel Network Tunnel</a></p>
+<div class="nerd-corner my-8 relative"><div class="relative rounded-lg overflow-hidden" style="background:var(--surface-1);border:1px solid var(--border-light)"><div class="absolute left-0 top-0 bottom-0 w-1" style="background:linear-gradient(180deg, var(--accent) 0%, var(--accent-secondary) 100%)"></div><button class="w-full flex items-center gap-4 pl-5 pr-4 py-4 text-left transition-colors duration-150 hover:bg-white/[0.02] group"><div class="flex items-center gap-2 flex-shrink-0"><span class="font-mono text-sm" style="color:var(--accent)">~/</span><span class="font-mono text-xs px-1.5 py-0.5 rounded" style="background:var(--btn-primary);color:var(--accent)">optional</span></div><div class="flex-1 min-w-0"><h3 class="font-semibold text-base group-hover:text-accent transition-colors duration-150" style="color:var(--primary-text)">WireGuard Cryptography Deep Dive</h3><p class="text-sm mt-0.5 truncate" style="color:var(--secondary-text)">How the Noise protocol handshake actually works</p></div><div class="flex items-center gap-2 flex-shrink-0"><span class="text-xs hidden sm:block" style="color:var(--muted-text)">expand</span><div class="p-1.5 rounded transition-colors duration-150" style="background:transparent;color:var(--accent)"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="12" width="12" xmlns="http://www.w3.org/2000/svg"><path d="M207.029 381.476L12.686 187.132c-9.373-9.373-9.373-24.569 0-33.941l22.667-22.667c9.357-9.357 24.522-9.375 33.901-.04L224 284.505l154.745-154.021c9.379-9.335 24.544-9.317 33.901.04l22.667 22.667c9.373 9.373 9.373 24.569 0 33.941L240.971 381.476c-9.373 9.372-24.569 9.372-33.942 0z"></path></svg></div></div></button></div></div>
+<h2 id="control-plane-vs-data-plane-why-its-still-fast">Control plane vs data plane (why it’s still fast)</h2>
+<p>Tailscale has a <strong>control plane</strong> that helps devices discover each other and exchange keys, but the <strong>data plane</strong> (the actual traffic) goes directly between your devices when possible. That’s why it feels fast — you’re not hair‑pinning through a central server unless you have to.</p>
+<p>Because only metadata flows through the control plane, the coordination service never sees your actual encrypted traffic. If you self‑host with <strong><a href="https://github.com/juanfont/headscale">Headscale</a></strong>, you take over that coordination role.</p>
+<h3 id="tailscale-vs-headscale-quick-breakdown">Tailscale vs Headscale (quick breakdown)</h3>
+<ul>
+<li><strong>Tailscale</strong>: hosted control plane, easiest setup, polished admin UI.</li>
+<li><strong>Headscale</strong>: open‑source control plane you host yourself, more work, more control.</li>
+</ul>
+<p>If you already run a homelab and want to minimize third‑party trust, Headscale is worth a look.</p>
+<h2 id="how-tailscale-compares-to-traditional-vpn-architectures">How Tailscale compares to traditional VPN architectures</h2>
+<p>Let me be blunt: traditional VPNs and Tailscale solve fundamentally different problems. Here’s the real breakdown:</p>
+<h3 id="traditional-hub-and-spoke-vpn-openvpn-ipsec-etc">Traditional hub-and-spoke VPN (OpenVPN, IPsec, etc.)</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="plaintext"><code class="hljs language-css">          ┌─────────────┐
+          │  VPN Server │
+          │  (gateway)  │
+          └──────┬──────┘
+       ┌─────────┼─────────┐
+       │         │         │
+       ▼         ▼         ▼
+    Device <span class="hljs-selector-tag">A</span>  Device <span class="hljs-selector-tag">B</span>  Device C</code></pre>
+<ul>
+<li><strong>All traffic routes through central server</strong> — even if Device A wants to talk to Device B sitting next to it</li>
+<li><strong>Single point of failure</strong> — server goes down, everyone’s disconnected</li>
+<li><strong>Bandwidth bottleneck</strong> — server handles all traffic</li>
+<li><strong>Perimeter security model</strong> — once you’re “in,” you’re trusted</li>
+<li><strong>Complex configuration</strong> — certificates, firewall rules, port forwarding</li>
+</ul>
+<h3 id="tailscales-mesh-architecture">Tailscale’s mesh architecture</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="plaintext"><code class="hljs language-css">    Device <span class="hljs-selector-tag">A</span> ◄────────► Device <span class="hljs-selector-tag">B</span>
+        ▲                   ▲
+        │                   │
+        └───────┬───────────┘
+                │
+                ▼
+            Device C
+    
+    (Control plane handles discovery,
+     but data flows directly)</code></pre>
+<ul>
+<li><strong>Direct peer-to-peer connections</strong> — traffic takes the shortest path</li>
+<li><strong>No single point of failure</strong> — control plane outage doesn’t kill existing connections</li>
+<li><strong>Scales horizontally</strong> — adding devices doesn’t increase central load</li>
+<li><strong>Zero-trust model</strong> — every device authenticated individually</li>
+<li><strong>Almost zero configuration</strong> — install, log in, done</li>
+</ul>
+<h3 id="the-site-to-site-problem">The “site-to-site” problem</h3>
+<p>Traditional VPNs excel at connecting <em>networks</em> (your office LAN to the datacenter). Tailscale excels at connecting <em>devices</em> regardless of what network they’re on. Different tools, different jobs.</p>
+<p>If you need a contractor to access one internal service without touching the rest of your network, Tailscale wins. If you need to bridge two entire subnets with legacy equipment that can’t run clients, traditional VPN (or Tailscale’s <a href="https://tailscale.com/kb/1019/subnets">subnet routers</a>) might be the answer.</p>
+<h2 id="identity--keys-the-real-security-story">Identity + keys (the real security story)</h2>
+<p>Every device gets a unique key pair, and access is tied to your identity provider. That’s the <strong><a href="https://en.wikipedia.org/wiki/Zero_trust_security_model">zero‑trust</a></strong> feel: instead of trusting a network, you trust <strong>who</strong> (and <strong>which device</strong>) is connecting. Under the hood it’s standard <strong><a href="https://en.wikipedia.org/wiki/Public-key_cryptography">public‑key cryptography</a></strong>, but with sane defaults.</p>
+<p>Tailscale also <a href="https://tailscale.com/kb/1028/key-expiry">rotates keys</a> over time, which limits the impact of a long‑lost laptop or a compromised device.</p>
+<h3 id="a-note-on-identity-provider-trust">A note on identity provider trust</h3>
+<p>Here’s the uncomfortable truth: your tailnet is only as secure as your identity provider. If someone compromises your Google or GitHub account, they can add their own device to your tailnet and access everything your ACLs allow. This is the trade-off for the convenience of SSO.</p>
+<p>Mitigations worth considering:</p>
+<ul>
+<li><strong>Enable MFA</strong> on your identity provider — preferably with hardware security keys, not SMS</li>
+<li><strong>Use a separate account</strong> for your homelab if you’re paranoid (a dedicated Google Workspace account, for example)</li>
+<li><strong>Enable <a href="https://tailscale.com/kb/1226/tailnet-lock">Tailnet Lock</a></strong> — this requires existing nodes to sign new device keys, so even a compromised identity provider can’t unilaterally add devices</li>
+</ul>
+<div class="callout warning"><div class="callout-title"><span class="mr-2 text-lg">⚠️</span>For the truly paranoid</div><div class="mt-2"><p>Tailnet Lock is the nuclear option. It adds friction (you need to approve new devices from an existing node), but it means your tailnet’s security doesn’t collapse if your identity provider does.</p></div></div>
+<h2 id="nat-traversal--derp-relays-the-how-did-it-work-part">NAT traversal + DERP relays (the “how did it work?” part)</h2>
+<p>Most home networks sit behind <a href="https://en.wikipedia.org/wiki/Network_address_translation">NAT</a>, which makes inbound connections hard. Tailscale uses <strong><a href="https://en.wikipedia.org/wiki/NAT_traversal">NAT traversal</a></strong> techniques to punch through when it can. If that fails, it falls back to <strong>DERP relays</strong> (basically a secure relay network) so your devices still connect.</p>
+<p>Relays are a fallback — not the default. You can check in the Tailscale admin panel whether a connection is direct or relayed.</p>
+<div class="callout info"><div class="callout-title"><span class="mr-2 text-lg">💡</span>Why this matters</div><div class="mt-2"><p>Direct connections are faster and more private, but relays make sure it still works in tricky networks (office Wi‑Fi, hotels, strict firewalls).</p></div></div>
+<h3 id="how-nat-hole-punching-actually-works-step-by-step">How NAT hole-punching actually works (step by step)</h3>
+<p>NAT hole-punching sounds like hacker movie nonsense, but it’s actually elegant. Here’s what happens when Device A (behind NAT) wants to connect to Device B (also behind NAT):</p>
+<p><strong>Step 1: STUN discovery</strong></p>
+<p>Both devices send packets to Tailscale’s <a href="https://en.wikipedia.org/wiki/STUN">STUN</a> servers. The STUN server sees the <em>external</em> IP and port that the NAT assigned, and reports it back. Now each device knows its own public-facing address.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="plaintext"><code class="hljs language-css">Device <span class="hljs-selector-tag">A</span> ──► NAT <span class="hljs-selector-tag">A</span> ──► STUN Server
+                           │
+            &quot;Your public <span class="hljs-selector-tag">address</span> is <span class="hljs-number">1.2</span>.<span class="hljs-number">3.4</span>:<span class="hljs-number">54321</span><span class="hljs-string">&quot;</span></code></pre>
+<p><strong>Step 2: Coordination server exchange</strong></p>
+<p>Tailscale’s control plane tells each device the other’s public address. Device A learns that Device B is at <code>5.6.7.8:12345</code>, and vice versa.</p>
+<p><strong>Step 3: Simultaneous connection attempts</strong></p>
+<p>Here’s the magic: both devices send packets to each other <em>at roughly the same time</em>.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="plaintext"><code class="hljs language-java">Device <span class="hljs-title function_">A</span> <span class="hljs-params">(<span class="hljs-number">1.2</span><span class="hljs-number">.3</span><span class="hljs-number">.4</span>:<span class="hljs-number">54321</span>)</span> ──────► Device <span class="hljs-title function_">B</span> <span class="hljs-params">(<span class="hljs-number">5.6</span><span class="hljs-number">.7</span><span class="hljs-number">.8</span>:<span class="hljs-number">12345</span>)</span>
+Device <span class="hljs-title function_">B</span> <span class="hljs-params">(<span class="hljs-number">5.6</span><span class="hljs-number">.7</span><span class="hljs-number">.8</span>:<span class="hljs-number">12345</span>)</span> ──────► Device <span class="hljs-title function_">A</span> <span class="hljs-params">(<span class="hljs-number">1.2</span><span class="hljs-number">.3</span><span class="hljs-number">.4</span>:<span class="hljs-number">54321</span>)</span></code></pre>
+<p>When Device A sends a packet <em>out</em> to Device B, NAT A creates a mapping: “packets from Device A going to 5.6.7.8:12345 should use external port 54321.”</p>
+<p>When Device B’s packet arrives at NAT A, it looks like a <em>reply</em> to Device A’s outbound packet — so NAT A lets it through. The same happens in reverse at NAT B.</p>
+<p><strong>Step 4: Connection established</strong></p>
+<p>Both NATs have now “punched holes” for this specific peer. Traffic flows directly.</p>
+<div class="callout warning"><div class="callout-title"><span class="mr-2 text-lg">⚠️</span>When hole-punching fails</div><div class="mt-2"><p>Some NATs are jerks. <strong>Symmetric NAT</strong> assigns a different external port for every destination, breaking the assumption that Device B can reach the same port Device A used for STUN. Corporate firewalls often block UDP entirely. That’s when DERP kicks in.</p></div></div>
+<p>For more details, see Tailscale’s excellent <a href="https://tailscale.com/blog/how-nat-traversal-works">How NAT traversal works</a> blog post.</p>
+<h3 id="derp-relay-infrastructure-whats-actually-happening">DERP relay infrastructure: what’s actually happening</h3>
+<p>DERP stands for <strong>Designated Encrypted Relay for Packets</strong> (yes, really). When direct connections fail, your traffic routes through DERP servers — but here’s the key thing: <strong>DERP can’t read your traffic</strong>. It’s still WireGuard-encrypted end-to-end; DERP just forwards the opaque blobs.</p>
+<p>Tailscale operates <a href="https://tailscale.com/kb/1232/derp-servers">DERP servers worldwide</a>:</p>
+<ul>
+<li>North America: NYC, San Francisco, Seattle, Chicago, Dallas, Miami, Denver, Los Angeles</li>
+<li>Europe: Amsterdam, Frankfurt, London, Paris, Warsaw</li>
+<li>Asia-Pacific: Singapore, Sydney, Tokyo, Hong Kong, Bangalore</li>
+<li>South America: São Paulo</li>
+</ul>
+<p>When you run <code>tailscale netcheck</code>, you’ll see latency to each DERP region. The client automatically picks the fastest one.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-yaml"><span class="hljs-string">$</span> <span class="hljs-string">tailscale</span> <span class="hljs-string">netcheck</span>
+
+<span class="hljs-attr">Report:</span>
+    <span class="hljs-attr">* UDP:</span> <span class="hljs-literal">true</span>
+    <span class="hljs-attr">* IPv4:</span> <span class="hljs-literal">yes</span><span class="hljs-string">,</span> <span class="hljs-number">1.2</span><span class="hljs-number">.3</span><span class="hljs-number">.4</span><span class="hljs-string">:54321</span>
+    <span class="hljs-attr">* IPv6:</span> <span class="hljs-literal">yes</span><span class="hljs-string">,</span> [<span class="hljs-number">2001</span><span class="hljs-string">:db8::1</span>]<span class="hljs-string">:54321</span>
+    <span class="hljs-attr">* MappingVariesByDestAddr:</span> <span class="hljs-literal">false</span>
+    <span class="hljs-attr">* HairPinning:</span> <span class="hljs-literal">false</span>
+    <span class="hljs-attr">* PortMapping:</span> <span class="hljs-string">UPnP</span>
+    <span class="hljs-attr">* Nearest DERP:</span> <span class="hljs-string">San</span> <span class="hljs-string">Francisco</span>
+    <span class="hljs-attr">* DERP latency:</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-attr">sfo:</span> <span class="hljs-string">12ms</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-attr">lax:</span> <span class="hljs-string">18ms</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-attr">sea:</span> <span class="hljs-string">25ms</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-attr">nyc:</span> <span class="hljs-string">65ms</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-attr">fra:</span> <span class="hljs-string">142ms</span></code></pre>
+<div class="callout tip"><div class="callout-title"><span class="mr-2 text-lg">💬</span>Self-hosting DERP</div><div class="mt-2"><p>If you’re paranoid (or have specific latency requirements), you can <a href="https://tailscale.com/kb/1118/custom-derp-servers">run your own DERP server</a>. It’s a single Go binary. I do this for my homelab to ensure traffic between local devices never leaves my network even when hole-punching fails.</p></div></div>
+<h2 id="tailscale-funnel-public-access-without-the-port-forwarding-nightmare">Tailscale Funnel: public access without the port forwarding nightmare</h2>
+<p>Here’s a feature that made me delete my Cloudflare Tunnel setup: <strong><a href="https://tailscale.com/kb/1223/funnel">Tailscale Funnel</a></strong>. It lets you expose a service on your tailnet to the <em>public internet</em> — no port forwarding, no dynamic DNS, no reverse proxy configuration.</p>
+<h3 id="how-it-works">How it works</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="plaintext"><code class="hljs language-rust">Public Internet ──► Tailscale<span class="hljs-symbol">&#39;s</span> edge ──► Your <span class="hljs-title function_ invoke__">device</span> (via DERP/direct)
+    https:<span class="hljs-comment">//mybox.tail1234.ts.net</span></code></pre>
+<ol>
+<li>Tailscale provisions a public hostname for your device (like <code>mybox.tail1234.ts.net</code>)</li>
+<li>They handle TLS termination with a valid certificate</li>
+<li>Traffic flows through their edge, then to your device over the encrypted tailnet</li>
+<li>Your device never needs to accept inbound connections from the internet</li>
+</ol>
+<h3 id="setting-it-up">Setting it up</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-ini"><span class="hljs-comment"># Expose a local web server on port 8080</span>
+tailscale funnel 8080
+
+<span class="hljs-comment"># Or expose with a specific path</span>
+tailscale funnel <span class="hljs-attr">--set-path</span>=/api localhost:<span class="hljs-number">3000</span></code></pre>
+<p>That’s it. You get a working HTTPS URL in seconds.</p>
+<h3 id="when-to-use-funnel-vs-other-options">When to use Funnel vs other options</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Scenario</th><th>Use Funnel</th><th>Use Cloudflare Tunnel</th><th>Use port forwarding</th></tr></thead><tbody><tr><td>Quick demo/webhook testing</td><td>✅</td><td>Overkill</td><td>Overkill</td></tr><tr><td>Production with custom domain</td><td>Maybe</td><td>✅</td><td>✅</td></tr><tr><td>Self-hosted apps for friends</td><td>✅</td><td>✅</td><td>Pain</td></tr><tr><td>Bandwidth-heavy (video streaming)</td><td>Consider limits</td><td>✅</td><td>✅</td></tr><tr><td>Full control over edge</td><td>❌</td><td>Partial</td><td>✅</td></tr></tbody></table>
+<div class="callout warning"><div class="callout-title"><span class="mr-2 text-lg">⚠️</span>Funnel limitations</div><div class="mt-2"><p>Funnel has bandwidth limits on the free plan, and you’re trusting Tailscale’s edge with unencrypted HTTP traffic (before it hits WireGuard). For serious production use, consider <a href="https://tailscale.com/kb/1312/serve">Tailscale Serve</a> for tailnet-only access, or combine with your own reverse proxy.</p></div></div>
+<p>See the <a href="https://tailscale.com/kb/1223/funnel">Funnel documentation</a> for the full details.</p>
+<h3 id="exit-nodes-vs-funnel-vs-cloudflare-tunnel-which-do-you-need">Exit nodes vs Funnel vs Cloudflare Tunnel: which do you need?</h3>
+<p>These three get confused constantly. Here’s the decision tree:</p>
+<p><strong>What are you trying to do?</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Goal</th><th>Use</th><th>Why</th></tr></thead><tbody><tr><td>Route my internet traffic through a trusted location</td><td><strong>Exit Node</strong></td><td>Tunnels <em>outbound</em> traffic from your device through another node in your tailnet</td></tr><tr><td>Let someone <em>outside</em> my tailnet access a service I’m running</td><td><strong>Funnel</strong> or <strong>Cloudflare Tunnel</strong></td><td>Creates an <em>inbound</em> path from the public internet</td></tr><tr><td>Access my own services from my own devices</td><td><strong>Neither</strong> — just use Tailscale directly</td><td>That’s the default behavior</td></tr></tbody></table>
+<p><strong>Funnel vs Cloudflare Tunnel decision:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Consideration</th><th>Funnel</th><th>Cloudflare Tunnel</th></tr></thead><tbody><tr><td><strong>Setup complexity</strong></td><td>One command</td><td>More config, but still reasonable</td></tr><tr><td><strong>Custom domain</strong></td><td>Limited (uses <code>*.ts.net</code>)</td><td>Full control</td></tr><tr><td><strong>DDoS protection</strong></td><td>Basic</td><td>Cloudflare’s full stack</td></tr><tr><td><strong>Bandwidth limits</strong></td><td>Yes (free tier)</td><td>Generous</td></tr><tr><td><strong>TLS termination</strong></td><td>Tailscale’s edge</td><td>Cloudflare’s edge</td></tr><tr><td><strong>Caching/CDN</strong></td><td>No</td><td>Yes</td></tr><tr><td><strong>Zero-trust access policies</strong></td><td>Via Tailscale ACLs</td><td>Via Cloudflare Access</td></tr></tbody></table>
+<p><strong>My recommendation:</strong></p>
+<ul>
+<li><strong>Quick demos, webhooks, sharing with a few friends</strong> → Funnel</li>
+<li><strong>Anything “production” with custom domains</strong> → Cloudflare Tunnel</li>
+<li><strong>Internal services for your own devices</strong> → Neither, just Tailscale</li>
+</ul>
+<div class="callout info"><div class="callout-title"><span class="mr-2 text-lg">💡</span>They&#x27;re not mutually exclusive</div><div class="mt-2"><p>You can run both. I use Tailscale for private access to everything, and Cloudflare Tunnel for the handful of services I expose publicly. Different tools, different jobs.</p></div></div>
+<h2 id="magicdns--acls--sane-networking">MagicDNS + ACLs = sane networking</h2>
+<p>Two features make Tailscale feel polished:</p>
+<ul>
+<li><strong><a href="https://tailscale.com/kb/1081/magicdns">MagicDNS</a></strong> gives your devices friendly names (like <code>nas.tailnet</code>), instead of memorizing IPs, by handling <strong><a href="https://en.wikipedia.org/wiki/Domain_Name_System">DNS</a></strong> for your tailnet.</li>
+<li><strong><a href="https://tailscale.com/kb/1018/acls">ACLs</a></strong> (access control lists) let you define who can access what — same idea as a classic <strong><a href="https://en.wikipedia.org/wiki/Access-control_list">ACL</a></strong>, but applied to your tailnet.</li>
+</ul>
+<p>Example ACL snippet:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="json"><code class="hljs language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;acls&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span><span class="hljs-attr">&quot;action&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;accept&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;src&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;group:admins&quot;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;dst&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;tag:server:*&quot;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span></code></pre>
+<p>You can also create <strong>device tags</strong> (like <code>tag:server</code>), then grant access to groups rather than specific devices. That makes permissions easier to reason about as your tailnet grows.</p>
+<h3 id="acl-patterns-for-homelabs">ACL patterns for homelabs</h3>
+<p>Here’s a real-world ACL structure I use for my homelab. It’s not minimal, but it’s sane:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="json"><code class="hljs language-perl">{
+  <span class="hljs-string">&quot;groups&quot;</span>: {
+    <span class="hljs-string">&quot;group:admins&quot;</span>: [<span class="hljs-string">&quot;user<span class="hljs-variable">@gmail</span>.com&quot;</span>],
+    <span class="hljs-string">&quot;group:family&quot;</span>: [<span class="hljs-string">&quot;spouse<span class="hljs-variable">@gmail</span>.com&quot;</span>, <span class="hljs-string">&quot;kid<span class="hljs-variable">@gmail</span>.com&quot;</span>]
+  },
+  <span class="hljs-string">&quot;tagOwners&quot;</span>: {
+    <span class="hljs-string">&quot;tag:server&quot;</span>: [<span class="hljs-string">&quot;group:admins&quot;</span>],
+    <span class="hljs-string">&quot;tag:media&quot;</span>: [<span class="hljs-string">&quot;group:admins&quot;</span>],
+    <span class="hljs-string">&quot;tag:nas&quot;</span>: [<span class="hljs-string">&quot;group:admins&quot;</span>]
+  },
+  <span class="hljs-string">&quot;acls&quot;</span>: [
+    <span class="hljs-regexp">//</span> Admins can access everything
+    {<span class="hljs-string">&quot;action&quot;</span>: <span class="hljs-string">&quot;accept&quot;</span>, <span class="hljs-string">&quot;src&quot;</span>: [<span class="hljs-string">&quot;group:admins&quot;</span>], <span class="hljs-string">&quot;dst&quot;</span>: [<span class="hljs-string">&quot;*:*&quot;</span>]},
+    
+    <span class="hljs-regexp">//</span> Family can access media servers (Jellyfin, etc.)
+    {<span class="hljs-string">&quot;action&quot;</span>: <span class="hljs-string">&quot;accept&quot;</span>, <span class="hljs-string">&quot;src&quot;</span>: [<span class="hljs-string">&quot;group:family&quot;</span>], <span class="hljs-string">&quot;dst&quot;</span>: [<span class="hljs-string">&quot;tag:media:80,443,8096&quot;</span>]},
+    
+    <span class="hljs-regexp">//</span> Family can access NAS <span class="hljs-keyword">for</span> file sharing
+    {<span class="hljs-string">&quot;action&quot;</span>: <span class="hljs-string">&quot;accept&quot;</span>, <span class="hljs-string">&quot;src&quot;</span>: [<span class="hljs-string">&quot;group:family&quot;</span>], <span class="hljs-string">&quot;dst&quot;</span>: [<span class="hljs-string">&quot;tag:nas:445,5000&quot;</span>]},
+    
+    <span class="hljs-regexp">//</span> Servers can talk to <span class="hljs-keyword">each</span> other (<span class="hljs-keyword">for</span> backups, monitoring, etc.)
+    {<span class="hljs-string">&quot;action&quot;</span>: <span class="hljs-string">&quot;accept&quot;</span>, <span class="hljs-string">&quot;src&quot;</span>: [<span class="hljs-string">&quot;tag:server&quot;</span>], <span class="hljs-string">&quot;dst&quot;</span>: [<span class="hljs-string">&quot;tag:server:*&quot;</span>]},
+    
+    <span class="hljs-regexp">//</span> All devices can <span class="hljs-keyword">use</span> the <span class="hljs-keyword">exit</span> node
+    {<span class="hljs-string">&quot;action&quot;</span>: <span class="hljs-string">&quot;accept&quot;</span>, <span class="hljs-string">&quot;src&quot;</span>: [<span class="hljs-string">&quot;autogroup:members&quot;</span>], <span class="hljs-string">&quot;dst&quot;</span>: [<span class="hljs-string">&quot;autogroup:internet:*&quot;</span>]}
+  ]
+}</code></pre>
+<p><strong>Why this structure works:</strong></p>
+<ul>
+<li><strong>Groups</strong> represent people, not devices — when you add a new phone, permissions follow automatically</li>
+<li><strong>Tags</strong> represent roles, not specific machines — swap your NAS hardware, just re-tag</li>
+<li><strong>Autogroups</strong> like <code>autogroup:members</code> and <code>autogroup:internet</code> reduce boilerplate</li>
+<li><strong>Explicit port lists</strong> for family access — they get Jellyfin, not SSH</li>
+</ul>
+<p><strong>Common footguns to avoid:</strong></p>
+<ul>
+<li><strong>Accidentally allowing <code>*:*</code> to everyone</strong> — always start restrictive, then open up</li>
+<li><strong>Forgetting to tag servers</strong> — an untagged device might fall through to a permissive rule, or worse, be unreachable</li>
+<li><strong>Not approving routes</strong> — subnet routers and exit nodes need explicit approval in the admin console, not just ACLs</li>
+<li><strong>Overly complex ACLs</strong> — if you can’t explain a rule in one sentence, simplify it</li>
+</ul>
+<div class="callout tip"><div class="callout-title"><span class="mr-2 text-lg">💬</span>Testing ACLs</div><div class="mt-2"><p>Use <code>tailscale status</code> and <code>tailscale ping &lt;device&gt;</code> to verify connectivity. The admin console also has an ACL preview tool that shows what each user/device can access.</p></div></div>
+<h2 id="realworld-use-cases">Real‑world use cases</h2>
+<ul>
+<li><strong>Remote <a href="https://en.wikipedia.org/wiki/Secure_Shell">SSH</a> access</strong> to your server without port forwarding</li>
+<li><strong>Private media servers</strong> (Jellyfin, Plex, Audiobookshelf)</li>
+<li><strong>Family tech support</strong> without a complex router setup</li>
+<li><strong>Development environments</strong> — access your home dev server from anywhere</li>
+<li><strong>IoT device management</strong> — reach your smart home gear securely</li>
+<li><strong>Game servers</strong> — friends can join without exposing ports</li>
+</ul>
+<h2 id="two-power-features-worth-knowing">Two power features worth knowing</h2>
+<ul>
+<li><strong><a href="https://tailscale.com/kb/1019/subnets">Subnet routers</a></strong> let you reach non‑Tailscale devices on a LAN (like a printer or a smart TV) through a tagged router.</li>
+<li><strong><a href="https://tailscale.com/kb/1103/exit-nodes">Exit nodes</a></strong> let you route <em>all</em> your internet traffic through a trusted device, similar to a traditional VPN but still within your tailnet.</li>
+</ul>
+<h2 id="performance-tips">Performance tips</h2>
+<ul>
+<li>Prefer <strong>direct connections</strong> when possible; relays add latency.</li>
+<li>Put the exit node close to the users who need it.</li>
+<li>If you’re self‑hosting, keep the coordination server in a low‑latency region.</li>
+<li>Run <code>tailscale netcheck</code> to diagnose connectivity issues.</li>
+<li>Check <code>tailscale status</code> to see which connections are direct vs relayed.</li>
+</ul>
+<h2 id="tailscale-ssh-no-more-shared-ssh-keys">Tailscale SSH (no more shared SSH keys)</h2>
+<p>Tailscale can act as an <strong><a href="https://en.wikipedia.org/wiki/Secure_Shell">SSH</a></strong> access broker, which means you authenticate with your identity provider instead of copying keys around. It’s particularly nice for teams: access can be revoked instantly without touching server configs.</p>
+<p>See <a href="https://tailscale.com/kb/1193/tailscale-ssh">Tailscale SSH documentation</a> for setup instructions.</p>
+<h2 id="file-sharing-taildrop">File sharing: Taildrop</h2>
+<p>Tailscale includes <strong><a href="https://tailscale.com/kb/1106/taildrop">Taildrop</a></strong>, a simple file transfer feature that works inside your tailnet. It’s not Dropbox, but it’s excellent for “get this file to my other device right now.”</p>
+<p>If you want the practical walkthrough, here’s the full guide: <a href="/blog/self-hosting-with-tailscale">Self‑Hosting With Tailscale</a></p>
+<h2 id="troubleshooting-common-tailscale-issues">Troubleshooting common Tailscale issues</h2>
+<p>After running Tailscale for a while, you’ll hit some of these. Here’s how to fix them:</p>
+<h3 id="connection-is-relayed-not-direct">“Connection is relayed” (not direct)</h3>
+<p><strong>Symptoms:</strong> Slow connections, <code>tailscale status</code> shows “relay” instead of “direct”</p>
+<p><strong>Diagnosis:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-lua">tailscale <span class="hljs-built_in">status</span>
+tailscale ping &lt;device-name&gt;
+tailscale netcheck</code></pre>
+<p><strong>Common causes:</strong></p>
+<ul>
+<li><strong>Symmetric NAT</strong> — your router assigns different ports per destination. Try enabling UPnP/NAT-PMP on your router.</li>
+<li><strong>Firewall blocking UDP</strong> — Tailscale needs UDP port 41641 (or uses random ports). Check corporate/hotel firewalls.</li>
+<li><strong>Double NAT</strong> — you’re behind two NAT layers (ISP’s CGNAT + your router). Not much you can do except use DERP.</li>
+<li><strong>One peer behind strict firewall</strong> — if only one side is restricted, hole-punching might still fail.</li>
+</ul>
+<p><strong>Fixes:</strong></p>
+<ol>
+<li>Enable UPnP on your router</li>
+<li>Try a different network (mobile hotspot) to isolate the problem</li>
+<li>If you control the network, forward UDP 41641 to one device</li>
+<li>Accept that DERP is your reality and move on</li>
+</ol>
+<h3 id="device-not-showing-up-in-tailnet">Device not showing up in tailnet</h3>
+<p><strong>Symptoms:</strong> New device installed Tailscale but doesn’t appear in admin console</p>
+<p><strong>Causes:</strong></p>
+<ul>
+<li>Device needs to be authorized (if your tailnet requires admin approval)</li>
+<li>Device is on a different tailnet (logged into wrong account)</li>
+<li>Tailscale service isn’t running</li>
+</ul>
+<p><strong>Fixes:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-graphql"><span class="hljs-comment"># Check if tailscale is running</span>
+tailscale status
+
+<span class="hljs-comment"># See which account you&#39;re logged into</span>
+tailscale status --json <span class="hljs-punctuation">|</span> jq .Self.UserID
+
+<span class="hljs-comment"># Force re-authentication</span>
+tailscale logout
+tailscale login</code></pre>
+<h3 id="key-expiry-issues">Key expiry issues</h3>
+<p><strong>Symptoms:</strong> Device suddenly can’t connect, “key expired” in logs</p>
+<p><strong>Cause:</strong> By default, device keys expire after 180 days. This is a security feature.</p>
+<p><strong>Fixes:</strong></p>
+<ol>
+<li>Re-authenticate: <code>tailscale login</code></li>
+<li>Disable key expiry for specific devices in admin console (not recommended for laptops)</li>
+<li>Use <code>--authkey</code> with a reusable, non-expiring key for servers (create in admin console)</li>
+</ol>
+<h3 id="magicdns-not-resolving">MagicDNS not resolving</h3>
+<p><strong>Symptoms:</strong> Can ping by Tailscale IP but not by name</p>
+<p><strong>Causes:</strong></p>
+<ul>
+<li>MagicDNS not enabled (check admin console → DNS)</li>
+<li>Local DNS resolver interfering</li>
+<li>systemd-resolved conflicts (common on Linux)</li>
+</ul>
+<p><strong>Fixes for Linux:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-ini"><span class="hljs-comment"># Check if tailscale is handling DNS</span>
+resolvectl status
+
+<span class="hljs-comment"># Force tailscale to take over DNS</span>
+sudo tailscale up <span class="hljs-attr">--accept-dns</span>=<span class="hljs-literal">true</span></code></pre>
+<h3 id="subnet-router-not-advertising-routes">Subnet router not advertising routes</h3>
+<p><strong>Symptoms:</strong> Subnet router shows as “advertising” but other devices can’t reach the subnet</p>
+<p><strong>Causes:</strong></p>
+<ul>
+<li>Routes need approval in admin console</li>
+<li>IP forwarding not enabled on the router device</li>
+<li>Firewall on router device blocking forwarded traffic</li>
+</ul>
+<p><strong>Fixes:</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-bash"><span class="hljs-comment"># Enable IP forwarding (Linux)</span>
+<span class="hljs-built_in">echo</span> <span class="hljs-string">&#39;net.ipv4.ip_forward = 1&#39;</span> | <span class="hljs-built_in">sudo</span> <span class="hljs-built_in">tee</span> -a /etc/sysctl.conf
+<span class="hljs-built_in">echo</span> <span class="hljs-string">&#39;net.ipv6.conf.all.forwarding = 1&#39;</span> | <span class="hljs-built_in">sudo</span> <span class="hljs-built_in">tee</span> -a /etc/sysctl.conf
+<span class="hljs-built_in">sudo</span> sysctl -p
+
+<span class="hljs-comment"># Check routes are approved in admin console</span>
+<span class="hljs-comment"># Then restart tailscale</span>
+<span class="hljs-built_in">sudo</span> tailscale up --advertise-routes=192.168.1.0/24 --reset</code></pre>
+<div class="callout tip"><div class="callout-title"><span class="mr-2 text-lg">💬</span>The nuclear option</div><div class="mt-2"><p>When all else fails: <code>tailscale logout &amp;&amp; tailscale login &amp;&amp; sudo systemctl restart tailscaled</code>. Sometimes you just need to start fresh.</p></div></div>
+<p>For more debugging, check the <a href="https://tailscale.com/kb/1023/troubleshooting">Tailscale troubleshooting guide</a> and the <a href="https://forum.tailscale.com/">community forum</a>.</p>
+<h2 id="when-tailscale-is-not-the-right-tool">When Tailscale is <em>not</em> the right tool</h2>
+<ul>
+<li>You need anonymous browsing (use a commercial VPN like Mullvad instead)</li>
+<li>You can’t install a client on a managed device</li>
+<li>You want full control of the coordination server (use <a href="https://github.com/juanfont/headscale">Headscale</a>)</li>
+<li>You need to connect networks at layer 2 (Tailscale is layer 3 only)</li>
+<li>You’re bridging legacy equipment that can’t run modern clients</li>
+</ul>
+<h2 id="how-to-evaluate-it-honestly">How to evaluate it honestly</h2>
+<p>Ask yourself:</p>
+<ul>
+<li>Do I trust an identity‑based model more than IP‑based firewalls?</li>
+<li>Do I want device‑to‑device access rather than a single VPN gateway?</li>
+<li>Is my primary goal remote access, not anonymity?</li>
+</ul>
+<p>If you answer “yes” to most of these, Tailscale is a strong fit.</p>
+<h2 id="quick-demo-video-setup-in-5-minutes">Quick demo video (setup in 5 minutes)</h2>
+<iframe title="Tailscale quickstart" src="https://www.youtube.com/embed/dJjRr2dK3wI" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+<h2 id="further-reading">Further reading</h2>
+<ul>
+<li><a href="https://tailscale.com/kb">Tailscale documentation</a> — the official knowledge base</li>
+<li><a href="https://tailscale.com/blog/how-tailscale-works">How Tailscale works</a> — their own deep-dive</li>
+<li><a href="https://tailscale.com/blog/how-nat-traversal-works">How NAT traversal works</a> — excellent technical explainer</li>
+<li><a href="https://www.wireguard.com/papers/wireguard.pdf">WireGuard whitepaper</a> — the cryptographic foundation</li>
+<li><a href="http://www.noiseprotocol.org/">Noise Protocol Framework</a> — the handshake pattern WireGuard uses</li>
+<li><a href="https://github.com/juanfont/headscale/tree/main/docs">Headscale documentation</a> — if you want to self-host the control plane</li>
+</ul>
+<h2 id="summary">Summary</h2>
+<p>Tailscale is a VPN in the most practical sense — <strong>it makes your devices feel like they’re on the same private network</strong>, without the pain of legacy VPN setups. If your goal is <em>private remote access</em> rather than “hide my browsing,” it’s one of the cleanest solutions available.</p>
+<p>Next up: <a href="/blog/self-hosting-with-tailscale">Self‑Hosting With Tailscale</a></p> </div> <div class="w-full max-w-3xl"> <script>(()=>{var a=(s,i,o)=>{let r=async()=>{await(await s())()},t=typeof i.value=="object"?i.value:void 0,c={rootMargin:t==null?void 0:t.rootMargin},n=new IntersectionObserver(e=>{for(let l of e)if(l.isIntersecting){n.disconnect(),r();break}},c);for(let e of o.children)n.observe(e)};(self.Astro||(self.Astro={})).visible=a;window.dispatchEvent(new Event("astro:visible"));})();</script><astro-island uid="12do4U" prefix="r11" component-url="/_astro/SuggestedPosts.D8WlOE5i.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{&quot;posts&quot;:[1,[[0,{&quot;slug&quot;:[0,&quot;reverse-proxy-homelab&quot;],&quot;metadata&quot;:[0,{&quot;title&quot;:[0,&quot;Reverse Proxy for a Homelab: Caddy Done Right&quot;],&quot;date&quot;:[0,&quot;2025-02-25&quot;],&quot;readingTime&quot;:[0,&quot;22min&quot;],&quot;excerpt&quot;:[0,&quot;How to set up Caddy as a reverse proxy for your self‑hosted services, with automatic HTTPS, internal domains, and clean URLs.&quot;],&quot;tags&quot;:[1,[[0,&quot;self-hosting&quot;],[0,&quot;homelab&quot;],[0,&quot;caddy&quot;],[0,&quot;networking&quot;],[0,&quot;security&quot;]]]}]}],[0,{&quot;slug&quot;:[0,&quot;self-hosting-with-tailscale&quot;],&quot;metadata&quot;:[0,{&quot;title&quot;:[0,&quot;Self‑Hosting With Tailscale: Secure Access Without Open Ports&quot;],&quot;date&quot;:[0,&quot;2025-02-19&quot;],&quot;readingTime&quot;:[0,&quot;25min&quot;],&quot;excerpt&quot;:[0,&quot;A practical guide to self‑hosting services and reaching them securely with Tailscale, no port forwarding required.&quot;],&quot;tags&quot;:[1,[[0,&quot;self-hosting&quot;],[0,&quot;tailscale&quot;],[0,&quot;homelab&quot;],[0,&quot;security&quot;],[0,&quot;docker&quot;]]]}]}],[0,{&quot;slug&quot;:[0,&quot;what-is-a-vpn&quot;],&quot;metadata&quot;:[0,{&quot;title&quot;:[0,&quot;What Is a VPN? A Practical, No‑Hype Guide&quot;],&quot;date&quot;:[0,&quot;2025-02-15&quot;],&quot;readingTime&quot;:[0,&quot;18min&quot;],&quot;excerpt&quot;:[0,&quot;A clear, practical explanation of VPNs, what they protect, what they don&#39;t, and how to choose one without the marketing noise.&quot;],&quot;tags&quot;:[1,[[0,&quot;vpn&quot;],[0,&quot;networking&quot;],[0,&quot;security&quot;],[0,&quot;privacy&quot;]]]}]}]]]}" ssr client="visible" opts="{&quot;name&quot;:&quot;SuggestedPosts&quot;,&quot;value&quot;:true}" await-children><section class="mt-16 pt-8 border-t border-white/[0.06]"><h2 class="text-2xl font-bold mb-6 text-primary-text">Related Posts</h2><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"><a href="/blog/reverse-proxy-homelab" class="group"><article class="card h-full flex flex-col transition-all duration-200 hover:scale-[1.02]"><h3 class="text-lg font-semibold mb-3 text-primary-text group-hover:text-accent transition-colors duration-150 line-clamp-2">Reverse Proxy for a Homelab: Caddy Done Right</h3><p class="text-sm text-muted-text mb-4 line-clamp-2 flex-grow">How to set up Caddy as a reverse proxy for your self‑hosted services, with automatic HTTPS, internal domains, and clean URLs.</p><div class="flex flex-wrap gap-2 mb-3"><span class="tag-bubble text-xs">#<!-- -->self-hosting</span><span class="tag-bubble text-xs">#<!-- -->homelab</span><span class="tag-bubble text-xs">#<!-- -->caddy</span><span class="text-xs text-muted-text">+<!-- -->2</span></div><div class="flex items-center gap-2 text-xs text-muted-text mt-auto"><time>2/25/25</time><span>•</span><span>22min</span></div></article></a><a href="/blog/self-hosting-with-tailscale" class="group"><article class="card h-full flex flex-col transition-all duration-200 hover:scale-[1.02]"><h3 class="text-lg font-semibold mb-3 text-primary-text group-hover:text-accent transition-colors duration-150 line-clamp-2">Self‑Hosting With Tailscale: Secure Access Without Open Ports</h3><p class="text-sm text-muted-text mb-4 line-clamp-2 flex-grow">A practical guide to self‑hosting services and reaching them securely with Tailscale, no port forwarding required.</p><div class="flex flex-wrap gap-2 mb-3"><span class="tag-bubble text-xs">#<!-- -->self-hosting</span><span class="tag-bubble text-xs">#<!-- -->tailscale</span><span class="tag-bubble text-xs">#<!-- -->homelab</span><span class="text-xs text-muted-text">+<!-- -->2</span></div><div class="flex items-center gap-2 text-xs text-muted-text mt-auto"><time>2/19/25</time><span>•</span><span>25min</span></div></article></a><a href="/blog/what-is-a-vpn" class="group"><article class="card h-full flex flex-col transition-all duration-200 hover:scale-[1.02]"><h3 class="text-lg font-semibold mb-3 text-primary-text group-hover:text-accent transition-colors duration-150 line-clamp-2">What Is a VPN? A Practical, No‑Hype Guide</h3><p class="text-sm text-muted-text mb-4 line-clamp-2 flex-grow">A clear, practical explanation of VPNs, what they protect, what they don&#x27;t, and how to choose one without the marketing noise.</p><div class="flex flex-wrap gap-2 mb-3"><span class="tag-bubble text-xs">#<!-- -->vpn</span><span class="tag-bubble text-xs">#<!-- -->networking</span><span class="tag-bubble text-xs">#<!-- -->security</span><span class="text-xs text-muted-text">+<!-- -->1</span></div><div class="flex items-center gap-2 text-xs text-muted-text mt-auto"><time>2/15/25</time><span>•</span><span>18min</span></div></article></a></div></section><!--astro:end--></astro-island> </div> </div> </article> </div> </div> </main> <astro-island uid="Z1HHq8M" prefix="r12" component-url="/_astro/Footer.Cvi6Gx2X.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;Footer&quot;,&quot;value&quot;:true}" await-children><footer class="mt-auto border-t border-white/[0.04]"><div class="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8"><div class="flex flex-col items-center justify-between gap-3 sm:flex-row sm:gap-6"><span class="text-xs text-muted-text">© <!-- -->2026<!-- --> Phil Vishnevsky</span><nav class="flex items-center gap-4 sm:gap-6"><a href="/projects" class="text-sm text-secondary-text transition-colors hover:text-accent">Projects</a><a href="/blog" class="text-sm text-secondary-text transition-colors hover:text-accent">Blog</a><a href="/about" class="text-sm text-secondary-text transition-colors hover:text-accent">About</a></nav><div class="flex items-center gap-3"><a href="https://github.com/zenatron" target="_blank" rel="noopener noreferrer" class="text-muted-text transition-colors hover:text-accent" aria-label="GitHub"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path></svg></a><a href="https://linkedin.com/in/philipvishnevsky" target="_blank" rel="noopener noreferrer" class="text-muted-text transition-colors hover:text-accent" aria-label="LinkedIn"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"></path></svg></a><a href="https://bsky.app/profile/zenatron.bsky.social" target="_blank" rel="noopener noreferrer" class="text-muted-text transition-colors hover:text-accent" aria-label="Bluesky"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M407.8 294.7c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3zM288 227.1C261.9 176.4 190.9 81.9 124.9 35.3C61.6-9.4 37.5-1.7 21.6 5.5C3.3 13.8 0 41.9 0 58.4S9.1 194 15 213.9c19.5 65.7 89.1 87.9 153.2 80.7c3.3-.5 6.6-.9 10-1.4c-3.3 .5-6.6 1-10 1.4C74.3 308.6-9.1 342.8 100.3 464.5C220.6 589.1 265.1 437.8 288 361.1c22.9 76.7 49.2 222.5 185.6 103.4c102.4-103.4 28.1-156-65.8-169.9c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3c64.1 7.1 133.6-15.1 153.2-80.7C566.9 194 576 75 576 58.4s-3.3-44.7-21.6-52.9c-15.8-7.1-40-14.9-103.2 29.8C385.1 81.9 314.1 176.4 288 227.1z"></path></svg></a><button type="button" data-cal-namespace="call" data-cal-link="phil/call" data-cal-origin="https://z3n.me" data-cal-config="{&quot;layout&quot;:&quot;month_view&quot;}" class="text-muted-text transition-colors duration-200 hover:text-accent " title="Book a Meeting"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="h-4 w-4" style="pointer-events:none" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M0 464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V192H0v272zm320-196c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zM192 268c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zM64 268c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zM400 64h-48V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H160V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H48C21.5 64 0 85.5 0 112v48h448v-48c0-26.5-21.5-48-48-48z"></path></svg></button></div></div></div></footer><!--astro:end--></astro-island> <astro-island uid="Z27XvrG" prefix="r13" component-url="/_astro/BackToTopButton.BwjLM3Om.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;BackToTopButton&quot;,&quot;value&quot;:true}" await-children><button type="button" class="fixed bottom-8 right-8 z-50 p-3 rounded-full bg-background/50 text-primary-foreground shadow-lg backdrop-blur-md border border-white/10 hover:bg-background/70 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all duration-300 opacity-0 scale-90" aria-label="Scroll back to top" style="visibility:hidden" title="Scroll back to top"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="h-5 w-5 mix-blend-difference" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"></path></svg></button><!--astro:end--></astro-island> </div>  </body></html>

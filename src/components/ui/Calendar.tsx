@@ -1,5 +1,3 @@
-"use client";
-
 import { getCalApi } from "@calcom/embed-react";
 import { useEffect } from "react";
 import { FaCalendarAlt } from "react-icons/fa";

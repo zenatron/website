@@ -1,10 +1,6 @@
-"use client";
-
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { BlogPost } from "@/types/types";
-import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
+import type { BlogPost } from "@/types/types";
 import dateFormatter from "@/utils/dateFormatter";
 import { ArrowRight, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -15,9 +11,8 @@ interface BlogClientProps {
 }
 
 export default function BlogClient({ posts }: BlogClientProps) {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const initialTag = searchParams.get("tag");
+  const [searchParamsObj, setSearchParamsObj] = useState(() => new URLSearchParams(typeof window !== "undefined" ? window.location.search : ""));
+  const initialTag = searchParamsObj.get("tag");
 
   const [searchQuery, setSearchQuery] = useState("");
   const [idleTime, setIdleTime] = useState(0);
@@ -35,9 +30,6 @@ export default function BlogClient({ posts }: BlogClientProps) {
   const chipRef = useRef<HTMLSpanElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
-  // Track if we're currently updating the URL to avoid race conditions
-  const isUpdatingUrl = useRef(false);
-
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -51,17 +43,16 @@ export default function BlogClient({ posts }: BlogClientProps) {
     }, 0);
   }, [posts]);
 
-  // Only sync URL → state on initial load or external navigation (not our own updates)
+  // Sync URL → state on popstate (back/forward navigation)
   useEffect(() => {
-    if (isUpdatingUrl.current) {
-      isUpdatingUrl.current = false;
-      return;
-    }
-    const urlTag = searchParams.get("tag");
-    if (urlTag !== selectedTag) {
+    const handlePopState = () => {
+      setSearchParamsObj(new URLSearchParams(window.location.search));
+      const urlTag = new URLSearchParams(window.location.search).get("tag");
       setSelectedTag(urlTag);
-    }
-  }, [searchParams]); // Intentionally exclude selectedTag to avoid loops
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   // Slash-to-focus keyboard shortcut
   useEffect(() => {
@@ -204,17 +195,18 @@ export default function BlogClient({ posts }: BlogClientProps) {
       setShowSuggestions(false);
       setTagQuery("");
 
-      // Mark that we're updating the URL to prevent the sync effect from fighting us
-      isUpdatingUrl.current = true;
+      const url = new URL(window.location.href);
       if (tag) {
-        router.push(`/blog?tag=${encodeURIComponent(tag)}`, { scroll: false });
+        url.searchParams.set("tag", tag);
       } else {
-        router.push("/blog", { scroll: false });
+        url.searchParams.delete("tag");
       }
+      window.history.pushState({}, "", url.toString());
+      setSearchParamsObj(new URLSearchParams(url.search));
       // Focus back on input
       setTimeout(() => searchInputRef.current?.focus(), 0);
     },
-    [router]
+    []
   );
 
   // Complete the tag from suggestions
@@ -337,8 +329,10 @@ export default function BlogClient({ posts }: BlogClientProps) {
     setSelectedTag(null);
     setShowSuggestions(false);
     setTagQuery("");
-    isUpdatingUrl.current = true;
-    router.push("/blog", { scroll: false });
+    const url = new URL(window.location.href);
+    url.searchParams.delete("tag");
+    window.history.pushState({}, "", url.toString());
+    setSearchParamsObj(new URLSearchParams(url.search));
   };
 
   const hasActiveFilters = searchQuery !== "" || selectedTag !== null;
@@ -549,7 +543,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
                 {/* Posts list */}
                 <div className="space-y-2">
                   {group.posts.map((post) => (
-                    <Link
+                    <a
                       key={post.slug}
                       href={`/blog/${post.slug}`}
                       className="group relative block rounded-xl py-5 px-4 transition-colors hover:bg-white/[0.02] sm:pl-8"
@@ -601,7 +595,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
 
                         <ArrowRight className="mt-1 hidden h-4 w-4 shrink-0 text-muted-text opacity-0 transition-all group-hover:translate-x-1 group-hover:text-accent group-hover:opacity-100 sm:block" />
                       </div>
-                    </Link>
+                    </a>
                   ))}
                 </div>
               </section>

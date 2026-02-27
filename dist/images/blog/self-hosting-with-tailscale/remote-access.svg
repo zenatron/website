@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
+  <title id="title">Remote access with Tailscale</title>
+  <desc id="desc">A diagram showing a home server accessed via Tailscale without open ports.</desc>
+  <rect width="1200" height="600" fill="#0b0f1a" />
+  <g font-family="Arial, sans-serif" fill="#e6e6e6">
+    <text x="40" y="60" font-size="32" font-weight="700">Self-hosting without open ports</text>
+  </g>
+
+  <g stroke="#6366f1" stroke-width="3" fill="none">
+    <rect x="90" y="160" width="260" height="160" rx="18" />
+    <rect x="460" y="160" width="260" height="160" rx="18" />
+    <rect x="830" y="160" width="260" height="160" rx="18" />
+  </g>
+  <g font-family="Arial, sans-serif" fill="#e6e6e6" font-size="20" text-anchor="middle">
+    <text x="220" y="240">Phone</text>
+    <text x="590" y="240">Tailnet</text>
+    <text x="960" y="240">Home server</text>
+  </g>
+
+  <g stroke="#22c55e" stroke-width="4" fill="none" stroke-dasharray="10 8">
+    <path d="M350 240 L460 240" />
+    <path d="M720 240 L830 240" />
+  </g>
+
+  <g fill="#22c55e" font-family="Arial, sans-serif" font-size="16">
+    <text x="380" y="220">Encrypted</text>
+    <text x="750" y="220">Encrypted</text>
+  </g>
+
+  <g stroke="#ef4444" stroke-width="4" fill="none">
+    <path d="M960 360 L960 500" />
+  </g>
+  <g fill="#ef4444" font-family="Arial, sans-serif" font-size="16" text-anchor="middle">
+    <text x="960" y="530">No public ports</text>
+  </g>
+</svg>

@@ -1,7 +1,4 @@
-"use client";
-
-import Link from "next/link";
-import { BlogPost } from "@/types/types";
+import type { BlogPost } from "@/types/types";
 import dateFormatter from "@/utils/dateFormatter";
 
 interface SuggestedPostsProps {
@@ -21,7 +18,7 @@ export default function SuggestedPosts({ posts }: SuggestedPostsProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {posts.map((post) => (
-          <Link key={post.slug} href={`/blog/${post.slug}`} className="group">
+          <a key={post.slug} href={`/blog/${post.slug}`} className="group">
             <article className="card h-full flex flex-col transition-all duration-200 hover:scale-[1.02]">
               {/* Title */}
               <h3 className="text-lg font-semibold mb-3 text-primary-text group-hover:text-accent transition-colors duration-150 line-clamp-2">
@@ -75,7 +72,7 @@ export default function SuggestedPosts({ posts }: SuggestedPostsProps) {
                 )}
               </div>
             </article>
-          </Link>
+          </a>
         ))}
       </div>
     </section>

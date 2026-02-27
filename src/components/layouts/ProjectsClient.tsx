@@ -1,11 +1,6 @@
-"use client";
-
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { ProjectCard } from "@/types/types";
-import Link from "next/link";
-import Image from "next/image";
-import { useSearchParams, useRouter } from "next/navigation";
+import type { ProjectCard } from "@/types/types";
 import { Search, X, ExternalLink } from "lucide-react";
 import { FaGithub, FaGlobe, FaGamepad, FaCode } from "react-icons/fa";
 import { SiJupyter } from "react-icons/si";
@@ -35,9 +30,8 @@ const getTypeIcon = (type: string | undefined) => {
 };
 
 export default function ProjectsClient({ projects }: ProjectsClientProps) {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const initialTag = searchParams.get("tag");
+  const [searchParamsObj, setSearchParamsObj] = useState(() => new URLSearchParams(typeof window !== "undefined" ? window.location.search : ""));
+  const initialTag = searchParamsObj.get("tag");
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<string | null>(null);
@@ -53,25 +47,20 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
   const chipRef = useRef<HTMLSpanElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
-  // Track if we're currently updating the URL to avoid race conditions
-  const isUpdatingUrl = useRef(false);
-
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Only sync URL → state on initial load or external navigation (not our own updates)
+  // Sync URL → state on popstate (back/forward navigation)
   useEffect(() => {
-    if (isUpdatingUrl.current) {
-      isUpdatingUrl.current = false;
-      return;
-    }
-    const urlTag = searchParams.get("tag");
-    // Sync from URL only if different from current state
-    if (urlTag !== selectedTag) {
+    const handlePopState = () => {
+      setSearchParamsObj(new URLSearchParams(window.location.search));
+      const urlTag = new URLSearchParams(window.location.search).get("tag");
       setSelectedTag(urlTag);
-    }
-  }, [searchParams]); // Intentionally exclude selectedTag to avoid loops
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   // Slash-to-focus keyboard shortcut
   useEffect(() => {
@@ -147,19 +136,18 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
       setShowSuggestions(false);
       setTagQuery("");
 
-      // Mark that we're updating the URL to prevent the sync effect from fighting us
-      isUpdatingUrl.current = true;
+      const url = new URL(window.location.href);
       if (tag) {
-        router.push(`/projects?tag=${encodeURIComponent(tag)}`, {
-          scroll: false,
-        });
+        url.searchParams.set("tag", tag);
       } else {
-        router.push("/projects", { scroll: false });
+        url.searchParams.delete("tag");
       }
+      window.history.pushState({}, "", url.toString());
+      setSearchParamsObj(new URLSearchParams(url.search));
       // Focus back on input
       setTimeout(() => searchInputRef.current?.focus(), 0);
     },
-    [router]
+    []
   );
 
   // Complete the tag from suggestions
@@ -297,7 +285,10 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
     setSearchQuery("");
     setSelectedType(null);
     setSelectedTag(null);
-    router.push("/projects", { scroll: false });
+    const url = new URL(window.location.href);
+    url.searchParams.delete("tag");
+    window.history.pushState({}, "", url.toString());
+    setSearchParamsObj(new URLSearchParams(url.search));
   };
 
   const hasActiveFilters =
@@ -652,7 +643,7 @@ function ProjectGridCard({ project }: { project: ProjectCard }) {
       )}
 
       {/* Clickable overlay for main link */}
-      <Link
+      <a
         href={href}
         target={isExternal ? "_blank" : undefined}
         rel={isExternal ? "noopener noreferrer" : undefined}
@@ -663,12 +654,11 @@ function ProjectGridCard({ project }: { project: ProjectCard }) {
       {/* Thumbnail / Placeholder */}
       <div className="relative aspect-[16/10] w-full overflow-hidden">
         {hasValidImage ? (
-          <Image
+          <img
             src={thumbnailSrc}
             alt={project.metadata.title}
-            fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
-            sizes="(max-width: 640px) 100vw, 50vw"
+            style={{ position: "absolute", inset: 0, objectFit: "cover", width: "100%", height: "100%" }}
             onError={() => setImageError(true)}
           />
         ) : (
@@ -737,13 +727,13 @@ function ProjectGridCard({ project }: { project: ProjectCard }) {
         {project.metadata.tags && project.metadata.tags.length > 0 && (
           <div className="relative z-20 mt-auto flex flex-wrap gap-2 pt-3">
             {project.metadata.tags.slice(0, 3).map((tag) => (
-              <Link
+              <a
                 key={tag}
                 href={`/projects?tag=${encodeURIComponent(tag)}`}
                 className="tag hover:text-accent"
               >
                 {tag}
-              </Link>
+              </a>
             ))}
           </div>
         )}

@@ -1,9 +1,6 @@
-"use client";
-
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
-import Link from "next/link";
 import ContactModal from "@/components/ui/ContactModal";
 import pkg from "../../../package.json";
 
@@ -76,13 +73,13 @@ export default function MobileMenu() {
         <ul className="flex flex-col gap-1">
           {NAV_ITEMS.map((item) => (
             <li key={item.href}>
-              <Link
+              <a
                 href={item.href}
                 onClick={() => setMenuOpen(false)}
                 className="block rounded-lg px-3 py-2.5 text-base font-medium text-primary-text transition-colors duration-150 hover:bg-white/[0.04] hover:text-accent"
               >
                 {item.label}
-              </Link>
+              </a>
             </li>
           ))}
         </ul>

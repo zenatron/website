@@ -32,7 +32,6 @@ export async function getGithubRepos() {
       "https://api.github.com/users/zenatron/repos",
       {
         headers,
-        next: { revalidate: 3600 },
       }
     );
 

@@ -1,7 +1,5 @@
-"use client";
-
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, PanInfo } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const QUOTES = [
   {

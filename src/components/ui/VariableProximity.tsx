@@ -3,8 +3,6 @@ import {
   useMemo,
   useRef,
   useEffect,
-  RefObject,
-  CSSProperties,
 } from "react";
 
 const hasWindow = typeof window !== "undefined";

@@ -1,6 +1,3 @@
-"use client";
-
-import Link from "next/link";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { FaBluesky } from "react-icons/fa6";
 import CalendarPopup from "@/components/ui/Calendar";
@@ -38,20 +35,20 @@ export default function Footer() {
           {/* Center: Navigation */}
           <nav className="flex items-center gap-4 sm:gap-6">
             {NAV_LINKS.map((link) => (
-              <Link
+              <a
                 key={link.href}
                 href={link.href}
                 className="text-sm text-secondary-text transition-colors hover:text-accent"
               >
                 {link.label}
-              </Link>
+              </a>
             ))}
           </nav>
 
           {/* Right: Social Icons + Calendar */}
           <div className="flex items-center gap-3">
             {SOCIAL_LINKS.map((social) => (
-              <Link
+              <a
                 key={social.label}
                 href={social.href}
                 target="_blank"
@@ -60,7 +57,7 @@ export default function Footer() {
                 aria-label={social.label}
               >
                 <social.icon className="h-4 w-4" />
-              </Link>
+              </a>
             ))}
             <CalendarPopup />
           </div>

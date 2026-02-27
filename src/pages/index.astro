@@ -1,0 +1,178 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import HomeHero from "@/components/home/HomeHero";
+import QuoteCarousel from "@/components/home/QuoteCarousel";
+import { getAllProjects } from "@/lib/projects";
+import { getAllBlogPosts } from "@/lib/blog";
+import dateFormatter from "@/utils/dateFormatter";
+import { QUICK_FACTS } from "@/lib/config";
+import { ArrowUpRight } from "lucide-react";
+
+const [projects, posts] = await Promise.all([
+  getAllProjects(),
+  getAllBlogPosts(),
+]);
+
+const recentProjects = projects
+  .filter((p) => p.metadata.date)
+  .sort(
+    (a, b) =>
+      new Date(b.metadata.date!).getTime() -
+      new Date(a.metadata.date!).getTime()
+  )
+  .slice(0, 3);
+
+const latestPost = posts.sort(
+  (a: any, b: any) =>
+    new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+)[0];
+---
+
+<BaseLayout>
+  <div class="relative flex min-h-screen flex-col">
+    <Header client:load />
+
+    <main id="main-content" class="flex-1">
+      <!-- Hero Section -->
+      <section class="relative overflow-hidden px-4 pb-12 pt-20 sm:pb-20 sm:pt-24 sm:px-6 md:pt-32">
+        <div class="absolute left-1/2 top-0 h-32 w-px -translate-x-1/2 bg-gradient-to-b from-accent/40 to-transparent"></div>
+
+        <div class="mx-auto max-w-5xl">
+          <div class="grid gap-16 lg:grid-cols-[1fr,320px]">
+            <HomeHero client:load />
+
+            <aside class="relative">
+              <div class="sticky top-32 space-y-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-sm">
+                <div class="flex items-center gap-3">
+                  <span class="status-dot" aria-hidden="true"></span>
+                  <span class="text-sm text-secondary-text">Available for work</span>
+                </div>
+
+                <div class="divider"></div>
+
+                <ul class="space-y-4">
+                  {QUICK_FACTS.map((fact) => (
+                    <li class="flex items-start gap-3">
+                      <fact.icon className="mt-0.5 h-4 w-4 text-muted-text" />
+                      <div>
+                        <p class="text-xs uppercase tracking-wider text-muted-text">{fact.label}</p>
+                        <p class="text-sm text-primary-text">{fact.value}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+
+                <div class="divider"></div>
+
+                <a href="mailto:phil@underscore.games" class="link-subtle block text-sm">
+                  phil@underscore.games
+                </a>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recent Projects Section -->
+      <section class="px-4 py-8 sm:py-20 sm:px-6">
+        <div class="mx-auto max-w-5xl">
+          <div class="mb-12 flex items-end justify-between">
+            <div class="space-y-3">
+              <p class="text-sm font-medium tracking-[0.2em] text-accent">RECENT WORK</p>
+              <h2 class="text-3xl tracking-tight md:text-4xl">Latest projects</h2>
+            </div>
+            <a href="/projects" class="link-subtle hidden text-sm md:inline-flex md:items-center md:gap-2">
+              View all
+              <ArrowUpRight className="h-3 w-3" />
+            </a>
+          </div>
+
+          <div class="space-y-1">
+            {recentProjects.map((project, index) => (
+              <a href={`/projects/${project.metadata.slug}`} class="group relative block">
+                <div class="flex items-start gap-6 rounded-xl px-4 py-6 transition-colors duration-150 hover:bg-white/[0.02] md:items-center">
+                  <span class="hidden w-8 text-sm tabular-nums text-muted-text md:block">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <div class="flex-1 space-y-2">
+                    <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                      <h3 class="text-lg font-medium text-primary-text transition-colors group-hover:text-accent">
+                        {project.metadata.title}
+                      </h3>
+                      <span class="text-sm capitalize text-muted-text">{project.metadata.type}</span>
+                    </div>
+                    <p class="text-sm text-secondary-text line-clamp-1">{project.metadata.description}</p>
+                  </div>
+                  <div class="hidden items-center gap-3 md:flex">
+                    {project.metadata.tags?.slice(0, 3).map((tag) => (
+                      <span class="tag">{tag}</span>
+                    ))}
+                  </div>
+                  <span class="text-sm tabular-nums text-muted-text">
+                    {project.metadata.date ? new Date(project.metadata.date).getFullYear() : ""}
+                  </span>
+                  <ArrowUpRight className="h-4 w-4 text-muted-text opacity-0 transition-all duration-150 group-hover:text-accent group-hover:opacity-100" />
+                </div>
+                {index < recentProjects.length - 1 && <div class="mx-4 h-px bg-white/[0.04]"></div>}
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- Writing preview -->
+      <section class="px-4 py-8 sm:py-20 sm:px-6">
+        <div class="mx-auto max-w-5xl">
+          <div class="grid gap-12 lg:grid-cols-2">
+            <div>
+              <div class="mb-8 space-y-3">
+                <p class="text-sm font-medium tracking-[0.2em] text-accent">WRITING</p>
+                <h2 class="text-3xl tracking-tight md:text-4xl">Blog</h2>
+                <p class="text-secondary-text">Sometimes I write things down. Mostly about code.</p>
+              </div>
+              <a href="/blog" class="btn btn-secondary inline-flex">
+                Read the blog
+                <ArrowUpRight className="h-4 w-4" />
+              </a>
+            </div>
+
+            {latestPost && (
+              <a
+                href={`/blog/${latestPost.slug}`}
+                class="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 transition-colors hover:border-white/[0.1] hover:bg-white/[0.03]"
+              >
+                <div class="absolute -top-3 left-6 bg-primary-bg px-2 text-xs uppercase tracking-wider text-muted-text">Latest</div>
+                <div class="space-y-4">
+                  <p class="text-xs text-muted-text">
+                    {dateFormatter({ date: latestPost.data.date, month: "long", year: "numeric" })}
+                  </p>
+                  <h3 class="text-xl font-medium text-primary-text transition-colors group-hover:text-accent">
+                    {latestPost.data.title}
+                  </h3>
+                  {latestPost.data.excerpt && (
+                    <p class="text-sm text-secondary-text line-clamp-3">{latestPost.data.excerpt}</p>
+                  )}
+                  <span class="link-subtle inline-flex items-center gap-2 text-sm">
+                    Continue reading
+                    <ArrowUpRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </span>
+                </div>
+              </a>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <!-- Philosophy section -->
+      <section class="px-4 py-8 sm:py-20 sm:px-6">
+        <div class="mx-auto max-w-3xl text-center">
+          <QuoteCarousel client:visible />
+        </div>
+      </section>
+    </main>
+
+    <Footer client:load />
+  </div>
+</BaseLayout>

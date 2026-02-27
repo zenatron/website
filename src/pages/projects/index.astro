@@ -1,0 +1,22 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import ProjectsLayout from "@/components/layouts/ProjectsLayout";
+import BackToTopButton from "@/components/ui/BackToTopButton";
+import { getGithubRepos } from "@/lib/github";
+import { getAllProjects } from "@/lib/projects";
+
+const githubProjects = await getGithubRepos();
+const dataProjects = await getAllProjects();
+const allProjects = [...dataProjects, ...githubProjects];
+---
+
+<BaseLayout title="Projects | Phil Vishnevsky">
+  <div class="relative flex min-h-screen flex-col">
+    <Header client:load />
+    <ProjectsLayout projects={allProjects} client:load />
+    <Footer client:load />
+    <BackToTopButton client:load />
+  </div>
+</BaseLayout>

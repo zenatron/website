@@ -1,0 +1,31 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import BlogLayout from "@/components/layouts/BlogLayout";
+import BackToTopButton from "@/components/ui/BackToTopButton";
+import { getAllBlogPosts } from "@/lib/blog";
+
+const posts = await getAllBlogPosts();
+
+const blogPosts = posts.map((post: any) => ({
+  slug: post.slug,
+  searchableContent: post.searchableContent,
+  metadata: {
+    title: post.data.title,
+    date: post.data.date,
+    readingTime: post.data.readingTime,
+    excerpt: post.data.excerpt || "",
+    tags: post.data.tags || [],
+  },
+}));
+---
+
+<BaseLayout title="Blog | Phil Vishnevsky">
+  <div class="relative flex min-h-screen flex-col">
+    <Header client:load />
+    <BlogLayout posts={blogPosts} client:load />
+    <Footer client:load />
+    <BackToTopButton client:load />
+  </div>
+</BaseLayout>

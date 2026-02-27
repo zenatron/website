@@ -1,9 +1,4 @@
-"use client";
-
-import Link from "next/link";
-import Image from "next/image";
 import MobileMenu from "@/components/ui/MobileMenu";
-import { usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import ContactModal from "@/components/ui/ContactModal";
@@ -17,7 +12,7 @@ const NAV_LINKS = [
 ];
 
 export default function Header() {
-  const pathname = usePathname();
+  const [pathname, setPathname] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [draggedLink, setDraggedLink] = useState<string | null>(null);
@@ -30,6 +25,7 @@ export default function Header() {
 
   useEffect(() => {
     setMounted(true);
+    setPathname(window.location.pathname);
   }, []);
 
   // Handle drag attempt on nav links
@@ -59,23 +55,22 @@ export default function Header() {
       <header className="fixed left-0 right-0 top-0 z-40">
         <div className="mx-auto flex h-20 max-w-5xl items-center justify-between px-6">
           {/* Brand - in bubble matching nav style */}
-          <Link
+          <a
             href="/"
             title="Home"
             className="group flex items-center gap-2.5 rounded-full border border-white/[0.06] bg-white/[0.02] p-1.5 backdrop-blur-sm transition-colors hover:border-white/[0.1] hover:bg-white/[0.04] sm:pr-3"
           >
-            <Image
+            <img
               src="/images/phil_headshot_scaled.webp"
               alt="Phil Vishnevsky"
               width={48}
               height={48}
-              quality={100}
               className="h-6 w-6 shrink-0 rounded-full object-cover"
             />
             <span className="hidden text-sm font-medium text-primary-text sm:block">
               Phil Vishnevsky
             </span>
-          </Link>
+          </a>
 
           {/* Navigation */}
           <nav
@@ -125,7 +120,7 @@ export default function Header() {
                   }}
                   transition={{ type: "spring", stiffness: 500, damping: 15 }}
                 >
-                  <Link
+                  <a
                     ref={(el) => {
                       linkRefs.current[link.href] = el;
                     }}
@@ -142,7 +137,7 @@ export default function Header() {
                     )}
                   >
                     {link.label}
-                  </Link>
+                  </a>
                 </motion.div>
               );
             })}

@@ -1,8 +1,5 @@
-"use client";
-
 import { motion } from "framer-motion";
 import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
-import Link from "next/link";
 import { useState, useEffect } from "react";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
@@ -120,14 +117,14 @@ export default function GitHubReadme({
             <p className="text-red-400 mb-4">
               {"Failed to load GitHub README."}
             </p>
-            <Link
+            <a
               href="https://github.com/zenatron"
               target="_blank"
               rel="noopener noreferrer"
               className="text-accent hover:text-accent/80 transition-colors"
             >
               {"View on GitHub"}
-            </Link>
+            </a>
           </div>
         </motion.div>
       </div>
@@ -149,7 +146,7 @@ export default function GitHubReadme({
             <FaGithub className="text-xl text-accent" />
             <span className="font-semibold text-primary-text">{repo}</span>
           </div>
-          <Link
+          <a
             href={`https://github.com/${repo}`}
             target="_blank"
             rel="noopener noreferrer"
@@ -157,7 +154,7 @@ export default function GitHubReadme({
           >
             <FaExternalLinkAlt className="text-xs" />
             {"View on GitHub"}
-          </Link>
+          </a>
         </div>
 
         {/* README Content */}

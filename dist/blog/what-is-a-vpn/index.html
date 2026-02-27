@@ -1,0 +1,728 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="I'm a software engineer crafting AI projects, tools, homelabs, and games. Explore my portfolio, technical blog posts, and latest development work."><title>What Is a VPN? A Practical, No‑Hype Guide | Phil Vishnevsky</title><link rel="icon" href="/favicon.ico"><!-- Preconnect to font and CDN origins for faster loading --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><!-- Google Fonts --><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/about.D-5dzeln.css"></head> <body class="antialiased bg-primary-bg text-primary-text"> <!-- Skip to main content link for accessibility --> <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-primary-bg focus:outline-none">
+Skip to main content
+</a> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="15c4Fn" prefix="r15" component-url="/_astro/EasterEggs.C55T2r_L.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;EasterEggs&quot;,&quot;value&quot;:true}" await-children><div class="fixed top-20 right-4 z-50 flex flex-col gap-3 pointer-events-none"></div><!--astro:end--></astro-island>  <div class="relative flex min-h-screen flex-col"> <astro-island uid="dHWCJ" prefix="r14" component-url="/_astro/KatexStyles.BafW8or2.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;KatexStyles&quot;,&quot;value&quot;:true}"></astro-island> <astro-island uid="Z16tfae" prefix="r8" component-url="/_astro/Header.CgjOm6Vf.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;Header&quot;,&quot;value&quot;:true}" await-children><link rel="preload" as="image" href="/images/phil_headshot_scaled.webp"/><header class="fixed left-0 right-0 top-0 z-40"><div class="mx-auto flex h-20 max-w-5xl items-center justify-between px-6"><a href="/" title="Home" class="group flex items-center gap-2.5 rounded-full border border-white/[0.06] bg-white/[0.02] p-1.5 backdrop-blur-sm transition-colors hover:border-white/[0.1] hover:bg-white/[0.04] sm:pr-3"><img src="/images/phil_headshot_scaled.webp" alt="Phil Vishnevsky" width="48" height="48" class="h-6 w-6 shrink-0 rounded-full object-cover"/><span class="hidden text-sm font-medium text-primary-text sm:block">Phil Vishnevsky</span></a><nav class="hidden items-center gap-1 rounded-full border border-white/[0.06] bg-white/[0.02] px-[3px] py-[3px] backdrop-blur-sm md:flex relative"><div><a href="/projects" draggable="true" class="relative rounded-full px-4 py-2 text-sm leading-none transition-colors duration-200 block cursor-pointer z-10 text-secondary-text">Projects</a></div><div><a href="/blog" draggable="true" class="relative rounded-full px-4 py-2 text-sm leading-none transition-colors duration-200 block cursor-pointer z-10 text-secondary-text">Blog</a></div><div><a href="/about" draggable="true" class="relative rounded-full px-4 py-2 text-sm leading-none transition-colors duration-200 block cursor-pointer z-10 text-secondary-text">About</a></div></nav><div class="flex items-center gap-3"><button type="button" class="hidden rounded-full border border-white/[0.06] bg-white/[0.02] px-4 py-2 text-sm font-medium text-secondary-text backdrop-blur-sm transition-colors hover:border-accent/30 hover:bg-accent/10 hover:text-accent sm:block">Get in touch</button><button type="button" class="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-secondary-text transition-colors duration-150 hover:border-white/20 hover:text-primary-text md:hidden" aria-label="Toggle Menu" aria-expanded="false" title="Toggle Menu"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"></path></svg></button><div class="fixed inset-0 z-30 bg-black/65 transition-opacity duration-200 pointer-events-none opacity-0"></div><nav class="fixed top-0 right-0 z-40 flex h-full w-[65vw] max-w-[240px] flex-col gap-6 border-l border-white/[0.06] bg-primary-bg/95 backdrop-blur-md px-5 py-8 transition-transform duration-200 md:hidden translate-x-full"><div class="flex items-center justify-end"><button type="button" class="flex h-8 w-8 items-center justify-center rounded-full border border-white/[0.06] bg-white/[0.02] text-secondary-text transition-colors duration-150 hover:border-white/[0.1] hover:text-primary-text" aria-label="Close menu"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 352 512" class="h-3.5 w-3.5" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg></button></div><ul class="flex flex-col gap-1"><li><a href="/projects" class="block rounded-lg px-3 py-2.5 text-base font-medium text-primary-text transition-colors duration-150 hover:bg-white/[0.04] hover:text-accent">Projects</a></li><li><a href="/blog" class="block rounded-lg px-3 py-2.5 text-base font-medium text-primary-text transition-colors duration-150 hover:bg-white/[0.04] hover:text-accent">Blog</a></li><li><a href="/about" class="block rounded-lg px-3 py-2.5 text-base font-medium text-primary-text transition-colors duration-150 hover:bg-white/[0.04] hover:text-accent">About</a></li></ul><button type="button" class="rounded-full px-4 py-2.5 text-base font-medium text-accent transition-colors duration-150" style="background-color:rgba(124, 138, 255, 0.15);border:1px solid rgba(124, 138, 255, 0.3)">Get in touch</button><div class="mt-auto pt-4 border-t border-white/[0.06]"><span class="text-xs text-muted-text">v0.8.5</span></div></nav></div></div></header><!--astro:end--></astro-island> <main class="px-4 py-10 pt-20 sm:px-6"> <div class="max-w-5xl mx-auto mb-6"> <a href="/blog" class="inline-flex items-center gap-2 text-muted-text hover:text-foreground text-sm" title="Back to Blog">
+← Back to Blog
+</a> </div> <div class="max-w-5xl mx-auto"> <div class="lg:flex lg:gap-8 lg:items-start"> <aside class="hidden lg:block lg:w-64 lg:flex-shrink-0 lg:sticky lg:top-24"> <astro-island uid="ZB8hHl" prefix="r9" component-url="/_astro/TableOfContents.DFg0TTA8.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{&quot;headings&quot;:[1,[[0,{&quot;id&quot;:[0,&quot;what-is-a-vpn-a-practical-nohype-guide&quot;],&quot;text&quot;:[0,&quot;What Is a VPN? A Practical, No‑Hype Guide&quot;],&quot;level&quot;:[0,1]}],[0,{&quot;id&quot;:[0,&quot;the-onesentence-definition&quot;],&quot;text&quot;:[0,&quot;The one‑sentence definition&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;what-a-vpn-actually-does&quot;],&quot;text&quot;:[0,&quot;What a VPN actually does&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;1-encrypts-traffic-between-you-and-the-vpn-server&quot;],&quot;text&quot;:[0,&quot;1. Encrypts traffic between you and the VPN server&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;2-changes-your-apparent-public-ip-address&quot;],&quot;text&quot;:[0,&quot;2. Changes your apparent public IP address&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;3-helps-on-untrusted-networks&quot;],&quot;text&quot;:[0,&quot;3. Helps on untrusted networks&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;4-changes-your-routing-path&quot;],&quot;text&quot;:[0,&quot;4. Changes your routing path&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;how-vpn-tunneling-actually-works&quot;],&quot;text&quot;:[0,&quot;How VPN tunneling actually works&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;the-encapsulation-process&quot;],&quot;text&quot;:[0,&quot;The encapsulation process&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;what-the-packet-structure-looks-like&quot;],&quot;text&quot;:[0,&quot;What the packet structure looks like&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;what-a-vpn-does-not-do&quot;],&quot;text&quot;:[0,&quot;What a VPN does not do&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;the-trust-tradeoff-who-can-see-what-now&quot;],&quot;text&quot;:[0,&quot;The trust trade‑off (who can see what now)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;common-vpn-use-cases-the-legit-ones&quot;],&quot;text&quot;:[0,&quot;Common VPN use cases (the legit ones)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;vpns-vs-proxies-not-the-same-thing&quot;],&quot;text&quot;:[0,&quot;VPNs vs proxies (not the same thing)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;vpn-types-in-plain-english&quot;],&quot;text&quot;:[0,&quot;VPN types, in plain English&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;a-quick-note-on-corporate-vpns&quot;],&quot;text&quot;:[0,&quot;A quick note on corporate VPNs&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;vpn-protocols-a-deep-dive&quot;],&quot;text&quot;:[0,&quot;VPN protocols: a deep dive&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;wireguard&quot;],&quot;text&quot;:[0,&quot;WireGuard&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;openvpn&quot;],&quot;text&quot;:[0,&quot;OpenVPN&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;ikev2ipsec&quot;],&quot;text&quot;:[0,&quot;IKEv2/IPsec&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;l2tpipsec&quot;],&quot;text&quot;:[0,&quot;L2TP/IPsec&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;pptp-avoid-this&quot;],&quot;text&quot;:[0,&quot;PPTP (avoid this)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;sstp&quot;],&quot;text&quot;:[0,&quot;SSTP&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;protocol-comparison-table&quot;],&quot;text&quot;:[0,&quot;Protocol comparison table&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;split-tunneling-vs-full-tunneling&quot;],&quot;text&quot;:[0,&quot;Split tunneling vs full tunneling&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;vpn-vs-https-and-why-both-matter&quot;],&quot;text&quot;:[0,&quot;VPN vs HTTPS (and why both matter)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;dns-the-leaky-faucet-people-forget-about&quot;],&quot;text&quot;:[0,&quot;DNS: the leaky faucet people forget about&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;kill-switches-and-why-they-matter&quot;],&quot;text&quot;:[0,&quot;Kill switches and why they matter&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;performance-the-hidden-cost&quot;],&quot;text&quot;:[0,&quot;Performance: the hidden cost&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;mtu-fragmentation-and-the-occasional-weird-bug&quot;],&quot;text&quot;:[0,&quot;MTU, fragmentation, and the occasional weird bug&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;troubleshooting-common-vpn-issues&quot;],&quot;text&quot;:[0,&quot;Troubleshooting common VPN issues&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;connected-but-no-internet&quot;],&quot;text&quot;:[0,&quot;”Connected but no internet”&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;slow-speeds&quot;],&quot;text&quot;:[0,&quot;Slow speeds&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;connection-drops-randomly&quot;],&quot;text&quot;:[0,&quot;Connection drops randomly&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;dns-leaks&quot;],&quot;text&quot;:[0,&quot;DNS leaks&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;webrtc-leak-warnings&quot;],&quot;text&quot;:[0,&quot;”WebRTC leak” warnings&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;site-blocks-vpn-traffic&quot;],&quot;text&quot;:[0,&quot;Site blocks VPN traffic&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;how-to-choose-a-vpn-without-falling-for-marketing&quot;],&quot;text&quot;:[0,&quot;How to choose a VPN without falling for marketing&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;threat-model-examples-pick-the-one-that-sounds-like-you&quot;],&quot;text&quot;:[0,&quot;Threat model examples (pick the one that sounds like you)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;a-short-mythbusting-list&quot;],&quot;text&quot;:[0,&quot;A short myth‑busting list&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;want-a-visual-explanation-2minute-video&quot;],&quot;text&quot;:[0,&quot;Want a visual explanation? (2‑minute video)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;where-to-go-next&quot;],&quot;text&quot;:[0,&quot;Where to go next&quot;],&quot;level&quot;:[0,2]}]]],&quot;className&quot;:[0,&quot;desktop-only&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;TableOfContents&quot;,&quot;value&quot;:true}" await-children><div class="hidden lg:block desktop-only"><div class="z-30"><div class="bg-neutral-800/60 backdrop-blur-md border border-neutral-600/40 rounded-xl p-4 shadow-lg max-h-[calc(100vh-8rem)] overflow-y-auto"><div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="text-xs" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M80 368H16a16 16 0 0 0-16 16v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16v-64a16 16 0 0 0-16-16zm0-320H16A16 16 0 0 0 0 64v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16V64a16 16 0 0 0-16-16zm0 160H16a16 16 0 0 0-16 16v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16v-64a16 16 0 0 0-16-16zm416 176H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16z"></path></svg><h3 class="text-sm font-medium text-foreground">Table of Contents</h3></div><button class="p-1 rounded hover:bg-neutral-700/50 transition-colors duration-200" aria-expanded="true" aria-label="Toggle table of contents"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="text-muted-text transition-transform duration-200 text-xs " height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M207.029 381.476L12.686 187.132c-9.373-9.373-9.373-24.569 0-33.941l22.667-22.667c9.357-9.357 24.522-9.375 33.901-.04L224 284.505l154.745-154.021c9.379-9.335 24.544-9.317 33.901.04l22.667 22.667c9.373 9.373 9.373 24.569 0 33.941L240.971 381.476c-9.373 9.372-24.569 9.372-33.942 0z"></path></svg></button></div><nav aria-label="Table of contents navigation"><ul class="space-y-1" role="list"><li class="mb-1"><a href="#what-is-a-vpn-a-practical-nohype-guide" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    font-semibold text-base
+    
+    
+    
+    
+    
+  ">What Is a VPN? A Practical, No‑Hype Guide</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#the-onesentence-definition" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">The one‑sentence definition</a></li><li class="mb-1"><a href="#what-a-vpn-actually-does" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">What a VPN actually does</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#1-encrypts-traffic-between-you-and-the-vpn-server" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">1. Encrypts traffic between you and the VPN server</a></li><li class="mb-1"><a href="#2-changes-your-apparent-public-ip-address" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">2. Changes your apparent public IP address</a></li><li class="mb-1"><a href="#3-helps-on-untrusted-networks" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">3. Helps on untrusted networks</a></li><li class="mb-1"><a href="#4-changes-your-routing-path" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">4. Changes your routing path</a></li></ul></li><li class="mb-1"><a href="#how-vpn-tunneling-actually-works" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">How VPN tunneling actually works</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#the-encapsulation-process" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">The encapsulation process</a></li><li class="mb-1"><a href="#what-the-packet-structure-looks-like" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">What the packet structure looks like</a></li></ul></li><li class="mb-1"><a href="#what-a-vpn-does-not-do" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">What a VPN does not do</a></li><li class="mb-1"><a href="#the-trust-tradeoff-who-can-see-what-now" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">The trust trade‑off (who can see what now)</a></li><li class="mb-1"><a href="#common-vpn-use-cases-the-legit-ones" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Common VPN use cases (the legit ones)</a></li><li class="mb-1"><a href="#vpns-vs-proxies-not-the-same-thing" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">VPNs vs proxies (not the same thing)</a></li><li class="mb-1"><a href="#vpn-types-in-plain-english" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">VPN types, in plain English</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#a-quick-note-on-corporate-vpns" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">A quick note on corporate VPNs</a></li></ul></li><li class="mb-1"><a href="#vpn-protocols-a-deep-dive" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">VPN protocols: a deep dive</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#wireguard" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">WireGuard</a></li><li class="mb-1"><a href="#openvpn" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">OpenVPN</a></li><li class="mb-1"><a href="#ikev2ipsec" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">IKEv2/IPsec</a></li><li class="mb-1"><a href="#l2tpipsec" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">L2TP/IPsec</a></li><li class="mb-1"><a href="#pptp-avoid-this" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">PPTP (avoid this)</a></li><li class="mb-1"><a href="#sstp" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">SSTP</a></li></ul></li><li class="mb-1"><a href="#protocol-comparison-table" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Protocol comparison table</a></li><li class="mb-1"><a href="#split-tunneling-vs-full-tunneling" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Split tunneling vs full tunneling</a></li><li class="mb-1"><a href="#vpn-vs-https-and-why-both-matter" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">VPN vs HTTPS (and why both matter)</a></li><li class="mb-1"><a href="#dns-the-leaky-faucet-people-forget-about" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">DNS: the leaky faucet people forget about</a></li><li class="mb-1"><a href="#kill-switches-and-why-they-matter" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Kill switches and why they matter</a></li><li class="mb-1"><a href="#performance-the-hidden-cost" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Performance: the hidden cost</a></li><li class="mb-1"><a href="#mtu-fragmentation-and-the-occasional-weird-bug" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">MTU, fragmentation, and the occasional weird bug</a></li><li class="mb-1"><a href="#troubleshooting-common-vpn-issues" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Troubleshooting common VPN issues</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#connected-but-no-internet" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">”Connected but no internet”</a></li><li class="mb-1"><a href="#slow-speeds" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Slow speeds</a></li><li class="mb-1"><a href="#connection-drops-randomly" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Connection drops randomly</a></li><li class="mb-1"><a href="#dns-leaks" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">DNS leaks</a></li><li class="mb-1"><a href="#webrtc-leak-warnings" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">”WebRTC leak” warnings</a></li><li class="mb-1"><a href="#site-blocks-vpn-traffic" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Site blocks VPN traffic</a></li></ul></li><li class="mb-1"><a href="#how-to-choose-a-vpn-without-falling-for-marketing" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">How to choose a VPN without falling for marketing</a></li><li class="mb-1"><a href="#threat-model-examples-pick-the-one-that-sounds-like-you" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Threat model examples (pick the one that sounds like you)</a></li><li class="mb-1"><a href="#a-short-mythbusting-list" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">A short myth‑busting list</a></li><li class="mb-1"><a href="#want-a-visual-explanation-2minute-video" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Want a visual explanation? (2‑minute video)</a></li><li class="mb-1"><a href="#where-to-go-next" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Where to go next</a></li></ul></li></ul></nav></div></div></div><!--astro:end--></astro-island> </aside> <article class="w-full max-w-4xl mx-auto lg:mx-0 lg:flex-1"> <div class="flex flex-col items-center"> <h1 class="text-4xl font-bold mb-4 text-center w-full">What Is a VPN? A Practical, No‑Hype Guide</h1> <div class="flex flex-col items-center gap-4 mb-8 text-muted-text w-full"> <div class="flex flex-wrap gap-2 justify-center"> <a href="/blog?tag=vpn" class="tag-bubble" title="View posts with tag: vpn">
+#vpn </a><a href="/blog?tag=networking" class="tag-bubble" title="View posts with tag: networking">
+#networking </a><a href="/blog?tag=security" class="tag-bubble" title="View posts with tag: security">
+#security </a><a href="/blog?tag=privacy" class="tag-bubble" title="View posts with tag: privacy">
+#privacy </a> </div> <div class="flex flex-row items-center text-muted-text mb-2"> <time>Saturday, February 15, 2025</time>  <span class="ml-2">•</span> <span class="ml-2">18min</span>  </div> </div> <astro-island uid="1vkSYu" prefix="r10" component-url="/_astro/TableOfContents.DFg0TTA8.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{&quot;headings&quot;:[1,[[0,{&quot;id&quot;:[0,&quot;what-is-a-vpn-a-practical-nohype-guide&quot;],&quot;text&quot;:[0,&quot;What Is a VPN? A Practical, No‑Hype Guide&quot;],&quot;level&quot;:[0,1]}],[0,{&quot;id&quot;:[0,&quot;the-onesentence-definition&quot;],&quot;text&quot;:[0,&quot;The one‑sentence definition&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;what-a-vpn-actually-does&quot;],&quot;text&quot;:[0,&quot;What a VPN actually does&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;1-encrypts-traffic-between-you-and-the-vpn-server&quot;],&quot;text&quot;:[0,&quot;1. Encrypts traffic between you and the VPN server&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;2-changes-your-apparent-public-ip-address&quot;],&quot;text&quot;:[0,&quot;2. Changes your apparent public IP address&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;3-helps-on-untrusted-networks&quot;],&quot;text&quot;:[0,&quot;3. Helps on untrusted networks&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;4-changes-your-routing-path&quot;],&quot;text&quot;:[0,&quot;4. Changes your routing path&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;how-vpn-tunneling-actually-works&quot;],&quot;text&quot;:[0,&quot;How VPN tunneling actually works&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;the-encapsulation-process&quot;],&quot;text&quot;:[0,&quot;The encapsulation process&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;what-the-packet-structure-looks-like&quot;],&quot;text&quot;:[0,&quot;What the packet structure looks like&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;what-a-vpn-does-not-do&quot;],&quot;text&quot;:[0,&quot;What a VPN does not do&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;the-trust-tradeoff-who-can-see-what-now&quot;],&quot;text&quot;:[0,&quot;The trust trade‑off (who can see what now)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;common-vpn-use-cases-the-legit-ones&quot;],&quot;text&quot;:[0,&quot;Common VPN use cases (the legit ones)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;vpns-vs-proxies-not-the-same-thing&quot;],&quot;text&quot;:[0,&quot;VPNs vs proxies (not the same thing)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;vpn-types-in-plain-english&quot;],&quot;text&quot;:[0,&quot;VPN types, in plain English&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;a-quick-note-on-corporate-vpns&quot;],&quot;text&quot;:[0,&quot;A quick note on corporate VPNs&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;vpn-protocols-a-deep-dive&quot;],&quot;text&quot;:[0,&quot;VPN protocols: a deep dive&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;wireguard&quot;],&quot;text&quot;:[0,&quot;WireGuard&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;openvpn&quot;],&quot;text&quot;:[0,&quot;OpenVPN&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;ikev2ipsec&quot;],&quot;text&quot;:[0,&quot;IKEv2/IPsec&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;l2tpipsec&quot;],&quot;text&quot;:[0,&quot;L2TP/IPsec&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;pptp-avoid-this&quot;],&quot;text&quot;:[0,&quot;PPTP (avoid this)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;sstp&quot;],&quot;text&quot;:[0,&quot;SSTP&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;protocol-comparison-table&quot;],&quot;text&quot;:[0,&quot;Protocol comparison table&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;split-tunneling-vs-full-tunneling&quot;],&quot;text&quot;:[0,&quot;Split tunneling vs full tunneling&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;vpn-vs-https-and-why-both-matter&quot;],&quot;text&quot;:[0,&quot;VPN vs HTTPS (and why both matter)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;dns-the-leaky-faucet-people-forget-about&quot;],&quot;text&quot;:[0,&quot;DNS: the leaky faucet people forget about&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;kill-switches-and-why-they-matter&quot;],&quot;text&quot;:[0,&quot;Kill switches and why they matter&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;performance-the-hidden-cost&quot;],&quot;text&quot;:[0,&quot;Performance: the hidden cost&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;mtu-fragmentation-and-the-occasional-weird-bug&quot;],&quot;text&quot;:[0,&quot;MTU, fragmentation, and the occasional weird bug&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;troubleshooting-common-vpn-issues&quot;],&quot;text&quot;:[0,&quot;Troubleshooting common VPN issues&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;connected-but-no-internet&quot;],&quot;text&quot;:[0,&quot;”Connected but no internet”&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;slow-speeds&quot;],&quot;text&quot;:[0,&quot;Slow speeds&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;connection-drops-randomly&quot;],&quot;text&quot;:[0,&quot;Connection drops randomly&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;dns-leaks&quot;],&quot;text&quot;:[0,&quot;DNS leaks&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;webrtc-leak-warnings&quot;],&quot;text&quot;:[0,&quot;”WebRTC leak” warnings&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;site-blocks-vpn-traffic&quot;],&quot;text&quot;:[0,&quot;Site blocks VPN traffic&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;how-to-choose-a-vpn-without-falling-for-marketing&quot;],&quot;text&quot;:[0,&quot;How to choose a VPN without falling for marketing&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;threat-model-examples-pick-the-one-that-sounds-like-you&quot;],&quot;text&quot;:[0,&quot;Threat model examples (pick the one that sounds like you)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;a-short-mythbusting-list&quot;],&quot;text&quot;:[0,&quot;A short myth‑busting list&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;want-a-visual-explanation-2minute-video&quot;],&quot;text&quot;:[0,&quot;Want a visual explanation? (2‑minute video)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;where-to-go-next&quot;],&quot;text&quot;:[0,&quot;Where to go next&quot;],&quot;level&quot;:[0,2]}]]],&quot;className&quot;:[0,&quot;mobile-only&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;TableOfContents&quot;,&quot;value&quot;:true}" await-children><div class="lg:hidden z-20 mb-8 mobile-only"><div class="relative max-w-4xl mx-auto px-4"><button class="w-full bg-neutral-800/60 backdrop-blur-md border border-neutral-600/40 rounded-xl p-4 flex items-center justify-between text-left transition-colors duration-200 hover:bg-neutral-800/70 active:bg-neutral-800/80 shadow-lg cursor-pointer touch-manipulation" aria-expanded="false" aria-label="Toggle table of contents"><div class="flex items-center gap-3"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="text-sm" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M80 368H16a16 16 0 0 0-16 16v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16v-64a16 16 0 0 0-16-16zm0-320H16A16 16 0 0 0 0 64v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16V64a16 16 0 0 0-16-16zm0 160H16a16 16 0 0 0-16 16v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16v-64a16 16 0 0 0-16-16zm416 176H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16z"></path></svg><div><div class="text-xs uppercase tracking-wide opacity-60 mb-1">Table of Contents</div><div class="text-sm font-medium">Jump to section</div></div></div><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="text-muted-text transition-transform duration-200 " height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M207.029 381.476L12.686 187.132c-9.373-9.373-9.373-24.569 0-33.941l22.667-22.667c9.357-9.357 24.522-9.375 33.901-.04L224 284.505l154.745-154.021c9.379-9.335 24.544-9.317 33.901.04l22.667 22.667c9.373 9.373 9.373 24.569 0 33.941L240.971 381.476c-9.373 9.372-24.569 9.372-33.942 0z"></path></svg></button></div></div><!--astro:end--></astro-island> <div class="mdx-content w-full max-w-3xl"> <h1 id="what-is-a-vpn-a-practical-nohype-guide">What Is a VPN? A Practical, No‑Hype Guide</h1>
+<p>You’re on café Wi‑Fi. Your laptop auto‑connects, your bank app loads, and a tiny voice in your head asks: <em>“Can anyone see this?”</em> That’s the moment a VPN makes sense — but only if you understand what it <strong>does</strong> and what it <strong>doesn’t</strong> do.</p>
+<p>This post explains VPNs like a friend would: plain language, real risks, no over‑promising.</p>
+<p><img src="/images/blog/what-is-a-vpn/vpn-tunnel-diagram.svg" alt="Diagram showing internet traffic with and without a VPN tunnel"/>
+<img src="/images/blog/what-is-a-vpn/traffic-metadata.svg" alt="Diagram showing metadata visibility shifting to a VPN provider"/></p>
+<h2 id="the-onesentence-definition">The one‑sentence definition</h2>
+<p>A <strong><a href="https://en.wikipedia.org/wiki/Virtual_private_network">VPN</a></strong> creates an <strong><a href="https://en.wikipedia.org/wiki/Encryption">encrypted</a></strong> tunnel between your device and a trusted server, so anyone sitting in the middle (like your <a href="https://en.wikipedia.org/wiki/Internet_service_provider">ISP</a> or a public Wi‑Fi operator) can’t read your traffic in transit.</p>
+<p>If you’ve ever used <strong><a href="https://en.wikipedia.org/wiki/HTTPS">HTTPS</a></strong>, you’ve already benefited from encryption. The difference is scope: HTTPS encrypts <em>a single connection</em> to a site, while a VPN encrypts <strong>everything leaving your device</strong>, including DNS lookups, app traffic, and background sync.</p>
+<div class="callout info"><div class="callout-title"><span class="mr-2 text-lg">💡</span>Pick Your VPN Goal</div><div class="mt-2"><p><strong>What are you trying to do?</strong> VPN means different things depending on your goal:</p><ul>
+<li><strong>Privacy VPN</strong> (consumer providers like Mullvad, Proton): Hide your browsing activity from your ISP and mask your IP from websites. Your traffic exits through the provider’s servers.</li>
+<li><strong>Remote Access VPN</strong> (self-hosted or mesh like Tailscale/WireGuard): Securely reach devices on your home network from anywhere. You’re the provider.</li>
+<li><strong>Corporate VPN</strong>: Access internal work resources (dashboards, file shares, staging environments). Managed by your IT department.</li>
+</ul><p>Pick your goal first, then read the relevant sections below.</p></div></div>
+<h2 id="what-a-vpn-actually-does">What a VPN actually does</h2>
+<h3 id="1-encrypts-traffic-between-you-and-the-vpn-server">1. Encrypts traffic between you and the VPN server</h3>
+<p>When you turn on a VPN, your device builds a secure tunnel to a VPN server. Your ISP can still see <em>that</em> you’re connected to a VPN, but not the contents of what you’re sending through it. Think of it like a locked mail tube: the postal service can see where the tube goes, not what’s inside.</p>
+<h3 id="2-changes-your-apparent-public-ip-address">2. Changes your apparent public IP address</h3>
+<p>Websites you visit see the <strong>VPN server’s <a href="https://en.wikipedia.org/wiki/IP_address">IP address</a></strong>, not your home IP. That can be useful for privacy, geo‑testing, or reducing the amount of location data that sites can infer.</p>
+<h3 id="3-helps-on-untrusted-networks">3. Helps on untrusted networks</h3>
+<p>Public Wi‑Fi is the classic example: a VPN protects traffic that might otherwise be sniffed by malicious actors on the same network. It won’t save you from a fake hotspot, but it dramatically reduces passive eavesdropping risk.</p>
+<h3 id="4-changes-your-routing-path">4. Changes your routing path</h3>
+<p>When a VPN is active, your device typically installs a new <strong>default route</strong> in your routing table so internet traffic flows through the tunnel first. That’s why your “public IP” changes — your traffic exits through the VPN server instead of your ISP.</p>
+<h2 id="how-vpn-tunneling-actually-works">How VPN tunneling actually works</h2>
+<p>Let’s get into the weeds for a minute. When you send data through a VPN, your original IP packet gets wrapped inside <em>another</em> packet — like putting a letter in an envelope, then putting that envelope in a secure tube.</p>
+<h3 id="the-encapsulation-process">The encapsulation process</h3>
+<p>Here’s what happens when you visit a website through a VPN:</p>
+<ol>
+<li><strong>Your device creates the original packet</strong> — a normal IP packet destined for, say, <code>93.184.216.34</code> (example.com).</li>
+<li><strong>The VPN client encrypts that entire packet</strong> — headers and all — using the negotiated cipher (often <a href="https://en.wikipedia.org/wiki/ChaCha20-Poly1305">ChaCha20</a> for WireGuard or <a href="https://en.wikipedia.org/wiki/Advanced_Encryption_Standard">AES-256</a> for OpenVPN).</li>
+<li><strong>A new outer packet is created</strong> — this one is addressed to the VPN server’s IP. The encrypted blob becomes the <em>payload</em> of this outer packet.</li>
+<li><strong>The outer packet traverses the internet normally</strong> — routers see only the VPN server as the destination.</li>
+<li><strong>The VPN server decrypts and forwards</strong> — it peels off the outer layer, decrypts your original packet, and sends it to the actual destination.</li>
+</ol>
+<p>The response follows the reverse path: the VPN server encrypts the incoming packet, wraps it, and sends it back to you.</p>
+<h3 id="what-the-packet-structure-looks-like">What the packet structure looks like</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="plaintext"><code class="hljs language-css">┌─────────────────────────────────────────────────────────┐
+│ Outer IP <span class="hljs-selector-tag">Header</span> (Your IP → VPN Server IP)               │
+├─────────────────────────────────────────────────────────┤
+│ UDP/TCP <span class="hljs-selector-tag">Header</span> (usually UDP for WireGuard/OpenVPN)      │
+├─────────────────────────────────────────────────────────┤
+│ ┌─────────────────────────────────────────────────────┐ │
+│ │ ENCRYPTED PAYLOAD                                   │ │
+│ │ ┌─────────────────────────────────────────────────┐ │ │
+│ │ │ Original IP <span class="hljs-selector-tag">Header</span> (Your IP → example<span class="hljs-selector-class">.com</span>)      │ │ │
+│ │ ├─────────────────────────────────────────────────┤ │ │
+│ │ │ Original TCP/UDP <span class="hljs-selector-tag">Header</span>                         │ │ │
+│ │ ├─────────────────────────────────────────────────┤ │ │
+│ │ │ Your actual data (HTTP request, etc.)           │ │ │
+│ │ └─────────────────────────────────────────────────┘ │ │
+│ └─────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────┘</code></pre>
+<p>This double-wrapping is why VPNs reduce your effective <a href="https://en.wikipedia.org/wiki/Maximum_transmission_unit">MTU</a> — you’re adding 40-60 bytes of overhead per packet, depending on the protocol.</p>
+<div class="callout info"><div class="callout-title"><span class="mr-2 text-lg">💡</span>Why UDP?</div><div class="mt-2"><p>Most modern VPN protocols use UDP because it’s faster and doesn’t create “TCP over TCP” problems. Running TCP inside TCP causes <a href="https://sites.inka.de/bigred/devel/tcp-tcp.html">TCP meltdown</a> — when the outer connection retransmits, so does the inner one, creating a cascading mess.</p></div></div>
+<h2 id="what-a-vpn-does-not-do">What a VPN does <strong>not</strong> do</h2>
+<div class="callout warning"><div class="callout-title"><span class="mr-2 text-lg">⚠️</span>The big misconception</div><div class="mt-2"><p>A VPN is not a magic invisibility cloak. It does <strong>not</strong> make you anonymous, and it does <strong>not</strong> prevent you from being tracked by <a href="https://en.wikipedia.org/wiki/HTTP_cookie">cookies</a>, <a href="https://en.wikipedia.org/wiki/Device_fingerprint">browser fingerprinting</a>, or accounts you log into.</p></div></div>
+<ul>
+<li><strong>A VPN doesn’t hide you from the websites you use.</strong> If you sign into Google, Google still knows it’s you.</li>
+<li><strong>A VPN doesn’t protect you from <a href="https://en.wikipedia.org/wiki/Phishing">phishing</a> or <a href="https://en.wikipedia.org/wiki/Malware">malware</a>.</strong> If you click a bad link, a VPN won’t save you.</li>
+<li><strong>A VPN doesn’t make a weak password strong.</strong> That’s still on you.</li>
+</ul>
+<h2 id="the-trust-tradeoff-who-can-see-what-now">The trust trade‑off (who can see what now)</h2>
+<p>A VPN doesn’t eliminate trust — it <strong>moves</strong> it. Without a VPN, your ISP can see the destinations you connect to. With a VPN, <strong>your VPN provider</strong> can see that metadata instead. That’s why logging policies matter, and why reputable providers publish audits (like <a href="https://mullvad.net/en/blog/2024/1/mullvad-completes-second-infrastructure-audit">Mullvad’s infrastructure audit</a> or <a href="https://protonvpn.com/blog/no-logs-audit/">ProtonVPN’s no-logs audit</a>). You’re choosing who you trust with your traffic’s “outside envelope,” not erasing it from existence.</p>
+<p>If that trade‑off feels uncomfortable, you’re not wrong. It’s why many power users prefer <strong>self‑hosted VPNs</strong> or mesh tools like Tailscale — you become the provider.</p>
+<h2 id="common-vpn-use-cases-the-legit-ones">Common VPN use cases (the legit ones)</h2>
+<ol>
+<li><strong>Safer public Wi‑Fi</strong> – Your traffic is encrypted from your device to the VPN server, so snooping is much harder.</li>
+<li><strong>Remote access to a home network</strong> – A VPN can let you reach your homelab or NAS without exposing ports publicly.</li>
+<li><strong>Business access</strong> – Companies use VPNs to allow employees to access internal systems securely.</li>
+<li><strong>Testing from another region</strong> – Developers use VPNs to verify localization, pricing, or regional content rules.</li>
+</ol>
+<h2 id="vpns-vs-proxies-not-the-same-thing">VPNs vs proxies (not the same thing)</h2>
+<p>A <strong><a href="https://en.wikipedia.org/wiki/Proxy_server">proxy server</a></strong> can forward traffic for a <em>single app</em> (usually your browser), but it doesn’t encrypt everything on your device. A VPN works at the <strong>network layer</strong>, so it covers <em>all</em> traffic unless you intentionally split it. If you need broad protection, a proxy is the wrong tool. (Note: <strong>reverse proxies</strong> like Caddy or Nginx are a different concept entirely — they sit in front of your servers, not your client. I cover those in the <a href="/blog/reverse-proxy-homelab">reverse proxy guide</a>.)</p>
+<p>If you’re curious about modern remote access that <em>feels</em> like magic, read my <a href="/blog/tailscale-explained">Tailscale guide</a> — it’s a newer, more user‑friendly approach built on WireGuard.</p>
+<h2 id="vpn-types-in-plain-english">VPN types, in plain English</h2>
+<ul>
+<li><strong>Consumer VPNs</strong> (Nord, Mullvad, Proton, etc.): You connect to a shared server and browse from there.</li>
+<li><strong>Corporate VPNs</strong>: Company‑managed servers that only employees can access.</li>
+<li><strong>Mesh VPNs</strong> (Tailscale, Headscale): Devices connect directly to each other in a private mesh, often with identity‑based access controls.</li>
+</ul>
+<h3 id="a-quick-note-on-corporate-vpns">A quick note on corporate VPNs</h3>
+<p>In many companies, the VPN is really just a <strong>gate</strong> into internal systems — dashboards, staging environments, and file shares. It’s usually combined with <strong><a href="https://en.wikipedia.org/wiki/Single_sign-on">single sign‑on</a></strong> and sometimes <strong><a href="https://en.wikipedia.org/wiki/Multi-factor_authentication">MFA</a></strong>. This is less about privacy and more about <em>access control</em>.</p>
+<h2 id="vpn-protocols-a-deep-dive">VPN protocols: a deep dive</h2>
+<p>Different VPNs use different tunnel protocols. Here’s the full rundown — including some you should probably avoid.</p>
+<h3 id="wireguard">WireGuard</h3>
+<p><strong><a href="https://www.wireguard.com/">WireGuard</a></strong> is the new hotness, and deservedly so. It’s around 4,000 lines of code (compared to OpenVPN’s 100,000+), which makes it easier to audit and harder to hide bugs in. It uses modern cryptography (<a href="https://en.wikipedia.org/wiki/Curve25519">Curve25519</a> for key exchange, ChaCha20-Poly1305 for encryption) and establishes connections in milliseconds.</p>
+<p>The trade-off? It’s opinionated — you can’t swap out ciphers like you can with OpenVPN. For most people, that’s actually a feature, not a bug. Fewer knobs means fewer ways to misconfigure it.</p>
+<h3 id="openvpn">OpenVPN</h3>
+<p><strong><a href="https://openvpn.net/">OpenVPN</a></strong> has been the workhorse of the VPN world since 2001. It runs over either TCP or UDP, supports a dizzying array of cipher configurations, and works almost everywhere. The downside is complexity — both in the codebase and in configuration. If you’ve ever stared at a <code>.ovpn</code> file wondering what half the directives do, you’re not alone.</p>
+<p>Still widely used in enterprise environments where customization matters more than simplicity.</p>
+<h3 id="ikev2ipsec">IKEv2/IPsec</h3>
+<p><strong><a href="https://en.wikipedia.org/wiki/Internet_Key_Exchange">IKEv2</a></strong> (Internet Key Exchange version 2) paired with <strong><a href="https://en.wikipedia.org/wiki/IPsec">IPsec</a></strong> is the protocol you’ll find baked into most operating systems. It’s fast, handles network changes gracefully (great for mobile), and is standardized via <a href="https://www.rfc-editor.org/rfc/rfc7296">RFC 7296</a>.</p>
+<p>The downside? IPsec configuration is notoriously fiddly. There’s a reason enterprise network admins both love and hate it. But if your VPN app “just works” on iOS or Windows, there’s a good chance IKEv2 is doing the heavy lifting.</p>
+<h3 id="l2tpipsec">L2TP/IPsec</h3>
+<p><strong><a href="https://en.wikipedia.org/wiki/Layer_2_Tunneling_Protocol">L2TP</a></strong> (Layer 2 Tunneling Protocol) by itself provides no encryption — it’s purely a tunneling protocol. When paired with IPsec, it becomes secure, but the combination is showing its age. It uses fixed ports (UDP 500 and 4500), making it easy to block, and the double encapsulation adds overhead.</p>
+<p>You’ll still find L2TP/IPsec in legacy corporate setups, but there’s rarely a good reason to choose it for new deployments.</p>
+<h3 id="pptp-avoid-this">PPTP (avoid this)</h3>
+<p><strong><a href="https://en.wikipedia.org/wiki/Point-to-Point_Tunneling_Protocol">PPTP</a></strong> was revolutionary in 1999. Today, it’s a security liability. The <a href="https://en.wikipedia.org/wiki/MS-CHAP">MS-CHAPv2 authentication</a> it uses has been <a href="https://www.cloudcracker.com/blog/2012/07/29/cracking-ms-chap-v2/">thoroughly broken</a>, and the encryption can be cracked in hours. If you see PPTP as an option, run the other way.</p>
+<h3 id="sstp">SSTP</h3>
+<p><strong><a href="https://en.wikipedia.org/wiki/Secure_Socket_Tunneling_Protocol">SSTP</a></strong> (Secure Socket Tunneling Protocol) is Microsoft’s answer to VPN-over-HTTPS. It wraps traffic in SSL/TLS, making it hard to block (it looks like regular HTTPS traffic). Useful in restrictive environments, but Windows-centric and not widely supported elsewhere.</p>
+<h2 id="protocol-comparison-table">Protocol comparison table</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Protocol</th><th>Speed</th><th>Security</th><th>Mobile Support</th><th>Ease of Setup</th><th>Best For</th></tr></thead><tbody><tr><td><strong>WireGuard</strong></td><td>Excellent</td><td>Excellent</td><td>Great (MOBIKE-like)</td><td>Easy</td><td>Modern deployments, speed-sensitive use</td></tr><tr><td><strong>OpenVPN</strong></td><td>Good</td><td>Excellent</td><td>Good</td><td>Moderate</td><td>Enterprise, legacy compatibility</td></tr><tr><td><strong>IKEv2/IPsec</strong></td><td>Very Good</td><td>Excellent</td><td>Excellent</td><td>Easy (native OS)</td><td>Mobile users, built-in clients</td></tr><tr><td><strong>L2TP/IPsec</strong></td><td>Moderate</td><td>Good</td><td>Good</td><td>Easy</td><td>Legacy systems only</td></tr><tr><td><strong>SSTP</strong></td><td>Good</td><td>Good</td><td>Windows only</td><td>Easy (Windows)</td><td>Bypassing firewalls on Windows</td></tr><tr><td><strong>PPTP</strong></td><td>Fast</td><td><strong>Broken</strong></td><td>Wide</td><td>Easy</td><td><strong>Nothing. Don’t use it.</strong></td></tr></tbody></table>
+<h2 id="split-tunneling-vs-full-tunneling">Split tunneling vs full tunneling</h2>
+<p>Some VPNs let you choose <strong><a href="https://en.wikipedia.org/wiki/Split_tunneling">split tunneling</a></strong>, where only certain apps or domains go through the VPN. The rest of your traffic goes out normally. Full tunneling routes <em>everything</em> through the VPN, which is simpler and usually more private, but can be slower or break local devices.</p>
+<h2 id="vpn-vs-https-and-why-both-matter">VPN vs HTTPS (and why both matter)</h2>
+<p>HTTPS protects <strong>browser‑to‑website</strong> traffic. A VPN protects <strong>device‑to‑internet</strong> traffic. The overlap is large, but not total:</p>
+<ul>
+<li>VPNs protect <strong>non‑browser apps</strong> that might not use HTTPS correctly.</li>
+<li>HTTPS does nothing for DNS requests unless you use <strong><a href="https://en.wikipedia.org/wiki/DNS_over_HTTPS">DoH</a></strong> or <strong><a href="https://en.wikipedia.org/wiki/DNS_over_TLS">DoT</a></strong>.</li>
+<li>If you already use HTTPS everywhere, the VPN is mostly about metadata, routing, and untrusted networks.</li>
+</ul>
+<h2 id="dns-the-leaky-faucet-people-forget-about">DNS: the leaky faucet people forget about</h2>
+<p>Even if your traffic is encrypted, <strong>DNS</strong> requests can reveal what you’re trying to access. A VPN should either run its own <strong><a href="https://en.wikipedia.org/wiki/Domain_Name_System">DNS resolver</a></strong> or tunnel your DNS queries through the VPN. If your DNS queries escape, it’s called a <strong>DNS leak</strong> and it defeats much of the privacy value.</p>
+<p>What counts as a “leak”? It’s not just your ISP — if your DNS queries go to your home router (which then forwards them to your ISP), that’s still a leak. Any DNS path outside the VPN tunnel exposes your browsing destinations.</p>
+<div class="callout warning"><div class="callout-title"><span class="mr-2 text-lg">⚠️</span>DoH/DoT doesn&#x27;t fully protect you</div><div class="mt-2"><p>Using <strong>DNS-over-HTTPS</strong> (DoH) in your browser? That only covers browser traffic. Other apps (email clients, chat apps, system services) still use OS-level DNS, which may leak outside the VPN. For full coverage, you need the VPN to handle <em>all</em> DNS or configure DoH/DoT at the system level.</p></div></div>
+<p>You can test for DNS leaks at <a href="https://www.dnsleaktest.com/">dnsleaktest.com</a> or <a href="https://ipleak.net/">ipleak.net</a>.</p>
+<h2 id="kill-switches-and-why-they-matter">Kill switches and why they matter</h2>
+<p>A <strong><a href="https://en.wikipedia.org/wiki/Kill_switch">kill switch</a></strong> is a safety feature that blocks all internet traffic if the VPN disconnects unexpectedly. Without it, your traffic can fall back to the normal route for a few seconds — which is exactly the moment you didn’t want it to.</p>
+<h2 id="performance-the-hidden-cost">Performance: the hidden cost</h2>
+<p>VPNs add <strong>latency</strong> because your traffic now takes a detour. They also add <strong>CPU overhead</strong> for encryption. On modern hardware it’s usually fine, but on phones or small routers it can be noticeable. If your video calls get choppy, the VPN is a prime suspect.</p>
+<h2 id="mtu-fragmentation-and-the-occasional-weird-bug">MTU, fragmentation, and the occasional weird bug</h2>
+<p>VPNs can reduce your effective <strong><a href="https://en.wikipedia.org/wiki/Maximum_transmission_unit">MTU</a></strong> because packets are wrapped inside other packets. That overhead can cause fragmentation and lead to odd issues: a site loads but images don’t, or large uploads stall. Some VPN clients auto‑tune MTU; if you’re troubleshooting “mysterious” network bugs, it’s worth checking.</p>
+<h2 id="troubleshooting-common-vpn-issues">Troubleshooting common VPN issues</h2>
+<p>VPNs work great until they don’t. Here’s how to diagnose the usual suspects.</p>
+<h3 id="connected-but-no-internet">”Connected but no internet”</h3>
+<p>This is the most common complaint. The tunnel is up, but nothing loads.</p>
+<ol>
+<li><strong>Check your DNS</strong> — Your VPN might have connected but failed to push DNS settings. Try <code>nslookup example.com</code> to see if DNS resolves. If not, temporarily set DNS to <code>8.8.8.8</code> or your VPN’s DNS server to confirm it’s a DNS issue. (This is a <strong>diagnostic step</strong>, not a permanent fix — once confirmed, configure your VPN to properly push DNS.)</li>
+<li><strong>Routing table got weird</strong> — Run <code>ip route</code> (Linux/Mac) or <code>route print</code> (Windows) and look for conflicting default routes. Sometimes the VPN route doesn’t take precedence.</li>
+<li><strong>Firewall blocking tunnel traffic</strong> — If you’re on a corporate network, they might block VPN protocols. Try switching to TCP port 443 (looks like HTTPS).</li>
+</ol>
+<h3 id="slow-speeds">Slow speeds</h3>
+<ul>
+<li><strong>Wrong server</strong> — Pick a server geographically closer to you. Routing to another continent adds 100+ ms of latency.</li>
+<li><strong>Protocol mismatch</strong> — If you’re on OpenVPN/TCP, switch to UDP or WireGuard.</li>
+<li><strong>ISP throttling</strong> — Some ISPs throttle VPN traffic. Test with <a href="https://fast.com">fast.com</a> with and without VPN.</li>
+<li><strong>MTU issues</strong> — If speeds crater on large transfers but small requests work fine, try lowering MTU to 1400 or 1280.</li>
+</ul>
+<h3 id="connection-drops-randomly">Connection drops randomly</h3>
+<ul>
+<li><strong>Aggressive NAT timeout</strong> — Some routers drop UDP connections after 30 seconds of inactivity. Enable keepalives (WireGuard calls this <code>PersistentKeepalive</code>).</li>
+<li><strong>Network switching</strong> — IKEv2 handles this well; OpenVPN doesn’t. If you’re on mobile, IKEv2 or WireGuard are better choices.</li>
+<li><strong>Kill switch triggering</strong> — Check if your VPN’s kill switch is overly aggressive. Some block traffic even during brief reconnects.</li>
+</ul>
+<h3 id="dns-leaks">DNS leaks</h3>
+<p>Your VPN is connected but your DNS queries are escaping through your normal ISP.</p>
+<ol>
+<li>Test at <a href="https://www.dnsleaktest.com/">dnsleaktest.com</a></li>
+<li>Check VPN settings for “Use VPN DNS” or similar</li>
+<li>On Linux, check <code>/etc/resolv.conf</code> — if it’s pointing to your router instead of the VPN’s DNS, that’s the leak</li>
+<li>Consider running <a href="https://wiki.archlinux.org/title/systemd-resolved">systemd-resolved</a> or manually configuring DNS</li>
+</ol>
+<h3 id="webrtc-leak-warnings">”WebRTC leak” warnings</h3>
+<p>Even with a VPN, browsers can leak your real IP through <a href="https://en.wikipedia.org/wiki/WebRTC">WebRTC</a>. This is a browser issue, not a VPN issue. Disable WebRTC in your browser settings, or use extensions like <a href="https://ublockorigin.com/">uBlock Origin</a> which can block WebRTC leaks.</p>
+<h3 id="site-blocks-vpn-traffic">Site blocks VPN traffic</h3>
+<p>Some services (streaming, banking) actively block known VPN IP ranges.</p>
+<ul>
+<li><strong>Try a different server</strong> — VPN providers rotate IPs; a fresh one might work.</li>
+<li><strong>Use a residential IP</strong> — Some providers offer these for an extra fee.</li>
+<li><strong>Split tunnel</strong> — Exclude that specific service from your VPN.</li>
+</ul>
+<div class="callout warning"><div class="callout-title"><span class="mr-2 text-lg">⚠️</span>When to give up</div><div class="mt-2"><p>If your bank’s fraud detection keeps locking you out, it might be easier to whitelist banking from your VPN than to fight the system. Security is about trade-offs, not absolutes.</p></div></div>
+<h2 id="how-to-choose-a-vpn-without-falling-for-marketing">How to choose a VPN without falling for marketing</h2>
+<p>Here’s a practical checklist:</p>
+<ul>
+<li><strong>Threat model</strong>: Do you want privacy from your ISP, or are you trying to safely access your home network?</li>
+<li><strong>Logging policy</strong>: Read the provider’s privacy policy and independent audits. <a href="https://www.safetydetectives.com/best-vpns/">That One Privacy Site</a> and <a href="https://www.techlore.tech/vpn">Techlore’s VPN Toolkit</a> are good starting points.</li>
+<li><strong>Performance</strong>: VPNs add latency. Look for WireGuard‑based providers if possible.</li>
+<li><strong>Jurisdiction</strong>: Different countries have different <a href="https://en.wikipedia.org/wiki/Data_retention">data retention laws</a>. <a href="https://en.wikipedia.org/wiki/Five_Eyes">Five Eyes</a>, Nine Eyes, and Fourteen Eyes alliances share intelligence.</li>
+<li><strong>DNS behavior</strong>: A good VPN should prevent <a href="https://en.wikipedia.org/wiki/DNS_leak">DNS leaks</a> (when your DNS queries escape the tunnel).</li>
+<li><strong>Transparency</strong>: If a provider won’t explain how it works, that’s a signal.</li>
+</ul>
+<h2 id="threat-model-examples-pick-the-one-that-sounds-like-you">Threat model examples (pick the one that sounds like you)</h2>
+<ul>
+<li><strong>“I just want safe café Wi‑Fi.”</strong> A reputable consumer VPN is fine.</li>
+<li><strong>“I need access to my NAS from anywhere.”</strong> A mesh VPN (Tailscale) or self‑hosted WireGuard server.</li>
+<li><strong>“I’m testing a site from another region.”</strong> A VPN with multiple exit regions.</li>
+<li><strong>“I want full privacy.”</strong> Be careful — no VPN gives full anonymity. Combine with good browser hygiene.</li>
+</ul>
+<div class="callout info"><div class="callout-title"><span class="mr-2 text-lg">💡</span>Quick rule of thumb</div><div class="mt-2"><p>If you want <strong>private remote access</strong>, consider a mesh VPN like Tailscale. If you want <strong>privacy from your ISP</strong>, a reputable consumer VPN is better.</p></div></div>
+<h2 id="a-short-mythbusting-list">A short myth‑busting list</h2>
+<ul>
+<li><strong>“A VPN makes me anonymous.”</strong> → Not really. It changes your IP, but tracking still works.</li>
+<li><strong>“VPNs are illegal.”</strong> → Legal in most countries, but rules vary. Check <a href="https://www.comparitech.com/vpn/where-are-vpns-legal-banned/">this overview</a>.</li>
+<li><strong>“Free VPNs are good enough.”</strong> → Free often means <em>you</em> are the product. <a href="https://research.csiro.au/ng/wp-content/uploads/sites/106/2016/08/paper-1.pdf">CSIRO’s study</a> found 38% of free Android VPN apps contained malware.</li>
+<li><strong>“A VPN hides me from my employer.”</strong> → If your employer controls the device, they likely still have visibility.</li>
+</ul>
+<h2 id="want-a-visual-explanation-2minute-video">Want a visual explanation? (2‑minute video)</h2>
+<iframe title="VPN explained in 2 minutes" src="https://www.youtube.com/embed/r4zSScX7u6E" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+<h2 id="where-to-go-next">Where to go next</h2>
+<ul>
+<li><strong>Tailscale deep dive</strong>: <a href="/blog/tailscale-explained">Tailscale Explained: The Mesh VPN That Feels Like Magic</a></li>
+<li><strong>Remote access walkthrough</strong>: <a href="/blog/self-hosting-with-tailscale">Self‑Hosting With Tailscale</a></li>
+<li><strong>WireGuard documentation</strong>: <a href="https://www.wireguard.com/">wireguard.com</a></li>
+<li><strong>Privacy basics</strong>: <a href="https://ssd.eff.org/">EFF Surveillance Self‑Defense</a></li>
+<li><strong>Test your VPN</strong>: <a href="https://ipleak.net/">ipleak.net</a></li>
+</ul>
+<p>If you want me to recommend a VPN based on your specific use case, send me a note and I’ll help you pick one that fits your threat model.</p> </div> <div class="w-full max-w-3xl"> <script>(()=>{var a=(s,i,o)=>{let r=async()=>{await(await s())()},t=typeof i.value=="object"?i.value:void 0,c={rootMargin:t==null?void 0:t.rootMargin},n=new IntersectionObserver(e=>{for(let l of e)if(l.isIntersecting){n.disconnect(),r();break}},c);for(let e of o.children)n.observe(e)};(self.Astro||(self.Astro={})).visible=a;window.dispatchEvent(new Event("astro:visible"));})();</script><astro-island uid="ZaUszC" prefix="r11" component-url="/_astro/SuggestedPosts.D8WlOE5i.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{&quot;posts&quot;:[1,[[0,{&quot;slug&quot;:[0,&quot;reverse-proxy-homelab&quot;],&quot;metadata&quot;:[0,{&quot;title&quot;:[0,&quot;Reverse Proxy for a Homelab: Caddy Done Right&quot;],&quot;date&quot;:[0,&quot;2025-02-25&quot;],&quot;readingTime&quot;:[0,&quot;22min&quot;],&quot;excerpt&quot;:[0,&quot;How to set up Caddy as a reverse proxy for your self‑hosted services, with automatic HTTPS, internal domains, and clean URLs.&quot;],&quot;tags&quot;:[1,[[0,&quot;self-hosting&quot;],[0,&quot;homelab&quot;],[0,&quot;caddy&quot;],[0,&quot;networking&quot;],[0,&quot;security&quot;]]]}]}],[0,{&quot;slug&quot;:[0,&quot;tailscale-explained&quot;],&quot;metadata&quot;:[0,{&quot;title&quot;:[0,&quot;Tailscale Explained: The Mesh VPN That Feels Like Magic&quot;],&quot;date&quot;:[0,&quot;2025-02-17&quot;],&quot;readingTime&quot;:[0,&quot;24min&quot;],&quot;excerpt&quot;:[0,&quot;A practical, human‑readable breakdown of how Tailscale works, why it&#39;s different, and when it&#39;s the right tool.&quot;],&quot;tags&quot;:[1,[[0,&quot;tailscale&quot;],[0,&quot;vpn&quot;],[0,&quot;networking&quot;],[0,&quot;homelab&quot;],[0,&quot;wireguard&quot;]]]}]}],[0,{&quot;slug&quot;:[0,&quot;sso-for-self-hosted-apps&quot;],&quot;metadata&quot;:[0,{&quot;title&quot;:[0,&quot;SSO for Self‑Hosted Apps: One Login to Rule Them All&quot;],&quot;date&quot;:[0,&quot;2025-02-23&quot;],&quot;readingTime&quot;:[0,&quot;20min&quot;],&quot;excerpt&quot;:[0,&quot;How to set up single sign‑on for your homelab using Pocket ID, Tinyauth, and a reverse proxy, so you&#39;re not juggling dozens of passwords.&quot;],&quot;tags&quot;:[1,[[0,&quot;self-hosting&quot;],[0,&quot;homelab&quot;],[0,&quot;security&quot;],[0,&quot;sso&quot;],[0,&quot;oidc&quot;]]]}]}]]]}" ssr client="visible" opts="{&quot;name&quot;:&quot;SuggestedPosts&quot;,&quot;value&quot;:true}" await-children><section class="mt-16 pt-8 border-t border-white/[0.06]"><h2 class="text-2xl font-bold mb-6 text-primary-text">Related Posts</h2><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"><a href="/blog/reverse-proxy-homelab" class="group"><article class="card h-full flex flex-col transition-all duration-200 hover:scale-[1.02]"><h3 class="text-lg font-semibold mb-3 text-primary-text group-hover:text-accent transition-colors duration-150 line-clamp-2">Reverse Proxy for a Homelab: Caddy Done Right</h3><p class="text-sm text-muted-text mb-4 line-clamp-2 flex-grow">How to set up Caddy as a reverse proxy for your self‑hosted services, with automatic HTTPS, internal domains, and clean URLs.</p><div class="flex flex-wrap gap-2 mb-3"><span class="tag-bubble text-xs">#<!-- -->self-hosting</span><span class="tag-bubble text-xs">#<!-- -->homelab</span><span class="tag-bubble text-xs">#<!-- -->caddy</span><span class="text-xs text-muted-text">+<!-- -->2</span></div><div class="flex items-center gap-2 text-xs text-muted-text mt-auto"><time>2/25/25</time><span>•</span><span>22min</span></div></article></a><a href="/blog/tailscale-explained" class="group"><article class="card h-full flex flex-col transition-all duration-200 hover:scale-[1.02]"><h3 class="text-lg font-semibold mb-3 text-primary-text group-hover:text-accent transition-colors duration-150 line-clamp-2">Tailscale Explained: The Mesh VPN That Feels Like Magic</h3><p class="text-sm text-muted-text mb-4 line-clamp-2 flex-grow">A practical, human‑readable breakdown of how Tailscale works, why it&#x27;s different, and when it&#x27;s the right tool.</p><div class="flex flex-wrap gap-2 mb-3"><span class="tag-bubble text-xs">#<!-- -->tailscale</span><span class="tag-bubble text-xs">#<!-- -->vpn</span><span class="tag-bubble text-xs">#<!-- -->networking</span><span class="text-xs text-muted-text">+<!-- -->2</span></div><div class="flex items-center gap-2 text-xs text-muted-text mt-auto"><time>2/17/25</time><span>•</span><span>24min</span></div></article></a><a href="/blog/sso-for-self-hosted-apps" class="group"><article class="card h-full flex flex-col transition-all duration-200 hover:scale-[1.02]"><h3 class="text-lg font-semibold mb-3 text-primary-text group-hover:text-accent transition-colors duration-150 line-clamp-2">SSO for Self‑Hosted Apps: One Login to Rule Them All</h3><p class="text-sm text-muted-text mb-4 line-clamp-2 flex-grow">How to set up single sign‑on for your homelab using Pocket ID, Tinyauth, and a reverse proxy, so you&#x27;re not juggling dozens of passwords.</p><div class="flex flex-wrap gap-2 mb-3"><span class="tag-bubble text-xs">#<!-- -->self-hosting</span><span class="tag-bubble text-xs">#<!-- -->homelab</span><span class="tag-bubble text-xs">#<!-- -->security</span><span class="text-xs text-muted-text">+<!-- -->2</span></div><div class="flex items-center gap-2 text-xs text-muted-text mt-auto"><time>2/23/25</time><span>•</span><span>20min</span></div></article></a></div></section><!--astro:end--></astro-island> </div> </div> </article> </div> </div> </main> <astro-island uid="Z1HHq8M" prefix="r12" component-url="/_astro/Footer.Cvi6Gx2X.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;Footer&quot;,&quot;value&quot;:true}" await-children><footer class="mt-auto border-t border-white/[0.04]"><div class="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8"><div class="flex flex-col items-center justify-between gap-3 sm:flex-row sm:gap-6"><span class="text-xs text-muted-text">© <!-- -->2026<!-- --> Phil Vishnevsky</span><nav class="flex items-center gap-4 sm:gap-6"><a href="/projects" class="text-sm text-secondary-text transition-colors hover:text-accent">Projects</a><a href="/blog" class="text-sm text-secondary-text transition-colors hover:text-accent">Blog</a><a href="/about" class="text-sm text-secondary-text transition-colors hover:text-accent">About</a></nav><div class="flex items-center gap-3"><a href="https://github.com/zenatron" target="_blank" rel="noopener noreferrer" class="text-muted-text transition-colors hover:text-accent" aria-label="GitHub"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path></svg></a><a href="https://linkedin.com/in/philipvishnevsky" target="_blank" rel="noopener noreferrer" class="text-muted-text transition-colors hover:text-accent" aria-label="LinkedIn"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"></path></svg></a><a href="https://bsky.app/profile/zenatron.bsky.social" target="_blank" rel="noopener noreferrer" class="text-muted-text transition-colors hover:text-accent" aria-label="Bluesky"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M407.8 294.7c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3zM288 227.1C261.9 176.4 190.9 81.9 124.9 35.3C61.6-9.4 37.5-1.7 21.6 5.5C3.3 13.8 0 41.9 0 58.4S9.1 194 15 213.9c19.5 65.7 89.1 87.9 153.2 80.7c3.3-.5 6.6-.9 10-1.4c-3.3 .5-6.6 1-10 1.4C74.3 308.6-9.1 342.8 100.3 464.5C220.6 589.1 265.1 437.8 288 361.1c22.9 76.7 49.2 222.5 185.6 103.4c102.4-103.4 28.1-156-65.8-169.9c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3c64.1 7.1 133.6-15.1 153.2-80.7C566.9 194 576 75 576 58.4s-3.3-44.7-21.6-52.9c-15.8-7.1-40-14.9-103.2 29.8C385.1 81.9 314.1 176.4 288 227.1z"></path></svg></a><button type="button" data-cal-namespace="call" data-cal-link="phil/call" data-cal-origin="https://z3n.me" data-cal-config="{&quot;layout&quot;:&quot;month_view&quot;}" class="text-muted-text transition-colors duration-200 hover:text-accent " title="Book a Meeting"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="h-4 w-4" style="pointer-events:none" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M0 464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V192H0v272zm320-196c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zM192 268c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zM64 268c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zM400 64h-48V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H160V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H48C21.5 64 0 85.5 0 112v48h448v-48c0-26.5-21.5-48-48-48z"></path></svg></button></div></div></div></footer><!--astro:end--></astro-island> <astro-island uid="Z27XvrG" prefix="r13" component-url="/_astro/BackToTopButton.BwjLM3Om.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;BackToTopButton&quot;,&quot;value&quot;:true}" await-children><button type="button" class="fixed bottom-8 right-8 z-50 p-3 rounded-full bg-background/50 text-primary-foreground shadow-lg backdrop-blur-md border border-white/10 hover:bg-background/70 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all duration-300 opacity-0 scale-90" aria-label="Scroll back to top" style="visibility:hidden" title="Scroll back to top"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="h-5 w-5 mix-blend-difference" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"></path></svg></button><!--astro:end--></astro-island> </div>  </body></html>

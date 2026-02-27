@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
+  <title id="title">Control plane vs data plane</title>
+  <desc id="desc">Diagram showing Tailscale control plane for coordination and direct data plane between devices.</desc>
+  <rect width="1200" height="600" fill="#0b0f1a" />
+  <g font-family="Arial, sans-serif" fill="#e6e6e6">
+    <text x="40" y="60" font-size="32" font-weight="700">Control plane vs data plane</text>
+  </g>
+
+  <g stroke="#6366f1" stroke-width="3" fill="none">
+    <rect x="80" y="150" width="320" height="180" rx="16" />
+    <rect x="800" y="150" width="320" height="180" rx="16" />
+    <rect x="440" y="350" width="320" height="180" rx="16" />
+  </g>
+
+  <g font-family="Arial, sans-serif" fill="#e6e6e6" font-size="20" text-anchor="middle">
+    <text x="240" y="250">Laptop</text>
+    <text x="960" y="250">Home server</text>
+    <text x="600" y="450">Coordination server</text>
+  </g>
+
+  <g stroke="#22c55e" stroke-width="4" fill="none" stroke-dasharray="10 8">
+    <path d="M240 330 L520 350" />
+    <path d="M960 330 L680 350" />
+  </g>
+  <g fill="#22c55e" font-family="Arial, sans-serif" font-size="16">
+    <text x="470" y="330">Control plane</text>
+  </g>
+
+  <g stroke="#38bdf8" stroke-width="5" fill="none">
+    <path d="M400 220 L800 220" />
+  </g>
+  <g fill="#38bdf8" font-family="Arial, sans-serif" font-size="16">
+    <text x="520" y="200">Data plane (direct)</text>
+  </g>
+</svg>

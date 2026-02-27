@@ -1,0 +1,1010 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="I'm a software engineer crafting AI projects, tools, homelabs, and games. Explore my portfolio, technical blog posts, and latest development work."><title>Self‑Hosting With Tailscale: Secure Access Without Open Ports | Phil Vishnevsky</title><link rel="icon" href="/favicon.ico"><!-- Preconnect to font and CDN origins for faster loading --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><!-- Google Fonts --><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/about.D-5dzeln.css"></head> <body class="antialiased bg-primary-bg text-primary-text"> <!-- Skip to main content link for accessibility --> <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-primary-bg focus:outline-none">
+Skip to main content
+</a> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="15c4Fn" prefix="r15" component-url="/_astro/EasterEggs.C55T2r_L.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;EasterEggs&quot;,&quot;value&quot;:true}" await-children><div class="fixed top-20 right-4 z-50 flex flex-col gap-3 pointer-events-none"></div><!--astro:end--></astro-island>  <div class="relative flex min-h-screen flex-col"> <astro-island uid="dHWCJ" prefix="r14" component-url="/_astro/KatexStyles.BafW8or2.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;KatexStyles&quot;,&quot;value&quot;:true}"></astro-island> <astro-island uid="Z16tfae" prefix="r8" component-url="/_astro/Header.CgjOm6Vf.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;Header&quot;,&quot;value&quot;:true}" await-children><link rel="preload" as="image" href="/images/phil_headshot_scaled.webp"/><header class="fixed left-0 right-0 top-0 z-40"><div class="mx-auto flex h-20 max-w-5xl items-center justify-between px-6"><a href="/" title="Home" class="group flex items-center gap-2.5 rounded-full border border-white/[0.06] bg-white/[0.02] p-1.5 backdrop-blur-sm transition-colors hover:border-white/[0.1] hover:bg-white/[0.04] sm:pr-3"><img src="/images/phil_headshot_scaled.webp" alt="Phil Vishnevsky" width="48" height="48" class="h-6 w-6 shrink-0 rounded-full object-cover"/><span class="hidden text-sm font-medium text-primary-text sm:block">Phil Vishnevsky</span></a><nav class="hidden items-center gap-1 rounded-full border border-white/[0.06] bg-white/[0.02] px-[3px] py-[3px] backdrop-blur-sm md:flex relative"><div><a href="/projects" draggable="true" class="relative rounded-full px-4 py-2 text-sm leading-none transition-colors duration-200 block cursor-pointer z-10 text-secondary-text">Projects</a></div><div><a href="/blog" draggable="true" class="relative rounded-full px-4 py-2 text-sm leading-none transition-colors duration-200 block cursor-pointer z-10 text-secondary-text">Blog</a></div><div><a href="/about" draggable="true" class="relative rounded-full px-4 py-2 text-sm leading-none transition-colors duration-200 block cursor-pointer z-10 text-secondary-text">About</a></div></nav><div class="flex items-center gap-3"><button type="button" class="hidden rounded-full border border-white/[0.06] bg-white/[0.02] px-4 py-2 text-sm font-medium text-secondary-text backdrop-blur-sm transition-colors hover:border-accent/30 hover:bg-accent/10 hover:text-accent sm:block">Get in touch</button><button type="button" class="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-secondary-text transition-colors duration-150 hover:border-white/20 hover:text-primary-text md:hidden" aria-label="Toggle Menu" aria-expanded="false" title="Toggle Menu"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"></path></svg></button><div class="fixed inset-0 z-30 bg-black/65 transition-opacity duration-200 pointer-events-none opacity-0"></div><nav class="fixed top-0 right-0 z-40 flex h-full w-[65vw] max-w-[240px] flex-col gap-6 border-l border-white/[0.06] bg-primary-bg/95 backdrop-blur-md px-5 py-8 transition-transform duration-200 md:hidden translate-x-full"><div class="flex items-center justify-end"><button type="button" class="flex h-8 w-8 items-center justify-center rounded-full border border-white/[0.06] bg-white/[0.02] text-secondary-text transition-colors duration-150 hover:border-white/[0.1] hover:text-primary-text" aria-label="Close menu"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 352 512" class="h-3.5 w-3.5" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg></button></div><ul class="flex flex-col gap-1"><li><a href="/projects" class="block rounded-lg px-3 py-2.5 text-base font-medium text-primary-text transition-colors duration-150 hover:bg-white/[0.04] hover:text-accent">Projects</a></li><li><a href="/blog" class="block rounded-lg px-3 py-2.5 text-base font-medium text-primary-text transition-colors duration-150 hover:bg-white/[0.04] hover:text-accent">Blog</a></li><li><a href="/about" class="block rounded-lg px-3 py-2.5 text-base font-medium text-primary-text transition-colors duration-150 hover:bg-white/[0.04] hover:text-accent">About</a></li></ul><button type="button" class="rounded-full px-4 py-2.5 text-base font-medium text-accent transition-colors duration-150" style="background-color:rgba(124, 138, 255, 0.15);border:1px solid rgba(124, 138, 255, 0.3)">Get in touch</button><div class="mt-auto pt-4 border-t border-white/[0.06]"><span class="text-xs text-muted-text">v0.8.5</span></div></nav></div></div></header><!--astro:end--></astro-island> <main class="px-4 py-10 pt-20 sm:px-6"> <div class="max-w-5xl mx-auto mb-6"> <a href="/blog" class="inline-flex items-center gap-2 text-muted-text hover:text-foreground text-sm" title="Back to Blog">
+← Back to Blog
+</a> </div> <div class="max-w-5xl mx-auto"> <div class="lg:flex lg:gap-8 lg:items-start"> <aside class="hidden lg:block lg:w-64 lg:flex-shrink-0 lg:sticky lg:top-24"> <astro-island uid="ZkR7Ge" prefix="r9" component-url="/_astro/TableOfContents.DFg0TTA8.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{&quot;headings&quot;:[1,[[0,{&quot;id&quot;:[0,&quot;selfhosting-with-tailscale-secure-access-without-open-ports&quot;],&quot;text&quot;:[0,&quot;Self‑Hosting With Tailscale: Secure Access Without Open Ports&quot;],&quot;level&quot;:[0,1]}],[0,{&quot;id&quot;:[0,&quot;why-selfhost-in-the-first-place&quot;],&quot;text&quot;:[0,&quot;Why self‑host in the first place?&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;the-threat-model-most-people-ignore&quot;],&quot;text&quot;:[0,&quot;The threat model most people ignore&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;the-risk-of-open-ports&quot;],&quot;text&quot;:[0,&quot;The risk of open ports&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;the-tailscale-pattern-private-by-default&quot;],&quot;text&quot;:[0,&quot;The Tailscale pattern (private by default)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;a-practical-setup-flow&quot;],&quot;text&quot;:[0,&quot;A practical setup flow&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;1-install-tailscale-on-your-server&quot;],&quot;text&quot;:[0,&quot;1) Install Tailscale on your server&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;2-install-tailscale-on-your-laptopphone&quot;],&quot;text&quot;:[0,&quot;2) Install Tailscale on your laptop/phone&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;3-turn-on-magicdns&quot;],&quot;text&quot;:[0,&quot;3) Turn on MagicDNS&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;4-lock-it-down-with-acls&quot;],&quot;text&quot;:[0,&quot;4) Lock it down with ACLs&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;5-optional-use-tailscale-ssh&quot;],&quot;text&quot;:[0,&quot;5) (Optional) Use Tailscale SSH&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;6-optional-use-a-subnet-router&quot;],&quot;text&quot;:[0,&quot;6) (Optional) Use a subnet router&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;setting-up-a-subnet-router-step-by-step&quot;],&quot;text&quot;:[0,&quot;Setting up a subnet router (step-by-step)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;step-1-enable-ip-forwarding-on-the-router-machine&quot;],&quot;text&quot;:[0,&quot;Step 1: Enable IP forwarding on the router machine&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;step-2-advertise-the-subnet&quot;],&quot;text&quot;:[0,&quot;Step 2: Advertise the subnet&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;step-3-approve-the-routes-in-the-admin-console&quot;],&quot;text&quot;:[0,&quot;Step 3: Approve the routes in the admin console&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;step-4-accept-routes-on-client-devices&quot;],&quot;text&quot;:[0,&quot;Step 4: Accept routes on client devices&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;step-5-verify-connectivity&quot;],&quot;text&quot;:[0,&quot;Step 5: Verify connectivity&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;docker-networking-with-tailscale&quot;],&quot;text&quot;:[0,&quot;Docker networking with Tailscale&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;the-problem&quot;],&quot;text&quot;:[0,&quot;The problem&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;option-1-host-network-mode-simple-but-limited&quot;],&quot;text&quot;:[0,&quot;Option 1: Host network mode (simple but limited)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;option-2-tailscale-sidecar-container-more-flexible&quot;],&quot;text&quot;:[0,&quot;Option 2: Tailscale sidecar container (more flexible)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;option-3-tailscale-on-the-host-containers-on-a-bridge&quot;],&quot;text&quot;:[0,&quot;Option 3: Tailscale on the host, containers on a bridge&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;which-option-should-you-pick&quot;],&quot;text&quot;:[0,&quot;Which option should you pick?&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;debugging-docker--tailscale&quot;],&quot;text&quot;:[0,&quot;Debugging Docker + Tailscale&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;tailscale-serve-https-for-local-services&quot;],&quot;text&quot;:[0,&quot;Tailscale Serve: HTTPS for local services&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;basic-usage&quot;],&quot;text&quot;:[0,&quot;Basic usage&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;serving-static-files&quot;],&quot;text&quot;:[0,&quot;Serving static files&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;serving-a-specific-port-on-a-path&quot;],&quot;text&quot;:[0,&quot;Serving a specific port on a path&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;making-it-persistent&quot;],&quot;text&quot;:[0,&quot;Making it persistent&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;tailscale-funnel-public-exposure-carefully&quot;],&quot;text&quot;:[0,&quot;Tailscale Funnel (public exposure, carefully)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;example-services-that-are-perfect-for-this&quot;],&quot;text&quot;:[0,&quot;Example services that are perfect for this&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;security-hardening-the-stuff-that-actually-matters&quot;],&quot;text&quot;:[0,&quot;Security hardening (the stuff that actually matters)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;ufw-uncomplicated-firewall&quot;],&quot;text&quot;:[0,&quot;UFW (Uncomplicated Firewall)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;fail2ban-because-bots-are-relentless&quot;],&quot;text&quot;:[0,&quot;fail2ban (because bots are relentless)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;crowdsec-crowd-sourced-threat-intelligence&quot;],&quot;text&quot;:[0,&quot;CrowdSec (crowd-sourced threat intelligence)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;automatic-security-updates&quot;],&quot;text&quot;:[0,&quot;Automatic security updates&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;ssh-hardening&quot;],&quot;text&quot;:[0,&quot;SSH hardening&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;backups-are-not-optional&quot;],&quot;text&quot;:[0,&quot;Backups are not optional&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;when-you-do-need-public-access&quot;],&quot;text&quot;:[0,&quot;When you do need public access&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;security-layers-that-still-matter&quot;],&quot;text&quot;:[0,&quot;Security layers that still matter&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;updates-and-patching-the-boring-part-that-saves-you&quot;],&quot;text&quot;:[0,&quot;Updates and patching (the boring part that saves you)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;monitoring-and-health-checks&quot;],&quot;text&quot;:[0,&quot;Monitoring and health checks&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;the-simplest-approach-systemd-timers--curl&quot;],&quot;text&quot;:[0,&quot;The simplest approach: systemd timers + curl&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;uptime-kuma-self-hosted-uptime-monitoring&quot;],&quot;text&quot;:[0,&quot;Uptime Kuma (self-hosted uptime monitoring)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;docker-health-checks&quot;],&quot;text&quot;:[0,&quot;Docker health checks&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;prometheus--grafana-the-full-stack&quot;],&quot;text&quot;:[0,&quot;Prometheus + Grafana (the full stack)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;quick-commands-for-debugging&quot;],&quot;text&quot;:[0,&quot;Quick commands for debugging&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;troubleshooting-checklist&quot;],&quot;text&quot;:[0,&quot;Troubleshooting checklist&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;video-walkthrough-handson&quot;],&quot;text&quot;:[0,&quot;Video walkthrough (hands‑on)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;summary&quot;],&quot;text&quot;:[0,&quot;Summary&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;further-reading&quot;],&quot;text&quot;:[0,&quot;Further reading&quot;],&quot;level&quot;:[0,2]}]]],&quot;className&quot;:[0,&quot;desktop-only&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;TableOfContents&quot;,&quot;value&quot;:true}" await-children><div class="hidden lg:block desktop-only"><div class="z-30"><div class="bg-neutral-800/60 backdrop-blur-md border border-neutral-600/40 rounded-xl p-4 shadow-lg max-h-[calc(100vh-8rem)] overflow-y-auto"><div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="text-xs" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M80 368H16a16 16 0 0 0-16 16v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16v-64a16 16 0 0 0-16-16zm0-320H16A16 16 0 0 0 0 64v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16V64a16 16 0 0 0-16-16zm0 160H16a16 16 0 0 0-16 16v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16v-64a16 16 0 0 0-16-16zm416 176H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16z"></path></svg><h3 class="text-sm font-medium text-foreground">Table of Contents</h3></div><button class="p-1 rounded hover:bg-neutral-700/50 transition-colors duration-200" aria-expanded="true" aria-label="Toggle table of contents"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="text-muted-text transition-transform duration-200 text-xs " height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M207.029 381.476L12.686 187.132c-9.373-9.373-9.373-24.569 0-33.941l22.667-22.667c9.357-9.357 24.522-9.375 33.901-.04L224 284.505l154.745-154.021c9.379-9.335 24.544-9.317 33.901.04l22.667 22.667c9.373 9.373 9.373 24.569 0 33.941L240.971 381.476c-9.373 9.372-24.569 9.372-33.942 0z"></path></svg></button></div><nav aria-label="Table of contents navigation"><ul class="space-y-1" role="list"><li class="mb-1"><a href="#selfhosting-with-tailscale-secure-access-without-open-ports" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    font-semibold text-base
+    
+    
+    
+    
+    
+  ">Self‑Hosting With Tailscale: Secure Access Without Open Ports</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#why-selfhost-in-the-first-place" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Why self‑host in the first place?</a></li><li class="mb-1"><a href="#the-threat-model-most-people-ignore" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">The threat model most people ignore</a></li><li class="mb-1"><a href="#the-risk-of-open-ports" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">The risk of open ports</a></li><li class="mb-1"><a href="#the-tailscale-pattern-private-by-default" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">The Tailscale pattern (private by default)</a></li><li class="mb-1"><a href="#a-practical-setup-flow" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">A practical setup flow</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#1-install-tailscale-on-your-server" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">1) Install Tailscale on your server</a></li><li class="mb-1"><a href="#2-install-tailscale-on-your-laptopphone" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">2) Install Tailscale on your laptop/phone</a></li><li class="mb-1"><a href="#3-turn-on-magicdns" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">3) Turn on MagicDNS</a></li><li class="mb-1"><a href="#4-lock-it-down-with-acls" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">4) Lock it down with ACLs</a></li><li class="mb-1"><a href="#5-optional-use-tailscale-ssh" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">5) (Optional) Use Tailscale SSH</a></li><li class="mb-1"><a href="#6-optional-use-a-subnet-router" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">6) (Optional) Use a subnet router</a></li></ul></li><li class="mb-1"><a href="#setting-up-a-subnet-router-step-by-step" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Setting up a subnet router (step-by-step)</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#step-1-enable-ip-forwarding-on-the-router-machine" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Step 1: Enable IP forwarding on the router machine</a></li><li class="mb-1"><a href="#step-2-advertise-the-subnet" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Step 2: Advertise the subnet</a></li><li class="mb-1"><a href="#step-3-approve-the-routes-in-the-admin-console" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Step 3: Approve the routes in the admin console</a></li><li class="mb-1"><a href="#step-4-accept-routes-on-client-devices" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Step 4: Accept routes on client devices</a></li><li class="mb-1"><a href="#step-5-verify-connectivity" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Step 5: Verify connectivity</a></li></ul></li><li class="mb-1"><a href="#docker-networking-with-tailscale" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Docker networking with Tailscale</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#the-problem" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">The problem</a></li><li class="mb-1"><a href="#option-1-host-network-mode-simple-but-limited" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Option 1: Host network mode (simple but limited)</a></li><li class="mb-1"><a href="#option-2-tailscale-sidecar-container-more-flexible" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Option 2: Tailscale sidecar container (more flexible)</a></li><li class="mb-1"><a href="#option-3-tailscale-on-the-host-containers-on-a-bridge" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Option 3: Tailscale on the host, containers on a bridge</a></li><li class="mb-1"><a href="#which-option-should-you-pick" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Which option should you pick?</a></li><li class="mb-1"><a href="#debugging-docker--tailscale" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Debugging Docker + Tailscale</a></li></ul></li><li class="mb-1"><a href="#tailscale-serve-https-for-local-services" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Tailscale Serve: HTTPS for local services</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#basic-usage" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Basic usage</a></li><li class="mb-1"><a href="#serving-static-files" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Serving static files</a></li><li class="mb-1"><a href="#serving-a-specific-port-on-a-path" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Serving a specific port on a path</a></li><li class="mb-1"><a href="#making-it-persistent" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Making it persistent</a></li><li class="mb-1"><a href="#tailscale-funnel-public-exposure-carefully" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Tailscale Funnel (public exposure, carefully)</a></li></ul></li><li class="mb-1"><a href="#example-services-that-are-perfect-for-this" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Example services that are perfect for this</a></li><li class="mb-1"><a href="#security-hardening-the-stuff-that-actually-matters" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Security hardening (the stuff that actually matters)</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#ufw-uncomplicated-firewall" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">UFW (Uncomplicated Firewall)</a></li><li class="mb-1"><a href="#fail2ban-because-bots-are-relentless" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">fail2ban (because bots are relentless)</a></li><li class="mb-1"><a href="#crowdsec-crowd-sourced-threat-intelligence" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">CrowdSec (crowd-sourced threat intelligence)</a></li><li class="mb-1"><a href="#automatic-security-updates" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Automatic security updates</a></li><li class="mb-1"><a href="#ssh-hardening" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">SSH hardening</a></li></ul></li><li class="mb-1"><a href="#backups-are-not-optional" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Backups are not optional</a></li><li class="mb-1"><a href="#when-you-do-need-public-access" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">When you do need public access</a></li><li class="mb-1"><a href="#security-layers-that-still-matter" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Security layers that still matter</a></li><li class="mb-1"><a href="#updates-and-patching-the-boring-part-that-saves-you" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Updates and patching (the boring part that saves you)</a></li><li class="mb-1"><a href="#monitoring-and-health-checks" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Monitoring and health checks</a><ul class="mt-1 space-y-0.5"><li class="mb-1"><a href="#the-simplest-approach-systemd-timers--curl" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">The simplest approach: systemd timers + curl</a></li><li class="mb-1"><a href="#uptime-kuma-self-hosted-uptime-monitoring" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Uptime Kuma (self-hosted uptime monitoring)</a></li><li class="mb-1"><a href="#docker-health-checks" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Docker health checks</a></li><li class="mb-1"><a href="#prometheus--grafana-the-full-stack" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Prometheus + Grafana (the full stack)</a></li><li class="mb-1"><a href="#quick-commands-for-debugging" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    
+    ml-6 text-xs
+    
+    
+    
+  ">Quick commands for debugging</a></li></ul></li><li class="mb-1"><a href="#troubleshooting-checklist" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Troubleshooting checklist</a></li><li class="mb-1"><a href="#video-walkthrough-handson" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Video walkthrough (hands‑on)</a></li><li class="mb-1"><a href="#summary" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Summary</a></li><li class="mb-1"><a href="#further-reading" class="
+    block py-2 px-3 text-sm transition-colors duration-200
+    hover:text-accent hover:bg-accent/10 rounded-md
+    text-muted-text
+   
+    
+    ml-3
+    
+    
+    
+    
+  ">Further reading</a></li></ul></li></ul></nav></div></div></div><!--astro:end--></astro-island> </aside> <article class="w-full max-w-4xl mx-auto lg:mx-0 lg:flex-1"> <div class="flex flex-col items-center"> <h1 class="text-4xl font-bold mb-4 text-center w-full">Self‑Hosting With Tailscale: Secure Access Without Open Ports</h1> <div class="flex flex-col items-center gap-4 mb-8 text-muted-text w-full"> <div class="flex flex-wrap gap-2 justify-center"> <a href="/blog?tag=self-hosting" class="tag-bubble" title="View posts with tag: self-hosting">
+#self-hosting </a><a href="/blog?tag=tailscale" class="tag-bubble" title="View posts with tag: tailscale">
+#tailscale </a><a href="/blog?tag=homelab" class="tag-bubble" title="View posts with tag: homelab">
+#homelab </a><a href="/blog?tag=security" class="tag-bubble" title="View posts with tag: security">
+#security </a><a href="/blog?tag=docker" class="tag-bubble" title="View posts with tag: docker">
+#docker </a> </div> <div class="flex flex-row items-center text-muted-text mb-2"> <time>Wednesday, February 19, 2025</time>  <span class="ml-2">•</span> <span class="ml-2">25min</span>  </div> </div> <astro-island uid="Z1fUowd" prefix="r10" component-url="/_astro/TableOfContents.DFg0TTA8.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{&quot;headings&quot;:[1,[[0,{&quot;id&quot;:[0,&quot;selfhosting-with-tailscale-secure-access-without-open-ports&quot;],&quot;text&quot;:[0,&quot;Self‑Hosting With Tailscale: Secure Access Without Open Ports&quot;],&quot;level&quot;:[0,1]}],[0,{&quot;id&quot;:[0,&quot;why-selfhost-in-the-first-place&quot;],&quot;text&quot;:[0,&quot;Why self‑host in the first place?&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;the-threat-model-most-people-ignore&quot;],&quot;text&quot;:[0,&quot;The threat model most people ignore&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;the-risk-of-open-ports&quot;],&quot;text&quot;:[0,&quot;The risk of open ports&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;the-tailscale-pattern-private-by-default&quot;],&quot;text&quot;:[0,&quot;The Tailscale pattern (private by default)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;a-practical-setup-flow&quot;],&quot;text&quot;:[0,&quot;A practical setup flow&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;1-install-tailscale-on-your-server&quot;],&quot;text&quot;:[0,&quot;1) Install Tailscale on your server&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;2-install-tailscale-on-your-laptopphone&quot;],&quot;text&quot;:[0,&quot;2) Install Tailscale on your laptop/phone&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;3-turn-on-magicdns&quot;],&quot;text&quot;:[0,&quot;3) Turn on MagicDNS&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;4-lock-it-down-with-acls&quot;],&quot;text&quot;:[0,&quot;4) Lock it down with ACLs&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;5-optional-use-tailscale-ssh&quot;],&quot;text&quot;:[0,&quot;5) (Optional) Use Tailscale SSH&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;6-optional-use-a-subnet-router&quot;],&quot;text&quot;:[0,&quot;6) (Optional) Use a subnet router&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;setting-up-a-subnet-router-step-by-step&quot;],&quot;text&quot;:[0,&quot;Setting up a subnet router (step-by-step)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;step-1-enable-ip-forwarding-on-the-router-machine&quot;],&quot;text&quot;:[0,&quot;Step 1: Enable IP forwarding on the router machine&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;step-2-advertise-the-subnet&quot;],&quot;text&quot;:[0,&quot;Step 2: Advertise the subnet&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;step-3-approve-the-routes-in-the-admin-console&quot;],&quot;text&quot;:[0,&quot;Step 3: Approve the routes in the admin console&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;step-4-accept-routes-on-client-devices&quot;],&quot;text&quot;:[0,&quot;Step 4: Accept routes on client devices&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;step-5-verify-connectivity&quot;],&quot;text&quot;:[0,&quot;Step 5: Verify connectivity&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;docker-networking-with-tailscale&quot;],&quot;text&quot;:[0,&quot;Docker networking with Tailscale&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;the-problem&quot;],&quot;text&quot;:[0,&quot;The problem&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;option-1-host-network-mode-simple-but-limited&quot;],&quot;text&quot;:[0,&quot;Option 1: Host network mode (simple but limited)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;option-2-tailscale-sidecar-container-more-flexible&quot;],&quot;text&quot;:[0,&quot;Option 2: Tailscale sidecar container (more flexible)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;option-3-tailscale-on-the-host-containers-on-a-bridge&quot;],&quot;text&quot;:[0,&quot;Option 3: Tailscale on the host, containers on a bridge&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;which-option-should-you-pick&quot;],&quot;text&quot;:[0,&quot;Which option should you pick?&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;debugging-docker--tailscale&quot;],&quot;text&quot;:[0,&quot;Debugging Docker + Tailscale&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;tailscale-serve-https-for-local-services&quot;],&quot;text&quot;:[0,&quot;Tailscale Serve: HTTPS for local services&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;basic-usage&quot;],&quot;text&quot;:[0,&quot;Basic usage&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;serving-static-files&quot;],&quot;text&quot;:[0,&quot;Serving static files&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;serving-a-specific-port-on-a-path&quot;],&quot;text&quot;:[0,&quot;Serving a specific port on a path&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;making-it-persistent&quot;],&quot;text&quot;:[0,&quot;Making it persistent&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;tailscale-funnel-public-exposure-carefully&quot;],&quot;text&quot;:[0,&quot;Tailscale Funnel (public exposure, carefully)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;example-services-that-are-perfect-for-this&quot;],&quot;text&quot;:[0,&quot;Example services that are perfect for this&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;security-hardening-the-stuff-that-actually-matters&quot;],&quot;text&quot;:[0,&quot;Security hardening (the stuff that actually matters)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;ufw-uncomplicated-firewall&quot;],&quot;text&quot;:[0,&quot;UFW (Uncomplicated Firewall)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;fail2ban-because-bots-are-relentless&quot;],&quot;text&quot;:[0,&quot;fail2ban (because bots are relentless)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;crowdsec-crowd-sourced-threat-intelligence&quot;],&quot;text&quot;:[0,&quot;CrowdSec (crowd-sourced threat intelligence)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;automatic-security-updates&quot;],&quot;text&quot;:[0,&quot;Automatic security updates&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;ssh-hardening&quot;],&quot;text&quot;:[0,&quot;SSH hardening&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;backups-are-not-optional&quot;],&quot;text&quot;:[0,&quot;Backups are not optional&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;when-you-do-need-public-access&quot;],&quot;text&quot;:[0,&quot;When you do need public access&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;security-layers-that-still-matter&quot;],&quot;text&quot;:[0,&quot;Security layers that still matter&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;updates-and-patching-the-boring-part-that-saves-you&quot;],&quot;text&quot;:[0,&quot;Updates and patching (the boring part that saves you)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;monitoring-and-health-checks&quot;],&quot;text&quot;:[0,&quot;Monitoring and health checks&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;the-simplest-approach-systemd-timers--curl&quot;],&quot;text&quot;:[0,&quot;The simplest approach: systemd timers + curl&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;uptime-kuma-self-hosted-uptime-monitoring&quot;],&quot;text&quot;:[0,&quot;Uptime Kuma (self-hosted uptime monitoring)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;docker-health-checks&quot;],&quot;text&quot;:[0,&quot;Docker health checks&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;prometheus--grafana-the-full-stack&quot;],&quot;text&quot;:[0,&quot;Prometheus + Grafana (the full stack)&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;quick-commands-for-debugging&quot;],&quot;text&quot;:[0,&quot;Quick commands for debugging&quot;],&quot;level&quot;:[0,3]}],[0,{&quot;id&quot;:[0,&quot;troubleshooting-checklist&quot;],&quot;text&quot;:[0,&quot;Troubleshooting checklist&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;video-walkthrough-handson&quot;],&quot;text&quot;:[0,&quot;Video walkthrough (hands‑on)&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;summary&quot;],&quot;text&quot;:[0,&quot;Summary&quot;],&quot;level&quot;:[0,2]}],[0,{&quot;id&quot;:[0,&quot;further-reading&quot;],&quot;text&quot;:[0,&quot;Further reading&quot;],&quot;level&quot;:[0,2]}]]],&quot;className&quot;:[0,&quot;mobile-only&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;TableOfContents&quot;,&quot;value&quot;:true}" await-children><div class="lg:hidden z-20 mb-8 mobile-only"><div class="relative max-w-4xl mx-auto px-4"><button class="w-full bg-neutral-800/60 backdrop-blur-md border border-neutral-600/40 rounded-xl p-4 flex items-center justify-between text-left transition-colors duration-200 hover:bg-neutral-800/70 active:bg-neutral-800/80 shadow-lg cursor-pointer touch-manipulation" aria-expanded="false" aria-label="Toggle table of contents"><div class="flex items-center gap-3"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="text-sm" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M80 368H16a16 16 0 0 0-16 16v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16v-64a16 16 0 0 0-16-16zm0-320H16A16 16 0 0 0 0 64v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16V64a16 16 0 0 0-16-16zm0 160H16a16 16 0 0 0-16 16v64a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16v-64a16 16 0 0 0-16-16zm416 176H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16z"></path></svg><div><div class="text-xs uppercase tracking-wide opacity-60 mb-1">Table of Contents</div><div class="text-sm font-medium">Jump to section</div></div></div><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="text-muted-text transition-transform duration-200 " height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M207.029 381.476L12.686 187.132c-9.373-9.373-9.373-24.569 0-33.941l22.667-22.667c9.357-9.357 24.522-9.375 33.901-.04L224 284.505l154.745-154.021c9.379-9.335 24.544-9.317 33.901.04l22.667 22.667c9.373 9.373 9.373 24.569 0 33.941L240.971 381.476c-9.373 9.372-24.569 9.372-33.942 0z"></path></svg></button></div></div><!--astro:end--></astro-island> <div class="mdx-content w-full max-w-3xl"> <h1 id="selfhosting-with-tailscale-secure-access-without-open-ports">Self‑Hosting With Tailscale: Secure Access Without Open Ports</h1>
+<p>Self‑hosting is empowering — but opening ports on your router can feel like hanging a neon sign that says “Please scan me.” There’s a better way: <strong>private access via Tailscale</strong>. If you’re new here, <a href="https://en.wikipedia.org/wiki/Self-hosting_(web_services)">self‑hosting</a> just means running services on hardware you control.</p>
+<p><img src="/images/blog/self-hosting-with-tailscale/remote-access.svg" alt="Remote access diagram showing encrypted tailnet links"/>
+<img src="/images/blog/self-hosting-with-tailscale/security-layers.svg" alt="Layered security stack for self-hosting"/></p>
+<h2 id="why-selfhost-in-the-first-place">Why self‑host in the first place?</h2>
+<ul>
+<li><strong>Control</strong>: Your data stays on <em>your</em> hardware.</li>
+<li><strong>Customization</strong>: Configure services how you want.</li>
+<li><strong>Reliability</strong>: Avoid vendor lock‑in.</li>
+</ul>
+<p>If you’re new to the concept of VPNs, start with <a href="/blog/what-is-a-vpn">What Is a VPN?</a>.</p>
+<h2 id="the-threat-model-most-people-ignore">The threat model most people ignore</h2>
+<p>The average self‑hoster isn’t being targeted by a nation‑state. The real risks are <strong>opportunistic scans</strong>, <strong>default passwords</strong>, and <strong>unpatched services</strong>. Your goal is to make your box a <em>terrible</em> target for drive‑by attacks.</p>
+<h2 id="the-risk-of-open-ports">The risk of open ports</h2>
+<p>Classic self‑hosting guides say: “forward port 443 to your server.” That works, but it exposes your box to the entire internet. A safer default is to <strong>not</strong> expose anything publicly unless you must. If you’re unfamiliar with the term, <a href="https://en.wikipedia.org/wiki/Port_forwarding">port forwarding</a> is essentially poking a hole through your router’s <a href="https://en.wikipedia.org/wiki/Network_address_translation">NAT</a>.</p>
+<p>If you do open ports, you’ve moved from “private” to “internet‑facing.” That’s when you need stronger patching discipline, monitoring, and rate‑limiting.</p>
+<div class="callout warning"><div class="callout-title"><span class="mr-2 text-lg">⚠️</span>Rule of thumb</div><div class="mt-2"><p>If the service is just for you (or your household), keep it private. Public exposure should be deliberate, not accidental.</p></div></div>
+<h2 id="the-tailscale-pattern-private-by-default">The Tailscale pattern (private by default)</h2>
+<p>Tailscale gives you:</p>
+<ul>
+<li><strong>Encrypted access</strong> between your devices</li>
+<li><strong>Identity‑based access control</strong> (people, groups, tags)</li>
+<li><strong>Zero port forwarding</strong> for private services</li>
+</ul>
+<p>This makes home services feel like they’re “on the same Wi‑Fi,” even when you’re across the world.</p>
+<p>The biggest win is that your services <strong>aren’t visible</strong> to the public internet at all. Most automated scans never even see the box.</p>
+<h2 id="a-practical-setup-flow">A practical setup flow</h2>
+<h3 id="1-install-tailscale-on-your-server">1) Install Tailscale on your server</h3>
+<p>For Debian/Ubuntu-based systems:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-bash">curl -fsSL https://tailscale.com/install.sh | sh
+<span class="hljs-built_in">sudo</span> tailscale up</code></pre>
+<p>For other distributions, check the <a href="https://tailscale.com/download">Tailscale install guide</a>. You can also run the daemon in a container if you prefer Docker-only setups (more on that shortly).</p>
+<p>Verify the connection:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-graphql">tailscale status
+<span class="hljs-comment"># Should show your device and any others on your tailnet</span></code></pre>
+<h3 id="2-install-tailscale-on-your-laptopphone">2) Install Tailscale on your laptop/phone</h3>
+<p>Sign in with the same identity provider to join the tailnet. You can download clients from <a href="https://tailscale.com/download">tailscale.com/download</a> for macOS, Windows, iOS, and Android.</p>
+<h3 id="3-turn-on-magicdns">3) Turn on MagicDNS</h3>
+<p>This gives you friendly hostnames (e.g., <code>media.tailnet</code>) instead of IPs. Enable it in the <a href="https://login.tailscale.com/admin/dns">Tailscale admin console</a> under DNS settings.</p>
+<p>Once enabled, you can reach your server like this:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-perl">ssh user<span class="hljs-variable">@myserver</span>  <span class="hljs-comment"># Instead of ssh user@100.x.y.z</span>
+curl http:<span class="hljs-regexp">//m</span>yserver:<span class="hljs-number">8096</span>  <span class="hljs-comment"># Jellyfin, for example</span></code></pre>
+<h3 id="4-lock-it-down-with-acls">4) Lock it down with ACLs</h3>
+<p>Even within your tailnet, you can restrict access by device or user. Edit your ACL policy in the <a href="https://login.tailscale.com/admin/acls">admin console</a>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="json"><code class="hljs language-perl">{
+  <span class="hljs-string">&quot;acls&quot;</span>: [
+    {<span class="hljs-string">&quot;action&quot;</span>: <span class="hljs-string">&quot;accept&quot;</span>, <span class="hljs-string">&quot;src&quot;</span>: [<span class="hljs-string">&quot;group:family&quot;</span>], <span class="hljs-string">&quot;dst&quot;</span>: [<span class="hljs-string">&quot;tag:media:*&quot;</span>]},
+    {<span class="hljs-string">&quot;action&quot;</span>: <span class="hljs-string">&quot;accept&quot;</span>, <span class="hljs-string">&quot;src&quot;</span>: [<span class="hljs-string">&quot;group:admins&quot;</span>], <span class="hljs-string">&quot;dst&quot;</span>: [<span class="hljs-string">&quot;*:*&quot;</span>]}
+  ],
+  <span class="hljs-string">&quot;groups&quot;</span>: {
+    <span class="hljs-string">&quot;group:family&quot;</span>: [<span class="hljs-string">&quot;user<span class="hljs-variable">@example</span>.com&quot;</span>, <span class="hljs-string">&quot;spouse<span class="hljs-variable">@example</span>.com&quot;</span>],
+    <span class="hljs-string">&quot;group:admins&quot;</span>: [<span class="hljs-string">&quot;you<span class="hljs-variable">@example</span>.com&quot;</span>]
+  },
+  <span class="hljs-string">&quot;tagOwners&quot;</span>: {
+    <span class="hljs-string">&quot;tag:media&quot;</span>: [<span class="hljs-string">&quot;group:admins&quot;</span>],
+    <span class="hljs-string">&quot;tag:server&quot;</span>: [<span class="hljs-string">&quot;group:admins&quot;</span>]
+  }
+}</code></pre>
+<div class="callout tip"><div class="callout-title"><span class="mr-2 text-lg">💬</span>ACL testing</div><div class="mt-2"><p>Use the “Preview” button in the admin console to test your ACLs before saving. Nothing like locking yourself out of your own server.</p></div></div>
+<h3 id="5-optional-use-tailscale-ssh">5) (Optional) Use Tailscale SSH</h3>
+<p>If you want to avoid copying SSH keys around, enable <a href="https://tailscale.com/kb/1193/tailscale-ssh">Tailscale SSH</a> so access is tied to your identity provider and device posture:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-bash"><span class="hljs-built_in">sudo</span> tailscale up --ssh</code></pre>
+<p>Then add to your ACL:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="json"><code class="hljs language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;ssh&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span><span class="hljs-attr">&quot;action&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;accept&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;src&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;group:admins&quot;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;dst&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;tag:server&quot;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;users&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;autogroup:nonroot&quot;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span></code></pre>
+<p>Now you can SSH without managing keys:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-graphql">ssh myserver  <span class="hljs-comment"># Authenticates via Tailscale identity</span></code></pre>
+<h3 id="6-optional-use-a-subnet-router">6) (Optional) Use a subnet router</h3>
+<p>If you have devices that <em>can’t</em> run Tailscale (smart TVs, printers, IoT gadgets), a <a href="https://tailscale.com/kb/1019/subnets">subnet router</a> advertises that LAN into your tailnet.</p>
+<h2 id="setting-up-a-subnet-router-step-by-step">Setting up a subnet router (step-by-step)</h2>
+<p>This is one of Tailscale’s most powerful features, but the docs can be a bit scattered. Here’s the full walkthrough.</p>
+<h3 id="step-1-enable-ip-forwarding-on-the-router-machine">Step 1: Enable IP forwarding on the router machine</h3>
+<p>On Linux, you need to enable IP forwarding so packets can flow through:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">&#39;net.ipv4.ip_forward = 1&#39;</span> | <span class="hljs-built_in">sudo</span> <span class="hljs-built_in">tee</span> -a /etc/sysctl.d/99-tailscale.conf
+<span class="hljs-built_in">echo</span> <span class="hljs-string">&#39;net.ipv6.conf.all.forwarding = 1&#39;</span> | <span class="hljs-built_in">sudo</span> <span class="hljs-built_in">tee</span> -a /etc/sysctl.d/99-tailscale.conf
+<span class="hljs-built_in">sudo</span> sysctl -p /etc/sysctl.d/99-tailscale.conf</code></pre>
+<h3 id="step-2-advertise-the-subnet">Step 2: Advertise the subnet</h3>
+<p>Tell Tailscale which subnet(s) to advertise. If your LAN is <code>192.168.1.0/24</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-css">sudo tailscale up <span class="hljs-attr">--advertise-routes</span>=<span class="hljs-number">192.168</span>.<span class="hljs-number">1.0</span>/<span class="hljs-number">24</span> <span class="hljs-attr">--accept-routes</span></code></pre>
+<h3 id="step-3-approve-the-routes-in-the-admin-console">Step 3: Approve the routes in the admin console</h3>
+<p>Go to the <a href="https://login.tailscale.com/admin/machines">Machines page</a>, find your subnet router, and click the ”…” menu → “Edit route settings” → enable the advertised routes.</p>
+<h3 id="step-4-accept-routes-on-client-devices">Step 4: Accept routes on client devices</h3>
+<p>On devices that need to reach the subnet:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-bash"><span class="hljs-built_in">sudo</span> tailscale up --accept-routes</code></pre>
+<p>Or enable “Accept subnet routes” in the GUI clients.</p>
+<h3 id="step-5-verify-connectivity">Step 5: Verify connectivity</h3>
+<p>From a remote device:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-graphql">ping <span class="hljs-number">192.168</span>.<span class="hljs-number">1.50</span>  <span class="hljs-comment"># Should reach your smart TV or printer</span></code></pre>
+<div class="callout info"><div class="callout-title"><span class="mr-2 text-lg">💡</span>Multiple subnets</div><div class="mt-2"><p>You can advertise multiple subnets: <code>--advertise-routes=192.168.1.0/24,192.168.2.0/24</code>. Useful for VLANs or multi-site setups.</p></div></div>
+<h2 id="docker-networking-with-tailscale">Docker networking with Tailscale</h2>
+<p>Here’s where things get interesting (and where I spent way too many hours debugging). Docker’s networking model doesn’t play nicely with Tailscale out of the box. Let me save you the headache.</p>
+<h3 id="the-problem">The problem</h3>
+<p>By default, Docker containers bind to <code>0.0.0.0</code>, which includes your host’s Tailscale interface (<code>tailscale0</code>). But the container itself doesn’t have Tailscale credentials, so outbound connections from containers won’t route through your tailnet.</p>
+<h3 id="option-1-host-network-mode-simple-but-limited">Option 1: Host network mode (simple but limited)</h3>
+<p>The easiest approach is <code>network_mode: host</code>, which makes the container share the host’s network stack:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="yaml"><code class="hljs language-bash">services:
+  jellyfin:
+    image: jellyfin/jellyfin
+    network_mode: host
+    volumes:
+      - ./config:/config
+      - /media:/media</code></pre>
+<p>Now Jellyfin is accessible at <code>http://myserver:8096</code> from any tailnet device. The downside: port conflicts become your problem.</p>
+<h3 id="option-2-tailscale-sidecar-container-more-flexible">Option 2: Tailscale sidecar container (more flexible)</h3>
+<p>Run Tailscale as a sidecar container that other containers can use as a network gateway. This is <a href="https://tailscale.com/kb/1282/docker">documented by Tailscale</a> but here’s a working example:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="yaml"><code class="hljs language-yaml"><span class="hljs-attr">services:</span>
+  <span class="hljs-attr">tailscale:</span>
+    <span class="hljs-attr">image:</span> <span class="hljs-string">tailscale/tailscale:latest</span>
+    <span class="hljs-attr">container_name:</span> <span class="hljs-string">tailscale</span>
+    <span class="hljs-attr">hostname:</span> <span class="hljs-string">docker-services</span>
+    <span class="hljs-attr">environment:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">TS_AUTHKEY=tskey-auth-xxx</span>  <span class="hljs-comment"># Generate at admin console</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">TS_STATE_DIR=/var/lib/tailscale</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">TS_USERSPACE=false</span>
+    <span class="hljs-attr">volumes:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">./tailscale-state:/var/lib/tailscale</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">/dev/net/tun:/dev/net/tun</span>
+    <span class="hljs-attr">cap_add:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">NET_ADMIN</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">SYS_MODULE</span>
+    <span class="hljs-attr">restart:</span> <span class="hljs-string">unless-stopped</span>
+
+  <span class="hljs-attr">jellyfin:</span>
+    <span class="hljs-attr">image:</span> <span class="hljs-string">jellyfin/jellyfin</span>
+    <span class="hljs-attr">network_mode:</span> <span class="hljs-string">service:tailscale</span>
+    <span class="hljs-attr">depends_on:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">tailscale</span>
+    <span class="hljs-attr">volumes:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">./jellyfin-config:/config</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">/media:/media</span></code></pre>
+<p>Now <code>jellyfin</code> shares the Tailscale container’s network. Access it at <code>http://docker-services:8096</code> from your tailnet.</p>
+<div class="callout warning"><div class="callout-title"><span class="mr-2 text-lg">⚠️</span>Auth key security</div><div class="mt-2"><p>Don’t commit <code>TS_AUTHKEY</code> to git. Use a <code>.env</code> file or Docker secrets. Generate keys at <a href="https://login.tailscale.com/admin/settings/keys">admin/keys</a> and consider making them ephemeral if you’re paranoid (like me).</p></div></div>
+<h3 id="option-3-tailscale-on-the-host-containers-on-a-bridge">Option 3: Tailscale on the host, containers on a bridge</h3>
+<p>If you run Tailscale on the host and containers on the default bridge network, you need to ensure the host’s firewall allows traffic from Docker’s bridge to reach Tailscale:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-css"># Allow Docker bridge traffic <span class="hljs-selector-tag">to</span> be forwarded
+sudo iptables -<span class="hljs-selector-tag">I</span> FORWARD -<span class="hljs-selector-tag">i</span> docker0 -o tailscale0 -j ACCEPT
+sudo iptables -<span class="hljs-selector-tag">I</span> FORWARD -<span class="hljs-selector-tag">i</span> tailscale0 -o docker0 -j ACCEPT</code></pre>
+<p>Or use <a href="https://firewalld.org/">firewalld</a>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-css">sudo firewall-cmd <span class="hljs-attr">--zone</span>=trusted <span class="hljs-attr">--add-interface</span>=docker0 <span class="hljs-attr">--permanent</span>
+sudo firewall-cmd <span class="hljs-attr">--reload</span></code></pre>
+<h3 id="which-option-should-you-pick">Which option should you pick?</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Approach</th><th>Complexity</th><th>Best for</th><th>Tradeoffs</th></tr></thead><tbody><tr><td><strong>Host network mode</strong></td><td>Low</td><td>Single-service setups, quick testing</td><td>Port conflicts, less isolation</td></tr><tr><td><strong>Sidecar container</strong></td><td>Medium</td><td>Multi-container stacks, per-service tailnet identity</td><td>More YAML, auth key management</td></tr><tr><td><strong>Host Tailscale + bridge</strong></td><td>Medium</td><td>Existing setups, many containers sharing host’s tailnet</td><td>Firewall rules needed, less portable</td></tr></tbody></table>
+<p>In general: start with host network mode for simplicity. Move to sidecar when you need per-service hostnames or want containers to have their own tailnet identity. Use the bridge approach if you already run Tailscale on the host and just need containers to be reachable.</p>
+<h3 id="debugging-docker--tailscale">Debugging Docker + Tailscale</h3>
+<p>When things go wrong (and they will), here’s your checklist:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-perl"><span class="hljs-comment"># Check Tailscale status</span>
+tailscale status
+
+<span class="hljs-comment"># Verify the container can reach the host&#39;s Tailscale IP</span>
+docker <span class="hljs-keyword">exec</span> -it jellyfin ping <span class="hljs-number">100</span>.x.y.z
+
+<span class="hljs-comment"># Check if the service is listening on the right interface</span>
+docker <span class="hljs-keyword">exec</span> -it jellyfin netstat -tlnp
+
+<span class="hljs-comment"># Verify routing from inside the container</span>
+docker <span class="hljs-keyword">exec</span> -it jellyfin ip route</code></pre>
+<h2 id="tailscale-serve-https-for-local-services">Tailscale Serve: HTTPS for local services</h2>
+<p><a href="https://tailscale.com/kb/1312/serve">Tailscale Serve</a> is one of those features that makes you wonder why you ever messed with reverse proxies. It exposes a local port over HTTPS to your tailnet, with automatic TLS certificates.</p>
+<h3 id="basic-usage">Basic usage</h3>
+<p>Expose a local web service:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-arduino"># Serve localhost:<span class="hljs-number">8096</span> (Jellyfin) at https:<span class="hljs-comment">//myserver.tail1234.ts.net</span>
+tailscale serve https / http:<span class="hljs-comment">//localhost:8096</span></code></pre>
+<p>Check what’s being served:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-lua">tailscale serve <span class="hljs-built_in">status</span></code></pre>
+<p>Now you can access <code>https://myserver.tail1234.ts.net</code> from any device on your tailnet, with a valid TLS cert. No port 443 exposed to the internet.</p>
+<h3 id="serving-static-files">Serving static files</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-bash"><span class="hljs-comment"># Serve files from a directory</span>
+tailscale serve https /files/ /home/user/shared-files</code></pre>
+<h3 id="serving-a-specific-port-on-a-path">Serving a specific port on a path</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-bash"><span class="hljs-comment"># Multiple services on different paths</span>
+tailscale serve https /jellyfin http://localhost:8096
+tailscale serve https /grafana http://localhost:3000</code></pre>
+<h3 id="making-it-persistent">Making it persistent</h3>
+<p>By default, <code>tailscale serve</code> runs in the foreground. To make it persistent:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-bash">tailscale serve https --<span class="hljs-built_in">bg</span> / http://localhost:8096</code></pre>
+<p>Or use <code>tailscale serve --set-path</code> for permanent configuration.</p>
+<h3 id="tailscale-funnel-public-exposure-carefully">Tailscale Funnel (public exposure, carefully)</h3>
+<p><a href="https://tailscale.com/kb/1223/funnel">Tailscale Funnel</a> goes a step further: it exposes your service to the <strong>public internet</strong> via Tailscale’s infrastructure. This is useful for webhooks, demos, or sharing a dev server with a client.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-csharp">tailscale funnel <span class="hljs-number">443</span> <span class="hljs-keyword">on</span></code></pre>
+<div class="callout warning"><div class="callout-title"><span class="mr-2 text-lg">⚠️</span>Funnel is public</div><div class="mt-2"><p>Funnel makes your service publicly accessible. Anyone with the URL can reach it. Use it intentionally, not accidentally.</p></div></div>
+<h2 id="example-services-that-are-perfect-for-this">Example services that are perfect for this</h2>
+<ul>
+<li><strong><a href="https://jellyfin.org/">Jellyfin</a></strong> or <strong><a href="https://www.plex.tv/">Plex</a></strong> for media</li>
+<li><strong><a href="https://www.home-assistant.io/">Home Assistant</a></strong> for smart home dashboards</li>
+<li><strong><a href="https://docs.paperless-ngx.com/">Paperless‑ngx</a></strong> for document storage</li>
+<li><strong><a href="https://grafana.com/">Grafana</a></strong> for monitoring your stack</li>
+<li><strong><a href="https://www.audiobookshelf.org/">Audiobookshelf</a></strong> for audiobooks and podcasts</li>
+<li><strong><a href="https://immich.app/">Immich</a></strong> for photo backup (self-hosted Google Photos)</li>
+</ul>
+<p>Here’s a favorite self‑hosting resource: <a href="https://www.reddit.com/r/selfhosted/">r/selfhosted</a></p>
+<h2 id="security-hardening-the-stuff-that-actually-matters">Security hardening (the stuff that actually matters)</h2>
+<p>Tailscale handles network-level access beautifully, but you still need defense in depth. Here’s my baseline for any self-hosted box.</p>
+<h3 id="ufw-uncomplicated-firewall">UFW (Uncomplicated Firewall)</h3>
+<p>If you’re on Ubuntu/Debian, <a href="https://wiki.ubuntu.com/UncomplicatedFirewall">UFW</a> is the path of least resistance:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-bash"><span class="hljs-comment"># Install and enable</span>
+<span class="hljs-built_in">sudo</span> apt install ufw
+<span class="hljs-built_in">sudo</span> ufw default deny incoming
+<span class="hljs-built_in">sudo</span> ufw default allow outgoing
+
+<span class="hljs-comment"># Allow SSH (important: do this before enabling!)</span>
+<span class="hljs-built_in">sudo</span> ufw allow ssh
+
+<span class="hljs-comment"># If you need local LAN access</span>
+<span class="hljs-built_in">sudo</span> ufw allow from 192.168.1.0/24
+
+<span class="hljs-comment"># Enable the firewall</span>
+<span class="hljs-built_in">sudo</span> ufw <span class="hljs-built_in">enable</span>
+<span class="hljs-built_in">sudo</span> ufw status verbose</code></pre>
+<div class="callout warning"><div class="callout-title"><span class="mr-2 text-lg">⚠️</span>Don&#x27;t lock yourself out</div><div class="mt-2"><p>Always allow SSH before enabling UFW. Ask me how I know.</p></div></div>
+<p>The beauty of Tailscale: you don’t need to punch holes for your services. UFW can deny all incoming traffic from the public internet while Tailscale handles private access.</p>
+<h3 id="fail2ban-because-bots-are-relentless">fail2ban (because bots are relentless)</h3>
+<p><a href="https://github.com/fail2ban/fail2ban">fail2ban</a> watches log files and bans IPs that fail authentication too many times. Even if you only expose SSH:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-bash"><span class="hljs-built_in">sudo</span> apt install fail2ban
+<span class="hljs-built_in">sudo</span> systemctl <span class="hljs-built_in">enable</span> fail2ban
+<span class="hljs-built_in">sudo</span> systemctl start fail2ban</code></pre>
+<p>Create <code>/etc/fail2ban/jail.local</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="ini"><code class="hljs language-ini"><span class="hljs-section">[DEFAULT]</span>
+<span class="hljs-attr">bantime</span> = <span class="hljs-number">1</span>h
+<span class="hljs-attr">findtime</span> = <span class="hljs-number">10</span>m
+<span class="hljs-attr">maxretry</span> = <span class="hljs-number">5</span>
+
+<span class="hljs-section">[sshd]</span>
+<span class="hljs-attr">enabled</span> = <span class="hljs-literal">true</span>
+<span class="hljs-attr">port</span> = ssh
+<span class="hljs-attr">logpath</span> = %(sshd_log)s
+<span class="hljs-attr">backend</span> = %(sshd_backend)s</code></pre>
+<p>Check banned IPs:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-bash"><span class="hljs-built_in">sudo</span> fail2ban-client status sshd</code></pre>
+<h3 id="crowdsec-crowd-sourced-threat-intelligence">CrowdSec (crowd-sourced threat intelligence)</h3>
+<p>For internet-facing services, <a href="https://crowdsec.net/">CrowdSec</a> is worth considering. It works like fail2ban but shares threat intelligence across its user base — if an IP attacks someone else’s server, your server learns about it too. It integrates well with reverse proxies like Nginx, Traefik, and Caddy, making it a good complement to your existing stack.</p>
+<h3 id="automatic-security-updates">Automatic security updates</h3>
+<p>For Ubuntu/Debian, enable <a href="https://wiki.debian.org/UnattendedUpgrades">unattended-upgrades</a>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-bash"><span class="hljs-built_in">sudo</span> apt install unattended-upgrades
+<span class="hljs-built_in">sudo</span> dpkg-reconfigure -plow unattended-upgrades</code></pre>
+<p>For a server that doesn’t need to be up 24/7, I also enable automatic reboots when required:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-ruby"><span class="hljs-comment"># In /etc/apt/apt.conf.d/50unattended-upgrades</span>
+<span class="hljs-title class_">Unattended</span>-<span class="hljs-title class_">Upgrade</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:Automatic-Reboot</span> <span class="hljs-string">&quot;true&quot;</span>;
+<span class="hljs-title class_">Unattended</span>-<span class="hljs-title class_">Upgrade</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:Automatic-Reboot-Time</span> <span class="hljs-string">&quot;03:00&quot;</span>;</code></pre>
+<h3 id="ssh-hardening">SSH hardening</h3>
+<p>If you’re not using Tailscale SSH, harden your SSH config in <code>/etc/ssh/sshd_config</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-yaml"><span class="hljs-string">PermitRootLogin</span> <span class="hljs-literal">no</span>
+<span class="hljs-string">PasswordAuthentication</span> <span class="hljs-literal">no</span>
+<span class="hljs-string">PubkeyAuthentication</span> <span class="hljs-literal">yes</span>
+<span class="hljs-string">MaxAuthTries</span> <span class="hljs-number">3</span>
+<span class="hljs-string">AllowUsers</span> <span class="hljs-string">yourusername</span></code></pre>
+<p>Then:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-bash"><span class="hljs-built_in">sudo</span> systemctl restart sshd</code></pre>
+<p>With Tailscale SSH, you can go even further and disable the regular SSH daemon entirely on the public interface.</p>
+<h2 id="backups-are-not-optional">Backups are not optional</h2>
+<p>If it’s worth hosting, it’s worth backing up. A basic rule: <strong><a href="https://en.wikipedia.org/wiki/Backup#3-2-1_rule">3‑2‑1 backups</a></strong> (three copies, two different media, one off‑site). Even a cheap external drive plus an encrypted cloud backup is better than nothing.</p>
+<p>For Docker setups, back up your volumes:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-perl"><span class="hljs-comment"># Simple backup script</span>
+<span class="hljs-comment">#!/bin/bash</span>
+BACKUP_DIR=<span class="hljs-string">&quot;/backups/<span class="hljs-variable">$(</span>date +<span class="hljs-variable">%Y</span>-<span class="hljs-variable">%m</span>-<span class="hljs-variable">%d</span>)&quot;</span>
+<span class="hljs-keyword">mkdir</span> -p <span class="hljs-string">&quot;<span class="hljs-variable">$BACKUP_DIR</span>&quot;</span>
+
+<span class="hljs-comment"># Stop services for consistent backups</span>
+docker compose stop
+
+<span class="hljs-comment"># Backup volumes</span>
+tar -czf <span class="hljs-string">&quot;<span class="hljs-variable">$BACKUP_DIR</span>/jellyfin-config.tar.gz&quot;</span> ./jellyfin-config
+tar -czf <span class="hljs-string">&quot;<span class="hljs-variable">$BACKUP_DIR</span>/paperless-data.tar.gz&quot;</span> ./paperless-data
+
+<span class="hljs-comment"># Restart services</span>
+docker compose start
+
+<span class="hljs-comment"># Sync to offsite (B2, S3, rsync.net, etc.)</span>
+rclone sync <span class="hljs-string">&quot;<span class="hljs-variable">$BACKUP_DIR</span>&quot;</span> remote:backups/</code></pre>
+<div class="callout warning"><div class="callout-title"><span class="mr-2 text-lg">⚠️</span>Database backups</div><div class="mt-2"><p>The “stop container + tar” approach works for config files and flat data, but <strong>databases need native backup tools</strong>. Use <code>pg_dump</code> for Postgres, <code>mysqldump</code> for MySQL/MariaDB, or <code>sqlite3 .backup</code> for SQLite. These ensure consistent, recoverable snapshots even if the database is running.</p></div></div>
+<h2 id="when-you-do-need-public-access">When you <em>do</em> need public access</h2>
+<p>Sometimes a service must be public (a personal site, a demo, a webhook endpoint). In that case, I still prefer a layered setup:</p>
+<ul>
+<li>Put it behind a <strong><a href="https://en.wikipedia.org/wiki/Reverse_proxy">reverse proxy</a></strong> (Nginx, Caddy, Traefik).</li>
+<li>Terminate <strong>TLS</strong> there and keep internal services private.</li>
+<li>Rate‑limit or require auth for anything that isn’t meant for the world.</li>
+</ul>
+<p>If you want a quick, clean way to do this, look into <strong><a href="https://caddyserver.com/">Caddy</a></strong> — it handles HTTPS automatically via Let’s Encrypt and is very easy to configure:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-bash"><span class="hljs-comment"># Caddyfile</span>
+yourdomain.com {
+    reverse_proxy localhost:8080
+}</code></pre>
+<p>That’s the entire config for a production-ready reverse proxy with automatic TLS. Caddy’s <a href="https://caddyserver.com/docs/">documentation</a> is excellent.</p>
+<h2 id="security-layers-that-still-matter">Security layers that still matter</h2>
+<p>Tailscale solves the <strong>network access</strong> problem, but you still want good app‑level hygiene:</p>
+<ul>
+<li><strong><a href="https://en.wikipedia.org/wiki/Transport_Layer_Security">TLS</a></strong> for any web UI, even inside your tailnet.</li>
+<li><strong><a href="https://en.wikipedia.org/wiki/Multi-factor_authentication">MFA</a></strong> on your identity provider.</li>
+<li><strong>App‑level auth</strong> (don’t leave dashboards wide open).</li>
+<li>A basic <strong><a href="https://en.wikipedia.org/wiki/Firewall_(computing)">firewall</a></strong> on the server for defense in depth.</li>
+</ul>
+<h2 id="updates-and-patching-the-boring-part-that-saves-you">Updates and patching (the boring part that saves you)</h2>
+<p>Most real‑world compromises happen because something wasn’t updated. Set a reminder, automate updates where safe, and <strong>subscribe to release notes</strong> for the apps you expose.</p>
+<p>For Docker images, <a href="https://containrrr.dev/watchtower/">Watchtower</a> can auto-update containers:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="yaml"><code class="hljs language-ini">services:
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - <span class="hljs-attr">WATCHTOWER_CLEANUP</span>=<span class="hljs-literal">true</span>
+      - <span class="hljs-attr">WATCHTOWER_SCHEDULE</span>=<span class="hljs-number">0</span> <span class="hljs-number">0</span> <span class="hljs-number">4</span> * * *  <span class="hljs-comment"># 4 AM daily</span></code></pre>
+<div class="callout tip"><div class="callout-title"><span class="mr-2 text-lg">💬</span>Be careful with auto-updates</div><div class="mt-2"><p>Watchtower is great for low-risk services. For databases or anything with migration steps, update manually and test.</p></div></div>
+<h2 id="monitoring-and-health-checks">Monitoring and health checks</h2>
+<p>Even a tiny homelab benefits from knowing when things break. Here are options from simple to sophisticated.</p>
+<h3 id="the-simplest-approach-systemd-timers--curl">The simplest approach: systemd timers + curl</h3>
+<p>Create <code>/usr/local/bin/health-check.sh</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-bash"><span class="hljs-meta">#!/bin/bash</span>
+SERVICES=(
+    <span class="hljs-string">&quot;http://localhost:8096/health&quot;</span>  <span class="hljs-comment"># Jellyfin</span>
+    <span class="hljs-string">&quot;http://localhost:3000/api/health&quot;</span>  <span class="hljs-comment"># Grafana</span>
+    <span class="hljs-string">&quot;http://localhost:8000/api/health&quot;</span>  <span class="hljs-comment"># Paperless</span>
+)
+
+<span class="hljs-keyword">for</span> url <span class="hljs-keyword">in</span> <span class="hljs-string">&quot;<span class="hljs-variable">${SERVICES[@]}</span>&quot;</span>; <span class="hljs-keyword">do</span>
+    <span class="hljs-keyword">if</span> ! curl -sf <span class="hljs-string">&quot;<span class="hljs-variable">$url</span>&quot;</span> &gt; /dev/null; <span class="hljs-keyword">then</span>
+        <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;ALERT: <span class="hljs-variable">$url</span> is down&quot;</span> | mail -s <span class="hljs-string">&quot;Service Down&quot;</span> you@example.com
+    <span class="hljs-keyword">fi</span>
+<span class="hljs-keyword">done</span></code></pre>
+<p>Run it every 5 minutes with a systemd timer or cron.</p>
+<h3 id="uptime-kuma-self-hosted-uptime-monitoring">Uptime Kuma (self-hosted uptime monitoring)</h3>
+<p><a href="https://github.com/louislam/uptime-kuma">Uptime Kuma</a> is a beautiful, self-hosted alternative to services like Pingdom:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="yaml"><code class="hljs language-yaml"><span class="hljs-attr">services:</span>
+  <span class="hljs-attr">uptime-kuma:</span>
+    <span class="hljs-attr">image:</span> <span class="hljs-string">louislam/uptime-kuma:1</span>
+    <span class="hljs-attr">volumes:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">./uptime-kuma-data:/app/data</span>
+    <span class="hljs-attr">ports:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;3001:3001&quot;</span>
+    <span class="hljs-attr">restart:</span> <span class="hljs-string">unless-stopped</span></code></pre>
+<p>It supports HTTP, TCP, DNS, and Docker container monitoring, with notifications via Slack, Discord, Telegram, email, and dozens more.</p>
+<h3 id="docker-health-checks">Docker health checks</h3>
+<p>Add health checks to your compose files so Docker knows when a service is unhealthy:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="yaml"><code class="hljs language-yaml"><span class="hljs-attr">services:</span>
+  <span class="hljs-attr">jellyfin:</span>
+    <span class="hljs-attr">image:</span> <span class="hljs-string">jellyfin/jellyfin</span>
+    <span class="hljs-attr">healthcheck:</span>
+      <span class="hljs-attr">test:</span> [<span class="hljs-string">&quot;CMD&quot;</span>, <span class="hljs-string">&quot;curl&quot;</span>, <span class="hljs-string">&quot;-f&quot;</span>, <span class="hljs-string">&quot;http://localhost:8096/health&quot;</span>]
+      <span class="hljs-attr">interval:</span> <span class="hljs-string">30s</span>
+      <span class="hljs-attr">timeout:</span> <span class="hljs-string">10s</span>
+      <span class="hljs-attr">retries:</span> <span class="hljs-number">3</span>
+      <span class="hljs-attr">start_period:</span> <span class="hljs-string">40s</span></code></pre>
+<p>Check status:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-bash">docker ps  <span class="hljs-comment"># Shows health status</span>
+docker inspect jellyfin | jq <span class="hljs-string">&#39;.[0].State.Health&#39;</span></code></pre>
+<h3 id="prometheus--grafana-the-full-stack">Prometheus + Grafana (the full stack)</h3>
+<p>If you want metrics, dashboards, and alerting, the <a href="https://prometheus.io/">Prometheus</a> + <a href="https://grafana.com/">Grafana</a> stack is the industry standard. It’s more work to set up, but you get:</p>
+<ul>
+<li>Historical metrics (CPU, RAM, disk, network)</li>
+<li>Custom dashboards</li>
+<li>Alerting rules</li>
+<li>Integration with almost everything</li>
+</ul>
+<p>The <a href="https://github.com/stefanprodan/dockprom">dockprom</a> project is a good starting point for Docker-based setups.</p>
+<h3 id="quick-commands-for-debugging">Quick commands for debugging</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-perl"><span class="hljs-comment"># Check if a service is listening</span>
+ss -tlnp | <span class="hljs-keyword">grep</span> :<span class="hljs-number">8096</span>
+
+<span class="hljs-comment"># Check container logs</span>
+docker logs jellyfin --tail <span class="hljs-number">100</span>
+
+<span class="hljs-comment"># Check systemd service status</span>
+systemctl status tailscaled
+
+<span class="hljs-comment"># Tailscale connectivity check</span>
+tailscale ping myserver
+
+<span class="hljs-comment"># Check for open ports (from outside)</span>
+nmap -Pn your-public-ip</code></pre>
+<h2 id="troubleshooting-checklist">Troubleshooting checklist</h2>
+<ul>
+<li><strong>Can’t connect?</strong> Check the Tailscale status page and confirm both devices show “active.”</li>
+<li><strong>High latency?</strong> You might be relayed through DERP; try <code>tailscale ping &lt;device&gt;</code> to check.</li>
+<li><strong>DNS issues?</strong> Confirm MagicDNS is enabled and your device uses the Tailscale DNS settings.</li>
+<li><strong>App unreachable?</strong> Check local firewall rules and service bindings (is it listening on <code>0.0.0.0</code> or just <code>localhost</code>?).</li>
+<li><strong>Docker container not reachable?</strong> Verify network mode and check if the port is exposed correctly.</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="bash"><code class="hljs language-graphql"><span class="hljs-comment"># Useful debugging commands</span>
+tailscale status
+tailscale ping server-name
+tailscale netcheck  <span class="hljs-comment"># Shows NAT type and DERP regions</span>
+tailscale bugreport  <span class="hljs-comment"># Generates a debug report</span></code></pre>
+<div class="callout tip"><div class="callout-title"><span class="mr-2 text-lg">💬</span>Quality of life</div><div class="mt-2"><p>Give your servers tags and friendly names early. You’ll thank yourself later when you’re SSH‑ing from a phone.</p></div></div>
+<h2 id="video-walkthrough-handson">Video walkthrough (hands‑on)</h2>
+<iframe title="Self-hosting with Tailscale" src="https://www.youtube.com/embed/9pJ7b8d8Wk8" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+<h2 id="summary">Summary</h2>
+<p>Tailscale makes private access to self‑hosted services feel effortless — and safer. Combine it with basic hardening (firewall, fail2ban, updates) and you’ve got a setup that’s both convenient and defensible.</p>
+<p>The pattern is simple: keep services private by default, expose only what you must, and monitor enough to know when things break.</p>
+<p>Want the deeper networking explanation? Read <a href="/blog/tailscale-explained">Tailscale Explained</a>.</p>
+<h2 id="further-reading">Further reading</h2>
+<ul>
+<li><a href="https://tailscale.com/kb/">Tailscale Documentation</a></li>
+<li><a href="https://tailscale.com/kb/1282/docker">Tailscale Docker Guide</a></li>
+<li><a href="https://tailscale.com/kb/1312/serve">Tailscale Serve &amp; Funnel</a></li>
+<li><a href="https://github.com/fail2ban/fail2ban/wiki">fail2ban Wiki</a></li>
+<li><a href="https://help.ubuntu.com/community/UFW">UFW Documentation</a></li>
+<li><a href="https://github.com/awesome-selfhosted/awesome-selfhosted">Awesome Self-Hosted</a> — curated list of self-hostable software</li>
+</ul> </div> <div class="w-full max-w-3xl"> <script>(()=>{var a=(s,i,o)=>{let r=async()=>{await(await s())()},t=typeof i.value=="object"?i.value:void 0,c={rootMargin:t==null?void 0:t.rootMargin},n=new IntersectionObserver(e=>{for(let l of e)if(l.isIntersecting){n.disconnect(),r();break}},c);for(let e of o.children)n.observe(e)};(self.Astro||(self.Astro={})).visible=a;window.dispatchEvent(new Event("astro:visible"));})();</script><astro-island uid="Z27Cd5" prefix="r11" component-url="/_astro/SuggestedPosts.D8WlOE5i.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{&quot;posts&quot;:[1,[[0,{&quot;slug&quot;:[0,&quot;reverse-proxy-homelab&quot;],&quot;metadata&quot;:[0,{&quot;title&quot;:[0,&quot;Reverse Proxy for a Homelab: Caddy Done Right&quot;],&quot;date&quot;:[0,&quot;2025-02-25&quot;],&quot;readingTime&quot;:[0,&quot;22min&quot;],&quot;excerpt&quot;:[0,&quot;How to set up Caddy as a reverse proxy for your self‑hosted services, with automatic HTTPS, internal domains, and clean URLs.&quot;],&quot;tags&quot;:[1,[[0,&quot;self-hosting&quot;],[0,&quot;homelab&quot;],[0,&quot;caddy&quot;],[0,&quot;networking&quot;],[0,&quot;security&quot;]]]}]}],[0,{&quot;slug&quot;:[0,&quot;sso-for-self-hosted-apps&quot;],&quot;metadata&quot;:[0,{&quot;title&quot;:[0,&quot;SSO for Self‑Hosted Apps: One Login to Rule Them All&quot;],&quot;date&quot;:[0,&quot;2025-02-23&quot;],&quot;readingTime&quot;:[0,&quot;20min&quot;],&quot;excerpt&quot;:[0,&quot;How to set up single sign‑on for your homelab using Pocket ID, Tinyauth, and a reverse proxy, so you&#39;re not juggling dozens of passwords.&quot;],&quot;tags&quot;:[1,[[0,&quot;self-hosting&quot;],[0,&quot;homelab&quot;],[0,&quot;security&quot;],[0,&quot;sso&quot;],[0,&quot;oidc&quot;]]]}]}],[0,{&quot;slug&quot;:[0,&quot;tailscale-explained&quot;],&quot;metadata&quot;:[0,{&quot;title&quot;:[0,&quot;Tailscale Explained: The Mesh VPN That Feels Like Magic&quot;],&quot;date&quot;:[0,&quot;2025-02-17&quot;],&quot;readingTime&quot;:[0,&quot;24min&quot;],&quot;excerpt&quot;:[0,&quot;A practical, human‑readable breakdown of how Tailscale works, why it&#39;s different, and when it&#39;s the right tool.&quot;],&quot;tags&quot;:[1,[[0,&quot;tailscale&quot;],[0,&quot;vpn&quot;],[0,&quot;networking&quot;],[0,&quot;homelab&quot;],[0,&quot;wireguard&quot;]]]}]}]]]}" ssr client="visible" opts="{&quot;name&quot;:&quot;SuggestedPosts&quot;,&quot;value&quot;:true}" await-children><section class="mt-16 pt-8 border-t border-white/[0.06]"><h2 class="text-2xl font-bold mb-6 text-primary-text">Related Posts</h2><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"><a href="/blog/reverse-proxy-homelab" class="group"><article class="card h-full flex flex-col transition-all duration-200 hover:scale-[1.02]"><h3 class="text-lg font-semibold mb-3 text-primary-text group-hover:text-accent transition-colors duration-150 line-clamp-2">Reverse Proxy for a Homelab: Caddy Done Right</h3><p class="text-sm text-muted-text mb-4 line-clamp-2 flex-grow">How to set up Caddy as a reverse proxy for your self‑hosted services, with automatic HTTPS, internal domains, and clean URLs.</p><div class="flex flex-wrap gap-2 mb-3"><span class="tag-bubble text-xs">#<!-- -->self-hosting</span><span class="tag-bubble text-xs">#<!-- -->homelab</span><span class="tag-bubble text-xs">#<!-- -->caddy</span><span class="text-xs text-muted-text">+<!-- -->2</span></div><div class="flex items-center gap-2 text-xs text-muted-text mt-auto"><time>2/25/25</time><span>•</span><span>22min</span></div></article></a><a href="/blog/sso-for-self-hosted-apps" class="group"><article class="card h-full flex flex-col transition-all duration-200 hover:scale-[1.02]"><h3 class="text-lg font-semibold mb-3 text-primary-text group-hover:text-accent transition-colors duration-150 line-clamp-2">SSO for Self‑Hosted Apps: One Login to Rule Them All</h3><p class="text-sm text-muted-text mb-4 line-clamp-2 flex-grow">How to set up single sign‑on for your homelab using Pocket ID, Tinyauth, and a reverse proxy, so you&#x27;re not juggling dozens of passwords.</p><div class="flex flex-wrap gap-2 mb-3"><span class="tag-bubble text-xs">#<!-- -->self-hosting</span><span class="tag-bubble text-xs">#<!-- -->homelab</span><span class="tag-bubble text-xs">#<!-- -->security</span><span class="text-xs text-muted-text">+<!-- -->2</span></div><div class="flex items-center gap-2 text-xs text-muted-text mt-auto"><time>2/23/25</time><span>•</span><span>20min</span></div></article></a><a href="/blog/tailscale-explained" class="group"><article class="card h-full flex flex-col transition-all duration-200 hover:scale-[1.02]"><h3 class="text-lg font-semibold mb-3 text-primary-text group-hover:text-accent transition-colors duration-150 line-clamp-2">Tailscale Explained: The Mesh VPN That Feels Like Magic</h3><p class="text-sm text-muted-text mb-4 line-clamp-2 flex-grow">A practical, human‑readable breakdown of how Tailscale works, why it&#x27;s different, and when it&#x27;s the right tool.</p><div class="flex flex-wrap gap-2 mb-3"><span class="tag-bubble text-xs">#<!-- -->tailscale</span><span class="tag-bubble text-xs">#<!-- -->vpn</span><span class="tag-bubble text-xs">#<!-- -->networking</span><span class="text-xs text-muted-text">+<!-- -->2</span></div><div class="flex items-center gap-2 text-xs text-muted-text mt-auto"><time>2/17/25</time><span>•</span><span>24min</span></div></article></a></div></section><!--astro:end--></astro-island> </div> </div> </article> </div> </div> </main> <astro-island uid="Z1HHq8M" prefix="r12" component-url="/_astro/Footer.Cvi6Gx2X.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;Footer&quot;,&quot;value&quot;:true}" await-children><footer class="mt-auto border-t border-white/[0.04]"><div class="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8"><div class="flex flex-col items-center justify-between gap-3 sm:flex-row sm:gap-6"><span class="text-xs text-muted-text">© <!-- -->2026<!-- --> Phil Vishnevsky</span><nav class="flex items-center gap-4 sm:gap-6"><a href="/projects" class="text-sm text-secondary-text transition-colors hover:text-accent">Projects</a><a href="/blog" class="text-sm text-secondary-text transition-colors hover:text-accent">Blog</a><a href="/about" class="text-sm text-secondary-text transition-colors hover:text-accent">About</a></nav><div class="flex items-center gap-3"><a href="https://github.com/zenatron" target="_blank" rel="noopener noreferrer" class="text-muted-text transition-colors hover:text-accent" aria-label="GitHub"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path></svg></a><a href="https://linkedin.com/in/philipvishnevsky" target="_blank" rel="noopener noreferrer" class="text-muted-text transition-colors hover:text-accent" aria-label="LinkedIn"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"></path></svg></a><a href="https://bsky.app/profile/zenatron.bsky.social" target="_blank" rel="noopener noreferrer" class="text-muted-text transition-colors hover:text-accent" aria-label="Bluesky"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M407.8 294.7c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3zM288 227.1C261.9 176.4 190.9 81.9 124.9 35.3C61.6-9.4 37.5-1.7 21.6 5.5C3.3 13.8 0 41.9 0 58.4S9.1 194 15 213.9c19.5 65.7 89.1 87.9 153.2 80.7c3.3-.5 6.6-.9 10-1.4c-3.3 .5-6.6 1-10 1.4C74.3 308.6-9.1 342.8 100.3 464.5C220.6 589.1 265.1 437.8 288 361.1c22.9 76.7 49.2 222.5 185.6 103.4c102.4-103.4 28.1-156-65.8-169.9c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3c64.1 7.1 133.6-15.1 153.2-80.7C566.9 194 576 75 576 58.4s-3.3-44.7-21.6-52.9c-15.8-7.1-40-14.9-103.2 29.8C385.1 81.9 314.1 176.4 288 227.1z"></path></svg></a><button type="button" data-cal-namespace="call" data-cal-link="phil/call" data-cal-origin="https://z3n.me" data-cal-config="{&quot;layout&quot;:&quot;month_view&quot;}" class="text-muted-text transition-colors duration-200 hover:text-accent " title="Book a Meeting"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="h-4 w-4" style="pointer-events:none" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M0 464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V192H0v272zm320-196c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zM192 268c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zM64 268c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zM400 64h-48V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H160V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H48C21.5 64 0 85.5 0 112v48h448v-48c0-26.5-21.5-48-48-48z"></path></svg></button></div></div></div></footer><!--astro:end--></astro-island> <astro-island uid="Z27XvrG" prefix="r13" component-url="/_astro/BackToTopButton.BwjLM3Om.js" component-export="default" renderer-url="/_astro/client.BkbWMX10.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;BackToTopButton&quot;,&quot;value&quot;:true}" await-children><button type="button" class="fixed bottom-8 right-8 z-50 p-3 rounded-full bg-background/50 text-primary-foreground shadow-lg backdrop-blur-md border border-white/10 hover:bg-background/70 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all duration-300 opacity-0 scale-90" aria-label="Scroll back to top" style="visibility:hidden" title="Scroll back to top"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="h-5 w-5 mix-blend-difference" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"></path></svg></button><!--astro:end--></astro-island> </div>  </body></html>

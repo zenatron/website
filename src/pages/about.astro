@@ -1,0 +1,16 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import AboutPageContent from "@/components/pages/AboutPageContent";
+import BackToTopButton from "@/components/ui/BackToTopButton";
+---
+
+<BaseLayout title="About | Phil Vishnevsky">
+  <div class="relative flex min-h-screen flex-col">
+    <Header client:load />
+    <AboutPageContent client:load />
+    <Footer client:load />
+    <BackToTopButton client:load />
+  </div>
+</BaseLayout>

@@ -1,7 +1,5 @@
-"use client";
-
 import { useRef } from "react";
-import { LinkItem } from "@/types/types";
+import type { LinkItem } from "@/types/types";
 import VariableProximity from "../ui/VariableProximity";
 import LinkCard from "../ui/LinkCard";
 

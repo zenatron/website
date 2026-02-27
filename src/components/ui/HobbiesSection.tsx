@@ -1,14 +1,10 @@
-"use client";
-
 import { useState } from "react";
 import { FaExternalLinkAlt, FaImage } from "react-icons/fa";
-import Link from "next/link";
 import {
   favoriteItems,
   categoryLabels,
   type FavoriteItem,
 } from "@/lib/favoriteItems";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 export default function HobbiesSection() {
@@ -61,9 +57,9 @@ export default function HobbiesSection() {
           {filteredItems.map((item) => (
             <div key={item.name}>
               {item.url ? (
-                <Link href={item.url} target="_blank" rel="noopener noreferrer">
+                <a href={item.url} target="_blank" rel="noopener noreferrer">
                   <FavoriteItemRow item={item} />
-                </Link>
+                </a>
               ) : (
                 <FavoriteItemRow item={item} />
               )}
@@ -100,7 +96,7 @@ function FavoriteItemRow({ item }: FavoriteItemRowProps) {
               title={`Failed to load icon for ${item.name}`}
             />
           ) : (
-            <Image
+            <img
               src={item.icon as string}
               alt={item.name}
               width={16}

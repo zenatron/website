@@ -1,4 +1,4 @@
-import { LinkItem } from "@/types/types";
+import type { LinkItem } from "@/types/types";
 import UgIcon from "@/components/icons/UgIcon";
 
 export const links: LinkItem[] = [

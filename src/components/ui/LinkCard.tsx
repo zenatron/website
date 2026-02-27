@@ -1,17 +1,17 @@
-"use client";
-
 import React from "react";
-import { LinkItem } from "@/types/types";
-import * as FaIcons from "react-icons/fa";
+import type { LinkItem } from "@/types/types";
+import { FaGithub, FaLinkedin, FaGlobe, FaCalendarAlt } from "react-icons/fa";
 import { FaBluesky } from "react-icons/fa6";
 
 interface LinkCardProps {
   item: LinkItem;
 }
 
-// A mapping from icon names (string) to actual icon components
 const iconMap: { [key: string]: React.ElementType } = {
-  ...FaIcons,
+  FaGithub,
+  FaLinkedin,
+  FaGlobe,
+  FaCalendarAlt,
   FaBluesky,
 };
 

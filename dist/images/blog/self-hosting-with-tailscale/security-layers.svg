@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
+  <title id="title">Layered security for self-hosting</title>
+  <desc id="desc">Stacked layers showing identity, network, and app protections.</desc>
+  <rect width="1200" height="600" fill="#0b0f1a" />
+  <g font-family="Arial, sans-serif" fill="#e6e6e6">
+    <text x="40" y="60" font-size="32" font-weight="700">Defense in depth</text>
+  </g>
+
+  <g stroke="#6366f1" stroke-width="3" fill="none">
+    <rect x="180" y="120" width="840" height="90" rx="14" />
+    <rect x="180" y="230" width="840" height="90" rx="14" />
+    <rect x="180" y="340" width="840" height="90" rx="14" />
+    <rect x="180" y="450" width="840" height="90" rx="14" />
+  </g>
+
+  <g font-family="Arial, sans-serif" fill="#e6e6e6" font-size="20">
+    <text x="220" y="175">Identity: SSO + MFA + device trust</text>
+    <text x="220" y="285">Network: Tailscale + ACLs + no public ports</text>
+    <text x="220" y="395">Transport: TLS + modern ciphers</text>
+    <text x="220" y="505">Application: auth, roles, and updates</text>
+  </g>
+</svg>

@@ -1,5 +1,3 @@
-"use client";
-
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaGithub,
@@ -10,7 +8,6 @@ import {
 } from "react-icons/fa";
 import { FaBluesky } from "react-icons/fa6";
 import { X } from "lucide-react";
-import Link from "next/link";
 import { useEffect, useRef, useCallback, useMemo } from "react";
 import UgIcon from "@/components/icons/UgIcon";
 
@@ -165,7 +162,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
             {/* Contact Options */}
             <div className="p-4 space-y-1">
               {contactOptions.map((option) => (
-                <Link
+                <a
                   key={option.name}
                   href={option.href}
                   target={
@@ -190,7 +187,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       {option.description}
                     </p>
                   </div>
-                </Link>
+                </a>
               ))}
             </div>
 

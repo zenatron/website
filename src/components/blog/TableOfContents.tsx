@@ -1,11 +1,6 @@
-"use client";
-
 import { useEffect, useState, useRef, useCallback } from "react";
-import {
-  Heading,
-  NestedHeading,
-  buildHeadingHierarchy,
-} from "@/utils/extractHeadings";
+import type { Heading, NestedHeading } from "@/utils/extractHeadings";
+import { buildHeadingHierarchy } from "@/utils/extractHeadings";
 import { FaChevronDown, FaList } from "react-icons/fa";
 
 // Custom hook for tracking active heading with IntersectionObserver
