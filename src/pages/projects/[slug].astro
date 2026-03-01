@@ -10,9 +10,7 @@ import ProjectDownloads from "@/components/ui/ProjectDownloads";
 import HtmlRenderer from "@/components/HtmlRenderer";
 import dateFormatter from "@/utils/dateFormatter";
 import { getGithubRepos } from "@/lib/github";
-import Counter from "@/components/mdx/Counter";
-import Callout from "@/components/mdx/Callout";
-import NotebookEmbed from "@/components/mdx/NotebookEmbed";
+
 import fs from "node:fs";
 import path from "node:path";
 
@@ -186,7 +184,7 @@ if (!metadata) {
         <!-- MDX Content -->
         {(metadata.contentSource === "mdx" || metadata.contentSource === "notebook") && Content && (
           <div class="mdx-content w-full max-w-3xl mx-auto mb-8">
-            <Content components={{ Counter, Callout, NotebookEmbed }} />
+            <Content />
           </div>
         )}
 

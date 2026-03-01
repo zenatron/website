@@ -9,9 +9,7 @@ import KatexStyles from "@/components/KatexStyles";
 import SuggestedPosts from "@/components/blog/SuggestedPosts";
 import dateFormatter from "@/utils/dateFormatter";
 import { getSuggestedPosts } from "@/lib/blog";
-import Counter from "@/components/mdx/Counter";
-import Callout from "@/components/mdx/Callout";
-import NerdCorner from "@/components/mdx/NerdCorner";
+
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
@@ -22,7 +20,9 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { Content, headings } = await post.render();
+const rendered = await post.render();
+const Content = rendered.Content;
+const headings = rendered.headings ?? [];
 
 const suggestedPostEntries = await getSuggestedPosts(post.slug, 3);
 const suggestedPosts = suggestedPostEntries.map((p: any) => ({
@@ -99,7 +99,7 @@ const suggestedPosts = suggestedPostEntries.map((p: any) => ({
               )}
 
               <div class="mdx-content w-full max-w-3xl">
-                <Content components={{ Counter, Callout, NerdCorner }} />
+                <Content />
               </div>
 
               <div class="w-full max-w-3xl">

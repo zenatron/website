@@ -62,7 +62,7 @@ Some apps don't support SSO at all. For those, you put an **auth layer in front*
 
 This is where tools like **Tinyauth** and **Authelia** come in — they handle the authentication check, and the proxy (Caddy, Nginx, Traefik) enforces it.
 
-<NerdCorner title="How forward auth actually works" subtitle="The HTTP headers and trust model">
+<NerdCorner client:load title="How forward auth actually works" subtitle="The HTTP headers and trust model">
 
 When you use forward auth, here's the flow:
 
