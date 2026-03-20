@@ -3,7 +3,8 @@
     "allow": [
       "Bash(bun run:*)",
       "Bash(npx astro:*)",
-      "Bash(bunx --bun astro build)"
+      "Bash(bunx --bun astro build)",
+      "Bash(bunx astro:*)"
     ]
   }
 }

@@ -8,21 +8,7 @@ import {
 } from "react-icons/fa";
 import { FaBluesky } from "react-icons/fa6";
 import { useEffect, useRef, useCallback, useMemo, useState } from "react";
-
-/* ── Atom One Dark palette (matching TerminalBoot) ── */
-const T = {
-  bg: "#282c34",
-  fg: "#abb2bf",
-  purple: "#c678dd",
-  blue: "#61afef",
-  green: "#98c379",
-  yellow: "#e5c07b",
-  red: "#e06c75",
-  comment: "#5c6370",
-  white: "#e6e6e6",
-  gutter: "#3e4451",
-  cursor: "#528bff",
-};
+import { T, tA } from "@/components/ui/TerminalWindow";
 
 interface ContactOption {
   name: string;
@@ -235,7 +221,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     style={{
                       backgroundColor:
                         hoveredIdx === idx
-                          ? `${T.purple}18`
+                          ? tA(T.purple, "18")
                           : "transparent",
                     }}
                   >
@@ -258,8 +244,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                           hoveredIdx === idx ? T.purple : T.comment,
                         backgroundColor:
                           hoveredIdx === idx
-                            ? `${T.purple}20`
-                            : `${T.fg}08`,
+                            ? tA(T.purple, "20")
+                            : tA(T.fg, "08"),
                       }}
                     >
                       {option.icon}

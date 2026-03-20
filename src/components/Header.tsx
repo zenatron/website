@@ -1,8 +1,9 @@
 import MobileMenu from "@/components/ui/MobileMenu";
+import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import ContactModal from "@/components/ui/ContactModal";
-import { T } from "@/components/ui/TerminalWindow";
+import { T, tA } from "@/components/ui/TerminalWindow";
 import { motion } from "framer-motion";
 
 const NAV_LINKS = [
@@ -28,7 +29,7 @@ export default function Header() {
       <header
         className="fixed left-0 right-0 top-0 z-40 border-b backdrop-blur-md"
         style={{
-          backgroundColor: `${T.bg}e6`,
+          backgroundColor: tA(T.bg, "e6"),
           borderColor: T.gutter,
         }}
       >
@@ -39,18 +40,18 @@ export default function Header() {
             className="group flex items-center gap-2.5 rounded border px-3 py-1.5 text-sm transition-all duration-150"
             style={{
               color: T.fg,
-              backgroundColor: `${T.bg}80`,
+              backgroundColor: tA(T.bg, "80"),
               borderColor: T.gutter,
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = T.purple;
-              e.currentTarget.style.borderColor = `${T.purple}44`;
-              e.currentTarget.style.backgroundColor = `${T.purple}0a`;
+              e.currentTarget.style.borderColor = tA(T.purple, "44");
+              e.currentTarget.style.backgroundColor = tA(T.purple, "0a");
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.color = T.fg;
               e.currentTarget.style.borderColor = T.gutter;
-              e.currentTarget.style.backgroundColor = `${T.bg}80`;
+              e.currentTarget.style.backgroundColor = tA(T.bg, "80");
             }}
           >
             <img
@@ -67,7 +68,7 @@ export default function Header() {
           {/* Navigation */}
           <nav
             className="hidden items-center gap-0.5 rounded border px-1 py-1 text-sm md:flex relative"
-            style={{ backgroundColor: `${T.bg}80`, borderColor: T.gutter }}
+            style={{ backgroundColor: tA(T.bg, "80"), borderColor: T.gutter }}
             onMouseLeave={() => setHoveredLink(null)}
           >
             {/* Animated indicator */}
@@ -88,7 +89,7 @@ export default function Header() {
                     top: linkRefs.current[link.href]?.offsetTop,
                     width: linkRefs.current[link.href]?.offsetWidth,
                     height: linkRefs.current[link.href]?.offsetHeight,
-                    backgroundColor: `${T.purple}18`,
+                    backgroundColor: tA(T.purple, "18"),
                   }}
                   initial={false}
                   transition={{
@@ -128,22 +129,23 @@ export default function Header() {
 
           {/* Right side */}
           <div className="flex items-center gap-3">
+            <ThemeSwitcher />
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
               className="hidden rounded px-3 py-1.5 text-sm transition-all duration-150 sm:block"
               style={{
-                backgroundColor: `${T.purple}18`,
-                border: `1px solid ${T.purple}44`,
+                backgroundColor: tA(T.purple, "18"),
+                border: `1px solid ${tA(T.purple, "44")}`,
                 color: T.purple,
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = `${T.purple}28`;
-                e.currentTarget.style.borderColor = `${T.purple}66`;
+                e.currentTarget.style.backgroundColor = tA(T.purple, "28");
+                e.currentTarget.style.borderColor = tA(T.purple, "66");
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = `${T.purple}18`;
-                e.currentTarget.style.borderColor = `${T.purple}44`;
+                e.currentTarget.style.backgroundColor = tA(T.purple, "18");
+                e.currentTarget.style.borderColor = tA(T.purple, "44");
               }}
             >
               <span style={{ color: T.green }}>$</span> contact

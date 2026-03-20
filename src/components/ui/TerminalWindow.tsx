@@ -1,19 +1,60 @@
 /* ── Reusable TUI window chrome ── */
 
-/* Atom One Dark palette */
+/* Terminal palette — references CSS custom properties so themes can swap them */
 const T = {
-  bg: "#282c34",
-  fg: "#abb2bf",
-  purple: "#c678dd",
-  blue: "#61afef",
-  green: "#98c379",
-  yellow: "#e5c07b",
-  red: "#e06c75",
-  comment: "#5c6370",
-  white: "#e6e6e6",
-  gutter: "#3e4451",
-  cursor: "#528bff",
+  bg: "var(--t-bg)",
+  fg: "var(--t-fg)",
+  purple: "var(--t-purple)",
+  blue: "var(--t-blue)",
+  green: "var(--t-green)",
+  yellow: "var(--t-yellow)",
+  red: "var(--t-red)",
+  comment: "var(--t-comment)",
+  white: "var(--t-white)",
+  gutter: "var(--t-gutter)",
+  cursor: "var(--t-cursor)",
 };
+
+/**
+ * Apply alpha to a CSS variable color using color-mix().
+ * Pass the hex alpha string (e.g. "18", "44", "80") — same values
+ * that were previously concatenated to hex colors.
+ */
+function tA(cssVar: string, hexAlpha: string): string {
+  const pct = Math.round((parseInt(hexAlpha, 16) / 255) * 100);
+  return `color-mix(in srgb, ${cssVar} ${pct}%, transparent)`;
+}
+
+/* Theme definitions */
+const THEMES: Record<string, Record<string, string>> = {
+  "atom-one-dark": {
+    bg: "#282c34", fg: "#abb2bf", purple: "#c678dd", blue: "#61afef",
+    green: "#98c379", yellow: "#e5c07b", red: "#e06c75", comment: "#5c6370",
+    white: "#e6e6e6", gutter: "#3e4451", cursor: "#528bff",
+  },
+  dracula: {
+    bg: "#282a36", fg: "#f8f8f2", purple: "#bd93f9", blue: "#8be9fd",
+    green: "#50fa7b", yellow: "#f1fa8c", red: "#ff5555", comment: "#6272a4",
+    white: "#f8f8f2", gutter: "#44475a", cursor: "#f8f8f2",
+  },
+  gruvbox: {
+    bg: "#282828", fg: "#ebdbb2", purple: "#d3869b", blue: "#83a598",
+    green: "#b8bb26", yellow: "#fabd2f", red: "#fb4934", comment: "#928374",
+    white: "#fbf1c7", gutter: "#3c3836", cursor: "#ebdbb2",
+  },
+  nord: {
+    bg: "#2e3440", fg: "#d8dee9", purple: "#b48ead", blue: "#81a1c1",
+    green: "#a3be8c", yellow: "#ebcb8b", red: "#bf616a", comment: "#4c566a",
+    white: "#eceff4", gutter: "#3b4252", cursor: "#d8dee9",
+  },
+  catppuccin: {
+    bg: "#1e1e2e", fg: "#cdd6f4", purple: "#cba6f7", blue: "#89b4fa",
+    green: "#a6e3a1", yellow: "#f9e2af", red: "#f38ba8", comment: "#585b70",
+    white: "#cdd6f4", gutter: "#313244", cursor: "#f5e0dc",
+  },
+};
+
+const THEME_NAMES = Object.keys(THEMES);
 
 interface TerminalWindowProps {
   title: string;
@@ -90,4 +131,4 @@ export default function TerminalWindow({
   );
 }
 
-export { T };
+export { T, tA, THEMES, THEME_NAMES };

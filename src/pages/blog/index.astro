@@ -21,7 +21,7 @@ const blogPosts = posts.map((post: any) => ({
 }));
 ---
 
-<BaseLayout title="Blog | Phil Vishnevsky">
+<BaseLayout title="Blog | Phil Vishnevsky" ogSlug="blog">
   <div class="relative flex min-h-screen flex-col">
     <Header client:load />
     <BlogLayout posts={blogPosts} client:load />

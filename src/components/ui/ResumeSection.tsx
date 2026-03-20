@@ -8,7 +8,7 @@ import {
   FaGamepad,
   FaLaptopCode,
 } from "react-icons/fa";
-import TerminalWindow, { T } from "@/components/ui/TerminalWindow";
+import TerminalWindow, { T, tA } from "@/components/ui/TerminalWindow";
 
 const currentYear = new Date().getFullYear();
 
@@ -287,16 +287,15 @@ export default function ResumeSection() {
           title="~/resume/resume.pdf"
           noPadding
           statusBar={
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between gap-1">
+              <div className="flex items-center gap-1.5">
                 <button
                   type="button"
                   onClick={handlePreview}
                   className="transition-colors hover:brightness-150"
                 >
                   [<span style={{ color: T.green }}>$</span>{" "}
-                  <span style={{ color: T.fg }}>open</span>{" "}
-                  <span style={{ color: T.purple }}>--full-size</span>]
+                  <span style={{ color: T.fg }}>open</span>]
                 </button>
                 <button
                   type="button"
@@ -304,11 +303,10 @@ export default function ResumeSection() {
                   className="transition-colors hover:brightness-150"
                 >
                   [<span style={{ color: T.green }}>$</span>{" "}
-                  <span style={{ color: T.fg }}>download</span>{" "}
-                  <span style={{ color: T.yellow }}>resume.pdf</span>]
+                  <span style={{ color: T.fg }}>download</span>]
                 </button>
               </div>
-              <span className="hidden sm:inline">PDF · 1 page</span>
+              <span>PDF</span>
             </div>
           }
         >
@@ -344,8 +342,8 @@ export default function ResumeSection() {
             onClick={handleDownload}
             className="flex flex-1 items-center justify-center gap-2 rounded border py-2.5 transition-all hover:brightness-125"
             style={{
-              borderColor: `${T.purple}44`,
-              backgroundColor: `${T.purple}12`,
+              borderColor: tA(T.purple, "44"),
+              backgroundColor: tA(T.purple, "12"),
               color: T.purple,
             }}
           >

@@ -1,10 +1,17 @@
-import { useState, useEffect, useRef, memo, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import TerminalWindow, { T } from "@/components/ui/TerminalWindow";
+import TerminalWindow, { T, tA } from "@/components/ui/TerminalWindow";
 import ContactModal from "@/components/ui/ContactModal";
-import { motion, AnimatePresence, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { QUICK_FACTS } from "@/lib/config";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
+import {
+  CTA_TEXTS,
+  TerminalHeader,
+  ScrollReveal,
+  CTAButton,
+  TerminalDivider,
+} from "@/components/ui/TerminalShared";
 
 /* ── Quotes (reused from QuoteCarousel) ── */
 const QUOTES = [
@@ -16,131 +23,6 @@ const QUOTES = [
   { text: "Every expert was once a beginner who refused to quit.", attribution: "probably a poster somewhere" },
   { text: "Make it work, make it right, make it fast. In that order.", attribution: "Kent Beck (paraphrased)" },
 ];
-
-const CTA_TEXTS = [
-  "get-in-touch",
-  "reach-out",
-  "say-hello",
-  "shoot-your-shot",
-  "lets-talk",
-  "slide-into-dms",
-  "make-my-day",
-];
-
-/* ── Terminal-styled section header ── */
-const TerminalHeader = ({
-  label,
-  title,
-  description,
-}: {
-  label: string;
-  title: string;
-  description?: React.ReactNode;
-}) => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-60px" });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 24 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="space-y-4 text-center"
-    >
-      <p className="font-mono text-sm tracking-wider" style={{ color: T.comment }}>
-        <span style={{ color: T.purple }}>//</span> {label}
-      </p>
-      <h2 className="text-3xl tracking-tight md:text-4xl">{title}</h2>
-      {description}
-    </motion.div>
-  );
-};
-
-/* ── Scroll-triggered section reveal ── */
-const ScrollReveal = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-60px" });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 32 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-};
-
-/* ── Terminal-style divider ── */
-const TerminalDivider = () => (
-  <div className="flex items-center justify-center gap-4" style={{ color: T.gutter }}>
-    <div
-      className="h-px flex-1"
-      style={{ background: `linear-gradient(to right, transparent, ${T.gutter}80)` }}
-    />
-    <span className="font-mono text-xs">···</span>
-    <div
-      className="h-px flex-1"
-      style={{ background: `linear-gradient(to left, transparent, ${T.gutter}80)` }}
-    />
-  </div>
-);
-
-/* ── Terminal CTA button ── */
-const CTAButton = memo(
-  ({ ctaIndex, onClick }: { ctaIndex: number; onClick: () => void }) => (
-    <button
-      onClick={onClick}
-      className="group inline-flex items-center gap-2 rounded px-5 py-2.5 font-mono text-sm transition-all duration-200 hover:brightness-125"
-      style={{
-        backgroundColor: `${T.purple}18`,
-        border: `1px solid ${T.purple}44`,
-        color: T.purple,
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.backgroundColor = `${T.purple}28`;
-        e.currentTarget.style.borderColor = `${T.purple}66`;
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.backgroundColor = `${T.purple}18`;
-        e.currentTarget.style.borderColor = `${T.purple}44`;
-      }}
-    >
-      <span style={{ color: T.green }}>$</span>
-      <span className="inline-block w-[16ch] text-center">
-        <AnimatePresence mode="wait">
-          <motion.span
-            key={ctaIndex}
-            className="inline-block"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
-          >
-            {CTA_TEXTS[ctaIndex]}
-          </motion.span>
-        </AnimatePresence>
-      </span>
-      <span
-        className="transition-transform duration-200 group-hover:translate-x-0.5"
-        style={{ color: T.comment }}
-      >
-        ↵
-      </span>
-    </button>
-  )
-);
-CTAButton.displayName = "CTAButton";
 
 /* ── Live-typing fortune terminal ── */
 const TerminalFortune = () => {
@@ -359,6 +241,13 @@ export default function HomePageContent({
 
   useEffect(() => setMounted(true), []);
 
+  // Listen for contact modal event from command palette
+  useEffect(() => {
+    const handler = () => setIsModalOpen(true);
+    window.addEventListener("open-contact-modal", handler);
+    return () => window.removeEventListener("open-contact-modal", handler);
+  }, []);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCtaIndex((prev) => (prev + 1) % CTA_TEXTS.length);
@@ -448,7 +337,7 @@ export default function HomePageContent({
                   {/* Divider */}
                   <div
                     className="mx-3 sm:mx-4 h-px"
-                    style={{ backgroundColor: `${T.gutter}80` }}
+                    style={{ backgroundColor: tA(T.gutter, "80") }}
                   />
 
                   {/* Social links */}
@@ -459,7 +348,7 @@ export default function HomePageContent({
                       rel="noopener noreferrer"
                       className="group flex items-center gap-3 px-3 sm:px-4 py-2 transition-colors duration-150"
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = `${T.purple}10`;
+                        e.currentTarget.style.backgroundColor = tA(T.purple, "10");
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.backgroundColor = "transparent";
@@ -492,7 +381,7 @@ export default function HomePageContent({
                       rel="noopener noreferrer"
                       className="group flex items-center gap-3 px-3 sm:px-4 py-2 transition-colors duration-150"
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = `${T.purple}10`;
+                        e.currentTarget.style.backgroundColor = tA(T.purple, "10");
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.backgroundColor = "transparent";
@@ -530,17 +419,17 @@ export default function HomePageContent({
                     href="/projects"
                     className="group inline-flex items-center gap-2 rounded px-5 py-2.5 font-mono text-sm transition-all duration-200 hover:brightness-125"
                     style={{
-                      backgroundColor: `${T.blue}18`,
-                      border: `1px solid ${T.blue}44`,
+                      backgroundColor: tA(T.blue, "18"),
+                      border: `1px solid ${tA(T.blue, "44")}`,
                       color: T.blue,
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = `${T.blue}28`;
-                      e.currentTarget.style.borderColor = `${T.blue}66`;
+                      e.currentTarget.style.backgroundColor = tA(T.blue, "28");
+                      e.currentTarget.style.borderColor = tA(T.blue, "66");
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = `${T.blue}18`;
-                      e.currentTarget.style.borderColor = `${T.blue}44`;
+                      e.currentTarget.style.backgroundColor = tA(T.blue, "18");
+                      e.currentTarget.style.borderColor = tA(T.blue, "44");
                     }}
                   >
                     <span style={{ color: T.green }}>$</span> view-work
@@ -556,7 +445,7 @@ export default function HomePageContent({
                       color: T.fg,
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = `${T.purple}66`;
+                      e.currentTarget.style.borderColor = tA(T.purple, "66");
                       e.currentTarget.style.color = T.purple;
                     }}
                     onMouseLeave={(e) => {
@@ -618,10 +507,10 @@ export default function HomePageContent({
                           style={{
                             borderBottom: isLast
                               ? "none"
-                              : `1px solid ${T.gutter}30`,
+                              : `1px solid ${tA(T.gutter, "30")}`,
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = `${T.purple}10`;
+                            e.currentTarget.style.backgroundColor = tA(T.purple, "10");
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.backgroundColor =
@@ -738,7 +627,7 @@ export default function HomePageContent({
                   statusBar={
                     <div className="flex items-center justify-between">
                       <span>{posts.length} blog posts</span>
-                      <span>LOG</span>
+                      <span>bLOG</span>
                     </div>
                   }
                   noPadding
@@ -767,10 +656,10 @@ export default function HomePageContent({
                           style={{
                             borderBottom: isLast
                               ? "none"
-                              : `1px solid ${T.gutter}30`,
+                              : `1px solid ${tA(T.gutter, "30")}`,
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = `${T.purple}10`;
+                            e.currentTarget.style.backgroundColor = tA(T.purple, "10");
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.backgroundColor =
@@ -800,7 +689,7 @@ export default function HomePageContent({
                             </span>
                             <span
                               className="text-xs tabular-nums shrink-0"
-                              style={{ color: T.comment }}
+                              style={{ color: T.green }}
                             >
                               {formatDate(post.date)}
                             </span>

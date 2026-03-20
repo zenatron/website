@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import type { LinkItem } from "@/types/types";
-import TerminalWindow, { T } from "@/components/ui/TerminalWindow";
+import TerminalWindow, { T, tA } from "@/components/ui/TerminalWindow";
 import { motion, useInView } from "framer-motion";
 import React from "react";
 import { FaGithub, FaLinkedin, FaGlobe, FaCalendarAlt } from "react-icons/fa";
@@ -127,7 +127,7 @@ export default function LinksClient({ links }: LinksClientProps) {
                     className="flex items-center gap-3 py-2 transition-colors duration-150 group text-sm md:text-base"
                     style={{ color: T.fg }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = `${T.purple}0a`;
+                      e.currentTarget.style.backgroundColor = tA(T.purple, "0a");
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.backgroundColor = "transparent";

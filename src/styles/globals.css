@@ -4,6 +4,39 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Terminal theme tokens (Atom One Dark = default) ── */
+:root,
+[data-theme="atom-one-dark"] {
+  --t-bg: #282c34;  --t-fg: #abb2bf;  --t-purple: #c678dd;
+  --t-blue: #61afef; --t-green: #98c379; --t-yellow: #e5c07b;
+  --t-red: #e06c75;  --t-comment: #5c6370; --t-white: #e6e6e6;
+  --t-gutter: #3e4451; --t-cursor: #528bff;
+}
+[data-theme="dracula"] {
+  --t-bg: #282a36;  --t-fg: #f8f8f2;  --t-purple: #bd93f9;
+  --t-blue: #8be9fd; --t-green: #50fa7b; --t-yellow: #f1fa8c;
+  --t-red: #ff5555;  --t-comment: #6272a4; --t-white: #f8f8f2;
+  --t-gutter: #44475a; --t-cursor: #f8f8f2;
+}
+[data-theme="gruvbox"] {
+  --t-bg: #282828;  --t-fg: #ebdbb2;  --t-purple: #d3869b;
+  --t-blue: #83a598; --t-green: #b8bb26; --t-yellow: #fabd2f;
+  --t-red: #fb4934;  --t-comment: #928374; --t-white: #fbf1c7;
+  --t-gutter: #3c3836; --t-cursor: #ebdbb2;
+}
+[data-theme="nord"] {
+  --t-bg: #2e3440;  --t-fg: #d8dee9;  --t-purple: #b48ead;
+  --t-blue: #81a1c1; --t-green: #a3be8c; --t-yellow: #ebcb8b;
+  --t-red: #bf616a;  --t-comment: #4c566a; --t-white: #eceff4;
+  --t-gutter: #3b4252; --t-cursor: #d8dee9;
+}
+[data-theme="catppuccin"] {
+  --t-bg: #1e1e2e;  --t-fg: #cdd6f4;  --t-purple: #cba6f7;
+  --t-blue: #89b4fa; --t-green: #a6e3a1; --t-yellow: #f9e2af;
+  --t-red: #f38ba8;  --t-comment: #585b70; --t-white: #cdd6f4;
+  --t-gutter: #313244; --t-cursor: #f5e0dc;
+}
+
 :root {
   color-scheme: dark;
   --primary-bg: #0f1012;
@@ -276,6 +309,41 @@ samp {
 
 .animate-fade-in {
   animation: fade-in 0.4s ease-out forwards;
+}
+
+/* ── View Transition animations (terminal-style) ── */
+@keyframes terminal-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes terminal-slide-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+    filter: blur(1px);
+  }
+}
+
+::view-transition-old(root) {
+  animation: terminal-slide-out 0.15s ease-in forwards;
+}
+
+::view-transition-new(root) {
+  animation: terminal-slide-in 0.2s ease-out forwards;
 }
 
 /* Respect reduced motion preferences */

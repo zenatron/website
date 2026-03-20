@@ -6,7 +6,7 @@ import {
   categoryLabels,
   type FavoriteItem,
 } from "@/lib/favoriteItems";
-import TerminalWindow, { T } from "@/components/ui/TerminalWindow";
+import TerminalWindow, { T, tA } from "@/components/ui/TerminalWindow";
 
 /* ── Staggered list with tree-style prefixes ── */
 function StaggeredList({ items }: { items: FavoriteItem[] }) {
@@ -113,9 +113,9 @@ export default function HobbiesSection() {
               onClick={() => setSelectedCategory(tab.key)}
               className="relative px-2 py-0.5 sm:px-2.5 sm:py-1 rounded transition-all duration-150"
               style={{
-                backgroundColor: isActive ? `${T.purple}22` : "transparent",
+                backgroundColor: isActive ? tA(T.purple, "22") : "transparent",
                 color: isActive ? T.purple : T.comment,
-                border: `1px solid ${isActive ? `${T.purple}44` : "transparent"}`,
+                border: `1px solid ${isActive ? tA(T.purple, "44") : "transparent"}`,
               }}
               onMouseEnter={(e) => {
                 if (!isActive) e.currentTarget.style.color = T.fg;
@@ -156,7 +156,7 @@ function FavoriteItemRow({ item, isLast }: FavoriteItemRowProps) {
       className="flex items-center gap-2 sm:gap-3 py-1.5 sm:py-2 px-1 rounded transition-colors duration-150 cursor-pointer font-mono text-xs sm:text-sm"
       style={{
         color: T.fg,
-        backgroundColor: hovered ? `${T.purple}10` : "transparent",
+        backgroundColor: hovered ? tA(T.purple, "10") : "transparent",
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -172,7 +172,7 @@ function FavoriteItemRow({ item, isLast }: FavoriteItemRowProps) {
       {/* Icon */}
       <div
         className="flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded"
-        style={{ backgroundColor: `${T.fg}0a` }}
+        style={{ backgroundColor: tA(T.fg, "0a") }}
       >
         {isImageIcon ? (
           imageError ? (

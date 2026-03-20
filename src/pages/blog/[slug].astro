@@ -4,10 +4,10 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BackToTopButton from "@/components/ui/BackToTopButton";
+import ReadingProgress from "@/components/ui/ReadingProgress";
 import TableOfContents from "@/components/blog/TableOfContents";
 import KatexStyles from "@/components/KatexStyles";
-import SuggestedPosts from "@/components/blog/SuggestedPosts";
-import dateFormatter from "@/utils/dateFormatter";
+import { BlogPostHeader, BlogPostFooter } from "@/components/layouts/BlogPostLayout";
 import { getSuggestedPosts } from "@/lib/blog";
 
 
@@ -37,22 +37,13 @@ const suggestedPosts = suggestedPostEntries.map((p: any) => ({
 }));
 ---
 
-<BaseLayout title={`${post.data.title} | Phil Vishnevsky`}>
+<BaseLayout title={`${post.data.title} | Phil Vishnevsky`} ogSlug={`blog/${post.slug}`}>
   <div class="relative flex min-h-screen flex-col">
     <KatexStyles client:load />
     <Header client:load />
+    <ReadingProgress readingTime={post.data.readingTime} client:load />
 
     <main class="px-4 py-10 pt-20 sm:px-6">
-      <div class="max-w-5xl mx-auto mb-6">
-        <a
-          href="/blog"
-          class="inline-flex items-center gap-2 text-muted-text hover:text-foreground text-sm"
-          title="Back to Blog"
-        >
-          ← Back to Blog
-        </a>
-      </div>
-
       <div class="max-w-5xl mx-auto">
         <div class="lg:flex lg:gap-8 lg:items-start">
           <aside class="hidden lg:block lg:w-64 lg:flex-shrink-0 lg:sticky lg:top-24">
@@ -66,45 +57,35 @@ const suggestedPosts = suggestedPostEntries.map((p: any) => ({
           </aside>
 
           <article class="w-full max-w-4xl mx-auto lg:mx-0 lg:flex-1">
-            <div class="flex flex-col items-center">
-              <h1 class="text-4xl font-bold mb-4 text-center w-full">{post.data.title}</h1>
+            <!-- TUI Terminal Header -->
+            <BlogPostHeader
+              title={post.data.title}
+              slug={post.slug}
+              date={post.data.date}
+              readingTime={post.data.readingTime}
+              tags={post.data.tags}
+            />
 
-              <div class="flex flex-col items-center gap-4 mb-8 text-muted-text w-full">
-                {post.data.tags && post.data.tags.length > 0 && (
-                  <div class="flex flex-wrap gap-2 justify-center">
-                    {post.data.tags.map((tag) => (
-                      <a href={`/blog?tag=${tag}`} class="tag-bubble" title={`View posts with tag: ${tag}`}>
-                        #{tag}
-                      </a>
-                    ))}
-                  </div>
-                )}
-                <div class="flex flex-row items-center text-muted-text mb-2">
-                  <time>{dateFormatter({ date: post.data.date, formatStyle: "full" })}</time>
-                  {post.data.readingTime && (
-                    <>
-                      <span class="ml-2">•</span>
-                      <span class="ml-2">{post.data.readingTime}</span>
-                    </>
-                  )}
-                </div>
-              </div>
+            <!-- Mobile TOC -->
+            {headings.length > 0 && (
+              <TableOfContents
+                headings={headings.map((h) => ({ id: h.slug, text: h.text, level: h.depth }))}
+                className="mobile-only"
+                client:load
+              />
+            )}
 
-              {headings.length > 0 && (
-                <TableOfContents
-                  headings={headings.map((h) => ({ id: h.slug, text: h.text, level: h.depth }))}
-                  className="mobile-only"
-                  client:load
-                />
-              )}
+            <!-- Prose content -->
+            <div class="mdx-content w-full max-w-3xl">
+              <Content />
+            </div>
 
-              <div class="mdx-content w-full max-w-3xl">
-                <Content />
-              </div>
-
-              <div class="w-full max-w-3xl">
-                <SuggestedPosts posts={suggestedPosts} client:visible />
-              </div>
+            <!-- TUI Terminal Footer -->
+            <div class="w-full max-w-3xl">
+              <BlogPostFooter
+                tags={post.data.tags}
+                suggestedPosts={suggestedPosts}
+              />
             </div>
           </article>
         </div>

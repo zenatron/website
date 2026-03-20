@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import ContactModal from "@/components/ui/ContactModal";
-import { T } from "@/components/ui/TerminalWindow";
+import { T, tA } from "@/components/ui/TerminalWindow";
 import pkg from "../../../package.json";
 
 const NAV_ITEMS = [
@@ -38,7 +38,7 @@ export default function MobileMenu() {
           color: T.comment,
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = `${T.purple}66`;
+          e.currentTarget.style.borderColor = tA(T.purple, "66");
           e.currentTarget.style.color = T.purple;
         }}
         onMouseLeave={(e) => {
@@ -115,7 +115,7 @@ export default function MobileMenu() {
                     className="group flex items-center gap-2 rounded px-2 py-2.5 text-sm transition-colors duration-150"
                     style={{ color: T.fg }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = `${T.purple}10`;
+                      e.currentTarget.style.backgroundColor = tA(T.purple, "10");
                       e.currentTarget.style.color = T.purple;
                     }}
                     onMouseLeave={(e) => {
@@ -139,17 +139,17 @@ export default function MobileMenu() {
             onClick={handleContactClick}
             className="w-full rounded px-3 py-2.5 text-sm transition-all duration-150"
             style={{
-              backgroundColor: `${T.purple}18`,
-              border: `1px solid ${T.purple}44`,
+              backgroundColor: tA(T.purple, "18"),
+              border: `1px solid ${tA(T.purple, "44")}`,
               color: T.purple,
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = `${T.purple}28`;
-              e.currentTarget.style.borderColor = `${T.purple}66`;
+              e.currentTarget.style.backgroundColor = tA(T.purple, "28");
+              e.currentTarget.style.borderColor = tA(T.purple, "66");
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = `${T.purple}18`;
-              e.currentTarget.style.borderColor = `${T.purple}44`;
+              e.currentTarget.style.backgroundColor = tA(T.purple, "18");
+              e.currentTarget.style.borderColor = tA(T.purple, "44");
             }}
           >
             <span style={{ color: T.green }}>$</span> contact{" "}

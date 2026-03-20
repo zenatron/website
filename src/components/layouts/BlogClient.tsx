@@ -2,13 +2,24 @@ import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import type { BlogPost } from "@/types/types";
 import dateFormatter from "@/utils/dateFormatter";
-import { ArrowRight, Search, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ContactModal from "@/components/ui/ContactModal";
+import TerminalWindow, { T, tA } from "@/components/ui/TerminalWindow";
 
 interface BlogClientProps {
   posts: BlogPost[];
 }
+
+/* ── Deterministic fake git hash ── */
+const fakeHash = (str: string) => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash).toString(16).slice(0, 7).padStart(7, "0");
+};
 
 export default function BlogClient({ posts }: BlogClientProps) {
   const [searchParamsObj, setSearchParamsObj] = useState(() => new URLSearchParams(typeof window !== "undefined" ? window.location.search : ""));
@@ -107,12 +118,12 @@ export default function BlogClient({ posts }: BlogClientProps) {
 
   // Dynamic placeholder based on idle time
   const getPlaceholder = () => {
-    if (idleTime < 5) return "Search posts... (use # for tags)";
-    if (idleTime < 10) return "Still thinking?";
-    if (idleTime < 15) return "Just type something...";
-    if (idleTime < 20) return "Literally anything...";
-    if (idleTime < 30) return "I'm getting lonely here...";
-    return "Fine. I'll wait. Forever, I guess.";
+    if (idleTime < 5) return "grep posts... (use # for tags)";
+    if (idleTime < 10) return "still thinking?";
+    if (idleTime < 15) return "just type something...";
+    if (idleTime < 20) return "literally anything...";
+    if (idleTime < 30) return "i'm getting lonely here...";
+    return "fine. i'll wait. forever, i guess.";
   };
 
   // Easter egg: Check for "42" search
@@ -125,25 +136,25 @@ export default function BlogClient({ posts }: BlogClientProps) {
   const getWordCountMessage = () => {
     if (wordCountClicks === 0) return null;
     if (wordCountClicks < 2)
-      return `That's ${Math.round(totalWords / 280)} tweets worth`;
+      return `that's ${Math.round(totalWords / 280)} tweets worth`;
     if (wordCountClicks < 3)
-      return `Or ${Math.round(totalWords / 250)} pages in a book`;
+      return `or ${Math.round(totalWords / 250)} pages in a book`;
     if (wordCountClicks < 4)
-      return `About ${Math.round(totalWords / 150)} minutes to read it all`;
+      return `about ${Math.round(totalWords / 150)} minutes to read it all`;
     if (wordCountClicks < 5)
       return `${Math.round(totalWords / 11)} average sentences`;
     if (wordCountClicks < 6)
-      return `Approximately ${(totalWords / 1320).toFixed(2)} Declarations of Independence`;
+      return `approximately ${(totalWords / 1320).toFixed(2)} Declarations of Independence`;
     if (wordCountClicks < 7)
-      return `Around ${Math.round(totalWords * (4 / 3))} LLM tokens`;
-    if (wordCountClicks < 8) return "Okay you really like clicking this huh";
-    if (wordCountClicks < 10) return "Alright, that's enough clicking for now.";
-    if (wordCountClicks < 12) return "There's nothing more to see here.";
-    if (wordCountClicks < 15) return "I promise";
-    if (wordCountClicks < 16) return "Okay fine...";
-    if (wordCountClicks < 17) return "I'll tell you a joke:";
+      return `around ${Math.round(totalWords * (4 / 3))} LLM tokens`;
+    if (wordCountClicks < 8) return "okay you really like clicking this huh";
+    if (wordCountClicks < 10) return "alright, that's enough clicking for now.";
+    if (wordCountClicks < 12) return "there's nothing more to see here.";
+    if (wordCountClicks < 15) return "i promise";
+    if (wordCountClicks < 16) return "okay fine...";
+    if (wordCountClicks < 17) return "i'll tell you a joke:";
     if (wordCountClicks < 18)
-      return "Two types of programmers exist: those who can extrapolate from incomplete data.";
+      return "two types of programmers exist: those who can extrapolate from incomplete data.";
     return "pls read my blog";
   };
 
@@ -341,50 +352,69 @@ export default function BlogClient({ posts }: BlogClientProps) {
     <div className="px-4 pb-8 pt-24 sm:px-6">
       <div className="mx-auto max-w-5xl">
         {/* Header */}
-        <header className="mb-8 sm:mb-16 space-y-6">
-          <p className="text-sm font-medium tracking-[0.2em] text-accent">
-            BLOG
+        <header className="mb-8 sm:mb-16 space-y-4 font-mono">
+          <p
+            className="text-sm tracking-wider"
+            style={{ color: T.comment }}
+          >
+            <span style={{ color: T.purple }}>//</span> BLOG
           </p>
-          <h1 className="text-4xl tracking-tight md:text-5xl">
+          <h1 className="text-3xl tracking-tight md:text-4xl" style={{ color: T.fg }}>
             Barely Legible Organized Gibberish
           </h1>
-          <p className="max-w-xl text-secondary-text">
-            Thoughts on code, learning, and whatever else I&apos;m figuring out.{" "}
+          <p className="max-w-xl text-sm md:text-base" style={{ color: T.comment }}>
+            thoughts on code, learning, and whatever else i&apos;m figuring out.{" "}
             <span
-              className="tabular-nums text-accent cursor-pointer hover:underline"
+              className="tabular-nums cursor-pointer transition-colors duration-150"
+              style={{ color: T.yellow }}
               onClick={() => setWordCountClicks((c) => c + 1)}
+              onMouseEnter={(e) => { e.currentTarget.style.color = T.purple; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = T.yellow; }}
               title="Click me!"
             >
               {totalWords.toLocaleString()}
             </span>{" "}
             words written so far.
             {getWordCountMessage() && (
-              <span className="block text-xs text-muted-text mt-1 italic">
-                ({getWordCountMessage()})
+              <span className="block text-xs mt-1" style={{ color: T.comment }}>
+                // {getWordCountMessage()}
               </span>
             )}
           </p>
         </header>
 
         {/* Filters */}
-        <div className="mb-12 space-y-6">
+        <div className="mb-12 space-y-4 font-mono">
           {/* Search with chip + autocomplete */}
           <div className="relative max-w-md">
-            <Search className="absolute left-4 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-muted-text" />
+            <Search className="absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2" style={{ color: T.comment }} />
 
             {/* Container with chip + input */}
-            <div className="flex w-full items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.02] py-2 pl-11 pr-12 transition-colors focus-within:border-accent/30 focus-within:bg-white/[0.04]">
+            <div
+              className="flex w-full items-center gap-1.5 rounded border py-2 pl-10 pr-12 transition-colors"
+              style={{
+                backgroundColor: T.bg,
+                borderColor: T.gutter,
+              }}
+              onFocus={() => {
+                const el = document.querySelector('[data-search-container]') as HTMLElement;
+                if (el) el.style.borderColor = tA(T.purple, "66");
+              }}
+            >
               {/* Tag chip */}
               {selectedTag && (
                 <span
                   ref={chipRef}
-                  className="inline-flex shrink-0 items-center gap-1 rounded-full bg-accent/20 px-2.5 py-1 text-sm text-accent"
+                  className="inline-flex shrink-0 items-center gap-1 rounded px-2 py-0.5 text-sm"
+                  style={{ backgroundColor: tA(T.purple, "20"), color: T.purple }}
                 >
                   #{selectedTag}
                   <button
                     type="button"
                     onClick={() => handleTagSelect(null)}
-                    className="ml-0.5 rounded-full p-0.5 hover:bg-white/10"
+                    className="ml-0.5 rounded p-0.5 transition-colors"
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = `${T.gutter}`; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -394,37 +424,50 @@ export default function BlogClient({ posts }: BlogClientProps) {
               {/* Input */}
               <input
                 ref={searchInputRef}
+                data-search-container
                 type="text"
                 placeholder={
-                  selectedTag ? "Add search terms..." : getPlaceholder()
+                  selectedTag ? "add search terms..." : getPlaceholder()
                 }
                 value={searchQuery}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
-                onFocus={() => {
+                onFocus={(e) => {
+                  // Style parent border
+                  const parent = e.currentTarget.parentElement;
+                  if (parent) parent.style.borderColor = tA(T.purple, "66");
                   // Show suggestions if user had typed a partial tag
                   if (searchQuery.includes("#")) {
                     setShowSuggestions(true);
                   }
                 }}
-                className="min-w-0 flex-1 bg-transparent text-base text-primary-text placeholder-muted-text outline-none"
+                onBlur={(e) => {
+                  const parent = e.currentTarget.parentElement;
+                  if (parent) parent.style.borderColor = T.gutter;
+                }}
+                className="min-w-0 flex-1 bg-transparent text-sm md:text-base outline-none"
+                style={{ color: T.fg }}
               />
             </div>
 
             {/* Keyboard hint */}
-            <kbd className="absolute right-4 top-1/2 -translate-y-1/2 hidden rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-muted-text sm:inline-block">
+            <kbd
+              className="absolute right-3 top-1/2 -translate-y-1/2 hidden rounded border px-1.5 py-0.5 text-[10px] sm:inline-block font-mono"
+              style={{ borderColor: T.gutter, backgroundColor: tA(T.gutter, "40"), color: T.comment }}
+            >
               /
             </kbd>
 
-            {/* Suggestions dropdown - scrollable with max 5 visible */}
+            {/* Suggestions dropdown */}
             {showSuggestions && filteredSuggestions.length > 0 && (
               <div
                 ref={suggestionsRef}
-                className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-xl border border-white/[0.06] bg-[#0c0c10]/95 shadow-xl backdrop-blur-sm"
+                className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded border shadow-xl"
+                style={{ backgroundColor: T.bg, borderColor: T.gutter }}
               >
                 <div className="p-1.5">
-                  <div className="mb-1.5 px-2 text-[10px] uppercase tracking-wider text-muted-text">
-                    Tags {tagQuery && `matching "${tagQuery}"`}
+                  <div className="mb-1.5 px-2 text-[10px] uppercase tracking-wider" style={{ color: T.comment }}>
+                    tags {tagQuery && `matching "${tagQuery}"`}
                   </div>
                   <div className="max-h-[180px] overflow-y-auto">
                     {filteredSuggestions.map((tag, index) => (
@@ -433,16 +476,30 @@ export default function BlogClient({ posts }: BlogClientProps) {
                         type="button"
                         onClick={() => completeTag(tag)}
                         className={cn(
-                          "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition-colors",
+                          "flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm transition-colors",
                           index === suggestionIndex
-                            ? "bg-accent/20 text-accent"
-                            : "text-secondary-text hover:bg-white/[0.04]"
+                            ? ""
+                            : ""
                         )}
+                        style={{
+                          backgroundColor: index === suggestionIndex ? tA(T.purple, "20") : "transparent",
+                          color: index === suggestionIndex ? T.purple : T.fg,
+                        }}
+                        onMouseEnter={(e) => {
+                          if (index !== suggestionIndex) {
+                            e.currentTarget.style.backgroundColor = tA(T.gutter, "40");
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (index !== suggestionIndex) {
+                            e.currentTarget.style.backgroundColor = "transparent";
+                          }
+                        }}
                       >
-                        <span className="text-muted-text">#</span>
+                        <span style={{ color: T.comment }}>#</span>
                         {tag}
                         {index === suggestionIndex && (
-                          <span className="ml-auto text-[10px] text-muted-text">
+                          <span className="ml-auto text-[10px]" style={{ color: T.comment }}>
                             Tab ↹
                           </span>
                         )}
@@ -456,24 +513,30 @@ export default function BlogClient({ posts }: BlogClientProps) {
 
           {/* 42 Easter Egg */}
           {is42Search && (
-            <div className="rounded-lg border border-accent/30 bg-accent/5 px-4 py-3 max-w-md">
-              <p className="text-sm text-accent font-medium">
-                🌌 The Answer to Life, the Universe, and Everything
+            <div
+              className="rounded border px-4 py-3 max-w-md font-mono"
+              style={{ borderColor: tA(T.yellow, "44"), backgroundColor: tA(T.yellow, "08") }}
+            >
+              <p className="text-sm" style={{ color: T.yellow }}>
+                // The Answer to Life, the Universe, and Everything
               </p>
-              <p className="text-xs text-muted-text mt-1">
-                But what was the question? - Douglas Adams
+              <p className="text-xs mt-1" style={{ color: T.comment }}>
+                but what was the question? — Douglas Adams
               </p>
             </div>
           )}
 
           {/* Bug Easter Egg */}
           {isBugSearch && (
-            <div className="rounded-lg border border-accent/30 bg-accent/5 px-4 py-3 max-w-md">
-              <p className="text-sm text-accent font-medium">
-                🐛 No bugs here!
+            <div
+              className="rounded border px-4 py-3 max-w-md font-mono"
+              style={{ borderColor: tA(T.green, "44"), backgroundColor: tA(T.green, "08") }}
+            >
+              <p className="text-sm" style={{ color: T.green }}>
+                // No bugs here!
               </p>
-              <p className="text-xs text-muted-text mt-1">
-                Only &quot;undocumented features&quot; and &quot;creative
+              <p className="text-xs mt-1" style={{ color: T.comment }}>
+                only &quot;undocumented features&quot; and &quot;creative
                 interpretations of the spec.&quot;
               </p>
             </div>
@@ -481,8 +544,8 @@ export default function BlogClient({ posts }: BlogClientProps) {
 
           {/* Tags */}
           <div className="flex flex-wrap items-center gap-2">
-            <span className="mr-2 text-xs uppercase tracking-wider text-muted-text">
-              Topics:
+            <span className="mr-1 text-xs uppercase tracking-wider" style={{ color: T.comment }}>
+              topics:
             </span>
             {allTags.slice(0, 8).map((tag) => (
               <button
@@ -490,131 +553,211 @@ export default function BlogClient({ posts }: BlogClientProps) {
                 onClick={() =>
                   handleTagSelect(selectedTag === tag ? null : tag)
                 }
-                className={cn(
-                  "tag-bubble",
-                  selectedTag === tag
-                    ? "!bg-accent/30"
-                    : "opacity-80 hover:opacity-100"
-                )}
+                className="rounded px-2 py-1 text-[11px] transition-colors duration-150"
+                style={{
+                  backgroundColor: selectedTag === tag ? tA(T.purple, "25") : tA(T.gutter, "40"),
+                  color: selectedTag === tag ? T.purple : T.comment,
+                  border: `1px solid ${selectedTag === tag ? tA(T.purple, "44") : "transparent"}`,
+                }}
+                onMouseEnter={(e) => {
+                  if (selectedTag !== tag) {
+                    e.currentTarget.style.color = T.fg;
+                    e.currentTarget.style.backgroundColor = tA(T.gutter, "80");
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedTag !== tag) {
+                    e.currentTarget.style.color = T.comment;
+                    e.currentTarget.style.backgroundColor = tA(T.gutter, "40");
+                  }
+                }}
               >
-                #{tag}
+                [{tag}]
               </button>
             ))}
             {hasActiveFilters && (
               <button
                 onClick={clearFilters}
-                className="ml-2 flex items-center gap-1 rounded-full px-3 py-1.5 text-xs text-muted-text transition-colors hover:text-primary-text"
+                className="ml-2 flex items-center gap-1 rounded px-2 py-1 text-xs transition-colors duration-150"
+                style={{ color: T.comment }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = T.red; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = T.comment; }}
               >
                 <X className="h-3 w-3" />
-                Clear
+                clear
               </button>
             )}
           </div>
         </div>
 
         {/* Posts */}
-        <div className="space-y-16">
+        <div className="space-y-12">
           {filteredPosts.length === 0 ? (
-            <div className="py-16 text-center">
-              <p className="text-secondary-text">
-                No posts found matching your criteria.
-              </p>
-              <button
-                onClick={clearFilters}
-                className="mt-4 text-sm text-accent hover:underline"
-              >
-                Clear filters
-              </button>
-            </div>
+            <TerminalWindow title="~/blog" statusBar={<span>0 results</span>}>
+              <div className="py-8 text-center font-mono">
+                <p className="text-sm" style={{ color: T.comment }}>
+                  <span style={{ color: T.green }}>$</span> grep{" "}
+                  <span style={{ color: T.yellow }}>"{searchQuery || selectedTag}"</span>{" "}
+                  ~/blog/**
+                </p>
+                <p className="text-sm mt-2" style={{ color: T.red }}>
+                  error: no posts found matching your criteria
+                </p>
+                <button
+                  onClick={clearFilters}
+                  className="mt-4 text-sm transition-colors duration-150"
+                  style={{ color: T.purple }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = T.blue; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = T.purple; }}
+                >
+                  $ clear-filters ↵
+                </button>
+              </div>
+            </TerminalWindow>
           ) : (
             groupedPosts.map((group) => (
-              <section key={group.year} className="relative">
+              <section key={group.year}>
                 {/* Year header */}
-                <div className="sticky top-24 z-10 mb-6 flex items-center gap-4">
-                  <span className="text-2xl font-medium text-primary-text">
+                <div className="sticky top-24 z-10 mb-4 flex items-center gap-3 font-mono">
+                  <span className="text-lg" style={{ color: T.purple }}>
                     {group.year}
                   </span>
-                  <span className="rounded-full bg-white/[0.04] px-2.5 py-0.5 text-xs text-muted-text">
+                  <span
+                    className="rounded px-2 py-0.5 text-xs"
+                    style={{ backgroundColor: tA(T.gutter, "60"), color: T.comment }}
+                  >
                     {group.posts.length}
                   </span>
-                  <div className="h-px flex-1 bg-white/[0.04]" />
+                  <div
+                    className="h-px flex-1"
+                    style={{ backgroundColor: tA(T.gutter, "60") }}
+                  />
                 </div>
 
-                {/* Posts list */}
-                <div className="space-y-2">
-                  {group.posts.map((post) => (
-                    <a
-                      key={post.slug}
-                      href={`/blog/${post.slug}`}
-                      className="group relative block rounded-xl py-5 px-4 transition-colors hover:bg-white/[0.02] sm:pl-8"
-                    >
-                      {/* Timeline dot - hidden on mobile */}
-                      <span className="absolute left-3 top-7 hidden h-2 w-2 rounded-full border-2 border-accent/40 bg-primary-bg transition-colors group-hover:border-accent group-hover:bg-accent sm:block" />
+                {/* Posts in TerminalWindow */}
+                <TerminalWindow
+                  title={`~/blog/${group.year}`}
+                  noPadding
+                  statusBar={
+                    <div className="flex items-center justify-between">
+                      <span>
+                        <span style={{ color: T.fg }}>{group.posts.length}</span> post{group.posts.length !== 1 ? "s" : ""}
+                      </span>
+                      <span>bLOG</span>
+                    </div>
+                  }
+                >
+                  {/* Command line */}
+                  <div
+                    className="px-3 sm:px-4 py-2 border-b font-mono text-xs md:text-sm"
+                    style={{ borderColor: T.gutter, color: T.comment }}
+                  >
+                    <span style={{ color: T.green }}>$</span>{" "}
+                    <span style={{ color: T.fg }}>git log</span>{" "}
+                    <span style={{ color: T.purple }}>--oneline</span>{" "}
+                    <span style={{ color: T.purple }}>--year</span>=<span style={{ color: T.yellow }}>{group.year}</span>
+                  </div>
 
-                      <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                        <div className="flex-1 space-y-2">
-                          <h2 className="text-lg font-medium text-primary-text transition-colors group-hover:text-accent">
-                            {post.metadata.title}
-                          </h2>
-                          {post.metadata.excerpt && (
-                            <p className="text-sm text-secondary-text line-clamp-2">
-                              {post.metadata.excerpt}
-                            </p>
-                          )}
-                          <div className="flex flex-wrap items-center gap-3 text-xs text-muted-text">
-                            <time>
+                  {/* Post rows */}
+                  <div>
+                    {group.posts.map((post, i) => {
+                      const hash = fakeHash(post.slug);
+                      const isLast = i === group.posts.length - 1;
+                      const prefix = isLast ? "└─" : "├─";
+                      return (
+                        <a
+                          key={post.slug}
+                          href={`/blog/${post.slug}`}
+                          className="group flex items-start sm:items-center gap-3 sm:gap-4 px-3 sm:px-4 py-3 sm:py-4 transition-colors duration-150 font-mono text-sm md:text-base"
+                          style={{
+                            borderBottom: isLast
+                              ? "none"
+                              : `1px solid ${tA(T.gutter, "30")}`,
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = tA(T.purple, "0a");
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = "transparent";
+                          }}
+                        >
+                          <span
+                            className="shrink-0 hidden sm:inline text-xs md:text-sm"
+                            style={{ color: T.gutter }}
+                          >
+                            {prefix}
+                          </span>
+                          <div className="shrink-0 flex flex-col items-start leading-tight">
+                            <span
+                              className="text-xs md:text-sm"
+                              style={{ color: T.yellow }}
+                            >
+                              {hash}
+                            </span>
+                            <span className="text-[11px] tabular-nums" style={{ color: T.green }}>
                               {dateFormatter({
                                 date: post.metadata.date,
                                 month: "short",
                                 day: "numeric",
                               })}
-                            </time>
+                            </span>
                             {post.metadata.readingTime && (
-                              <>
-                                <span className="h-1 w-1 rounded-full bg-white/20" />
-                                <span>{post.metadata.readingTime}</span>
-                              </>
+                              <span className="text-[11px]" style={{ color: T.blue }}>
+                                {post.metadata.readingTime}
+                              </span>
                             )}
-                            {post.metadata.tags &&
-                              post.metadata.tags.length > 0 && (
-                                <>
-                                  <span className="h-1 w-1 rounded-full bg-white/20" />
-                                  <div className="flex gap-2">
-                                    {post.metadata.tags
-                                      .slice(0, 2)
-                                      .map((tag) => (
-                                        <span key={tag} className="tag">
-                                          {tag}
-                                        </span>
-                                      ))}
-                                  </div>
-                                </>
-                              )}
                           </div>
-                        </div>
-
-                        <ArrowRight className="mt-1 hidden h-4 w-4 shrink-0 text-muted-text opacity-0 transition-all group-hover:translate-x-1 group-hover:text-accent group-hover:opacity-100 sm:block" />
-                      </div>
-                    </a>
-                  ))}
-                </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                              <span className="font-medium transition-colors duration-150" style={{ color: T.fg }}>
+                                <span className="group-hover:hidden">{post.metadata.title}</span>
+                                <span className="hidden group-hover:inline" style={{ color: T.purple }}>{post.metadata.title}</span>
+                              </span>
+                            </div>
+                            {post.metadata.excerpt && (
+                              <p className="text-xs mt-1 truncate" style={{ color: T.comment }}>
+                                {post.metadata.excerpt}
+                              </p>
+                            )}
+                          </div>
+                          <div className="hidden md:flex items-center gap-2 shrink-0">
+                            {post.metadata.tags && post.metadata.tags.slice(0, 2).map((tag) => (
+                              <span key={tag} className="text-[11px]">
+                                <span style={{ color: T.gutter }}>[</span>
+                                <span style={{ color: T.blue }}>{tag}</span>
+                                <span style={{ color: T.gutter }}>]</span>
+                              </span>
+                            ))}
+                          </div>
+                          <span
+                            className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 shrink-0"
+                            style={{ color: T.purple }}
+                          >
+                            ↗
+                          </span>
+                        </a>
+                      );
+                    })}
+                  </div>
+                </TerminalWindow>
               </section>
             ))
           )}
         </div>
 
         {/* Mobile CTA */}
-        <div className="mt-8 text-center sm:hidden">
+        <div className="mt-8 text-center sm:hidden font-mono">
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="rounded-full px-5 py-2 text-sm font-medium text-accent transition-colors"
+            className="rounded px-5 py-2 text-sm transition-all duration-150"
             style={{
-              backgroundColor: "rgba(124, 138, 255, 0.15)",
-              border: "1px solid rgba(124, 138, 255, 0.3)",
+              backgroundColor: tA(T.purple, "18"),
+              border: `1px solid ${tA(T.purple, "44")}`,
+              color: T.purple,
             }}
           >
-            Get in touch
+            <span style={{ color: T.green }}>$</span> contact ↵
           </button>
         </div>
       </div>

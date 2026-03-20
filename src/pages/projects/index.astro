@@ -12,7 +12,7 @@ const dataProjects = await getAllProjects();
 const allProjects = [...dataProjects, ...githubProjects];
 ---
 
-<BaseLayout title="Projects | Phil Vishnevsky">
+<BaseLayout title="Projects | Phil Vishnevsky" ogSlug="projects">
   <div class="relative flex min-h-screen flex-col">
     <Header client:load />
     <ProjectsLayout projects={allProjects} client:load />
