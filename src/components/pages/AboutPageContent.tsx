@@ -16,7 +16,7 @@ const CTA_TEXTS = [
   "say-hello",
   "shoot-your-shot",
   "lets-talk",
-  "slide-into-inbox",
+  "slide-into-dms",
   "make-my-day",
 ];
 

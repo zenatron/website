@@ -51,7 +51,7 @@ export default function HomeHero() {
             <FaGithub className="h-5 w-5" />
           </a>
           <a
-            href="https://linkedin.com/in/philipvishnevsky"
+            href="https://linkedin.com/in/philvishnevsky"
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-text transition-colors hover:text-primary-text"

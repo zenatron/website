@@ -58,8 +58,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       {
         name: "LinkedIn",
         icon: <FaLinkedin className="text-base" />,
-        href: "https://www.linkedin.com/in/philipvishnevsky/",
-        cmd: "open linkedin/philipvishnevsky",
+        href: "https://www.linkedin.com/in/philvishnevsky/",
+        cmd: "open linkedin/philvishnevsky",
       },
       {
         name: "Book a Call",

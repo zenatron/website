@@ -10,7 +10,7 @@ export const links: LinkItem[] = [
   },
   {
     title: "LinkedIn",
-    url: "https://www.linkedin.com/in/philipvishnevsky/",
+    url: "https://www.linkedin.com/in/philvishnevsky/",
     description: "My professional network and profile",
     icon: "FaLinkedin",
   },

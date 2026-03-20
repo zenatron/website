@@ -57,7 +57,7 @@ export default function TerminalWindow({
           />
         </div>
         <span
-          className="flex-1 text-center font-mono text-[11px] sm:text-xs truncate px-2"
+          className="flex-1 text-center font-mono text-[11px] sm:text-xs md:text-sm truncate px-2"
           style={{ color: T.comment }}
         >
           {title}
@@ -80,7 +80,7 @@ export default function TerminalWindow({
       {/* Optional status bar */}
       {statusBar && (
         <div
-          className="px-3 sm:px-4 py-1.5 sm:py-2 border-t font-mono text-[11px] sm:text-xs"
+          className="px-3 sm:px-4 py-1.5 sm:py-2 border-t font-mono text-[11px] sm:text-xs md:text-sm"
           style={{ borderColor: T.gutter, color: T.comment }}
         >
           {statusBar}
