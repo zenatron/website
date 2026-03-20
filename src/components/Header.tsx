@@ -36,13 +36,21 @@ export default function Header() {
           {/* Brand */}
           <a
             href="/"
-            className="group flex items-center gap-2.5 text-sm transition-colors duration-150"
-            style={{ color: T.fg }}
+            className="group flex items-center gap-2.5 rounded border px-3 py-1.5 text-sm transition-all duration-150"
+            style={{
+              color: T.fg,
+              backgroundColor: `${T.bg}80`,
+              borderColor: T.gutter,
+            }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = T.purple;
+              e.currentTarget.style.borderColor = `${T.purple}44`;
+              e.currentTarget.style.backgroundColor = `${T.purple}0a`;
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.color = T.fg;
+              e.currentTarget.style.borderColor = T.gutter;
+              e.currentTarget.style.backgroundColor = `${T.bg}80`;
             }}
           >
             <img

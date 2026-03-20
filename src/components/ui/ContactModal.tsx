@@ -46,8 +46,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       {
         name: "Email",
         icon: <FaEnvelope className="text-base" />,
-        href: "mailto:phil@underscore.games",
-        cmd: "mail phil@underscore.games",
+        href: "mailto:phil@pvi.sh",
+        cmd: "mail phil@pvi.sh",
       },
       {
         name: "GitHub",

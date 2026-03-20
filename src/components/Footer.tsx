@@ -2,6 +2,7 @@ import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { FaBluesky } from "react-icons/fa6";
 import CalendarPopup from "@/components/ui/Calendar";
 import { T } from "@/components/ui/TerminalWindow";
+import UgLogo from "@/components/icons/UgIcon";
 
 const NAV_LINKS = [
   { href: "/projects", label: "~/projects" },
@@ -21,6 +22,11 @@ const SOCIAL_LINKS = [
     icon: FaBluesky,
     label: "Bluesky",
   },
+  {
+    href: "https://underscore.games",
+    icon: UgLogo,
+    label: "Underscore Games",
+  }
 ];
 
 export default function Footer() {

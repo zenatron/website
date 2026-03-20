@@ -1,5 +1,4 @@
 import type { LinkItem } from "@/types/types";
-import UgIcon from "@/components/icons/UgIcon";
 
 export const links: LinkItem[] = [
   {
@@ -24,7 +23,7 @@ export const links: LinkItem[] = [
     title: "Underscore Games",
     url: "https://underscore.games",
     description: "Games & tools for game developers",
-    icon: UgIcon,
+    icon: "UgLogo",
   },
   {
     title: "Calendar",

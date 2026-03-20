@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(bun run:*)",
-      "Bash(npx astro:*)"
+      "Bash(npx astro:*)",
+      "Bash(bunx --bun astro build)"
     ]
   }
 }
