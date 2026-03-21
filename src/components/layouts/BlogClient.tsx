@@ -6,6 +6,12 @@ import { Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ContactModal from "@/components/ui/ContactModal";
 import TerminalWindow, { T, tA } from "@/components/ui/TerminalWindow";
+import {
+  CTA_TEXTS,
+  CTAButton,
+  TerminalDivider,
+  ScrollReveal,
+} from "@/components/ui/TerminalShared";
 
 interface BlogClientProps {
   posts: BlogPost[];
@@ -37,12 +43,20 @@ export default function BlogClient({ posts }: BlogClientProps) {
   const [suggestionIndex, setSuggestionIndex] = useState(0);
   const [tagQuery, setTagQuery] = useState(""); // tracks partial tag after #
 
+  const [ctaIndex, setCtaIndex] = useState(0);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const chipRef = useRef<HTMLSpanElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCtaIndex((prev) => (prev + 1) % CTA_TEXTS.length);
+    }, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   // Calculate total words across all posts
@@ -349,7 +363,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
   const hasActiveFilters = searchQuery !== "" || selectedTag !== null;
 
   return (
-    <div className="px-4 pb-8 pt-24 sm:px-6">
+    <div className="px-4 pb-16 pt-24 sm:pb-24 sm:pt-28 sm:px-6">
       <div className="mx-auto max-w-5xl">
         {/* Header */}
         <header className="mb-8 sm:mb-16 space-y-4 font-mono">
@@ -745,20 +759,18 @@ export default function BlogClient({ posts }: BlogClientProps) {
           )}
         </div>
 
-        {/* Mobile CTA */}
-        <div className="mt-8 text-center sm:hidden font-mono">
-          <button
-            type="button"
-            onClick={() => setIsModalOpen(true)}
-            className="rounded px-5 py-2 text-sm transition-all duration-150"
-            style={{
-              backgroundColor: tA(T.purple, "18"),
-              border: `1px solid ${tA(T.purple, "44")}`,
-              color: T.purple,
-            }}
-          >
-            <span style={{ color: T.green }}>$</span> contact ↵
-          </button>
+        {/* Bottom CTA */}
+        <div className="mt-16 text-center space-y-6">
+          <TerminalDivider />
+          <div className="font-mono text-sm" style={{ color: T.comment }}>
+            <span style={{ color: T.gutter }}>{"─".repeat(3)}</span>
+            {" "}EOF{" "}
+            <span style={{ color: T.gutter }}>{"─".repeat(3)}</span>
+          </div>
+          <CTAButton ctaIndex={ctaIndex} onClick={() => setIsModalOpen(true)} />
+          <p className="font-mono text-xs" style={{ color: T.comment }}>
+            <span style={{ color: T.green }}>exit 0</span> · thanks for reading
+          </p>
         </div>
       </div>
 

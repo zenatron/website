@@ -15,6 +15,7 @@ interface ContactOption {
   icon: React.ReactNode;
   href: string;
   cmd: string; // terminal-style command hint
+  cmdParts: { text: string; color: string }[]; // colored command segments
 }
 
 interface ContactModalProps {
@@ -34,36 +35,65 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         icon: <FaEnvelope className="text-base" />,
         href: "mailto:phil@pvi.sh",
         cmd: "mail phil@pvi.sh",
+        cmdParts: [
+          { text: "mail", color: T.fg },
+          { text: " phil@pvi.sh", color: T.yellow },
+        ],
       },
       {
         name: "GitHub",
         icon: <FaGithub className="text-base" />,
         href: "https://github.com/zenatron",
         cmd: "gh profile zenatron",
+        cmdParts: [
+          { text: "gh", color: T.fg },
+          { text: " profile", color: T.purple },
+          { text: " zenatron", color: T.yellow },
+        ],
       },
       {
         name: "LinkedIn",
         icon: <FaLinkedin className="text-base" />,
         href: "https://www.linkedin.com/in/philvishnevsky/",
         cmd: "open linkedin/philvishnevsky",
+        cmdParts: [
+          { text: "open", color: T.fg },
+          { text: " linkedin/philvishnevsky", color: T.yellow },
+        ],
       },
       {
         name: "Book a Call",
         icon: <FaCalendarAlt className="text-base" />,
         href: "https://z3n.me/phil",
         cmd: "cal schedule --with phil",
+        cmdParts: [
+          { text: "cal", color: T.fg },
+          { text: " schedule", color: T.fg },
+          { text: " --with", color: T.purple },
+          { text: " phil", color: T.yellow },
+        ],
       },
       {
         name: "Bluesky",
         icon: <FaBluesky className="text-base" />,
         href: "https://bsky.app/profile/zenatron.bsky.social",
         cmd: "bsky follow @zenatron",
+        cmdParts: [
+          { text: "bsky", color: T.fg },
+          { text: " follow", color: T.fg },
+          { text: " @zenatron", color: T.yellow },
+        ],
       },
       {
         name: "Discord",
         icon: <FaDiscord className="text-base" />,
         href: "https://discord.com/users/492872848025583616",
         cmd: "discord dm zenatron",
+        cmdParts: [
+          { text: "discord", color: T.fg },
+          { text: " dm", color: T.fg },
+          { text: " zenatron", color: T.yellow },
+        ],
       },
     ],
     []
@@ -126,7 +156,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.15 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
           onClick={onClose}
         >
           <motion.div
@@ -217,7 +247,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     onClick={onClose}
                     onMouseEnter={() => setHoveredIdx(idx)}
                     onMouseLeave={() => setHoveredIdx(null)}
-                    className="flex items-center gap-3 px-2 py-2 rounded transition-colors group"
+                    className="flex items-center gap-2 px-2 py-2 rounded transition-colors group"
                     style={{
                       backgroundColor:
                         hoveredIdx === idx
@@ -238,14 +268,9 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
                     {/* Icon */}
                     <span
-                      className="flex h-7 w-7 items-center justify-center rounded"
                       style={{
                         color:
                           hoveredIdx === idx ? T.purple : T.comment,
-                        backgroundColor:
-                          hoveredIdx === idx
-                            ? tA(T.purple, "20")
-                            : tA(T.fg, "08"),
                       }}
                     >
                       {option.icon}
@@ -264,11 +289,11 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                           {option.name}
                         </span>
                       </div>
-                      <div
-                        className="text-xs truncate"
-                        style={{ color: T.comment }}
-                      >
-                        $ {option.cmd}
+                      <div className="text-xs truncate">
+                        <span style={{ color: T.green }}>$</span>{" "}
+                        {option.cmdParts.map((part, j) => (
+                          <span key={j} style={{ color: part.color }}>{part.text}</span>
+                        ))}
                       </div>
                     </div>
 

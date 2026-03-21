@@ -125,7 +125,7 @@ function parseEvents(events: GitHubEvent[]): ActivityLine[] {
         break;
     }
 
-    if (lines.length >= 10) break;
+    if (lines.length >= 8) break;
   }
 
   return lines;
@@ -245,17 +245,19 @@ export default function GitHubActivity() {
                 borderBottom: isLast ? "none" : `1px solid ${tA(T.gutter, "30")}`,
               }}
             >
-              <span className="shrink-0" style={{ color: T.yellow }}>
-                {line.hash}
-              </span>
+              <div className="shrink-0 flex flex-col items-start leading-tight">
+                <span style={{ color: T.yellow }}>
+                  {line.hash}
+                </span>
+                <span className="text-[11px] tabular-nums" style={{ color: T.green }}>
+                  {line.date}
+                </span>
+              </div>
               <span className="flex-1 min-w-0 truncate" style={{ color: T.fg }}>
                 {line.message}
               </span>
               <span className="shrink-0 hidden sm:inline" style={{ color: typeColor }}>
                 {line.repo}
-              </span>
-              <span className="shrink-0 tabular-nums" style={{ color: T.comment }}>
-                {line.date}
               </span>
             </div>
           );

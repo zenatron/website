@@ -23,6 +23,10 @@ const THEME_LABELS: Record<string, string> = {
   gruvbox: "Gruvbox",
   nord: "Nord",
   catppuccin: "Catppuccin",
+  "high-contrast": "High Contrast",
+  "tokyo-night": "Tokyo Night",
+  "solarized-dark": "Solarized Dark",
+  monokai: "Monokai",
 };
 
 function navigate(path: string) {

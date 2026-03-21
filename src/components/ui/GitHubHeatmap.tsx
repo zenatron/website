@@ -230,9 +230,6 @@ export default function GitHubHeatmap() {
       >
         <span style={{ color: T.green }}>$</span>{" "}
         <span style={{ color: T.fg }}>git log</span>{" "}
-        <span style={{ color: T.purple }}>--graph</span>{" "}
-        <span style={{ color: T.purple }}>--since</span>=
-        <span style={{ color: T.yellow }}>"90d"</span>{" "}
         <span style={{ color: T.purple }}>--format</span>=
         <span style={{ color: T.yellow }}>heatmap</span>
       </div>

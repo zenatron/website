@@ -52,6 +52,26 @@ const THEMES: Record<string, Record<string, string>> = {
     green: "#a6e3a1", yellow: "#f9e2af", red: "#f38ba8", comment: "#585b70",
     white: "#cdd6f4", gutter: "#313244", cursor: "#f5e0dc",
   },
+  "high-contrast": {
+    bg: "#0a0a0a", fg: "#f5f5f5", purple: "#e78bf9", blue: "#6cb6ff",
+    green: "#56d364", yellow: "#e3b341", red: "#f47067", comment: "#9e9e9e",
+    white: "#ffffff", gutter: "#3d3d3d", cursor: "#ffffff",
+  },
+  "tokyo-night": {
+    bg: "#1a1b26", fg: "#a9b1d6", purple: "#bb9af7", blue: "#7aa2f7",
+    green: "#9ece6a", yellow: "#e0af68", red: "#f7768e", comment: "#565f89",
+    white: "#c0caf5", gutter: "#292e42", cursor: "#c0caf5",
+  },
+  "solarized-dark": {
+    bg: "#002b36", fg: "#839496", purple: "#d33682", blue: "#268bd2",
+    green: "#859900", yellow: "#b58900", red: "#dc322f", comment: "#586e75",
+    white: "#fdf6e3", gutter: "#073642", cursor: "#839496",
+  },
+  monokai: {
+    bg: "#272822", fg: "#f8f8f2", purple: "#ae81ff", blue: "#66d9ef",
+    green: "#a6e22e", yellow: "#e6db74", red: "#f92672", comment: "#75715e",
+    white: "#f8f8f0", gutter: "#3e3d32", cursor: "#f8f8f0",
+  },
 };
 
 const THEME_NAMES = Object.keys(THEMES);

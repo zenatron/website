@@ -104,7 +104,7 @@ export default function AboutPageContent() {
         transition={{ duration: 0.6, delay: 0.1 }}
       >
         {/* Hero Section */}
-        <section className="px-4 pb-16 pt-24 sm:pb-20 sm:px-6">
+        <section className="px-4 pb-16 pt-24 sm:pb-20 sm:pt-28 sm:px-6">
           <div className="mx-auto max-w-5xl">
             <div className="space-y-8 text-center">
               <div className="space-y-6">

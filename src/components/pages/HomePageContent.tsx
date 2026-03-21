@@ -224,6 +224,15 @@ interface PostData {
   excerpt?: string;
 }
 
+/* ── Project type → theme color ── */
+const TYPE_COLOR_MAP: Record<string, string> = {
+  data: T.blue,
+  web: T.green,
+  game: T.purple,
+  github: T.comment,
+  other: T.yellow,
+};
+
 /* ════════════════════════════════════════════════════════════════════
    HomePageContent — Full TUI conversion
    ════════════════════════════════════════════════════════════════════ */
@@ -539,14 +548,16 @@ export default function HomePageContent({
                                   {project.title}
                                 </span>
                               </span>
-                              {project.type && (
-                                <span
-                                  className="text-xs capitalize"
-                                  style={{ color: T.comment }}
-                                >
-                                  {project.type}
-                                </span>
-                              )}
+                              {project.type && (() => {
+                                const typeColor = TYPE_COLOR_MAP[project.type?.toLowerCase() ?? "other"] ?? T.yellow;
+                                return (
+                                  <span className="text-[11px] font-mono">
+                                    <span style={{ color: T.gutter }}>[</span>
+                                    <span style={{ color: typeColor }}>{project.type}</span>
+                                    <span style={{ color: T.gutter }}>]</span>
+                                  </span>
+                                );
+                              })()}
                             </div>
                             {project.description && (
                               <p
@@ -667,14 +678,22 @@ export default function HomePageContent({
                           }}
                         >
                           <div className="flex items-start sm:items-center gap-3">
+                            <div className="shrink-0 flex flex-col items-start leading-tight">
+                              <span
+                                className="text-xs md:text-sm"
+                                style={{ color: T.yellow }}
+                              >
+                                {hash}
+                              </span>
+                              <span
+                                className="text-[11px] tabular-nums"
+                                style={{ color: T.green }}
+                              >
+                                {formatDate(post.date)}
+                              </span>
+                            </div>
                             <span
-                              className="shrink-0"
-                              style={{ color: T.yellow }}
-                            >
-                              {hash}
-                            </span>
-                            <span
-                              className="flex-1 min-w-0 truncate font-medium transition-colors duration-150"
+                              className="flex-1 min-w-0 line-clamp-2 font-medium transition-colors duration-150"
                               style={{ color: T.fg }}
                             >
                               <span className="group-hover:hidden">
@@ -686,12 +705,6 @@ export default function HomePageContent({
                               >
                                 {post.title}
                               </span>
-                            </span>
-                            <span
-                              className="text-xs tabular-nums shrink-0"
-                              style={{ color: T.green }}
-                            >
-                              {formatDate(post.date)}
                             </span>
                             <span
                               className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 shrink-0"

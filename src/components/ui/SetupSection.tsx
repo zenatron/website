@@ -73,8 +73,8 @@ function NeofetchBlock({ spec }: { spec: FetchSpec }) {
   return (
     <div className="flex gap-4 sm:gap-6">
       {/* Icon column */}
-      <div className="hidden sm:flex flex-col items-center pt-1">
-        <Icon className="h-10 w-10 md:h-12 md:w-12" style={{ color: spec.iconColor }} />
+      <div className="flex flex-col items-center pt-1">
+        <Icon className="h-6 w-6 sm:h-10 sm:w-10 md:h-12 md:w-12" style={{ color: spec.iconColor }} />
       </div>
 
       {/* Info column */}

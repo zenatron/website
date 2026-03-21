@@ -7,6 +7,12 @@ import { SiJupyter } from "react-icons/si";
 import { cn } from "@/lib/utils";
 import ContactModal from "@/components/ui/ContactModal";
 import TerminalWindow, { T, tA } from "@/components/ui/TerminalWindow";
+import {
+  CTA_TEXTS,
+  CTAButton,
+  TerminalDivider,
+  ScrollReveal,
+} from "@/components/ui/TerminalShared";
 
 interface ProjectsClientProps {
   projects: ProjectCard[];
@@ -41,6 +47,14 @@ const getTypeLabel = (type: string | undefined): string => {
   }
 };
 
+const TYPE_COLOR_MAP: Record<string, string> = {
+  data: T.blue,
+  web: T.green,
+  game: T.purple,
+  github: T.comment,
+  other: T.yellow,
+};
+
 export default function ProjectsClient({ projects }: ProjectsClientProps) {
   const [searchParamsObj, setSearchParamsObj] = useState(() => new URLSearchParams(typeof window !== "undefined" ? window.location.search : ""));
   const initialTag = searchParamsObj.get("tag");
@@ -55,12 +69,20 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
   const [tagQuery, setTagQuery] = useState(""); // tracks partial tag after #
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [ctaIndex, setCtaIndex] = useState(0);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const chipRef = useRef<HTMLSpanElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCtaIndex((prev) => (prev + 1) % CTA_TEXTS.length);
+    }, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   // Sync URL → state on popstate (back/forward navigation)
@@ -306,7 +328,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
     searchQuery !== "" || selectedType !== null || selectedTag !== null;
 
   return (
-    <div className="px-4 pb-8 pt-24 sm:px-6">
+    <div className="px-4 pb-16 pt-24 sm:pb-24 sm:pt-28 sm:px-6">
       <div className="mx-auto max-w-5xl">
         {/* Header */}
         <header className="mb-8 sm:mb-16 space-y-4 font-mono">
@@ -657,12 +679,6 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                           >
                             {prefix}
                           </span>
-                          <span
-                            className="shrink-0"
-                            style={{ color: T.comment }}
-                          >
-                            {getTypeIcon(projectType)}
-                          </span>
                           <div className="flex-1 min-w-0">
                             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                               <span className="font-medium transition-colors duration-150" style={{ color: T.fg }}>
@@ -672,9 +688,16 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                               {project.metadata.featured && (
                                 <span className="text-[11px]" style={{ color: T.yellow }}>★</span>
                               )}
-                              <span className="text-xs capitalize" style={{ color: T.comment }}>
-                                {getTypeLabel(projectType)}
-                              </span>
+                              {(() => {
+                                const typeColor = TYPE_COLOR_MAP[projectType?.toLowerCase() ?? "other"] ?? T.yellow;
+                                return (
+                                  <span className="text-[11px] font-mono">
+                                    <span style={{ color: T.gutter }}>[</span>
+                                    <span style={{ color: typeColor }}>{getTypeLabel(projectType)}</span>
+                                    <span style={{ color: T.gutter }}>]</span>
+                                  </span>
+                                );
+                              })()}
                             </div>
                             {project.metadata.description && (
                               <p className="text-xs mt-1 truncate" style={{ color: T.comment }}>
@@ -715,20 +738,18 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
           )}
         </div>
 
-        {/* Mobile CTA */}
-        <div className="mt-8 text-center sm:hidden font-mono">
-          <button
-            type="button"
-            onClick={() => setIsModalOpen(true)}
-            className="rounded px-5 py-2 text-sm transition-all duration-150"
-            style={{
-              backgroundColor: tA(T.purple, "18"),
-              border: `1px solid ${tA(T.purple, "44")}`,
-              color: T.purple,
-            }}
-          >
-            <span style={{ color: T.green }}>$</span> contact ↵
-          </button>
+        {/* Bottom CTA */}
+        <div className="mt-16 text-center space-y-6">
+          <TerminalDivider />
+          <div className="font-mono text-sm" style={{ color: T.comment }}>
+            <span style={{ color: T.gutter }}>{"─".repeat(3)}</span>
+            {" "}EOF{" "}
+            <span style={{ color: T.gutter }}>{"─".repeat(3)}</span>
+          </div>
+          <CTAButton ctaIndex={ctaIndex} onClick={() => setIsModalOpen(true)} />
+          <p className="font-mono text-xs" style={{ color: T.comment }}>
+            <span style={{ color: T.green }}>exit 0</span> · thanks for browsing
+          </p>
         </div>
       </div>
 
