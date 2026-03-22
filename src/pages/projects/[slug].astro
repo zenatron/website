@@ -1,0 +1,249 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import BackToTopButton from "@/components/ui/BackToTopButton";
+import KatexStyles from "@/components/KatexStyles";
+import GitHubReadme from "@/components/ui/GitHubReadme";
+import HtmlRenderer from "@/components/HtmlRenderer";
+import {
+  ProjectHeader,
+  ProjectFooter,
+  ProjectDownloadsBlock,
+} from "@/components/layouts/ProjectLayout";
+import { getGithubRepos } from "@/lib/github";
+
+import fs from "node:fs";
+import path from "node:path";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("projects");
+  const mdxPaths = entries.map((entry) => ({
+    params: { slug: entry.data.slug || entry.slug },
+    props: { type: "mdx" as const, entry },
+  }));
+
+  const githubProjects = await getGithubRepos();
+  const githubPaths = githubProjects.map((project) => ({
+    params: { slug: project.metadata.slug },
+    props: { type: "github" as const, project },
+  }));
+
+  return [...mdxPaths, ...githubPaths];
+}
+
+const props = Astro.props;
+let metadata: any;
+let Content: any = null;
+let htmlContent = "";
+let links: any = {};
+let downloads: any[] = [];
+
+if (props.type === "mdx") {
+  const entry = props.entry;
+  const rendered = await entry.render();
+  Content = rendered.Content;
+  metadata = {
+    title: entry.data.title || entry.slug,
+    description: entry.data.description || "",
+    type: entry.data.type || "other",
+    slug: entry.data.slug || entry.slug,
+    date: entry.data.date,
+    tags: entry.data.tags || [],
+    image: entry.data.image,
+    images: entry.data.images,
+    video: entry.data.video,
+    videos: entry.data.videos,
+    featured: entry.data.featured || false,
+    contentSource: entry.data.contentSource || "mdx",
+    notebookHtml: entry.data.notebookHtml,
+    githubRepo: entry.data.githubRepo,
+  };
+  links = {
+    github: entry.data.github,
+    live: entry.data.live || entry.data.demoUrl,
+  };
+  downloads = entry.data.downloads || [];
+
+  if (entry.data.notebookHtml) {
+    const filename = entry.data.notebookHtml.endsWith(".html")
+      ? entry.data.notebookHtml
+      : `${entry.data.notebookHtml}.html`;
+    const htmlPath = path.join(process.cwd(), "public/downloads", filename);
+    if (fs.existsSync(htmlPath)) {
+      htmlContent = fs.readFileSync(htmlPath, "utf8");
+    }
+  }
+} else {
+  const project = props.project;
+  metadata = project.metadata;
+  links = project.links;
+}
+
+if (!metadata) {
+  return Astro.redirect("/projects");
+}
+
+/* Serialisable subsets for the React islands */
+const headerMeta = {
+  title: metadata.title,
+  description: metadata.description,
+  type: metadata.type,
+  slug: metadata.slug,
+  date: metadata.date instanceof Date ? metadata.date.toISOString() : metadata.date,
+  tags: metadata.tags,
+};
+---
+
+<BaseLayout title={`${metadata.title} | Phil Vishnevsky`} ogSlug={`projects/${metadata.slug}`}>
+  <div class="relative flex min-h-screen flex-col">
+    <KatexStyles client:load />
+    <Header client:load />
+    <main class="flex-1 px-4 py-10 pt-20 sm:px-6">
+      <div class="max-w-5xl mx-auto">
+        {/* ── Terminal header (React island) ── */}
+        <ProjectHeader
+          metadata={headerMeta}
+          links={links}
+          downloads={downloads}
+          client:load
+        />
+
+        {/* ── Content body — server-rendered with TUI border ── */}
+        <div
+          class="project-body border-x px-4 sm:px-6 py-6"
+          style={`border-color: var(--t-gutter);`}
+        >
+          {/* Featured Image */}
+          {metadata.image && (
+            <div
+              class="mb-8 rounded-lg overflow-hidden border"
+              style="border-color: var(--t-gutter);"
+            >
+              <img src={metadata.image} alt={metadata.title} class="w-full h-auto" />
+            </div>
+          )}
+
+          {/* Featured Video */}
+          {metadata.video && (
+            <div
+              class="mb-8 rounded-lg overflow-hidden border aspect-video"
+              style="border-color: var(--t-gutter);"
+            >
+              {metadata.video.includes("youtube.com") || metadata.video.includes("youtu.be") ? (
+                <iframe
+                  src={metadata.video.replace("watch?v=", "embed/")}
+                  title={metadata.title}
+                  class="w-full h-full"
+                  allowfullscreen
+                ></iframe>
+              ) : (
+                <video src={metadata.video} controls class="w-full h-full">
+                  Your browser does not support the video tag.
+                </video>
+              )}
+            </div>
+          )}
+
+          {/* Downloads block (React island) */}
+          {downloads && downloads.length > 0 && (
+            <ProjectDownloadsBlock downloads={downloads} client:load />
+          )}
+
+          {/* MDX Content */}
+          {(metadata.contentSource === "mdx" || metadata.contentSource === "notebook") && Content && (
+            <div class="mdx-content w-full max-w-3xl mx-auto mb-8">
+              <Content />
+            </div>
+          )}
+
+          {/* GitHub README for enhanced projects */}
+          {metadata.contentSource === "mdx" && metadata.githubRepo && (
+            <div class="mt-8 w-full">
+              <GitHubReadme repo={metadata.githubRepo} client:load />
+            </div>
+          )}
+
+          {/* GitHub README Only */}
+          {metadata.contentSource === "github" && metadata.githubRepo && (
+            <div class="w-full">
+              <GitHubReadme repo={metadata.githubRepo} client:load />
+            </div>
+          )}
+
+          {/* Raw HTML */}
+          {metadata.contentSource === "html" && htmlContent && (
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+              <HtmlRenderer htmlContent={htmlContent} title={metadata.title} client:load />
+            </div>
+          )}
+
+          {/* Image Gallery */}
+          {metadata.images && metadata.images.length > 0 && (
+            <div class="mt-8">
+              <div
+                class="text-xs sm:text-sm mb-4 font-mono"
+                style="color: var(--t-comment);"
+              >
+                <span style="color: var(--t-green);">$</span>{" "}
+                <span style="color: var(--t-fg);">ls</span>{" "}
+                <span style="color: var(--t-yellow);">./gallery/</span>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {metadata.images.map((image: string, index: number) => (
+                  <div
+                    class="rounded-lg overflow-hidden border"
+                    style="border-color: var(--t-gutter);"
+                  >
+                    <img src={image} alt={`${metadata.title} - Image ${index + 1}`} class="w-full h-auto" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Video Gallery */}
+          {metadata.videos && metadata.videos.length > 0 && (
+            <div class="mt-8">
+              <div
+                class="text-xs sm:text-sm mb-4 font-mono"
+                style="color: var(--t-comment);"
+              >
+                <span style="color: var(--t-green);">$</span>{" "}
+                <span style="color: var(--t-fg);">ls</span>{" "}
+                <span style="color: var(--t-yellow);">./videos/</span>
+              </div>
+              <div class="grid grid-cols-1 gap-4">
+                {metadata.videos.map((video: string, index: number) => (
+                  <div
+                    class="rounded-lg overflow-hidden border aspect-video"
+                    style="border-color: var(--t-gutter);"
+                  >
+                    {video.includes("youtube.com") || video.includes("youtu.be") ? (
+                      <iframe
+                        src={video.replace("watch?v=", "embed/")}
+                        title={`${metadata.title} - Video ${index + 1}`}
+                        class="w-full h-full"
+                        allowfullscreen
+                      ></iframe>
+                    ) : (
+                      <video src={video} controls class="w-full h-full">
+                        Your browser does not support the video tag.
+                      </video>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ── Terminal footer (React island) ── */}
+        <ProjectFooter tags={metadata.tags || []} client:load />
+      </div>
+    </main>
+    <Footer client:load />
+    <BackToTopButton client:load />
+  </div>
+</BaseLayout>

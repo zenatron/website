@@ -1,20 +1,19 @@
-"use client";
-
-import Link from "next/link";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { FaBluesky } from "react-icons/fa6";
 import CalendarPopup from "@/components/ui/Calendar";
+import { T } from "@/components/ui/TerminalWindow";
+import UgLogo from "@/components/icons/UgIcon";
 
 const NAV_LINKS = [
-  { href: "/projects", label: "Projects" },
-  { href: "/blog", label: "Blog" },
-  { href: "/about", label: "About" },
+  { href: "/projects", label: "~/projects" },
+  { href: "/blog", label: "~/blog" },
+  { href: "/about", label: "~/about" },
 ];
 
 const SOCIAL_LINKS = [
   { href: "https://github.com/zenatron", icon: FaGithub, label: "GitHub" },
   {
-    href: "https://linkedin.com/in/philipvishnevsky",
+    href: "https://linkedin.com/in/philvishnevsky",
     icon: FaLinkedin,
     label: "LinkedIn",
   },
@@ -23,44 +22,67 @@ const SOCIAL_LINKS = [
     icon: FaBluesky,
     label: "Bluesky",
   },
+  {
+    href: "https://underscore.games",
+    icon: UgLogo,
+    label: "Underscore Games",
+  }
 ];
 
 export default function Footer() {
   return (
-    <footer className="mt-auto border-t border-white/[0.04]">
-      <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
+    <footer
+      className="mt-auto border-t font-mono"
+      style={{ backgroundColor: T.bg, borderColor: T.gutter }}
+    >
+      <div className="mx-auto max-w-5xl px-4 py-4 sm:px-6 sm:py-5">
         <div className="flex flex-col items-center justify-between gap-3 sm:flex-row sm:gap-6">
-          {/* Left: Copyright */}
-          <span className="text-xs text-muted-text">
-            © {new Date().getFullYear()} Phil Vishnevsky
+          {/* Copyright */}
+          <span className="text-xs" style={{ color: T.comment }}>
+            <span style={{ color: T.purple }}>//</span> ©{" "}
+            {new Date().getFullYear()} phil vishnevsky
           </span>
 
-          {/* Center: Navigation */}
+          {/* Navigation */}
           <nav className="flex items-center gap-4 sm:gap-6">
             {NAV_LINKS.map((link) => (
-              <Link
+              <a
                 key={link.href}
                 href={link.href}
-                className="text-sm text-secondary-text transition-colors hover:text-accent"
+                className="text-xs transition-colors duration-150"
+                style={{ color: T.comment }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = T.purple;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = T.comment;
+                }}
               >
                 {link.label}
-              </Link>
+              </a>
             ))}
           </nav>
 
-          {/* Right: Social Icons + Calendar */}
+          {/* Social Icons + Calendar */}
           <div className="flex items-center gap-3">
             {SOCIAL_LINKS.map((social) => (
-              <Link
+              <a
                 key={social.label}
                 href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-text transition-colors hover:text-accent"
+                className="transition-colors duration-150"
+                style={{ color: T.comment }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = T.purple;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = T.comment;
+                }}
                 aria-label={social.label}
               >
-                <social.icon className="h-4 w-4" />
-              </Link>
+                <social.icon className="h-3.5 w-3.5" />
+              </a>
             ))}
             <CalendarPopup />
           </div>

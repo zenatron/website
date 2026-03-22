@@ -1,6 +1,3 @@
-import { ReactNode } from "react";
-import { Heading } from "@/utils/extractHeadings";
-
 export type BlogMetadata = {
   title: string;
   date: string;
@@ -11,10 +8,10 @@ export type BlogMetadata = {
 
 export type BlogPost = {
   slug: string;
-  content: ReactNode;
+  content?: any;
   searchableContent: string; // Plain text version for searching
   metadata: BlogMetadata;
-  headings: Heading[]; // Table of contents headings
+  headings?: any[]; // Table of contents headings
 };
 
 export type ProjectTypes = "data" | "web" | "game" | "other";
@@ -75,7 +72,7 @@ export type DataScienceProject = ProjectCard & {
 // New type for full project with content (for individual project pages)
 export type Project = {
   metadata: ProjectMetadata;
-  content?: ReactNode; // MDX compiled content
+  content?: any; // MDX compiled content
   searchableContent?: string; // Plain text for search
   htmlContent?: string; // HTML content for notebooks
   readmeContent?: string; // Markdown content from GitHub README

@@ -1,0 +1,97 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import BackToTopButton from "@/components/ui/BackToTopButton";
+import ReadingProgress from "@/components/ui/ReadingProgress";
+import TableOfContents from "@/components/blog/TableOfContents";
+import KatexStyles from "@/components/KatexStyles";
+import { BlogPostHeader, BlogPostFooter } from "@/components/layouts/BlogPostLayout";
+import { getSuggestedPosts } from "@/lib/blog";
+
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const rendered = await post.render();
+const Content = rendered.Content;
+const headings = rendered.headings ?? [];
+
+const suggestedPostEntries = await getSuggestedPosts(post.slug, 3);
+const suggestedPosts = suggestedPostEntries.map((p: any) => ({
+  slug: p.slug,
+  metadata: {
+    title: p.data.title,
+    date: p.data.date,
+    readingTime: p.data.readingTime,
+    excerpt: p.data.excerpt || "",
+    tags: p.data.tags || [],
+  },
+}));
+---
+
+<BaseLayout title={`${post.data.title} | Phil Vishnevsky`} ogSlug={`blog/${post.slug}`}>
+  <div class="relative flex min-h-screen flex-col">
+    <KatexStyles client:load />
+    <Header client:load />
+    <ReadingProgress readingTime={post.data.readingTime} client:load />
+
+    <main class="px-4 py-10 pt-20 sm:px-6">
+      <div class="max-w-5xl mx-auto">
+        <div class="lg:flex lg:gap-8 lg:items-start">
+          <aside class="hidden lg:block lg:w-64 lg:flex-shrink-0 lg:sticky lg:top-24">
+            {headings.length > 0 && (
+              <TableOfContents
+                headings={headings.map((h) => ({ id: h.slug, text: h.text, level: h.depth }))}
+                className="desktop-only"
+                client:load
+              />
+            )}
+          </aside>
+
+          <article class="w-full max-w-4xl mx-auto lg:mx-0 lg:flex-1">
+            <!-- TUI Terminal Header -->
+            <BlogPostHeader
+              title={post.data.title}
+              slug={post.slug}
+              date={post.data.date}
+              readingTime={post.data.readingTime}
+              tags={post.data.tags}
+            />
+
+            <!-- Mobile TOC -->
+            {headings.length > 0 && (
+              <TableOfContents
+                headings={headings.map((h) => ({ id: h.slug, text: h.text, level: h.depth }))}
+                className="mobile-only"
+                client:load
+              />
+            )}
+
+            <!-- Prose content -->
+            <div class="mdx-content w-full max-w-3xl">
+              <Content />
+            </div>
+
+            <!-- TUI Terminal Footer -->
+            <div class="w-full max-w-3xl">
+              <BlogPostFooter
+                tags={post.data.tags}
+                suggestedPosts={suggestedPosts}
+              />
+            </div>
+          </article>
+        </div>
+      </div>
+    </main>
+    <Footer client:load />
+    <BackToTopButton client:load />
+  </div>
+</BaseLayout>

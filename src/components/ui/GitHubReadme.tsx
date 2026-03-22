@@ -1,11 +1,9 @@
-"use client";
-
 import { motion } from "framer-motion";
 import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
-import Link from "next/link";
 import { useState, useEffect } from "react";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
+import TerminalWindow, { T } from "@/components/ui/TerminalWindow";
 
 interface GitHubReadmeData {
   htmlContent: string;
@@ -14,12 +12,12 @@ interface GitHubReadmeData {
 }
 
 interface GitHubReadmeProps {
-  repo?: string; // Format: "owner/repo", defaults to "zenatron/zenatron"
-  processSections?: boolean; // Whether to process sections between separators
+  repo?: string;
+  processSections?: boolean;
 }
 
 export default function GitHubReadme({
-  repo = "zenatron/zenatron", // Default to your profile README
+  repo = "zenatron/zenatron",
   processSections = false,
 }: GitHubReadmeProps) {
   const [readmeData, setReadmeData] = useState<GitHubReadmeData>({
@@ -31,7 +29,6 @@ export default function GitHubReadme({
   useEffect(() => {
     const fetchReadme = async () => {
       try {
-        // Fetch the raw README content from GitHub
         const response = await fetch(
           `https://raw.githubusercontent.com/${repo}/main/README.md`
         );
@@ -41,10 +38,8 @@ export default function GitHubReadme({
         }
 
         const rawContent = await response.text();
-
         let processedContent = rawContent;
 
-        // Optionally remove sections between separators (for personal README)
         if (processSections) {
           const firstSeparatorIndex = rawContent.indexOf("---");
           const contentAfterFirst =
@@ -59,16 +54,8 @@ export default function GitHubReadme({
               : contentAfterFirst;
         }
 
-        // Configure marked to handle HTML and GitHub-flavored markdown
-        marked.setOptions({
-          gfm: true,
-          breaks: true,
-        });
-
-        // Convert markdown to HTML
+        marked.setOptions({ gfm: true, breaks: true });
         const htmlContent = await marked(processedContent);
-
-        // Sanitize the HTML content
         const sanitizedHtml = DOMPurify.sanitize(htmlContent);
 
         setReadmeData({
@@ -91,78 +78,103 @@ export default function GitHubReadme({
 
   if (readmeData.loading) {
     return (
-      <div className="space-y-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="relative border border-white/[0.06] rounded-2xl overflow-hidden"
-        >
-          <div className="p-8 text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent mx-auto mb-4"></div>
-            <p className="text-muted-text">{"Loading GitHub README..."}</p>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <TerminalWindow title={`~/github/${repo}/README.md`}>
+          <div className="font-mono text-sm space-y-2">
+            <div>
+              <span style={{ color: T.green }}>$</span>{" "}
+              <span style={{ color: T.fg }}>curl</span>{" "}
+              <span style={{ color: T.yellow }}>github.com/{repo}/README.md</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <motion.span
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                className="inline-block"
+                style={{ color: T.yellow }}
+              >
+                ⠋
+              </motion.span>
+              <span style={{ color: T.comment }}>Fetching README...</span>
+            </div>
           </div>
-        </motion.div>
-      </div>
+        </TerminalWindow>
+      </motion.div>
     );
   }
 
   if (readmeData.error) {
     return (
-      <div className="space-y-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="relative border border-white/[0.06] rounded-2xl overflow-hidden"
-        >
-          <div className="p-8 text-center">
-            <p className="text-red-400 mb-4">
-              {"Failed to load GitHub README."}
-            </p>
-            <Link
-              href="https://github.com/zenatron"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-accent hover:text-accent/80 transition-colors"
-            >
-              {"View on GitHub"}
-            </Link>
-          </div>
-        </motion.div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-8">
-      {/* GitHub README Embed */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="relative border border-white/[0.06] rounded-2xl overflow-hidden"
       >
-        {/* Header Bar */}
-        <div className="flex items-center justify-between p-4 bg-white/[0.02] border-b border-white/[0.06]">
-          <div className="flex items-center gap-3">
-            <FaGithub className="text-xl text-accent" />
-            <span className="font-semibold text-primary-text">{repo}</span>
+        <TerminalWindow title={`~/github/${repo}/README.md`}>
+          <div className="font-mono text-sm space-y-2">
+            <div>
+              <span style={{ color: T.green }}>$</span>{" "}
+              <span style={{ color: T.fg }}>curl</span>{" "}
+              <span style={{ color: T.yellow }}>github.com/{repo}/README.md</span>
+            </div>
+            <div>
+              <span style={{ color: T.red }}>error:</span>{" "}
+              <span style={{ color: T.fg }}>Failed to load GitHub README</span>
+            </div>
+            <div>
+              <span style={{ color: T.comment }}>{"  "}try: </span>
+              <a
+                href={`https://github.com/${repo}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline transition-colors hover:brightness-125"
+                style={{ color: T.blue }}
+              >
+                open in browser
+              </a>
+            </div>
           </div>
-          <Link
-            href={`https://github.com/${repo}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-nav"
-          >
-            <FaExternalLinkAlt className="text-xs" />
-            {"View on GitHub"}
-          </Link>
-        </div>
+        </TerminalWindow>
+      </motion.div>
+    );
+  }
 
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      <TerminalWindow
+        title={`~/github/${repo}/README.md`}
+        noPadding
+        statusBar={
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <FaGithub style={{ color: T.fg }} />
+              <span>{repo}</span>
+            </div>
+            <a
+              href={`https://github.com/${repo}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:brightness-150"
+            >
+              [<span style={{ color: T.green }}>$</span>{" "}
+              <span style={{ color: T.fg }}>open</span>{" "}
+              <span style={{ color: T.purple }}>--github</span>{" "}
+              <span style={{ color: T.fg }}>↗</span>]
+            </a>
+          </div>
+        }
+      >
         {/* README Content */}
         <div
-          className="p-6 md:p-8 prose prose-invert max-w-none overflow-x-auto
+          className="p-5 sm:p-6 prose prose-invert max-w-none overflow-x-auto
             [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-primary-text [&_h2]:mb-4 [&_h2]:mt-6 [&_h2:first-child]:mt-0 [&_h2]:flex [&_h2]:items-center [&_h2]:gap-2
             [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-primary-text [&_h3]:mb-3 [&_h3]:mt-5 [&_h3:first-child]:mt-0 [&_h3]:flex [&_h3]:items-center [&_h3]:gap-2
             [&_p]:text-muted-text [&_p]:mb-4 [&_p]:leading-relaxed
@@ -176,7 +188,7 @@ export default function GitHubReadme({
             [&_th]:px-4 [&_th]:py-3 [&_th]:text-center [&_th]:font-semibold [&_th]:text-primary-text [&_th]:whitespace-nowrap"
           dangerouslySetInnerHTML={{ __html: readmeData.htmlContent }}
         />
-      </motion.div>
-    </div>
+      </TerminalWindow>
+    </motion.div>
   );
 }

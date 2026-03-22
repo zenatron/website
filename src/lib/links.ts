@@ -1,5 +1,4 @@
-import { LinkItem } from "@/types/types";
-import UgIcon from "@/components/icons/UgIcon";
+import type { LinkItem } from "@/types/types";
 
 export const links: LinkItem[] = [
   {
@@ -10,7 +9,7 @@ export const links: LinkItem[] = [
   },
   {
     title: "LinkedIn",
-    url: "https://www.linkedin.com/in/philipvishnevsky/",
+    url: "https://www.linkedin.com/in/philvishnevsky/",
     description: "My professional network and profile",
     icon: "FaLinkedin",
   },
@@ -24,7 +23,7 @@ export const links: LinkItem[] = [
     title: "Underscore Games",
     url: "https://underscore.games",
     description: "Games & tools for game developers",
-    icon: UgIcon,
+    icon: "UgLogo",
   },
   {
     title: "Calendar",

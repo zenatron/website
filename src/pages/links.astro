@@ -1,0 +1,17 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import LinksClient from "@/components/layouts/LinksClient";
+import { links } from "@/lib/links";
+---
+
+<BaseLayout title="Links | Phil Vishnevsky" description="A collection of my important links." ogSlug="links">
+  <div class="relative flex min-h-screen flex-col">
+    <Header client:load />
+    <main class="flex-1">
+      <LinksClient links={links} client:load />
+    </main>
+    <Footer client:load />
+  </div>
+</BaseLayout>

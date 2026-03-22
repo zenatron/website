@@ -1,0 +1,61 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import HomePageContent from "@/components/pages/HomePageContent";
+import { getAllProjects } from "@/lib/projects";
+import { getAllBlogPosts } from "@/lib/blog";
+
+const [projects, posts] = await Promise.all([
+  getAllProjects(),
+  getAllBlogPosts(),
+]);
+
+const recentProjects = projects
+  .filter((p) => p.metadata.date)
+  .sort(
+    (a, b) =>
+      new Date(b.metadata.date!).getTime() -
+      new Date(a.metadata.date!).getTime()
+  )
+  .slice(0, 3)
+  .map((p) => ({
+    title: p.metadata.title,
+    slug: p.metadata.slug,
+    type: p.metadata.type,
+    description: p.metadata.description,
+    tags: p.metadata.tags,
+    date:
+      p.metadata.date instanceof Date
+        ? p.metadata.date.toISOString()
+        : String(p.metadata.date),
+  }));
+
+const recentPosts = posts
+  .sort(
+    (a: any, b: any) =>
+      new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+  )
+  .slice(0, 3)
+  .map((p: any) => ({
+    title: p.data.title,
+    slug: p.slug,
+    date:
+      p.data.date instanceof Date
+        ? p.data.date.toISOString()
+        : String(p.data.date),
+    excerpt: p.data.excerpt || "",
+  }));
+---
+
+<BaseLayout>
+  <div class="relative flex min-h-screen flex-col">
+    <Header client:load />
+    <HomePageContent
+      client:load
+      projects={recentProjects}
+      posts={recentPosts}
+    />
+    <Footer client:load />
+  </div>
+</BaseLayout>

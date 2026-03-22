@@ -1,7 +1,5 @@
-"use client";
-
 import ProjectsClient from "@/components/layouts/ProjectsClient";
-import { ProjectCard } from "@/types/types";
+import type { ProjectCard } from "@/types/types";
 
 export default function ProjectsLayout({
   projects,

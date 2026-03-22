@@ -1,6 +1,4 @@
-"use client";
-
-import { BlogPost } from "@/types/types";
+import type { BlogPost } from "@/types/types";
 import BlogClient from "@/components/layouts/BlogClient";
 
 export default function BlogLayout({ posts }: { posts: BlogPost[] }) {

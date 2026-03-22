@@ -1,16 +1,14 @@
-"use client";
-
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useRef, useEffect, useState } from "react";
+import { motion, useInView } from "framer-motion";
 import {
   FaDownload,
   FaExternalLinkAlt,
-  FaBriefcase,
   FaGraduationCap,
   FaRocket,
   FaGamepad,
   FaLaptopCode,
 } from "react-icons/fa";
+import TerminalWindow, { T, tA } from "@/components/ui/TerminalWindow";
 
 const currentYear = new Date().getFullYear();
 
@@ -20,34 +18,98 @@ const TIMELINE_EVENTS = [
     title: "Embedded, AI & Game Development",
     description: "Building AI tools and indie games",
     icon: FaGamepad,
-    type: "work",
+    type: "work" as const,
   },
   {
     year: "2023-Present",
     title: "Full-Stack Engineering",
     description: "Web apps, containers, and embedded",
     icon: FaLaptopCode,
-    type: "work",
+    type: "work" as const,
   },
   {
     year: "2022-2025",
     title: "UNC Charlotte",
     description: "BS, Computer Science",
     icon: FaGraduationCap,
-    type: "education",
+    type: "education" as const,
   },
   {
     year: "2019",
     title: "First Lines of Code",
-    description: "Self-taught programming journey begins",
+    description: "Self-taught coding journey begins",
     icon: FaRocket,
-    type: "milestone",
+    type: "milestone" as const,
   },
 ];
 
-export default function ResumeSection() {
-  const [isHovered, setIsHovered] = useState(false);
+const TYPE_COLORS: Record<string, { text: string; label: string }> = {
+  work: { text: T.purple, label: "work" },
+  education: { text: T.blue, label: "edu" },
+  milestone: { text: T.yellow, label: "milestone" },
+};
 
+const STATS = [
+  { label: "years_coding", numValue: currentYear - 2019, suffix: "+", color: T.purple },
+  { label: "projects", numValue: 15, suffix: "+", color: T.blue },
+  { label: "technologies", numValue: 11, suffix: "+", color: T.green },
+];
+
+/* ── Animated count-up stat with TUI progress bar ── */
+function AnimatedStat({
+  numValue,
+  suffix,
+  label,
+  color,
+  maxValue = 20,
+}: {
+  numValue: number;
+  suffix: string;
+  label: string;
+  color: string;
+  maxValue?: number;
+}) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-40px" });
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    if (!isInView) return;
+    const duration = 1200;
+    const startTime = performance.now();
+
+    const tick = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplay(Math.round(eased * numValue));
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [isInView, numValue]);
+
+  const filledBlocks = Math.round((display / maxValue) * 10);
+  const emptyBlocks = 10 - filledBlocks;
+
+  return (
+    <div ref={ref} className="font-mono text-xs sm:text-sm">
+      <div className="flex items-baseline justify-between mb-1">
+        <span style={{ color: T.comment }}>{label}</span>
+        <span className="tabular-nums font-bold" style={{ color }}>
+          {display}{suffix}
+        </span>
+      </div>
+      <div className="flex items-center gap-0.5">
+        <span style={{ color: T.gutter }}>[</span>
+        <span style={{ color }}>{"█".repeat(filledBlocks)}</span>
+        <span style={{ color: T.gutter }}>{"░".repeat(emptyBlocks)}</span>
+        <span style={{ color: T.gutter }}>]</span>
+      </div>
+    </div>
+  );
+}
+
+export default function ResumeSection() {
   const handleDownload = () => {
     const link = document.createElement("a");
     link.href = "/downloads/Resume_Phil_Vishnevsky.pdf";
@@ -62,84 +124,155 @@ export default function ResumeSection() {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr,1.2fr] lg:gap-16">
-      {/* Left Side: Interactive Timeline */}
+    <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr,1.2fr] lg:gap-12">
+      {/* Left Side: Timeline + Stats */}
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
-        className="relative"
       >
-        <h3 className="mb-8 text-lg font-medium text-primary-text">
-          My Journey
-        </h3>
+        <TerminalWindow
+          title="~/journey/timeline.log"
+          statusBar={
+            <div className="flex justify-between">
+              <span>{TIMELINE_EVENTS.length} logs</span>
+              <span>LOG</span>
+            </div>
+          }
+        >
+          {/* Tree-style timeline */}
+          <div className="font-mono text-xs sm:text-sm" style={{ color: T.fg }}>
+            {TIMELINE_EVENTS.map((event, index) => {
+              const isLast = index === TIMELINE_EVENTS.length - 1;
+              const typeColor = TYPE_COLORS[event.type];
+              /* Desktop: last item uses └─, others ├─ (all content on 2 lines) */
+              const prefix = isLast ? "└─ " : "├─ ";
+              const linePrefix = isLast ? "   " : "│  ";
+              /* Mobile: last item still needs │ on continuation lines,
+                 with └─ only on the final line (the tag) */
+              const mobilePrefix = isLast ? "│  " : "├─ ";
+              const mobileLinePrefix = "│  ";
+              const mobileLastLine = isLast ? "└─ " : "│  ";
 
-        {/* Timeline */}
-        <div className="relative">
-          {/* Vertical line */}
-          <div className="absolute left-[19px] top-2 bottom-2 w-px bg-gradient-to-b from-accent/50 via-accent/20 to-transparent" />
-
-          {/* Events */}
-          <div className="space-y-8">
-            {TIMELINE_EVENTS.map((event, index) => (
-              <motion.div
-                key={event.year}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-                className="group relative flex gap-6"
-              >
-                {/* Icon node */}
-                <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/[0.08] bg-primary-bg transition-all duration-300 group-hover:border-accent/50 group-hover:bg-accent/10">
-                  <event.icon className="h-4 w-4 text-muted-text transition-colors group-hover:text-accent" />
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 pb-2">
-                  <div className="mb-1 flex items-baseline gap-3">
-                    <span className="text-2xl font-bold tabular-nums text-primary-text transition-colors group-hover:text-accent">
+              return (
+                <motion.div
+                  key={event.year}
+                  initial={{ opacity: 0, x: -16 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{
+                    duration: 0.4,
+                    delay: index * 0.1,
+                    ease: [0.25, 0.46, 0.45, 0.94],
+                  }}
+                  className="group cursor-default"
+                >
+                  {/* Line 1: prefix + year (+ title on desktop) */}
+                  <div className="hidden sm:flex items-baseline">
+                    <span className="shrink-0" style={{ color: T.gutter }}>{prefix}</span>
+                    <span
+                      className="font-bold tabular-nums shrink-0"
+                      style={{ color: typeColor.text }}
+                    >
                       {event.year}
                     </span>
+                    <span style={{ color: T.gutter }}>{" — "}</span>
+                    <span style={{ color: T.fg }}>{event.title}</span>
+                  </div>
+
+                  {/* Desktop: description + type tag */}
+                  <div className="hidden sm:flex items-center">
+                    <span className="shrink-0" style={{ color: T.gutter }}>{linePrefix}</span>
+                    <span style={{ color: T.comment }}>{event.description}</span>
+                    <span style={{ color: T.gutter }}>{" ["}</span>
+                    <span style={{ color: typeColor.text }}>{typeColor.label}</span>
+                    <span style={{ color: T.gutter }}>{"]"}</span>
+                  </div>
+
+                  {/* Desktop: connector */}
+                  {!isLast && <div className="hidden sm:block" style={{ color: T.gutter }}>│</div>}
+
+                  {/* ── Mobile: stacked with tree running through all lines ── */}
+
+                  {/* Mobile line 1: year */}
+                  <div className="sm:hidden flex items-baseline">
+                    <span className="shrink-0" style={{ color: T.gutter }}>{mobilePrefix}</span>
                     <span
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${
-                        event.type === "education"
-                          ? "bg-blue-500/10 text-blue-400"
-                          : event.type === "milestone"
-                            ? "bg-amber-500/10 text-amber-400"
-                            : "bg-accent/10 text-accent"
-                      }`}
+                      className="font-bold tabular-nums shrink-0"
+                      style={{ color: typeColor.text }}
                     >
-                      {event.type}
+                      {event.year}
                     </span>
                   </div>
-                  <h4 className="mb-1 font-medium text-primary-text">
-                    {event.title}
-                  </h4>
-                  <p className="text-sm text-muted-text">{event.description}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
 
-          {/* "More to come" indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.5 }}
-            className="mt-8 flex items-center gap-4 pl-[52px]"
+                  {/* Mobile line 2: title */}
+                  <div className="sm:hidden flex">
+                    <span className="shrink-0" style={{ color: T.gutter }}>{mobileLinePrefix}</span>
+                    <span style={{ color: T.fg }}>{event.title}</span>
+                  </div>
+
+                  {/* Mobile line 3: description */}
+                  <div className="sm:hidden flex items-center">
+                    <span className="shrink-0" style={{ color: T.gutter }}>{mobileLinePrefix}</span>
+                    <span style={{ color: T.comment }}>{event.description}</span>
+                  </div>
+
+                  {/* Mobile line 4: type tag (last visible line of this entry) */}
+                  <div className="sm:hidden flex">
+                    <span className="shrink-0" style={{ color: T.gutter }}>{mobileLastLine}</span>
+                    <span style={{ color: T.gutter }}>{"["}</span>
+                    <span style={{ color: typeColor.text }}>{typeColor.label}</span>
+                    <span style={{ color: T.gutter }}>{"]"}</span>
+                  </div>
+
+                  {/* Mobile: connector between entries */}
+                  {!isLast && <div className="sm:hidden" style={{ color: T.gutter }}>│</div>}
+                </motion.div>
+              );
+            })}
+
+            {/* "More to come" */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.5 }}
+              className="mt-3 flex items-center gap-2"
+            >
+              <span style={{ color: T.gutter }}>{"   "}</span>
+              <span className="animate-pulse" style={{ color: T.purple }}>...</span>
+              <span className="italic" style={{ color: T.comment }}>more chapters loading</span>
+            </motion.div>
+          </div>
+        </TerminalWindow>
+
+        {/* Stats — TUI progress bars */}
+        <div className="mt-6">
+          <TerminalWindow
+            title="~/stats/overview"
+            statusBar={
+              <div className="flex justify-between">
+                <span>
+                  last updated: <span style={{ color: T.green }}>now</span>
+                </span>
+                <span>STATS</span>
+              </div>
+            }
           >
-            <div className="flex gap-1">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent/60" />
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent/40 [animation-delay:150ms]" />
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent/20 [animation-delay:300ms]" />
+            <div className="space-y-3">
+              {STATS.map((stat) => (
+                <AnimatedStat
+                  key={stat.label}
+                  numValue={stat.numValue}
+                  suffix={stat.suffix}
+                  label={stat.label}
+                  color={stat.color}
+                  maxValue={stat.label === "years_coding" ? 15 : 20}
+                />
+              ))}
             </div>
-            <span className="text-sm italic text-muted-text">
-              More chapters loading...
-            </span>
-          </motion.div>
+          </TerminalWindow>
         </div>
       </motion.div>
 
@@ -149,31 +282,34 @@ export default function ResumeSection() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="space-y-4"
       >
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-medium text-primary-text">Full Resume</h3>
-          {/* Always visible download button for mobile */}
-          <button
-            type="button"
-            onClick={handleDownload}
-            className="flex items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.02] px-3 py-1.5 text-xs text-secondary-text transition-colors hover:border-accent/30 hover:bg-accent/10 hover:text-accent lg:hidden"
-          >
-            <FaDownload className="h-3 w-3" />
-            Download
-          </button>
-        </div>
-
-        {/* PDF Embed Container */}
-        <div
-          className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] shadow-2xl shadow-black/20"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
+        <TerminalWindow
+          title="~/resume/resume.pdf"
+          noPadding
+          statusBar={
+            <div className="flex items-center justify-between gap-1">
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={handlePreview}
+                  className="transition-colors hover:brightness-150"
+                >
+                  [<span style={{ color: T.green }}>$</span>{" "}
+                  <span style={{ color: T.fg }}>open</span>]
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDownload}
+                  className="transition-colors hover:brightness-150"
+                >
+                  [<span style={{ color: T.green }}>$</span>{" "}
+                  <span style={{ color: T.fg }}>download</span>]
+                </button>
+              </div>
+              <span>PDF</span>
+            </div>
+          }
         >
-          {/* Decorative corner accents */}
-          <div className="pointer-events-none absolute left-0 top-0 h-16 w-16 border-l-2 border-t-2 border-accent/20 rounded-tl-2xl" />
-          <div className="pointer-events-none absolute right-0 bottom-0 h-16 w-16 border-r-2 border-b-2 border-accent/20 rounded-br-2xl" />
-
           {/* PDF Embed */}
           <div className="aspect-[8.5/11] w-full">
             <iframe
@@ -183,48 +319,39 @@ export default function ResumeSection() {
               loading="lazy"
             />
           </div>
+        </TerminalWindow>
 
-          {/* Overlay with buttons - desktop only */}
-          <div
-            className={`absolute inset-0 hidden items-end justify-center bg-gradient-to-t from-black/80 via-black/40 to-transparent p-8 transition-all duration-300 lg:flex ${
-              isHovered ? "opacity-100" : "opacity-0"
-            }`}
+        {/* Action buttons below — always visible
+        <div className="mt-3 flex gap-2 font-mono text-xs sm:text-sm">
+          <button
+            type="button"
+            onClick={handlePreview}
+            className="flex flex-1 items-center justify-center gap-2 rounded border py-2.5 transition-all hover:brightness-125"
+            style={{
+              borderColor: T.gutter,
+              backgroundColor: T.bg,
+              color: T.fg,
+            }}
           >
-            <div className="flex gap-4">
-              <button
-                type="button"
-                onClick={handlePreview}
-                className="flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-medium text-white backdrop-blur-sm transition-all hover:bg-white/20"
-              >
-                <FaExternalLinkAlt className="h-3.5 w-3.5" />
-                Open Full Size
-              </button>
-
-              <button
-                type="button"
-                onClick={handleDownload}
-                className="flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-medium text-white shadow-lg shadow-accent/25 transition-all hover:bg-accent/90 hover:shadow-accent/40"
-              >
-                <FaDownload className="h-3.5 w-3.5" />
-                Download PDF
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Stats row */}
-        <div className="grid grid-cols-3 gap-4 pt-4">
-          {[
-            { label: "Years Coding", value: `${currentYear - 2019}+` },
-            { label: "Projects", value: "15+" },
-            { label: "Technologies", value: "11+" },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div className="text-2xl font-bold text-accent">{stat.value}</div>
-              <div className="text-xs text-muted-text">{stat.label}</div>
-            </div>
-          ))}
-        </div>
+            <FaExternalLinkAlt className="h-3 w-3" />
+            <span className="hidden sm:inline">$ open --full-size</span>
+            <span className="sm:hidden">open</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleDownload}
+            className="flex flex-1 items-center justify-center gap-2 rounded border py-2.5 transition-all hover:brightness-125"
+            style={{
+              borderColor: tA(T.purple, "44"),
+              backgroundColor: tA(T.purple, "12"),
+              color: T.purple,
+            }}
+          >
+            <FaDownload className="h-3 w-3" />
+            <span className="hidden sm:inline">$ download resume.pdf</span>
+            <span className="sm:hidden">download</span>
+          </button>
+        </div> */}
       </motion.div>
     </div>
   );

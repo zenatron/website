@@ -1,6 +1,6 @@
 ---
 title: "SSO for Self‑Hosted Apps: One Login to Rule Them All"
-date: "2025-02-23"
+date: "2026-02-23"
 readingTime: "20min"
 excerpt: "How to set up single sign‑on for your homelab using Pocket ID, Tinyauth, and a reverse proxy, so you're not juggling dozens of passwords."
 tags: ["self-hosting", "homelab", "security", "sso", "oidc"]
@@ -62,7 +62,7 @@ Some apps don't support SSO at all. For those, you put an **auth layer in front*
 
 This is where tools like **Tinyauth** and **Authelia** come in — they handle the authentication check, and the proxy (Caddy, Nginx, Traefik) enforces it.
 
-<NerdCorner title="How forward auth actually works" subtitle="The HTTP headers and trust model">
+<NerdCorner client:load title="How forward auth actually works" subtitle="The HTTP headers and trust model">
 
 When you use forward auth, here's the flow:
 

@@ -1,6 +1,6 @@
 ---
 title: "Reverse Proxy for a Homelab: Caddy Done Right"
-date: "2025-02-25"
+date: "2026-02-25"
 readingTime: "22min"
 excerpt: "How to set up Caddy as a reverse proxy for your self‑hosted services, with automatic HTTPS, internal domains, and clean URLs."
 tags: ["self-hosting", "homelab", "caddy", "networking", "security"]
@@ -180,7 +180,7 @@ Caddy proves domain ownership by creating a DNS TXT record, not by responding to
 
 Run your own certificate authority and trust it on your devices. More work, but fully offline.
 
-<NerdCorner title="Setting up DNS challenge with Cloudflare" subtitle="The full configuration">
+<NerdCorner client:load title="Setting up DNS challenge with Cloudflare" subtitle="The full configuration">
 
 1. **Get a Cloudflare API token** with `Zone:DNS:Edit` permissions for your domain.
 

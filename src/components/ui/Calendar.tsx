@@ -1,8 +1,7 @@
-"use client";
-
 import { getCalApi } from "@calcom/embed-react";
 import { useEffect } from "react";
 import { FaCalendarAlt } from "react-icons/fa";
+import { T } from "@/components/ui/TerminalWindow";
 
 interface CalendarPopupProps {
   className?: string;
@@ -30,11 +29,18 @@ export default function CalendarPopup({ className = "" }: CalendarPopupProps) {
       data-cal-link="phil/call"
       data-cal-origin="https://z3n.me"
       data-cal-config='{"layout":"month_view"}'
-      className={`text-muted-text transition-colors duration-200 hover:text-accent ${className}`}
+      className={`transition-colors duration-150 ${className}`}
+      style={{ color: T.comment }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.color = T.purple;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.color = T.comment;
+      }}
       title="Book a Meeting"
     >
       <FaCalendarAlt
-        className="h-4 w-4"
+        className="h-3.5 w-3.5"
         style={{ pointerEvents: "none" }}
         aria-hidden
       />

@@ -1,6 +1,3 @@
-"use client";
-
-import Link from "next/link";
 import { useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
@@ -36,15 +33,15 @@ export default function HomeHero() {
 
       {/* CTA row */}
       <div className="flex flex-wrap items-center gap-4">
-        <Link href="/projects" className="btn btn-primary">
+        <a href="/projects" className="btn btn-primary">
           View work
           <ArrowUpRight className="h-4 w-4" />
-        </Link>
-        <Link href="/about" className="btn btn-secondary">
+        </a>
+        <a href="/about" className="btn btn-secondary">
           About me
-        </Link>
+        </a>
         <div className="flex items-center gap-3 pl-2">
-          <Link
+          <a
             href="https://github.com/zenatron"
             target="_blank"
             rel="noopener noreferrer"
@@ -52,16 +49,16 @@ export default function HomeHero() {
             aria-label="GitHub"
           >
             <FaGithub className="h-5 w-5" />
-          </Link>
-          <Link
-            href="https://linkedin.com/in/philipvishnevsky"
+          </a>
+          <a
+            href="https://linkedin.com/in/philvishnevsky"
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-text transition-colors hover:text-primary-text"
             aria-label="LinkedIn"
           >
             <FaLinkedin className="h-5 w-5" />
-          </Link>
+          </a>
         </div>
       </div>
     </div>
