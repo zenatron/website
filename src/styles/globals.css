@@ -109,6 +109,11 @@
       ),
       /* Base gradient */ linear-gradient(180deg, #0f1012 0%, #121316 100%);
     background-attachment: fixed;
+    /* Disable fixed attachment + simplify on touch/mobile devices */
+    @media (pointer: coarse), (max-width: 768px) {
+      background-attachment: scroll;
+      background-image: linear-gradient(180deg, #0f1012 0%, #121316 100%);
+    }
     color: var(--primary-text);
     font-family:
       var(--font-body-sans),
@@ -302,6 +307,13 @@ samp {
     @apply absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75 content-[''];
   }
 
+  /* Disable infinite ping animation on mobile to save GPU/battery */
+  @media (pointer: coarse), (max-width: 768px) {
+    .status-dot::before {
+      animation: none;
+    }
+  }
+
   .status-dot::after {
     @apply relative inline-flex h-2 w-2 rounded-full bg-accent content-[''];
   }
@@ -369,6 +381,16 @@ samp {
 
 ::view-transition-new(root) {
   animation: terminal-slide-in 0.2s ease-out forwards;
+}
+
+/* ── Mobile GPU savings: disable backdrop-filter (blur is very expensive) ── */
+@media (pointer: coarse), (max-width: 768px) {
+  *,
+  *::before,
+  *::after {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
 }
 
 /* Respect reduced motion preferences */
