@@ -44,15 +44,10 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
       // Re-apply after View Transitions swap
       document.addEventListener('astro:after-swap',function(){var t=localStorage.getItem('terminal-theme');if(t)document.documentElement.setAttribute('data-theme',t)});
     </script>
-    <!-- Preconnect to font and CDN origins for faster loading -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
-    <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Preload critical fonts (body + headings) to avoid layout shift -->
+    <link rel="preload" href="/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
     <ViewTransitions />
   </head>
   <body class="antialiased bg-primary-bg text-primary-text">
