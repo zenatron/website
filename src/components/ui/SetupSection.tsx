@@ -40,8 +40,9 @@ const MACHINES: FetchSpec[] = [
       ["Storage", "512GB NVMe"],
       ["Display", "14.2\" Liquid Retina XDR (120Hz)"],
       ["Shell", "zsh + oh-my-zsh"],
+      ["PM", "brew"],
       ["Editor", "VS Code · nvim"],
-      ["Terminal", "Ghostty"],
+      ["Emulator", "Ghostty"],
       ["Theme", "Atom One Dark"],
     ],
   },
@@ -58,9 +59,10 @@ const MACHINES: FetchSpec[] = [
       ["Memory", "64GB DDR5"],
       ["Storage", "4TB NVMe"],
       ["Display", "2x 27\" 2K QHD (144Hz)"],
-      ["Shell", "fish"],
+      ["Shell", "zsh + oh-my-zsh"],
+      ["PM", "pacman"],
       ["Editor", "VS Code · nvim"],
-      ["Terminal", "Alacritty"],
+      ["Emulator", "Konsole"],
       ["Theme", "Atom One Dark"],
     ],
   },
@@ -113,13 +115,13 @@ function NeofetchBlock({ spec }: { spec: FetchSpec }) {
 export default function SetupSection() {
   return (
     <TerminalWindow
-      title="~/neofetch"
+      title="~/setup"
       statusBar={
         <div className="flex items-center justify-between">
           <span>
             <span style={{ color: T.fg }}>2</span> machines
           </span>
-          <span>FETCH</span>
+          <span>FASTFETCH</span>
         </div>
       }
     >

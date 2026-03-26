@@ -1,4 +1,4 @@
-import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { FaCalendarAlt, FaGithub, FaLinkedin } from "react-icons/fa";
 import { FaBluesky } from "react-icons/fa6";
 import CalendarPopup from "@/components/ui/Calendar";
 import { T } from "@/components/ui/TerminalWindow";
@@ -26,6 +26,11 @@ const SOCIAL_LINKS = [
     href: "https://underscore.games",
     icon: UgLogo,
     label: "Underscore Games",
+  },
+  {
+    href: "https://fantastical.app/philv",
+    icon: FaCalendarAlt,
+    label: "Calendar",
   }
 ];
 
@@ -84,7 +89,7 @@ export default function Footer() {
                 <social.icon className="h-3.5 w-3.5" />
               </a>
             ))}
-            <CalendarPopup />
+            {/* <CalendarPopup /> */}
           </div>
         </div>
       </div>

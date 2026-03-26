@@ -27,7 +27,8 @@ export const links: LinkItem[] = [
   },
   {
     title: "Calendar",
-    url: "https://z3n.me/phil/call",
+    // url: "https://z3n.me/phil/call",
+    url: "https://fantastical.app/philv",
     description: "Schedule a call!",
     icon: "FaCalendarAlt",
   },

@@ -293,9 +293,8 @@ export default function HomePageContent({
                   Phil Vishnevsky
                 </h1>
 
-                <p className="mx-auto max-w-2xl text-lg leading-relaxed text-secondary-text">
-                  Mostly building tools, games and AI stuff. I try to write code
-                  I can actually read later and avoid 3am incident pages.
+                <p className="mx-auto max-w-2xl text-lg leading-relaxed" style={{ color: T.fg }}>
+                  Full-stack engineer focused on dev experience. I build servers, performant web apps, explore creative projects, and occasionally ship things that don't break in production.
                 </p>
               </div>
 

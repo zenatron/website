@@ -91,7 +91,8 @@ export const favoriteItems: FavoriteItem[] = [
     name: "Cal.com",
     icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/cal-com-dark.svg",
     description: "book a call!",
-    url: "https://z3n.me/phil/call",
+    // url: "https://z3n.me/phil/call",
+    url: "https://fantastical.app/philv",
     category: "apps",
   },
 

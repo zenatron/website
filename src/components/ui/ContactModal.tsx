@@ -64,7 +64,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       {
         name: "Book a Call",
         icon: <FaCalendarAlt className="text-base" />,
-        href: "https://z3n.me/phil",
+        // href: "https://z3n.me/phil",
+        href: "https://fantastical.app/philv",
         cmd: "cal schedule --with phil",
         cmdParts: [
           { text: "cal", color: T.fg },
