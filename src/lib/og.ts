@@ -107,7 +107,7 @@ export async function generateOGImage(options: OGOptions): Promise<Buffer> {
                         type: "div",
                         props: {
                           style: { flex: 1, textAlign: "center", color: OG.comment, fontSize: "16px" },
-                          children: "philvishnevsky.com",
+                          children: "pvi.sh",
                         },
                       },
                       { type: "div", props: { style: { width: "62px" } } },

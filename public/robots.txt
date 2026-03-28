@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://philvishnevsky.com/sitemap-index.xml
+Sitemap: https://pvi.sh/sitemap-index.xml

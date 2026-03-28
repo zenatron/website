@@ -16,7 +16,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
     // Blog posts
     ...blogPosts.map((post) => ({
-      params: { slug: `blog/${post.id}` },
+      params: { slug: `blog/${post.slug}` },
       props: {
         title: post.data.title,
         subtitle: post.data.excerpt || "",
@@ -27,7 +27,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
     // Projects
     ...projects.map((project) => ({
-      params: { slug: `projects/${project.id}` },
+      params: { slug: `projects/${project.data.slug || project.slug}` },
       props: {
         title: project.data.title,
         subtitle: project.data.description || "",

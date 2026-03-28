@@ -10,7 +10,7 @@ import rehypeKatex from "rehype-katex";
 import rehypeSlug from "rehype-slug";
 
 export default defineConfig({
-  site: "https://philvishnevsky.com",
+  site: "https://pvi.sh",
   integrations: [
     react(),
     tailwind({ applyBaseStyles: false }),
