@@ -12,6 +12,7 @@ const THEME_LABELS: Record<string, string> = {
   "tokyo-night": "Tokyo Night",
   "solarized-dark": "Solarized Dark",
   monokai: "Monokai",
+  "i-hate-colors": "I Hate Colors",
 };
 
 function setTheme(name: string) {

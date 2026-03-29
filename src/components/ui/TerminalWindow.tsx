@@ -72,6 +72,11 @@ const THEMES: Record<string, Record<string, string>> = {
     green: "#a6e22e", yellow: "#e6db74", red: "#f92672", comment: "#75715e",
     white: "#f8f8f0", gutter: "#3e3d32", cursor: "#f8f8f0",
   },
+  "i-hate-colors": {
+    bg: "#1a1a1a", fg: "#d4d4d4", purple: "#b0b0b0", blue: "#b0b0b0",
+    green: "#b0b0b0", yellow: "#b0b0b0", red: "#b0b0b0", comment: "#686868",
+    white: "#e8e8e8", gutter: "#333333", cursor: "#d4d4d4",
+  },
 };
 
 const THEME_NAMES = Object.keys(THEMES);

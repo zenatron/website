@@ -61,6 +61,12 @@
   --t-red: #f92672;  --t-comment: #75715e; --t-white: #f8f8f0;
   --t-gutter: #3e3d32; --t-cursor: #f8f8f0;
 }
+[data-theme="i-hate-colors"] {
+  --t-bg: #1a1a1a;  --t-fg: #d4d4d4;  --t-purple: #b0b0b0;
+  --t-blue: #b0b0b0; --t-green: #b0b0b0; --t-yellow: #b0b0b0;
+  --t-red: #b0b0b0;  --t-comment: #686868; --t-white: #e8e8e8;
+  --t-gutter: #333333; --t-cursor: #d4d4d4;
+}
 
 :root {
   color-scheme: dark;
