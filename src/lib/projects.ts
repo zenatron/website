@@ -84,6 +84,43 @@ export async function getProjectBySlug(slug: string): Promise<{
   };
 }
 
+export async function getSuggestedProjects(
+  currentSlug: string,
+  count: number = 3
+): Promise<ProjectCard[]> {
+  const allProjects = await getAllProjects();
+  const otherProjects = allProjects.filter(
+    (p) => p.metadata.slug !== currentSlug
+  );
+
+  if (otherProjects.length === 0) return [];
+
+  const currentProject = allProjects.find(
+    (p) => p.metadata.slug === currentSlug
+  );
+  const currentTags = currentProject?.metadata.tags || [];
+
+  const scored = otherProjects.map((project) => {
+    const projectTags = project.metadata.tags || [];
+    const sharedTags = projectTags.filter((tag) =>
+      currentTags.includes(tag)
+    ).length;
+
+    const projectDate = project.metadata.date
+      ? new Date(project.metadata.date).getTime()
+      : 0;
+    const now = Date.now();
+    const daysSince = (now - projectDate) / (1000 * 60 * 60 * 24);
+    const recencyScore = Math.max(0, 1 - daysSince / 365);
+    const score = sharedTags * 10 + recencyScore;
+
+    return { project, score };
+  });
+
+  scored.sort((a, b) => b.score - a.score);
+  return scored.slice(0, count).map((item) => item.project);
+}
+
 export async function getProjectStaticPaths() {
   const entries = await getCollection("projects");
   const mdxPaths = entries.map((entry) => ({

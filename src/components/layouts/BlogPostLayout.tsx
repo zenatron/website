@@ -91,7 +91,7 @@ export function BlogPostHeader({
                 key={tag}
                 href={`/blog?tag=${tag}`}
                 className="transition-colors duration-150 hover:opacity-80"
-                style={{ color: T.purple }}
+                style={{ color: T.blue }}
                 title={`View posts tagged ${tag}`}
               >
                 [{tag}]
@@ -142,7 +142,7 @@ export function BlogPostFooter({
               key={tag}
               href={`/blog?tag=${tag}`}
               className="transition-colors duration-150 hover:opacity-80"
-              style={{ color: T.purple }}
+              style={{ color: T.blue }}
               title={`View posts tagged ${tag}`}
             >
               [{tag}]

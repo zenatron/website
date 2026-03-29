@@ -1,20 +1,28 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { THEMES } from "@/components/ui/TerminalWindow";
 
-/* ── Atom One Dark palette ── */
-const T = {
-  bg: "#282c34",
-  fg: "#abb2bf",
-  purple: "#c678dd",
-  blue: "#61afef",
-  green: "#98c379",
-  yellow: "#e5c07b",
-  red: "#e06c75",
-  comment: "#5c6370",
-  white: "#e6e6e6",
-  gutter: "#3e4451",
-  cursor: "#528bff",
-};
+/* ── Resolve the user's selected theme palette ── */
+function getThemePalette() {
+  const name =
+    typeof window !== "undefined"
+      ? localStorage.getItem("terminal-theme") || "atom-one-dark"
+      : "atom-one-dark";
+  const colors = THEMES[name] || THEMES["atom-one-dark"];
+  return {
+    bg: colors.bg,
+    fg: colors.fg,
+    purple: colors.purple,
+    blue: colors.blue,
+    green: colors.green,
+    yellow: colors.yellow,
+    red: colors.red,
+    comment: colors.comment,
+    white: colors.white,
+    gutter: colors.gutter,
+    cursor: colors.cursor,
+  };
+}
 
 type Seg = { text: string; color: string };
 
@@ -32,9 +40,13 @@ const SESSION_KEY = "terminal-boot-played";
 function Spinner({
   resolved,
   resolveDelay,
+  greenColor,
+  yellowColor,
 }: {
   resolved: boolean;
   resolveDelay: number;
+  greenColor: string;
+  yellowColor: string;
 }) {
   const [frame, setFrame] = useState(0);
   const [done, setDone] = useState(false);
@@ -55,9 +67,9 @@ function Spinner({
   }, [done]);
 
   if (done) {
-    return <span style={{ color: T.green }}>✓</span>;
+    return <span style={{ color: greenColor }}>✓</span>;
   }
-  return <span style={{ color: T.yellow }}>{SPINNER_CHARS[frame]}</span>;
+  return <span style={{ color: yellowColor }}>{SPINNER_CHARS[frame]}</span>;
 }
 
 export default function TerminalBoot({
@@ -73,6 +85,9 @@ export default function TerminalBoot({
   >("init");
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const hasSkipped = useRef(false);
+
+  /* ── Resolve theme palette once on mount ── */
+  const T = useMemo(() => getThemePalette(), []);
 
   /* ── Dynamic values ── */
   const daysOfCode = useMemo(() => {
@@ -111,8 +126,6 @@ export default function TerminalBoot({
         delay: 280,
         segments: [
           { text: "  shell   ", color: T.comment },
-          { text: "fish", color: T.green },
-          { text: " / ", color: T.gutter },
           { text: "zsh", color: T.green },
         ],
       },
@@ -201,7 +214,7 @@ export default function TerminalBoot({
         ],
       },
     ],
-    [daysOfCode]
+    [daysOfCode, T]
   );
 
   /* ── Cleanup helper ── */
@@ -413,6 +426,8 @@ export default function TerminalBoot({
                       {line.isLoading && (
                         <Spinner
                           resolved={loadingResolved}
+                          greenColor={T.green}
+                          yellowColor={T.yellow}
                           resolveDelay={
                             idx === 10 ? 0 : idx === 11 ? 150 : 300
                           }

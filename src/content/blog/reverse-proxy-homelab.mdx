@@ -9,8 +9,6 @@ tags: ["self-hosting", "homelab", "caddy", "networking", "security"]
 import Callout from '@/components/mdx/Callout';
 import NerdCorner from '@/components/mdx/NerdCorner';
 
-# Reverse Proxy for a Homelab: Caddy Done Right
-
 You've got services running on different ports: Jellyfin on 8096, Grafana on 3000, Nextcloud on 443, and a dozen others. Remembering `server:8096` is annoying. Typing IPs is worse. And exposing random ports to the internet? That's a security incident waiting to happen.
 
 A **reverse proxy** solves all of this: one entry point, clean URLs, automatic HTTPS, and centralized access control.

@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { FaChevronDown } from "react-icons/fa";
+import { T, tA } from "@/components/ui/TerminalWindow";
 
 interface NerdCornerProps {
   title?: string;
@@ -18,112 +17,76 @@ export default function NerdCorner({
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="nerd-corner my-8 relative">
-      {/* Outer container with accent left border */}
+    <div
+      className="my-8 rounded-lg border overflow-hidden font-mono"
+      style={{
+        borderColor: T.gutter,
+        backgroundColor: tA(T.bg, "cc"),
+      }}
+    >
+      {/* Title bar */}
       <div
-        className="relative rounded-lg overflow-hidden"
+        className="flex items-center gap-2 px-3 sm:px-4 py-2 border-b"
+        style={{ borderColor: T.gutter }}
+      >
+        <div className="flex items-center gap-1.5 shrink-0">
+          <span
+            className="h-2.5 w-2.5 rounded-full opacity-80"
+            style={{ backgroundColor: T.red }}
+          />
+          <span
+            className="h-2.5 w-2.5 rounded-full opacity-80"
+            style={{ backgroundColor: T.yellow }}
+          />
+          <span
+            className="h-2.5 w-2.5 rounded-full opacity-80"
+            style={{ backgroundColor: T.green }}
+          />
+        </div>
+        <span
+          className="flex-1 text-center text-[11px] sm:text-xs truncate px-2"
+          style={{ color: T.comment }}
+        >
+          :optional-reading
+        </span>
+      </div>
+
+      {/* Command bar — clickable to toggle */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center gap-2 px-3 sm:px-4 py-3 text-xs sm:text-sm cursor-pointer transition-colors duration-150 text-left"
         style={{
-          background: "var(--surface-1)",
-          border: "1px solid var(--border-light)",
+          borderBottom: isOpen ? `1px solid ${T.gutter}` : "none",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = tA(T.cursor, "0a");
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = "transparent";
         }}
       >
-        {/* Accent left edge */}
-        <div
-          className="absolute left-0 top-0 bottom-0 w-1"
-          style={{
-            background:
-              "linear-gradient(180deg, var(--accent) 0%, var(--accent-secondary) 100%)",
-          }}
-        />
+        <span style={{ color: T.green }}>$</span>
+        <span style={{ color: T.fg }}>cat</span>
+        <span style={{ color: T.blue }}>{title}</span>
+        {!isOpen && subtitle && (
+          <span
+            className="hidden sm:inline truncate"
+            style={{ color: T.comment }}
+          >
+            # {subtitle}
+          </span>
+        )}
+        <span className="ml-auto shrink-0" style={{ color: T.comment }}>
+          {isOpen ? "[-]" : "[+]"}
+        </span>
+      </button>
 
-        {/* Header */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-full flex items-center gap-4 pl-5 pr-4 py-4 text-left transition-colors duration-150 hover:bg-white/[0.02] group"
-        >
-          {/* Terminal-style prompt */}
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <span
-              className="font-mono text-sm"
-              style={{ color: "var(--accent)" }}
-            >
-              ~/
-            </span>
-            <span
-              className="font-mono text-xs px-1.5 py-0.5 rounded"
-              style={{
-                background: "var(--btn-primary)",
-                color: "var(--accent)",
-              }}
-            >
-              optional
-            </span>
-          </div>
-
-          {/* Title and subtitle */}
-          <div className="flex-1 min-w-0">
-            <h3
-              className="font-semibold text-base group-hover:text-accent transition-colors duration-150"
-              style={{ color: "var(--primary-text)" }}
-            >
-              {title}
-            </h3>
-            {subtitle && !isOpen && (
-              <p
-                className="text-sm mt-0.5 truncate"
-                style={{ color: "var(--secondary-text)" }}
-              >
-                {subtitle}
-              </p>
-            )}
-          </div>
-
-          {/* Expand indicator */}
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <span
-              className="text-xs hidden sm:block"
-              style={{ color: "var(--muted-text)" }}
-            >
-              {isOpen ? "collapse" : "expand"}
-            </span>
-            <motion.div
-              animate={{ rotate: isOpen ? 180 : 0 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="p-1.5 rounded transition-colors duration-150"
-              style={{
-                background: isOpen ? "var(--btn-primary)" : "transparent",
-                color: "var(--accent)",
-              }}
-            >
-              <FaChevronDown size={12} />
-            </motion.div>
-          </div>
-        </button>
-
-        {/* Collapsible Content */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              className="overflow-hidden"
-            >
-              {/* Divider */}
-              <div
-                className="mx-5 h-px"
-                style={{ background: "var(--border-light)" }}
-              />
-
-              {/* Content area */}
-              <div className="pl-5 pr-4 py-5">
-                <div className="nerd-corner-content">{children}</div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+      {/* Content */}
+      {isOpen && (
+        <div className="px-3 sm:px-4 md:px-5 py-4">
+          <div className="nerd-corner-content font-sans">{children}</div>
+        </div>
+      )}
     </div>
   );
 }

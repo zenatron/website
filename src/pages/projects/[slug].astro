@@ -13,6 +13,7 @@ import {
   ProjectDownloadsBlock,
 } from "@/components/layouts/ProjectLayout";
 import { getGithubRepos } from "@/lib/github";
+import { getSuggestedProjects } from "@/lib/projects";
 
 import fs from "node:fs";
 import path from "node:path";
@@ -94,6 +95,14 @@ const headerMeta = {
   date: metadata.date instanceof Date ? metadata.date.toISOString() : metadata.date,
   tags: metadata.tags,
 };
+
+const suggestedProjectCards = await getSuggestedProjects(metadata.slug, 3);
+const suggestedProjects = suggestedProjectCards.map((p) => ({
+  slug: p.metadata.slug,
+  title: p.metadata.title,
+  type: p.metadata.type,
+  description: p.metadata.description,
+}));
 ---
 
 <BaseLayout title={`${metadata.title} | Phil Vishnevsky`} ogSlug={`projects/${metadata.slug}`}>
@@ -112,7 +121,7 @@ const headerMeta = {
 
         {/* ── Content body — server-rendered with TUI border ── */}
         <div
-          class="project-body border-x px-4 sm:px-6 py-6"
+          class="project-body border-x border-b rounded-b-lg px-4 sm:px-6 py-6"
           style={`border-color: var(--t-gutter);`}
         >
           {/* Featured Image */}
@@ -240,7 +249,7 @@ const headerMeta = {
         </div>
 
         {/* ── Terminal footer (React island) ── */}
-        <ProjectFooter tags={metadata.tags || []} client:load />
+        <ProjectFooter tags={metadata.tags || []} suggestedProjects={suggestedProjects} client:load />
       </div>
     </main>
     <Footer client:load />

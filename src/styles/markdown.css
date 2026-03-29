@@ -73,7 +73,7 @@
 }
 
 .mdx-content a {
-  color: var(--accent);
+  color: var(--t-blue);
   text-decoration: underline;
   font-family:
     "Atkinson Hyperlegible",
@@ -83,7 +83,7 @@
 }
 
 .mdx-content a:hover {
-  color: var(--btn-primary-hover);
+  color: var(--t-purple);
 }
 
 .mdx-content strong,

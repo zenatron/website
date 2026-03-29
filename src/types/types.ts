@@ -9,7 +9,7 @@ export type BlogMetadata = {
 export type BlogPost = {
   slug: string;
   content?: any;
-  searchableContent: string; // Plain text version for searching
+  searchableContent?: string; // Plain text version for searching
   metadata: BlogMetadata;
   headings?: any[]; // Table of contents headings
 };

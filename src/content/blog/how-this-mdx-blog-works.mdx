@@ -2,22 +2,20 @@
 title: "How I Built My MDX Blog System (and Why It's Fast Enough)"
 date: "2025-02-21"
 readingTime: "22min"
-excerpt: "A behind‑the‑scenes look at how my MDX pipeline works, how I render posts, and where performance really matters."
-tags: ["mdx", "nextjs", "performance", "web-dev"]
+excerpt: "A behind-the-scenes look at how my Astro + MDX pipeline works, how I render posts, and where performance really matters."
+tags: ["mdx", "astro", "performance", "web-dev"]
 ---
 
 import Callout from '@/components/mdx/Callout';
 
-# How I Built My MDX Blog System (and Why It's Fast Enough)
-
-I wanted a blog that felt like **[Markdown](https://en.wikipedia.org/wiki/Markdown)**, but could still render React components, callouts, and embeds without turning into a templating mess. **[MDX](https://mdxjs.com/)** hit the sweet spot.
+I wanted a blog that felt like **[Markdown](https://en.wikipedia.org/wiki/Markdown)**, but could still render React components, callouts, and embeds without turning into a templating mess. **[MDX](https://mdxjs.com/)** hit the sweet spot — and **[Astro](https://astro.build/)** makes it fly.
 
 ![MDX pipeline diagram](/images/blog/how-this-mdx-blog-works/mdx-pipeline.svg)
 ![MDX compilation flow diagram](/images/blog/how-this-mdx-blog-works/compile-flow.svg)
 
 ## Why MDX (not just Markdown)
 
-Markdown is simple and portable. The downside: you're stuck with plain content. MDX gives you the ability to **import React components** right inside a post, which means you can drop in things like callouts, counters, or custom embeds. Under the hood, MDX turns your content into a structured syntax tree (think **[AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree)**) before it becomes React.
+Markdown is simple and portable. The downside: you're stuck with plain content. MDX gives you the ability to **import React components** right inside a post, which means you can drop in things like callouts, counters, or custom embeds. Under the hood, MDX turns your content into a structured syntax tree (think **[AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree)**) before it becomes HTML.
 
 If you've used a static site generator before, MDX feels like "Markdown with superpowers" — but it's still readable in plain text, which keeps the writing workflow fast.
 
@@ -31,70 +29,60 @@ import Callout from '@/components/mdx/Callout';
 </Callout>
 ```
 
-## The pipeline: files → frontmatter → compiled content
+## The pipeline: content collections to compiled HTML
 
-At a high level, my posts live in `src/content/blog/*.mdx`. When a blog page is requested, the site:
+At a high level, my posts live in `src/content/blog/*.mdx`. Astro's **[Content Collections](https://docs.astro.build/en/guides/content-collections/)** handle the heavy lifting: schema validation, frontmatter parsing, and compilation all happen at build time.
 
-1. **Reads the file** from disk
-2. **Parses [front matter](https://en.wikipedia.org/wiki/YAML#Front_matter)** with [gray-matter](https://github.com/jonschlinkert/gray-matter)
-3. **Compiles MDX** using [next-mdx-remote](https://github.com/hashicorp/next-mdx-remote)
-4. **Runs a remark/rehype pipeline** (Markdown → HTML) for math, tables, syntax highlighting, and heading slugs
+Here's how it works:
 
-This happens in the `getBlogPostBySlug` function and `getAllBlogPosts` list builder.
+1. **Content Collections** define the schema with [Zod](https://zod.dev/) in `src/content/config.ts`
+2. **`getStaticPaths()`** generates a route for every post at build time
+3. **`post.render()`** compiles the MDX through the remark/rehype pipeline
+4. **Astro outputs static HTML** — no MDX compilation happens in the browser
 
-The key point: the MDX compilation happens on the server, not in the browser. That means visitors aren't shipping a Markdown parser to render your content — they get clean HTML.
-
-Here's the actual code that loads a post:
+The schema ensures every post has the right shape:
 
 ```typescript
-export async function getBlogPostBySlug(
-  slug: string
-): Promise<BlogPost | null> {
-  // Try MDX file first, then fall back to MD
-  let fullPath = path.join(blogDirectory, `${slug}.mdx`);
-
-  if (!fs.existsSync(fullPath)) {
-    fullPath = path.join(blogDirectory, `${slug}.md`);
-    if (!fs.existsSync(fullPath)) {
-      return null;
-    }
-  }
-
-  const fileContents = fs.readFileSync(fullPath, "utf8");
-  const { data, content } = matter(fileContents);
-
-  // Extract plain text for searching
-  const searchableContent = extractPlainText(content);
-
-  // Extract headings from the raw content
-  const headings = extractHeadings(content);
-
-  const { content: compiledContent } = await compileMDX({
-    source: content,
-    components,
-    options: {
-      parseFrontmatter: false, // We already parsed it with gray-matter
-      mdxOptions: {
-        remarkPlugins: [remarkMath, remarkGfm],
-        rehypePlugins: [
-          rehypeSlug,
-          rehypeKatex,
-          [rehypeHighlight, rehypeHighlightOptions],
-        ],
-        development: process.env.NODE_ENV === "development",
-      },
-    },
-  });
-
-  return {
-    slug,
-    content: compiledContent,
-    searchableContent,
-    headings,
-    metadata: { /* ... */ },
-  };
-}
+const blog = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    date: z.string(),
+    readingTime: z.string().optional(),
+    excerpt: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+  }),
+});
 ```
+
+And the page route at `src/pages/blog/[slug].astro` renders each post:
+
+```astro
+---
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const rendered = await post.render();
+const Content = rendered.Content;
+const headings = rendered.headings ?? [];
+---
+
+<article>
+  <div class="mdx-content">
+    <Content />
+  </div>
+</article>
+```
+
+The key point: the MDX compilation happens at build time, not in the browser. Visitors get clean, static HTML with zero JavaScript needed to display the content.
 
 ## Deep dive: the remark/rehype plugin pipeline
 
@@ -107,31 +95,35 @@ The flow looks like this:
 
 ```
 MDX Source
-    ↓
+    |
 Parse to mdast (Markdown AST)
-    ↓
+    |
 Remark plugins transform mdast
-    ↓
+    |
 Convert to hast (HTML AST)
-    ↓
+    |
 Rehype plugins transform hast
-    ↓
-Stringify to JSX/React components
+    |
+Stringify to HTML + component islands
 ```
 
 ### My plugin stack
 
-Here's exactly what I'm using and why:
+The plugins are configured once in `astro.config.mjs` and apply to all Markdown and MDX content:
 
-```typescript
-mdxOptions: {
-  remarkPlugins: [remarkMath, remarkGfm],
-  rehypePlugins: [
-    rehypeSlug,      // Add IDs to headings
-    rehypeKatex,     // Render LaTeX math
-    [rehypeHighlight, rehypeHighlightOptions],
+```javascript
+export default defineConfig({
+  markdown: {
+    remarkPlugins: [remarkMath, remarkGfm],
+    rehypePlugins: [rehypeSlug, rehypeKatex],
+  },
+  integrations: [
+    react(),
+    tailwind({ applyBaseStyles: false }),
+    mdx(),
+    sitemap(),
   ],
-}
+});
 ```
 
 | Plugin | Stage | Purpose |
@@ -140,108 +132,30 @@ mdxOptions: {
 | [remark-gfm](https://github.com/remarkjs/remark-gfm) | Remark | Enables GitHub Flavored Markdown (tables, strikethrough, autolinks) |
 | [rehype-slug](https://github.com/rehypejs/rehype-slug) | Rehype | Auto-generates `id` attributes on headings for anchor links |
 | [rehype-katex](https://github.com/remarkjs/remark-math/tree/main/packages/rehype-katex) | Rehype | Renders math expressions using [KaTeX](https://katex.org/) |
-| [rehype-highlight](https://github.com/rehypejs/rehype-highlight) | Rehype | Syntax highlighting via [highlight.js](https://highlightjs.org/) |
 
 <Callout type="tip" title="Plugin order matters" showEmoji={true}>
 Remark plugins run first (on Markdown), then Rehype plugins run on the resulting HTML. Within each stage, plugins run in array order. Put `rehypeSlug` before anything that depends on heading IDs.
 </Callout>
 
-### Syntax highlighting configuration
+Astro handles syntax highlighting out of the box with [Shiki](https://shiki.matsu.io/), so there's no need for a separate rehype-highlight plugin. Code blocks get beautiful, theme-aware highlighting with zero configuration.
 
-I configure `rehype-highlight` with auto-detection so I don't have to specify every language:
+## Table of contents + heading extraction
 
-```typescript
-const rehypeHighlightOptions = {
-  detect: true,      // Auto-detect language if not specified
-  ignoreMissing: true, // Don't throw on missing language
-  subset: false,     // Use all languages
-};
-```
-
-The `ignoreMissing: true` is key — it prevents the build from exploding if I use a language that highlight.js doesn't recognize.
-
-## Table of contents + searchability
-
-I wanted a TOC on every post and quick search on the blog index. So I added two features:
-
-- **Heading extraction** for a table of contents (I parse raw Markdown headings so the TOC is stable and predictable)
-- **Plain‑text extraction** for search (strip imports, JSX, code blocks, then index the result)
-
-The TOC uses `rehype-slug` to ensure headings have predictable IDs, which is why the anchor links stay stable across builds.
-
-Here's the heading extraction logic:
+I wanted a TOC on every post. Astro makes this easy — when you call `post.render()`, it returns a `headings` array alongside the compiled `Content` component:
 
 ```typescript
-export function extractHeadings(content: string): Heading[] {
-  const headings: Heading[] = [];
-  const usedIds = new Set<string>();
-
-  // Regular expression to match markdown headings (# ## ### etc.)
-  const headingRegex = /^(#{1,6})\s+(.+)$/gm;
-  let match;
-
-  while ((match = headingRegex.exec(content)) !== null) {
-    const level = match[1].length;
-    const text = match[2].trim();
-
-    // Generate unique ID
-    const baseId = generateSlug(text);
-    let id = baseId;
-    let counter = 1;
-
-    // Ensure ID is unique
-    while (usedIds.has(id)) {
-      id = `${baseId}-${counter}`;
-      counter++;
-    }
-
-    usedIds.add(id);
-    headings.push({ id, text, level });
-  }
-
-  return headings;
-}
+const rendered = await post.render();
+const headings = rendered.headings ?? [];
+// Each heading: { slug: string, text: string, depth: number }
 ```
+
+These headings are extracted by `rehype-slug` during compilation, so the IDs are stable across builds. The TOC component receives them and renders an interactive sidebar with scroll tracking via `IntersectionObserver`.
+
+I also have a utility in `src/utils/extractHeadings.ts` that builds a nested hierarchy from the flat headings array — turning a flat list of h2s and h3s into a proper tree structure for indented rendering.
 
 <Callout type="note" title="Tiny performance win" showEmoji={true}>
-Doing those extra passes once during compilation keeps the client UI lightweight.
+Heading extraction happens once at build time. The client-side TOC just receives the pre-built list and handles scroll tracking — no parsing needed in the browser.
 </Callout>
-
-### Plain text extraction for search
-
-The search index strips away all the MDX noise to get searchable content:
-
-```typescript
-function extractPlainText(content: string): string {
-  // Remove import statements
-  let plainText = content.replace(/import\s+.*?from\s+['"].*?['"]/g, "");
-
-  // Remove JSX/HTML tags
-  plainText = plainText.replace(/<[^>]*>/g, " ");
-
-  // Remove code blocks
-  plainText = plainText.replace(/```[\s\S]*?```/g, "");
-
-  // Remove inline code
-  plainText = plainText.replace(/`.*?`/g, "");
-
-  // Remove Markdown formatting
-  plainText = plainText
-    .replace(/#{1,6}\s+/g, "")     // Headers
-    .replace(/\*\*(.*?)\*\*/g, "$1") // Bold
-    .replace(/\*(.*?)\*/g, "$1")   // Italic
-    .replace(/\[(.*?)\]\(.*?\)/g, "$1") // Links
-    .replace(/!\[(.*?)\]\(.*?\)/g, "$1") // Images
-    .replace(/\n>/g, "\n");        // Blockquotes
-
-  // Remove extra whitespace
-  plainText = plainText.replace(/\s+/g, " ").trim();
-
-  return plainText;
-}
-```
-
-This gives me instant client-side filtering without needing a full-text search engine.
 
 ## Creating custom MDX components
 
@@ -268,23 +182,7 @@ export default function MyComponent({ title, children }: MyComponentProps) {
 }
 ```
 
-### Step 2: Register it in the MDX components map
-
-In `src/lib/blog.ts`, add your component to the registry:
-
-```typescript
-import Counter from "@/components/mdx/Counter";
-import Callout from "@/components/mdx/Callout";
-import MyComponent from "@/components/mdx/MyComponent";
-
-const components = {
-  Counter,
-  Callout,
-  MyComponent, // Add it here
-};
-```
-
-### Step 3: Use it in your MDX
+### Step 2: Import and use it in your MDX
 
 ```mdx
 import MyComponent from '@/components/mdx/MyComponent';
@@ -294,8 +192,14 @@ import MyComponent from '@/components/mdx/MyComponent';
 </MyComponent>
 ```
 
-<Callout type="warning" title="Client components need 'use client'" showEmoji={true}>
-If your component uses hooks like `useState` or `useEffect`, add `"use client"` at the top. Server components can't use React state.
+With Astro's MDX integration, imports work directly in `.mdx` files — no component registry needed. If your component needs client-side interactivity (hooks, state), add the `client:load` directive:
+
+```mdx
+<Counter client:load />
+```
+
+<Callout type="warning" title="Islands architecture" showEmoji={true}>
+Astro uses an [islands architecture](https://docs.astro.build/en/concepts/islands/). Static components render to HTML with zero JavaScript. Only components with a `client:*` directive ship JS to the browser. Use `client:load` for immediately interactive components, or `client:visible` to defer hydration until the component scrolls into view.
 </Callout>
 
 ### Current component inventory
@@ -304,15 +208,16 @@ Here's what I've got available:
 
 | Component | Type | Purpose |
 |-----------|------|---------|
-| `Callout` | Server | Tips, warnings, notes with styled boxes |
-| `Counter` | Client | Interactive counter demo (uses useState) |
-| `NotebookEmbed` | Client | Lazy-loads Jupyter notebook HTML with collapsible UI |
+| `Callout` | Static | Tips, warnings, notes with styled boxes |
+| `Counter` | Interactive | Counter demo (uses useState, needs `client:load`) |
+| `NerdCorner` | Interactive | Collapsible advanced-info section |
+| `NotebookEmbed` | Interactive | Lazy-loads Jupyter notebook HTML with collapsible UI |
 
 The constraint is intentional: fewer components means fewer ways for content to break over time.
 
 ## Styling: a focused MDX layer
 
-All post content is wrapped in `.mdx-content`, with typography and media styles in `src/app/markdown.css`. That means:
+All post content is wrapped in `.mdx-content`, with typography and media styles in `src/styles/markdown.css`. That means:
 
 - Code blocks look good without extra wrappers
 - Tables are readable
@@ -320,7 +225,7 @@ All post content is wrapped in `.mdx-content`, with typography and media styles 
 
 Because the styles are centralized in a single file, I can tweak typography without editing every post. That's a small thing that pays off over time.
 
-The CSS uses CSS custom properties for theming:
+The CSS uses custom properties for theming — including a terminal-themed palette that powers the entire site's look:
 
 ```css
 .mdx-content {
@@ -345,26 +250,15 @@ The CSS uses CSS custom properties for theming:
 
 ## The build process: what actually happens
 
-When you run `next build`, here's the flow:
+When you run `astro build`, here's the flow:
 
-1. **[generateStaticParams](https://nextjs.org/docs/app/api-reference/functions/generate-static-params)** scans `src/content/blog/` for all `.mdx` and `.md` files
-2. For each slug, Next.js calls the page component at build time
-3. `getBlogPostBySlug` reads, parses, and compiles each post
-4. The compiled React components get serialized into the static output
-5. At runtime, the server returns pre-rendered HTML — no MDX compilation needed
+1. **Content Collections** scan `src/content/blog/` and validate every post's frontmatter against the Zod schema
+2. **`getStaticPaths()`** generates a route for each post
+3. **`post.render()`** compiles each MDX file through the remark/rehype pipeline
+4. **Astro outputs static HTML** — every page is pre-rendered with zero client-side compilation
+5. **Vite bundles** only the JavaScript needed for interactive islands
 
-```typescript
-export async function generateStaticParams() {
-  const files = fs.readdirSync(blogDirectory);
-  return files
-    .filter((file) => file.endsWith(".md") || file.endsWith(".mdx"))
-    .map((file) => ({
-      slug: file.replace(/\.(md|mdx)$/, ""),
-    }));
-}
-```
-
-This is [Static Site Generation (SSG)](https://nextjs.org/docs/pages/building-your-application/rendering/static-site-generation) — pages are built once and served as static HTML.
+This is [Static Site Generation (SSG)](https://en.wikipedia.org/wiki/Static_site_generator) — pages are built once and served as static HTML. Astro's build is fast because it ships **zero JavaScript by default** and only hydrates the interactive islands you explicitly opt into.
 
 ## SEO considerations
 
@@ -372,44 +266,28 @@ MDX plays nicely with SEO because the output is clean HTML. Here's what I'm doin
 
 ### Semantic HTML structure
 
-- One `<h1>` per page (the post title)
-- Proper heading hierarchy (`h2` → `h3` → `h4`)
+- One `<h1>` per page (the post title, rendered from frontmatter)
+- Proper heading hierarchy (`h2` -> `h3` -> `h4`)
 - `<time>` elements for dates
 - `<article>` wrapper for the main content
 
 ### Meta tags and Open Graph
 
-Next.js 13+ uses the [Metadata API](https://nextjs.org/docs/app/building-your-application/optimizing/metadata). You can generate these from frontmatter:
+Astro's `<BaseLayout>` handles meta tags, and I generate dynamic OG images with [Satori](https://github.com/vercel/satori) at `/src/pages/og/[...slug].png.ts`:
 
-```typescript
-export async function generateMetadata({ params }) {
-  const post = await getBlogPostBySlug(params.slug);
-  return {
-    title: post.metadata.title,
-    description: post.metadata.excerpt,
-    openGraph: {
-      title: post.metadata.title,
-      description: post.metadata.excerpt,
-      type: 'article',
-      publishedTime: post.metadata.date,
-    },
-  };
-}
+```astro
+---
+// In BaseLayout.astro
+const { title, ogSlug } = Astro.props;
+---
+<head>
+  <title>{title}</title>
+  <meta property="og:title" content={title} />
+  <meta property="og:image" content={`https://pvi.sh/og/${ogSlug}.png`} />
+</head>
 ```
 
-### Structured data
-
-For blog posts, you can add [JSON-LD](https://json-ld.org/) structured data:
-
-```typescript
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BlogPosting',
-  headline: post.metadata.title,
-  datePublished: post.metadata.date,
-  author: { '@type': 'Person', name: 'Your Name' },
-};
-```
+Each blog post gets a unique OG image generated at build time — no external service needed.
 
 <Callout type="tip" title="Test your structured data" showEmoji={true}>
 Use [Google's Rich Results Test](https://search.google.com/test/rich-results) to validate your JSON-LD before deploying.
@@ -417,39 +295,40 @@ Use [Google's Rich Results Test](https://search.google.com/test/rich-results) to
 
 ### URL structure
 
-Clean URLs like `/blog/my-post-slug` are better than query strings. The file-based routing handles this automatically — `my-post.mdx` becomes `/blog/my-post`.
+Clean URLs like `/blog/my-post-slug` are handled automatically by Astro's file-based routing. A file at `src/content/blog/my-post.mdx` becomes `/blog/my-post` via the dynamic route in `src/pages/blog/[slug].astro`.
 
 ## Performance: where it matters (and where it doesn't)
 
-The two main performance costs are:
+Astro's architecture means most performance concerns are already handled:
 
-1. **Compilation time** – MDX compilation is expensive compared to plain Markdown.
-2. **List page aggregation** – the blog index compiles every post so it can render excerpts, tags, and searchable text.
-3. **Syntax highlighting** – code highlighting adds overhead, but it keeps posts readable for technical content.
+1. **Zero JS by default** — blog content ships as pure HTML, no React runtime needed
+2. **Islands for interactivity** — only the TOC, theme switcher, and interactive MDX components ship JavaScript
+3. **Build-time compilation** — MDX is compiled once, not on every request
 
-### Actual metrics from my site
+### Performance optimizations I've made
 
-| Metric | Value | Notes |
-|--------|-------|-------|
-| Build time (10 posts) | ~8-12s | Includes full MDX compilation |
-| Per-post compile time | ~200-400ms | Varies with code blocks and math |
-| Page weight (typical post) | ~80-120KB | Gzipped, includes fonts |
-| First Contentful Paint | ~0.8-1.2s | Static HTML helps a lot |
-| Largest Contentful Paint | ~1.0-1.5s | Usually the hero image |
+**Vite manual chunking** keeps the bundle lean by splitting heavy dependencies:
 
-If I ever hit scaling issues, the next step would be **pre‑compiling** MDX into cached artifacts at build time and only re‑compiling changed posts.
+```javascript
+vite: {
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("framer-motion")) return "framer-motion";
+          if (id.includes("react-icons")) return "react-icons";
+          if (id.includes("katex")) return "katex";
+        },
+      },
+    },
+  },
+},
+```
 
-In practice, this is fine for a small‑to‑mid sized blog. If I were scaling to hundreds of posts, I'd pre‑compile content or cache compiled output.
-
-## Performance optimization tips
-
-### 1. Lazy load heavy components
-
-The `NotebookEmbed` component only fetches HTML when expanded:
+**Lazy loading heavy components** — the `NotebookEmbed` only fetches HTML when expanded:
 
 ```tsx
 useEffect(() => {
-  // Only load HTML when expanded
   if (isOpen && !htmlContent) {
     setLoading(true);
     fetch(`/downloads/${notebookHtml}.html`)
@@ -462,53 +341,28 @@ useEffect(() => {
 }, [isOpen, notebookHtml, htmlContent]);
 ```
 
-### 2. Use Next.js Image optimization
+**Mobile GPU savings** — backdrop-filter (blur) is disabled on mobile via CSS to save battery:
 
-For images in MDX, consider using Next.js `<Image>` instead of raw `<img>`:
-
-```mdx
-import Image from 'next/image';
-
-<Image
-  src="/images/blog/my-image.png"
-  alt="Description"
-  width={800}
-  height={400}
-  priority={false}
-/>
-```
-
-This gets you automatic WebP conversion, lazy loading, and responsive sizing.
-
-### 3. Minimize client-side JavaScript
-
-Keep components server-rendered when possible. Only add `"use client"` when you need interactivity. My `Callout` component is a server component — it renders to static HTML with zero JavaScript.
-
-### 4. Code splitting for syntax highlighting
-
-If you're using a lot of languages, consider [dynamic imports](https://nextjs.org/docs/pages/building-your-application/optimizing/lazy-loading) for highlight.js languages:
-
-```typescript
-const rehypeHighlightOptions = {
-  detect: true,
-  ignoreMissing: true,
-  subset: false, // Use subset: ['javascript', 'python', 'bash'] for smaller bundles
-};
+```css
+@media (pointer: coarse), (max-width: 768px) {
+  * { backdrop-filter: none !important; }
+}
 ```
 
 ## Rendering model (why the page still feels snappy)
 
-The heavy lifting happens on the server. By the time the browser gets the page, the MDX is already rendered into HTML and styled by the `.mdx-content` layer. That's classic **[server‑side rendering](https://en.wikipedia.org/wiki/Server-side_scripting)**: the client only needs to display the result, not compile it.
+Astro's **[islands architecture](https://docs.astro.build/en/concepts/islands/)** is the key insight. Unlike a traditional React SPA where the entire page is a JavaScript application, Astro renders everything to static HTML first. Only the pieces that need interactivity — like the table of contents scroll tracker or the theme switcher — get hydrated as isolated React components.
 
-With Next.js 13+ and the App Router, you get the benefits of [React Server Components](https://nextjs.org/docs/app/building-your-application/rendering/server-components) — most of the page is static HTML with no client-side React hydration needed.
+The result: most of the page loads instantly as static HTML, and the few interactive pieces hydrate independently without blocking each other. A blog post with a TOC and a counter component ships maybe 40KB of JavaScript total, compared to 200KB+ for an equivalent React SPA.
 
 ## The parts I don't want to compromise on
 
 - **Readable source files** (writing should feel like writing, not coding).
 - **Composable components** (callouts, embeds, and custom UI).
-- **Plain SEO‑friendly HTML** on the other side.
+- **Plain SEO-friendly HTML** on the other side.
+- **Near-zero JavaScript** for content that doesn't need it.
 
-MDX checks all three boxes for me.
+MDX on Astro checks all four boxes.
 
 ## Measuring performance (lightweight but honest)
 
@@ -517,45 +371,37 @@ I keep an eye on:
 - Build time (does compiling all posts start to drag?)
 - Page load on mobile (do embeds slow things down?)
 - Core Web Vitals for individual posts
+- JavaScript bundle size per page (islands should stay small)
 
 If any of those start to slip, I'll adjust the pipeline rather than throwing more JS at the browser.
 
 <Callout type="info" title="Why I'm okay with it" showEmoji={true}>
-For my current post volume, build‑time compilation is a trade‑off I'm happy with: simpler code, fewer moving parts, and no extra build pipeline.
+For my current post volume, build-time compilation is a trade-off I'm happy with: simpler code, fewer moving parts, and Astro's static output means the site is as fast as it can possibly be.
 </Callout>
 
 ## What I'd improve next
 
-- **Incremental compilation** (only rebuild changed posts) — [Next.js ISR](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#revalidating-data) could help here
-- **Prebuilt search index** for faster client filtering — consider [Fuse.js](https://fusejs.io/) or [FlexSearch](https://github.com/nextapps-de/flexsearch)
-- **Image optimization** with metadata (width/height) for layout stability
-- **RSS feed generation** from the post metadata
+- **View Transitions** — Astro supports the [View Transitions API](https://docs.astro.build/en/guides/view-transitions/) for smooth page navigation (already partially implemented)
+- **Prebuilt search index** for faster client filtering — consider [Fuse.js](https://fusejs.io/) or [Pagefind](https://pagefind.app/)
+- **Image optimization** with Astro's `<Image>` component for automatic format conversion and responsive sizing
+- **RSS feed generation** from the content collection metadata
 
 ## A note on images and embeds
 
 Images live in `public/images/blog/...`, which keeps paths stable and makes them easy to reference from MDX. For videos, I use responsive `<iframe>` embeds that inherit the `.mdx-content` styling so they don't overflow the layout on small screens.
 
-## A quick video that inspired the approach
-
-<iframe
-  title="MDX in Next.js"
-  src="https://www.youtube.com/embed/1B0d9QwCw1o"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-  allowFullScreen
-></iframe>
-
 ## Further reading
 
 - [MDX Official Documentation](https://mdxjs.com/) — the definitive guide
-- [next-mdx-remote GitHub](https://github.com/hashicorp/next-mdx-remote) — the library I use
+- [Astro Content Collections](https://docs.astro.build/en/guides/content-collections/) — how Astro handles structured content
 - [Unified.js ecosystem](https://unifiedjs.com/) — the parser that powers remark/rehype
-- [Next.js App Router docs](https://nextjs.org/docs/app) — how routing and rendering work
+- [Astro Islands](https://docs.astro.build/en/concepts/islands/) — the architecture behind partial hydration
 - [Core Web Vitals](https://web.dev/vitals/) — what to measure for performance
 
 ## Examples you can read next
 
 - [What Is a VPN?](/blog/what-is-a-vpn)
 - [Tailscale Explained](/blog/tailscale-explained)
-- [Self‑Hosting With Tailscale](/blog/self-hosting-with-tailscale)
+- [Self-Hosting With Tailscale](/blog/self-hosting-with-tailscale)
 
 If you're building your own MDX pipeline and want to compare notes, I'm happy to share more details.

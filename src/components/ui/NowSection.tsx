@@ -6,36 +6,35 @@ const NOW_ITEMS = [
   {
     category: "building",
     items: [
-      { name: "indie game with Godot + C#", status: "active" },
-      { name: "AI-powered dev tools", status: "active" },
-      { name: "this portfolio (always)", status: "ongoing" },
+      { name: "performant flac library organizer", status: "in progress" },
+      { name: "tools for card games", status: "planning" },
+      { name: "this portfolio (always)", status: "deployed" },
     ],
   },
   {
     category: "learning",
     items: [
-      { name: "embedded systems & RTOS", status: "deep-dive" },
+      { name: "embedded systems & rtos", status: "exploring" },
       { name: "game design patterns", status: "exploring" },
-      { name: "Rust (slowly)", status: "started" },
+      { name: "rust", status: "exploring" },
     ],
   },
   {
     category: "reading",
     items: [
-      { name: "Designing Data-Intensive Applications", status: "current" },
+      { name: "Designing Data-Intensive Applications", status: "reference" },
       { name: "Game Programming Patterns", status: "reference" },
     ],
   },
 ];
 
 const STATUS_COLORS: Record<string, string> = {
-  active: T.green,
-  ongoing: T.blue,
-  "deep-dive": T.purple,
-  exploring: T.yellow,
-  started: T.yellow,
-  current: T.green,
-  reference: T.comment,
+  "in progress": T.blue,
+  "deployed": T.green,
+  "planning": T.yellow,
+  "exploring": T.yellow,
+  "current": T.green,
+  "reference": T.comment,
 };
 
 export default function NowSection() {

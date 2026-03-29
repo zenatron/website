@@ -76,8 +76,12 @@ export function ProjectHeader({
 
       {/* Title */}
       <h1
-        className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 font-sans"
-        style={{ color: T.fg }}
+        className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2"
+        style={{
+          color: T.fg,
+          fontFamily:
+            '"Atkinson Hyperlegible", system-ui, -apple-system, sans-serif',
+        }}
       >
         {metadata.title}
       </h1>
@@ -98,8 +102,12 @@ export function ProjectHeader({
       {/* Description */}
       {metadata.description && (
         <p
-          className="text-sm sm:text-base mb-4 max-w-3xl font-sans"
-          style={{ color: T.comment }}
+          className="text-sm sm:text-base mb-4 max-w-3xl"
+          style={{
+            color: T.comment,
+            fontFamily:
+              '"Atkinson Hyperlegible", system-ui, -apple-system, sans-serif',
+          }}
         >
           {metadata.description}
         </p>
@@ -188,17 +196,6 @@ export function ProjectHeader({
               </span>
             </a>
           )}
-          {downloads.length > 0 && (
-            <div className="flex items-center gap-2 px-2 py-1 -mx-2">
-              <span style={{ color: T.green }}>$</span>
-              <span style={{ color: T.fg }}>ls</span>
-              <span style={{ color: T.yellow }}>./downloads/</span>
-              <span style={{ color: T.comment }}>
-                # {downloads.length} file{downloads.length !== 1 ? "s" : ""}{" "}
-                available
-              </span>
-            </div>
-          )}
         </div>
       )}
     </div>
@@ -227,38 +224,58 @@ export function ProjectDownloadsBlock({
       }}
     >
       <div className="text-xs sm:text-sm mb-3">
-        <span style={{ color: T.purple }}>Downloads</span>
+        <span style={{ color: T.purple }}>Project Files</span>
       </div>
       <div className="space-y-2">
-        {downloads.map((dl) => (
-          <a
-            key={dl.filename}
-            href={`/downloads/${dl.filename}`}
-            download
-            className="flex items-center gap-2 group rounded px-2 py-1.5 -mx-2 transition-colors duration-150 text-xs sm:text-sm"
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = tA(T.green, "0a");
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "transparent";
-            }}
-          >
-            <span style={{ color: T.green }}>$</span>
-            <span style={{ color: T.fg }}>curl -O</span>
-            <span style={{ color: T.yellow }}>{dl.filename}</span>
-            {dl.label && (
-              <span style={{ color: T.comment }}>
-                {"  "}# {dl.label}
-              </span>
-            )}
-            <span
-              className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity"
-              style={{ color: T.green }}
+        {downloads.map((dl) => {
+          const isViewable = dl.filename.endsWith(".html");
+          const ext = dl.filename.split(".").pop()?.toLowerCase() ?? "";
+          const autoComment = dl.label
+            ? dl.label
+            : ext === "html"
+              ? "view in browser"
+              : ext === "ipynb"
+                ? "jupyter notebook"
+                : ext === "pdf"
+                  ? "PDF document"
+                  : ext === "zip"
+                    ? "archive"
+                    : "download";
+          return (
+            <a
+              key={dl.filename}
+              href={`/downloads/${dl.filename}`}
+              {...(isViewable
+                ? { target: "_blank", rel: "noopener noreferrer" }
+                : { download: true })}
+              className="flex items-center gap-2 group rounded px-2 py-1.5 -mx-2 transition-colors duration-150 text-xs sm:text-sm"
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = tA(T.green, "0a");
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+              }}
             >
-              {"\u2193"}
-            </span>
-          </a>
-        ))}
+              <span style={{ color: T.green }}>$</span>
+              <span style={{ color: T.fg }}>
+                {isViewable ? "open" : "curl -O"}
+              </span>
+              <span style={{ color: T.yellow }}>{dl.filename}</span>
+              <span
+                className="hidden sm:inline"
+                style={{ color: T.comment }}
+              >
+                {"  "}# {autoComment}
+              </span>
+              <span
+                className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity"
+                style={{ color: T.green }}
+              >
+                {isViewable ? "\u21B5" : "\u2193"}
+              </span>
+            </a>
+          );
+        })}
       </div>
     </div>
   );
@@ -268,78 +285,125 @@ export function ProjectDownloadsBlock({
 /*  ProjectFooter                                                            */
 /* ────────────────────────────────────────────────────────────────────────── */
 
-interface ProjectFooterProps {
-  tags?: string[];
+interface SuggestedProject {
+  slug: string;
+  title: string;
+  type?: string;
+  description?: string;
 }
 
-export function ProjectFooter({ tags = [] }: ProjectFooterProps) {
+interface ProjectFooterProps {
+  tags?: string[];
+  suggestedProjects?: SuggestedProject[];
+}
+
+export function ProjectFooter({
+  tags,
+  suggestedProjects = [],
+}: ProjectFooterProps) {
   return (
-    <div
-      className="rounded-b-lg border border-t-0 px-4 sm:px-6 py-4 font-mono"
-      style={{
-        backgroundColor: tA(T.bg, "cc"),
-        borderColor: T.gutter,
-      }}
-    >
+    <div className="mt-12">
       {/* EOF divider */}
-      <div className="text-xs sm:text-sm mb-4" style={{ color: T.comment }}>
-        // EOF
+      <div
+        className="font-mono text-sm mb-8 flex items-center gap-3"
+        style={{ color: T.comment }}
+      >
+        <span
+          className="flex-1 border-t"
+          style={{ borderColor: T.gutter }}
+        />
+        <span>// EOF</span>
+        <span
+          className="flex-1 border-t"
+          style={{ borderColor: T.gutter }}
+        />
       </div>
 
-      {/* Back link */}
-      <a
-        href="/projects"
-        className="flex items-center gap-2 group rounded px-2 py-1.5 -mx-2 transition-colors duration-150 text-xs sm:text-sm mb-4"
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = tA(T.purple, "0a");
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = "transparent";
-        }}
-      >
-        <span style={{ color: T.green }}>$</span>
-        <span style={{ color: T.fg }}>cd</span>
-        <span style={{ color: T.yellow }}>~/projects</span>
-        <span
-          className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity"
-          style={{ color: T.purple }}
-        >
-          {"\u21B5"}
-        </span>
-      </a>
+      {/* Tags */}
+      {tags && tags.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-8 font-mono text-sm">
+          <span style={{ color: T.comment }}>tags:</span>
+          {tags.map((tag) => (
+            <a
+              key={tag}
+              href={`/projects?tag=${encodeURIComponent(tag)}`}
+              className="transition-colors duration-150 hover:opacity-80"
+              style={{ color: T.blue }}
+              title={`View projects tagged ${tag}`}
+            >
+              [{tag}]
+            </a>
+          ))}
+        </div>
+      )}
 
-      {/* Related tags */}
-      {tags.length > 0 && (
-        <div className="border-t pt-3" style={{ borderColor: T.gutter }}>
-          <div className="text-xs mb-2" style={{ color: T.comment }}>
-            related:
+      {/* Suggested projects */}
+      {suggestedProjects.length > 0 && (
+        <div
+          className="rounded-lg border overflow-hidden mb-8"
+          style={{
+            backgroundColor: tA(T.bg, "80"),
+            borderColor: T.gutter,
+          }}
+        >
+          <div
+            className="px-3 sm:px-4 py-2 sm:py-2.5 border-b font-mono text-xs sm:text-sm"
+            style={{ borderColor: T.gutter, color: T.comment }}
+          >
+            similar projects
           </div>
-          <div className="flex flex-wrap gap-2">
-            {tags.map((tag) => (
+          <div className="p-3 sm:p-4 md:p-5 font-mono text-sm space-y-3">
+            {suggestedProjects.map((project, i) => (
               <a
-                key={tag}
-                href={`/projects?tag=${encodeURIComponent(tag)}`}
-                className="inline-flex items-center rounded px-2 py-0.5 text-xs transition-all duration-150"
-                style={{
-                  backgroundColor: tA(T.blue, "12"),
-                  border: `1px solid ${tA(T.blue, "30")}`,
-                  color: T.blue,
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = tA(T.blue, "22");
-                  e.currentTarget.style.borderColor = tA(T.blue, "50");
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = tA(T.blue, "12");
-                  e.currentTarget.style.borderColor = tA(T.blue, "30");
-                }}
+                key={project.slug}
+                href={`/projects/${project.slug}`}
+                className="block group transition-colors duration-150"
               >
-                [{tag}]
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span style={{ color: T.comment }}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span
+                    className="group-hover:underline"
+                    style={{ color: T.blue }}
+                  >
+                    {project.title}
+                  </span>
+                  {project.type && (
+                    <span
+                      className="text-xs"
+                      style={{ color: T.comment }}
+                    >
+                      {project.type}
+                    </span>
+                  )}
+                </div>
+                {project.description && (
+                  <p
+                    className="ml-6 text-xs mt-0.5 line-clamp-1"
+                    style={{ color: T.comment }}
+                  >
+                    {project.description}
+                  </p>
+                )}
               </a>
             ))}
           </div>
         </div>
       )}
+
+      {/* Navigation back */}
+      <div className="font-mono text-sm">
+        <a
+          href="/projects"
+          className="inline-flex items-center gap-2 transition-colors duration-150 hover:opacity-80"
+          style={{ color: T.green }}
+        >
+          <span>$</span>
+          <span style={{ color: T.fg }}>cd</span>
+          <span style={{ color: T.blue }}>~/projects</span>
+        </a>
+      </div>
     </div>
   );
 }

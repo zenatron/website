@@ -129,6 +129,53 @@ export default function Header() {
 
           {/* Right side */}
           <div className="flex items-center gap-3">
+            {/* Cmd+K hint — desktop only */}
+            <button
+              type="button"
+              onClick={() =>
+                document.dispatchEvent(
+                  new KeyboardEvent("keydown", {
+                    key: "k",
+                    metaKey: true,
+                    ctrlKey: true,
+                    bubbles: true,
+                  })
+                )
+              }
+              className="hidden lg:flex items-center gap-2 rounded px-3 py-1.5 text-xs transition-all duration-150 cursor-pointer"
+              style={{
+                color: T.comment,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = T.fg;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = T.comment;
+              }}
+              title="Open command palette"
+            >
+              <kbd
+                className="rounded border px-1.5 py-0.5 text-[11px] leading-none"
+                style={{
+                  borderColor: T.gutter,
+                  backgroundColor: tA(T.bg, "cc"),
+                }}
+              >
+                {typeof navigator !== "undefined" &&
+                /mac/i.test((navigator as any).userAgentData?.platform ?? navigator.platform)
+                  ? "⌘"
+                  : "Ctrl"}
+              </kbd>
+              <kbd
+                className="rounded border px-1.5 py-0.5 text-[11px] leading-none"
+                style={{
+                  borderColor: T.gutter,
+                  backgroundColor: tA(T.bg, "cc"),
+                }}
+              >
+                K
+              </kbd>
+            </button>
             <ThemeSwitcher />
             <button
               type="button"
