@@ -75,7 +75,9 @@ export default function ThemeSwitcher() {
             className="px-3 py-2 border-b"
             style={{ borderColor: T.gutter, color: T.comment }}
           >
-            <span style={{ color: T.green }}>$</span> theme --set
+            <span style={{ color: T.green }}>$</span>{" "}
+            <span style={{ color: T.fg }}>theme</span>{" "}
+            <span style={{ color: T.purple }}>--set</span>
           </div>
 
           {/* Theme list */}
@@ -103,7 +105,7 @@ export default function ThemeSwitcher() {
               >
                 {/* Color swatch */}
                 <div className="flex gap-0.5 shrink-0">
-                  {[colors.red, colors.green, colors.yellow, colors.blue, colors.purple].map(
+                  {[colors.red, colors.orange, colors.yellow, colors.green, colors.cyan, colors.blue, colors.purple].map(
                     (c, i) => (
                       <span
                         key={i}

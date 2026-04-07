@@ -611,8 +611,8 @@ export default function BlogClient({ posts }: BlogClientProps) {
               <div className="py-8 text-center font-mono">
                 <p className="text-sm" style={{ color: T.comment }}>
                   <span style={{ color: T.green }}>$</span> grep{" "}
-                  <span style={{ color: T.yellow }}>"{searchQuery || selectedTag}"</span>{" "}
-                  ~/blog/**
+                  <span style={{ color: T.orange }}>"{searchQuery || selectedTag}"</span>{" "}
+                  <span style={{ color: T.cyan }}>~/blog/**</span>
                 </p>
                 <p className="text-sm mt-2" style={{ color: T.red }}>
                   error: no posts found matching your criteria
@@ -669,7 +669,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
                     <span style={{ color: T.green }}>$</span>{" "}
                     <span style={{ color: T.fg }}>git log</span>{" "}
                     <span style={{ color: T.purple }}>--oneline</span>{" "}
-                    <span style={{ color: T.purple }}>--year</span>=<span style={{ color: T.yellow }}>{group.year}</span>
+                    <span style={{ color: T.purple }}>--year</span>=<span style={{ color: T.orange }}>{group.year}</span>
                   </div>
 
                   {/* Post rows */}
@@ -716,7 +716,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
                               })}
                             </span>
                             {post.metadata.readingTime && (
-                              <span className="text-[11px]" style={{ color: T.blue }}>
+                              <span className="text-[11px]" style={{ color: T.cyan }}>
                                 {post.metadata.readingTime}
                               </span>
                             )}
@@ -738,7 +738,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
                             {post.metadata.tags && post.metadata.tags.slice(0, 2).map((tag) => (
                               <span key={tag} className="text-[11px]">
                                 <span style={{ color: T.gutter }}>[</span>
-                                <span style={{ color: T.blue }}>{tag}</span>
+                                <span style={{ color: T.cyan }}>{tag}</span>
                                 <span style={{ color: T.gutter }}>]</span>
                               </span>
                             ))}

@@ -229,7 +229,7 @@ export default function GitHubActivity() {
         <span style={{ color: T.fg }}>git log</span>{" "}
         <span style={{ color: T.purple }}>--all</span>{" "}
         <span style={{ color: T.purple }}>--oneline</span>{" "}
-        <span style={{ color: T.purple }}>--limit</span>=<span style={{ color: T.yellow }}>{activity.length}</span>
+        <span style={{ color: T.purple }}>--limit</span>=<span style={{ color: T.orange }}>{activity.length}</span>
       </div>
 
       {/* Activity rows */}

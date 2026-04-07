@@ -91,7 +91,7 @@ export default function HobbiesSection() {
         <span style={{ color: T.green }}>$</span>{" "}
         <span style={{ color: T.fg }}>ls</span>{" "}
         <span style={{ color: T.purple }}>--filter</span>{" "}
-        <span style={{ color: T.yellow }}>
+        <span style={{ color: T.orange }}>
           {selectedCategory
             ? categoryLabels[
                 selectedCategory as keyof typeof categoryLabels
@@ -170,14 +170,11 @@ function FavoriteItemRow({ item, isLast }: FavoriteItemRowProps) {
       </span>
 
       {/* Icon */}
-      <div
-        className="flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded"
-        style={{ backgroundColor: tA(T.fg, "0a") }}
-      >
+      <div className="flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center">
         {isImageIcon ? (
           imageError ? (
             <FaImage
-              className="w-3 h-3 sm:w-3.5 sm:h-3.5"
+              className="w-5 h-5 sm:w-6 sm:h-6"
               style={{ color: T.comment }}
               title={`Failed to load icon for ${item.name}`}
             />
@@ -185,21 +182,21 @@ function FavoriteItemRow({ item, isLast }: FavoriteItemRowProps) {
             <img
               src={item.icon as string}
               alt={item.name}
-              width={14}
-              height={14}
-              className="object-contain"
+              width={24}
+              height={24}
+              className="w-5 h-5 sm:w-6 sm:h-6 object-contain"
               style={{ filter: item.invertIcon ? "invert(1)" : "none" }}
               onError={() => setImageError(true)}
             />
           )
         ) : IconComponent ? (
           <IconComponent
-            className="w-3 h-3 sm:w-3.5 sm:h-3.5"
+            className="w-5 h-5 sm:w-6 sm:h-6"
             style={{ color: item.color }}
           />
         ) : (
           <div
-            className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded"
+            className="w-5 h-5 sm:w-6 sm:h-6 rounded"
             style={{ backgroundColor: T.comment }}
           />
         )}

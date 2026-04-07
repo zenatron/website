@@ -49,10 +49,10 @@ function buildGrid(events: GitHubEvent[]): {
     countMap.set(date, (countMap.get(date) || 0) + 1);
   }
 
-  // Generate 91 days (13 weeks) ending today
+  // Generate 63 days (9 weeks) ending today
   const today = new Date();
   const days: DayData[] = [];
-  for (let i = 90; i >= 0; i--) {
+  for (let i = 62; i >= 0; i--) {
     const d = new Date(today);
     d.setDate(d.getDate() - i);
     const dateStr = d.toISOString().slice(0, 10);
@@ -124,7 +124,7 @@ export default function GitHubHeatmap() {
     const fetchPages = async () => {
       try {
         const pages = await Promise.all(
-          [1, 2, 3].map((page) =>
+          [1, 2].map((page) =>
             fetch(
               `https://api.github.com/users/zenatron/events/public?per_page=100&page=${page}`
             ).then((res) => {
@@ -157,7 +157,7 @@ export default function GitHubHeatmap() {
             <span style={{ color: T.fg }}>git log</span>{" "}
             <span style={{ color: T.purple }}>--graph</span>{" "}
             <span style={{ color: T.purple }}>--since</span>=
-            <span style={{ color: T.yellow }}>"90d"</span>
+            <span style={{ color: T.orange }}>"60d"</span>
           </div>
           <div className="flex items-center gap-2">
             <motion.span
@@ -184,7 +184,7 @@ export default function GitHubHeatmap() {
             <span style={{ color: T.fg }}>git log</span>{" "}
             <span style={{ color: T.purple }}>--graph</span>{" "}
             <span style={{ color: T.purple }}>--since</span>=
-            <span style={{ color: T.yellow }}>"90d"</span>
+            <span style={{ color: T.orange }}>"60d"</span>
           </div>
           <div>
             <span style={{ color: T.comment }}>
@@ -231,7 +231,7 @@ export default function GitHubHeatmap() {
         <span style={{ color: T.green }}>$</span>{" "}
         <span style={{ color: T.fg }}>git log</span>{" "}
         <span style={{ color: T.purple }}>--format</span>=
-        <span style={{ color: T.yellow }}>heatmap</span>
+        <span style={{ color: T.orange }}>heatmap</span>
       </div>
 
       {/* Heatmap grid */}

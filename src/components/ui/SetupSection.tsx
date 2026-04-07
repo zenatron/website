@@ -15,7 +15,7 @@ const CachyOSIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 /* Color palette bar — the classic neofetch touch */
-const PALETTE = [T.red, T.yellow, T.green, T.blue, T.purple, T.comment, T.fg, T.gutter];
+const PALETTE = [T.gutter, T.red, T.green, T.yellow, T.blue, T.purple, T.cyan, T.white];
 
 interface FetchSpec {
   user: string;
@@ -93,7 +93,7 @@ function NeofetchBlock({ spec }: { spec: FetchSpec }) {
         {/* fields */}
         {spec.fields.map(([label, value]) => (
           <div key={label} className="flex">
-            <span className="shrink-0 w-[9ch]" style={{ color: T.blue }}>
+            <span className="shrink-0 w-[9ch]" style={{ color: T.cyan }}>
               {label}
             </span>
             <span style={{ color: T.gutter }}>: </span>
@@ -133,7 +133,7 @@ export default function SetupSection() {
               <span style={{ color: T.green }}>$</span>{" "}
               <span style={{ color: T.fg }}>fastfetch</span>{" "}
               <span style={{ color: T.purple }}>--host</span>=
-              <span style={{ color: T.yellow }}>{machine.host}</span>
+              <span style={{ color: T.orange }}>{machine.host}</span>
             </div>
             <NeofetchBlock spec={machine} />
             {i < MACHINES.length - 1 && (

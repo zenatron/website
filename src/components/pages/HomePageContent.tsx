@@ -367,11 +367,9 @@ export default function HomePageContent({
                         className="h-3.5 w-3.5 shrink-0"
                         style={{ color: T.comment }}
                       />
-                      <span
-                        className="w-[8ch] text-left transition-colors duration-150 group-hover:!text-[#c678dd]"
-                        style={{ color: T.fg }}
-                      >
-                        github
+                      <span className="w-[8ch] text-left">
+                        <span className="group-hover:hidden" style={{ color: T.fg }}>github</span>
+                        <span className="hidden group-hover:inline" style={{ color: T.purple }}>github</span>
                       </span>
                       <span className="flex-1 text-right" style={{ color: T.comment }}>
                         zenatron
@@ -400,11 +398,9 @@ export default function HomePageContent({
                         className="h-3.5 w-3.5 shrink-0"
                         style={{ color: T.comment }}
                       />
-                      <span
-                        className="w-[8ch] text-left transition-colors duration-150 group-hover:!text-[#c678dd]"
-                        style={{ color: T.fg }}
-                      >
-                        linkedin
+                      <span className="w-[8ch] text-left">
+                        <span className="group-hover:hidden" style={{ color: T.fg }}>linkedin</span>
+                        <span className="hidden group-hover:inline" style={{ color: T.purple }}>linkedin</span>
                       </span>
                       <span className="flex-1 text-right" style={{ color: T.comment }}>
                         philvishnevsky
@@ -499,7 +495,7 @@ export default function HomePageContent({
                     <span style={{ color: T.green }}>$</span>{" "}
                     <span style={{ color: T.fg }}>ls</span>{" "}
                     <span style={{ color: T.purple }}>-la</span>{" "}
-                    <span style={{ color: T.purple }}>--sort</span>=<span style={{ color: T.yellow }}>date</span>
+                    <span style={{ color: T.purple }}>--sort</span>=<span style={{ color: T.orange }}>date</span>
                   </div>
 
                   {/* Project rows */}
@@ -571,7 +567,7 @@ export default function HomePageContent({
                             {project.tags?.slice(0, 3).map((tag) => (
                               <span key={tag}>
                                 <span style={{ color: T.gutter }}>[</span>
-                                <span style={{ color: T.blue }}>{tag}</span>
+                                <span style={{ color: T.cyan }}>{tag}</span>
                                 <span style={{ color: T.gutter }}>]</span>
                               </span>
                             ))}
@@ -610,7 +606,7 @@ export default function HomePageContent({
                     }}
                   >
                     <span style={{ color: T.green }}>$</span> cd ~/projects{" "}
-                    <span style={{ color: T.blue }}>↵</span>
+                    <span style={{ color: T.cyan }}>↵</span>
                   </a>
                 </div>
               </ScrollReveal>
@@ -650,7 +646,7 @@ export default function HomePageContent({
                     <span style={{ color: T.green }}>$</span>{" "}
                     <span style={{ color: T.fg }}>git log</span>{" "}
                     <span style={{ color: T.purple }}>--oneline</span>{" "}
-                    <span style={{ color: T.purple }}>--limit</span>=<span style={{ color: T.yellow }}>{posts.length}</span>
+                    <span style={{ color: T.purple }}>--limit</span>=<span style={{ color: T.orange }}>{posts.length}</span>
                   </div>
 
                   {/* Blog post rows */}
@@ -743,7 +739,7 @@ export default function HomePageContent({
                     }}
                   >
                     <span style={{ color: T.green }}>$</span> cd ~/blog{" "}
-                    <span style={{ color: T.blue }}>↵</span>
+                    <span style={{ color: T.cyan }}>↵</span>
                   </a>
                 </div>
               </ScrollReveal>

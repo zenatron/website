@@ -580,9 +580,9 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
               <div className="py-8 text-center font-mono">
                 <p className="text-sm" style={{ color: T.comment }}>
                   <span style={{ color: T.green }}>$</span> find{" "}
-                  <span style={{ color: T.yellow }}>~/projects</span>{" "}
+                  <span style={{ color: T.cyan }}>~/projects</span>{" "}
                   <span style={{ color: T.purple }}>-name</span>{" "}
-                  <span style={{ color: T.yellow }}>"{searchQuery || selectedTag || selectedType}"</span>
+                  <span style={{ color: T.orange }}>"{searchQuery || selectedTag || selectedType}"</span>
                 </p>
                 <p className="text-sm mt-2" style={{ color: T.red }}>
                   error: no projects found matching your criteria
@@ -639,8 +639,8 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                     <span style={{ color: T.green }}>$</span>{" "}
                     <span style={{ color: T.fg }}>ls</span>{" "}
                     <span style={{ color: T.purple }}>-la</span>{" "}
-                    <span style={{ color: T.purple }}>--sort</span>=<span style={{ color: T.yellow }}>date</span>{" "}
-                    <span style={{ color: T.blue }}>~/projects/{group.year}</span>
+                    <span style={{ color: T.purple }}>--sort</span>=<span style={{ color: T.orange }}>date</span>{" "}
+                    <span style={{ color: T.cyan }}>~/projects/{group.year}</span>
                   </div>
 
                   {/* Project rows */}
@@ -709,7 +709,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                             {project.metadata.tags?.slice(0, 3).map((tag) => (
                               <span key={tag}>
                                 <span style={{ color: T.gutter }}>[</span>
-                                <span style={{ color: T.blue }}>{tag}</span>
+                                <span style={{ color: T.cyan }}>{tag}</span>
                                 <span style={{ color: T.gutter }}>]</span>
                               </span>
                             ))}

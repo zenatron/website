@@ -37,7 +37,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         cmd: "mail phil@pvi.sh",
         cmdParts: [
           { text: "mail", color: T.fg },
-          { text: " phil@pvi.sh", color: T.yellow },
+          { text: " phil@pvi.sh", color: T.orange },
         ],
       },
       {
@@ -48,7 +48,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         cmdParts: [
           { text: "gh", color: T.fg },
           { text: " profile", color: T.purple },
-          { text: " zenatron", color: T.yellow },
+          { text: " zenatron", color: T.orange },
         ],
       },
       {
@@ -58,7 +58,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         cmd: "open linkedin/philvishnevsky",
         cmdParts: [
           { text: "open", color: T.fg },
-          { text: " linkedin/philvishnevsky", color: T.yellow },
+          { text: " linkedin/philvishnevsky", color: T.orange },
         ],
       },
       {
@@ -71,7 +71,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           { text: "cal", color: T.fg },
           { text: " schedule", color: T.fg },
           { text: " --with", color: T.purple },
-          { text: " phil", color: T.yellow },
+          { text: " phil", color: T.orange },
         ],
       },
       {
@@ -82,7 +82,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         cmdParts: [
           { text: "bsky", color: T.fg },
           { text: " follow", color: T.fg },
-          { text: " @zenatron", color: T.yellow },
+          { text: " @zenatron", color: T.orange },
         ],
       },
       {
@@ -93,7 +93,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         cmdParts: [
           { text: "discord", color: T.fg },
           { text: " dm", color: T.fg },
-          { text: " zenatron", color: T.yellow },
+          { text: " zenatron", color: T.orange },
         ],
       },
     ],

@@ -103,8 +103,8 @@ export default function LinksClient({ links }: LinksClientProps) {
               <span style={{ color: T.fg }}>cat</span>{" "}
               <span style={{ color: T.purple }}>--format</span>
               <span style={{ color: T.fg }}>=</span>
-              <span style={{ color: T.yellow }}>tree</span>{" "}
-              <span style={{ color: T.blue }}>links.json</span>
+              <span style={{ color: T.orange }}>tree</span>{" "}
+              <span style={{ color: T.cyan }}>links.json</span>
             </div>
 
             {/* Link rows */}
@@ -140,17 +140,21 @@ export default function LinksClient({ links }: LinksClientProps) {
                       {prefix}
                     </span>
                     {Icon && (
-                      <Icon
-                        className="h-4 w-4 shrink-0 transition-colors duration-150 group-hover:!text-[#c678dd]"
-                        style={{ color: T.comment }}
-                      />
+                      <span className="shrink-0">
+                        <Icon
+                          className="h-4 w-4 group-hover:hidden"
+                          style={{ color: T.comment }}
+                        />
+                        <Icon
+                          className="h-4 w-4 hidden group-hover:block"
+                          style={{ color: T.purple }}
+                        />
+                      </span>
                     )}
                     <span className="flex flex-col min-w-0 gap-0">
-                      <span
-                        className="transition-colors duration-150 group-hover:!text-[#c678dd] truncate"
-                        style={{ color: T.blue }}
-                      >
-                        {link.title}
+                      <span className="truncate">
+                        <span className="group-hover:hidden" style={{ color: T.blue }}>{link.title}</span>
+                        <span className="hidden group-hover:inline" style={{ color: T.purple }}>{link.title}</span>
                       </span>
                       {link.description && (
                         <span

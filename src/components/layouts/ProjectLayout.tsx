@@ -71,7 +71,7 @@ export function ProjectHeader({
       <div className="text-xs sm:text-sm mb-4 flex items-center gap-2 flex-wrap">
         <span style={{ color: T.green }}>$</span>
         <span style={{ color: T.fg }}>cat</span>
-        <span style={{ color: T.yellow }}>~/projects/{metadata.slug}</span>
+        <span style={{ color: T.cyan }}>~/projects/{metadata.slug}</span>
       </div>
 
       {/* Title */}
@@ -121,12 +121,12 @@ export function ProjectHeader({
               key={tag}
               href={`/projects?tag=${encodeURIComponent(tag)}`}
               className="text-xs sm:text-sm transition-colors duration-150"
-              style={{ color: T.blue }}
+              style={{ color: T.cyan }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = T.purple;
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = T.blue;
+                e.currentTarget.style.color = T.cyan;
               }}
             >
               [{tag}]
@@ -159,7 +159,7 @@ export function ProjectHeader({
             >
               <span style={{ color: T.green }}>$</span>
               <span style={{ color: T.fg }}>open</span>
-              <span style={{ color: T.yellow }}>
+              <span style={{ color: T.orange }}>
                 {displayUrl(links.github)}
               </span>
               <span
@@ -185,7 +185,7 @@ export function ProjectHeader({
             >
               <span style={{ color: T.green }}>$</span>
               <span style={{ color: T.fg }}>open</span>
-              <span style={{ color: T.yellow }}>
+              <span style={{ color: T.orange }}>
                 {displayUrl(links.live)}
               </span>
               <span
@@ -260,7 +260,7 @@ export function ProjectDownloadsBlock({
               <span style={{ color: T.fg }}>
                 {isViewable ? "open" : "curl -O"}
               </span>
-              <span style={{ color: T.yellow }}>{dl.filename}</span>
+              <span style={{ color: T.orange }}>{dl.filename}</span>
               <span
                 className="hidden sm:inline"
                 style={{ color: T.comment }}
@@ -328,7 +328,7 @@ export function ProjectFooter({
               key={tag}
               href={`/projects?tag=${encodeURIComponent(tag)}`}
               className="transition-colors duration-150 hover:opacity-80"
-              style={{ color: T.blue }}
+              style={{ color: T.cyan }}
               title={`View projects tagged ${tag}`}
             >
               [{tag}]
@@ -401,7 +401,7 @@ export function ProjectFooter({
         >
           <span>$</span>
           <span style={{ color: T.fg }}>cd</span>
-          <span style={{ color: T.blue }}>~/projects</span>
+          <span style={{ color: T.cyan }}>~/projects</span>
         </a>
       </div>
     </div>

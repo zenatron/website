@@ -9,62 +9,72 @@
 :root,
 [data-theme="atom-one-dark"] {
   --t-bg: #282c34;  --t-fg: #abb2bf;  --t-purple: #c678dd;
-  --t-blue: #61afef; --t-green: #98c379; --t-yellow: #e5c07b;
-  --t-red: #e06c75;  --t-comment: #5c6370; --t-white: #e6e6e6;
+  --t-blue: #61afef; --t-cyan: #56b6c2; --t-green: #98c379;
+  --t-yellow: #e5c07b; --t-orange: #d19a66; --t-red: #e06c75;
+  --t-comment: #5c6370; --t-white: #e6e6e6;
   --t-gutter: #3e4451; --t-cursor: #528bff;
 }
 [data-theme="dracula"] {
   --t-bg: #282a36;  --t-fg: #f8f8f2;  --t-purple: #bd93f9;
-  --t-blue: #8be9fd; --t-green: #50fa7b; --t-yellow: #f1fa8c;
-  --t-red: #ff5555;  --t-comment: #6272a4; --t-white: #f8f8f2;
+  --t-blue: #8be9fd; --t-cyan: #8be9fd; --t-green: #50fa7b;
+  --t-yellow: #f1fa8c; --t-orange: #ffb86c; --t-red: #ff5555;
+  --t-comment: #6272a4; --t-white: #f8f8f2;
   --t-gutter: #44475a; --t-cursor: #f8f8f2;
 }
 [data-theme="gruvbox"] {
   --t-bg: #282828;  --t-fg: #ebdbb2;  --t-purple: #d3869b;
-  --t-blue: #83a598; --t-green: #b8bb26; --t-yellow: #fabd2f;
-  --t-red: #fb4934;  --t-comment: #928374; --t-white: #fbf1c7;
+  --t-blue: #83a598; --t-cyan: #8ec07c; --t-green: #b8bb26;
+  --t-yellow: #fabd2f; --t-orange: #fe8019; --t-red: #fb4934;
+  --t-comment: #928374; --t-white: #fbf1c7;
   --t-gutter: #3c3836; --t-cursor: #ebdbb2;
 }
 [data-theme="nord"] {
   --t-bg: #2e3440;  --t-fg: #d8dee9;  --t-purple: #b48ead;
-  --t-blue: #81a1c1; --t-green: #a3be8c; --t-yellow: #ebcb8b;
-  --t-red: #bf616a;  --t-comment: #4c566a; --t-white: #eceff4;
+  --t-blue: #81a1c1; --t-cyan: #88c0d0; --t-green: #a3be8c;
+  --t-yellow: #ebcb8b; --t-orange: #d08770; --t-red: #bf616a;
+  --t-comment: #4c566a; --t-white: #eceff4;
   --t-gutter: #3b4252; --t-cursor: #d8dee9;
 }
 [data-theme="catppuccin"] {
   --t-bg: #1e1e2e;  --t-fg: #cdd6f4;  --t-purple: #cba6f7;
-  --t-blue: #89b4fa; --t-green: #a6e3a1; --t-yellow: #f9e2af;
-  --t-red: #f38ba8;  --t-comment: #585b70; --t-white: #cdd6f4;
+  --t-blue: #89b4fa; --t-cyan: #94e2d5; --t-green: #a6e3a1;
+  --t-yellow: #f9e2af; --t-orange: #fab387; --t-red: #f38ba8;
+  --t-comment: #585b70; --t-white: #cdd6f4;
   --t-gutter: #313244; --t-cursor: #f5e0dc;
 }
 [data-theme="high-contrast"] {
   --t-bg: #0a0a0a;  --t-fg: #f5f5f5;  --t-purple: #e78bf9;
-  --t-blue: #6cb6ff; --t-green: #56d364; --t-yellow: #e3b341;
-  --t-red: #f47067;  --t-comment: #9e9e9e; --t-white: #ffffff;
+  --t-blue: #6cb6ff; --t-cyan: #39d2e0; --t-green: #56d364;
+  --t-yellow: #e3b341; --t-orange: #f0883e; --t-red: #f47067;
+  --t-comment: #9e9e9e; --t-white: #ffffff;
   --t-gutter: #3d3d3d; --t-cursor: #ffffff;
 }
 [data-theme="tokyo-night"] {
   --t-bg: #1a1b26;  --t-fg: #a9b1d6;  --t-purple: #bb9af7;
-  --t-blue: #7aa2f7; --t-green: #9ece6a; --t-yellow: #e0af68;
-  --t-red: #f7768e;  --t-comment: #565f89; --t-white: #c0caf5;
+  --t-blue: #7aa2f7; --t-cyan: #7dcfff; --t-green: #9ece6a;
+  --t-yellow: #e0af68; --t-orange: #ff9e64; --t-red: #f7768e;
+  --t-comment: #565f89; --t-white: #c0caf5;
   --t-gutter: #292e42; --t-cursor: #c0caf5;
 }
 [data-theme="solarized-dark"] {
   --t-bg: #002b36;  --t-fg: #839496;  --t-purple: #d33682;
-  --t-blue: #268bd2; --t-green: #859900; --t-yellow: #b58900;
-  --t-red: #dc322f;  --t-comment: #586e75; --t-white: #fdf6e3;
+  --t-blue: #268bd2; --t-cyan: #2aa198; --t-green: #859900;
+  --t-yellow: #b58900; --t-orange: #cb4b16; --t-red: #dc322f;
+  --t-comment: #586e75; --t-white: #fdf6e3;
   --t-gutter: #073642; --t-cursor: #839496;
 }
 [data-theme="monokai"] {
   --t-bg: #272822;  --t-fg: #f8f8f2;  --t-purple: #ae81ff;
-  --t-blue: #66d9ef; --t-green: #a6e22e; --t-yellow: #e6db74;
-  --t-red: #f92672;  --t-comment: #75715e; --t-white: #f8f8f0;
+  --t-blue: #66d9ef; --t-cyan: #66d9ef; --t-green: #a6e22e;
+  --t-yellow: #e6db74; --t-orange: #fd971f; --t-red: #f92672;
+  --t-comment: #75715e; --t-white: #f8f8f0;
   --t-gutter: #3e3d32; --t-cursor: #f8f8f0;
 }
 [data-theme="i-hate-colors"] {
   --t-bg: #1a1a1a;  --t-fg: #d4d4d4;  --t-purple: #b0b0b0;
-  --t-blue: #b0b0b0; --t-green: #b0b0b0; --t-yellow: #b0b0b0;
-  --t-red: #b0b0b0;  --t-comment: #686868; --t-white: #e8e8e8;
+  --t-blue: #b0b0b0; --t-cyan: #b0b0b0; --t-green: #b0b0b0;
+  --t-yellow: #b0b0b0; --t-orange: #b0b0b0; --t-red: #b0b0b0;
+  --t-comment: #686868; --t-white: #e8e8e8;
   --t-gutter: #333333; --t-cursor: #d4d4d4;
 }
 

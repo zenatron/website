@@ -219,7 +219,7 @@ export default function NotFoundPageContent() {
                 <div style={{ color: T.comment }}>
                   <span style={{ color: T.green }}>$</span>{" "}
                   <span style={{ color: T.fg }}>cd</span>{" "}
-                  <span style={{ color: T.yellow }}>{path}</span>
+                  <span style={{ color: T.cyan }}>{path}</span>
                 </div>
               </div>
 
@@ -274,7 +274,7 @@ export default function NotFoundPageContent() {
                 }}
               >
                 <div className="text-xs" style={{ color: T.comment }}>
-                  stack trace:
+                  fake stack trace:
                 </div>
                 {STACK_TRACE.map((frame, i) => (
                   <motion.div
@@ -289,7 +289,7 @@ export default function NotFoundPageContent() {
                     </span>
                     <span style={{ color: T.purple }}>{frame.fn}</span>
                     <span style={{ color: T.comment }}> (</span>
-                    <span style={{ color: T.blue }}>{frame.file}</span>
+                    <span style={{ color: T.cyan }}>{frame.file}</span>
                     <span style={{ color: T.comment }}>:</span>
                     <span style={{ color: T.yellow }}>{frame.line}</span>
                     <span style={{ color: T.comment }}>)</span>
@@ -360,7 +360,7 @@ export default function NotFoundPageContent() {
                       className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity"
                       style={{ color: T.purple }}
                     >
-                      \u21B5
+                      {"\u21B5"}
                     </span>
                   </a>
                 ))}
@@ -395,7 +395,7 @@ export default function NotFoundPageContent() {
                     : seconds < 60
                       ? "please cd ~"
                       : "cd ~ # I'm begging you"}
-                  <span style={{ color: T.comment }}>\u21B5</span>
+                  <span style={{ color: T.comment }}>{"\u21B5"}</span>
                 </a>
               </motion.div>
             </div>

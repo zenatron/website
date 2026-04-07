@@ -58,7 +58,7 @@ export function BlogPostHeader({
         <div className="flex items-baseline gap-2 flex-wrap">
           <span style={{ color: T.green }}>$</span>
           <span style={{ color: T.fg }}>cat</span>
-          <span style={{ color: T.blue }}>~/blog/{slug}.mdx</span>
+          <span style={{ color: T.cyan }}>~/blog/{slug}.mdx</span>
         </div>
 
         {/* Title */}
@@ -79,7 +79,7 @@ export function BlogPostHeader({
             {dateFormatter({ date, formatStyle: "long" })}
           </span>
           {readingTime && (
-            <span style={{ color: T.blue }}>{readingTime}</span>
+            <span style={{ color: T.cyan }}>{readingTime}</span>
           )}
         </div>
 
@@ -91,7 +91,7 @@ export function BlogPostHeader({
                 key={tag}
                 href={`/blog?tag=${tag}`}
                 className="transition-colors duration-150 hover:opacity-80"
-                style={{ color: T.blue }}
+                style={{ color: T.cyan }}
                 title={`View posts tagged ${tag}`}
               >
                 [{tag}]
@@ -142,7 +142,7 @@ export function BlogPostFooter({
               key={tag}
               href={`/blog?tag=${tag}`}
               className="transition-colors duration-150 hover:opacity-80"
-              style={{ color: T.blue }}
+              style={{ color: T.cyan }}
               title={`View posts tagged ${tag}`}
             >
               [{tag}]
@@ -186,7 +186,7 @@ export function BlogPostFooter({
                   {post.metadata.readingTime && (
                     <span
                       className="text-xs"
-                      style={{ color: T.comment }}
+                      style={{ color: T.cyan }}
                     >
                       {post.metadata.readingTime}
                     </span>
@@ -215,7 +215,7 @@ export function BlogPostFooter({
         >
           <span>$</span>
           <span style={{ color: T.fg }}>cd</span>
-          <span style={{ color: T.blue }}>~/blog</span>
+          <span style={{ color: T.cyan }}>~/blog</span>
         </a>
       </div>
     </div>
