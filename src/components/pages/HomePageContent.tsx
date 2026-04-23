@@ -4,7 +4,7 @@ import TerminalWindow, { T, tA } from "@/components/ui/TerminalWindow";
 import ContactModal from "@/components/ui/ContactModal";
 import { motion } from "framer-motion";
 import { QUICK_FACTS } from "@/lib/config";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { SiGithub, SiLinkedin } from "react-icons/si";
 import {
   CTA_TEXTS,
   TerminalHeader,
@@ -363,7 +363,7 @@ export default function HomePageContent({
                       }}
                     >
                       <span style={{ color: T.gutter }}>├─</span>
-                      <FaGithub
+                      <SiGithub
                         className="h-3.5 w-3.5 shrink-0"
                         style={{ color: T.comment }}
                       />
@@ -382,7 +382,7 @@ export default function HomePageContent({
                       </span>
                     </a>
                     <a
-                      href="https://linkedin.com/in/philvishnevsky"
+                      href="https://www.linkedin.com/in/philvishnevsky/"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group flex items-center gap-3 px-3 sm:px-4 py-2 transition-colors duration-150"
@@ -394,7 +394,7 @@ export default function HomePageContent({
                       }}
                     >
                       <span style={{ color: T.gutter }}>└─</span>
-                      <FaLinkedin
+                      <SiLinkedin
                         className="h-3.5 w-3.5 shrink-0"
                         style={{ color: T.comment }}
                       />

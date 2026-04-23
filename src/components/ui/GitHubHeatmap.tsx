@@ -120,27 +120,23 @@ export default function GitHubHeatmap() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    // Fetch multiple pages to get ~90 days of data
-    const fetchPages = async () => {
-      try {
-        const pages = await Promise.all(
-          [1, 2].map((page) =>
-            fetch(
-              `https://api.github.com/users/zenatron/events/public?per_page=100&page=${page}`
-            ).then((res) => {
-              if (!res.ok) throw new Error("Failed to fetch");
-              return res.json();
-            })
-          )
-        );
-        setEvents(pages.flat());
+    // Pre-rendered at build time — see src/pages/api/github/events.json.ts
+    fetch("/api/github/events.json")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch");
+        return res.json();
+      })
+      .then((payload: { events?: GitHubEvent[]; error?: string }) => {
+        if (payload.error || !payload.events) {
+          throw new Error(payload.error ?? "empty_events");
+        }
+        setEvents(payload.events);
         setLoading(false);
-      } catch {
+      })
+      .catch(() => {
         setError(true);
         setLoading(false);
-      }
-    };
-    fetchPages();
+      });
   }, []);
 
   const { grid, weeks, monthLabels, totalEvents, streak } = useMemo(

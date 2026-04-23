@@ -2,7 +2,8 @@ import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import type { ProjectCard } from "@/types/types";
 import { Search, X, ExternalLink } from "lucide-react";
-import { FaGithub, FaGlobe, FaGamepad, FaCode } from "react-icons/fa";
+import { FaGlobe, FaGamepad, FaCode } from "react-icons/fa";
+import { SiGithub } from "react-icons/si";
 import { SiJupyter } from "react-icons/si";
 import { cn } from "@/lib/utils";
 import ContactModal from "@/components/ui/ContactModal";
@@ -26,7 +27,7 @@ const getTypeIcon = (type: string | undefined) => {
     case "data":
       return <SiJupyter className={iconClass} />;
     case "github":
-      return <FaGithub className={iconClass} />;
+      return <SiGithub className={iconClass} />;
     case "web":
       return <FaGlobe className={iconClass} />;
     case "game":

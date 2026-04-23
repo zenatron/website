@@ -1,12 +1,11 @@
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  FaGithub,
   FaEnvelope,
-  FaLinkedin,
   FaDiscord,
   FaCalendarAlt,
 } from "react-icons/fa";
 import { FaBluesky } from "react-icons/fa6";
+import { SiGithub, SiLinkedin } from "react-icons/si";
 import { useEffect, useRef, useCallback, useMemo, useState } from "react";
 import { T, tA } from "@/components/ui/TerminalWindow";
 
@@ -42,7 +41,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       },
       {
         name: "GitHub",
-        icon: <FaGithub className="text-base" />,
+        icon: <SiGithub className="h-4 w-4" />,
         href: "https://github.com/zenatron",
         cmd: "gh profile zenatron",
         cmdParts: [
@@ -53,7 +52,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       },
       {
         name: "LinkedIn",
-        icon: <FaLinkedin className="text-base" />,
+        icon: <SiLinkedin className="h-4 w-4" />,
         href: "https://www.linkedin.com/in/philvishnevsky/",
         cmd: "open linkedin/philvishnevsky",
         cmdParts: [

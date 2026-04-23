@@ -37,7 +37,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogUrl} />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <!-- Blocking theme init — prevents flash of wrong theme -->
     <script is:inline>
       (function(){var t=localStorage.getItem('terminal-theme');if(t)document.documentElement.setAttribute('data-theme',t)})();

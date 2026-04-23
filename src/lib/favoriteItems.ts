@@ -83,18 +83,18 @@ export const favoriteItems: FavoriteItem[] = [
   {
     name: "Fantastical",
     icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/fantastical.png",
-    description: "the best calendar",
-    url: "https://flexibits.com/fantastical",
-    category: "apps",
-  },
-  {
-    name: "Cal.com",
-    icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/cal-com-dark.svg",
     description: "book a call!",
-    // url: "https://z3n.me/phil/call",
     url: "https://fantastical.app/philv",
     category: "apps",
   },
+  // {
+  //   name: "Cal.com",
+  //   icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/cal-com-dark.svg",
+  //   description: "book a call!",
+  //   // url: "https://z3n.me/phil/call",
+  //   url: "https://fantastical.app/philv",
+  //   category: "apps",
+  // },
 
   // Communication & Social
   {
@@ -108,7 +108,7 @@ export const favoriteItems: FavoriteItem[] = [
     name: "LinkedIn",
     icon: "https://raw.githubusercontent.com/zenatron/zenatron/refs/heads/main/logos/linkedin.svg",
     description: '"professional" networking',
-    url: "https://linkedin.com/in/philvishnevsky",
+    url: "https://www.linkedin.com/in/philvishnevsky/",
     category: "apps",
   },
   {

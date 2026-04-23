@@ -5,13 +5,13 @@ export const links: LinkItem[] = [
     title: "GitHub",
     url: "https://github.com/zenatron",
     description: "My code, projects, and contributions",
-    icon: "FaGithub",
+    icon: "Github",
   },
   {
     title: "LinkedIn",
     url: "https://www.linkedin.com/in/philvishnevsky/",
     description: "My professional network and profile",
-    icon: "FaLinkedin",
+    icon: "Linkedin",
   },
   {
     title: "Website",

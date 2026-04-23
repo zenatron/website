@@ -1,5 +1,6 @@
-import { FaCalendarAlt, FaGithub, FaLinkedin } from "react-icons/fa";
+import { FaCalendarAlt } from "react-icons/fa";
 import { FaBluesky } from "react-icons/fa6";
+import { SiGithub, SiLinkedin } from "react-icons/si";
 import CalendarPopup from "@/components/ui/Calendar";
 import { T } from "@/components/ui/TerminalWindow";
 import UgLogo from "@/components/icons/UgIcon";
@@ -11,10 +12,10 @@ const NAV_LINKS = [
 ];
 
 const SOCIAL_LINKS = [
-  { href: "https://github.com/zenatron", icon: FaGithub, label: "GitHub" },
+  { href: "https://github.com/zenatron", icon: SiGithub, label: "GitHub" },
   {
-    href: "https://linkedin.com/in/philvishnevsky",
-    icon: FaLinkedin,
+    href: "https://www.linkedin.com/in/philvishnevsky/",
+    icon: SiLinkedin,
     label: "LinkedIn",
   },
   {

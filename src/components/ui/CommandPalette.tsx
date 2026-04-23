@@ -4,9 +4,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { T, tA, THEMES, THEME_NAMES } from "@/components/ui/TerminalWindow";
 import {
   Home, FileText, FolderOpen, User, Link, Search, Mail,
-  Palette, Github, Linkedin, ExternalLink,
-  ArrowUp, ArrowDown, CornerDownLeft, Command,
+  Palette, ExternalLink,
+  ArrowUp, ArrowDown, CornerDownLeft, Command, Tag,
 } from "lucide-react";
+import { SiGithub, SiLinkedin } from "react-icons/si";
+import pkg from "../../../package.json";
 
 interface PaletteItem {
   id: string;
@@ -71,8 +73,25 @@ export default function CommandPalette() {
 
     const actions: PaletteItem[] = [
       { id: "contact", label: "Contact", category: "Actions", icon: Mail, action: () => window.dispatchEvent(new CustomEvent("open-contact-modal")), keywords: "email reach out message hello get in touch say hello shoot dm" },
-      { id: "github", label: "GitHub", category: "Links", icon: Github, action: () => window.open("https://github.com/zenatron", "_blank"), keywords: "source code repo" },
-      { id: "linkedin", label: "LinkedIn", category: "Links", icon: Linkedin, action: () => window.open("https://www.linkedin.com/in/philvishnevsky/", "_blank"), keywords: "professional network" },
+      {
+        id: "version",
+        label: `Version (v${pkg.version})`,
+        category: "Actions",
+        icon: Tag,
+        action: () =>
+          window.dispatchEvent(
+            new CustomEvent("show-toast", {
+              detail: {
+                icon: "🏷️",
+                title: `${pkg.name} v${pkg.version}`,
+                message: `$ cat package.json | jq .version → "${pkg.version}"`,
+              },
+            })
+          ),
+        keywords: "build release semver pkg package",
+      },
+      { id: "github", label: "GitHub", category: "Links", icon: SiGithub, action: () => window.open("https://github.com/zenatron", "_blank"), keywords: "source code repo" },
+      { id: "linkedin", label: "LinkedIn", category: "Links", icon: SiLinkedin, action: () => window.open("https://www.linkedin.com/in/philvishnevsky/", "_blank"), keywords: "professional network" },
     ];
 
     return [...nav, ...sections, ...themeItems, ...actions];

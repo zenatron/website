@@ -3,13 +3,14 @@ import type { LinkItem } from "@/types/types";
 import TerminalWindow, { T, tA } from "@/components/ui/TerminalWindow";
 import { motion, useInView } from "framer-motion";
 import React from "react";
-import { FaGithub, FaLinkedin, FaGlobe, FaCalendarAlt } from "react-icons/fa";
+import { FaGlobe, FaCalendarAlt } from "react-icons/fa";
 import { FaBluesky } from "react-icons/fa6";
+import { SiGithub, SiLinkedin } from "react-icons/si";
 import UgLogo from "../icons/UgIcon";
 
 const iconMap: { [key: string]: React.ElementType } = {
-  FaGithub,
-  FaLinkedin,
+  Github: SiGithub,
+  Linkedin: SiLinkedin,
   FaGlobe,
   FaCalendarAlt,
   FaBluesky,

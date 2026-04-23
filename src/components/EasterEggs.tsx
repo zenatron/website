@@ -109,13 +109,13 @@ export default function EasterEggs() {
   // Console easter egg - runs once on mount
   useEffect(() => {
     console.log(
-      `
-%c  ____  _     _ _  __     ___     _                          _          
-%c |  _ \| |__ (_) | \ \   / (_)___| |__  _ __   _____   _____ | | ___   _ 
+      String.raw`
+%c  ____  _     _ _  __     ___     _                          _
+%c |  _ \| |__ (_) | \ \   / (_)___| |__  _ __   _____   _____ | | ___   _
 %c | |_) | '_ \| | |  \ \ / /| / __| '_ \| '_ \ / _ \ \ / / __|| |/ / | | |
 %c |  __/| | | | | |   \ V / | \__ \ | | | | | |  __/\ V /\__ \|   <| |_| |
-%c |_|   |_| |_|_|_|    \_/  |_|___/_| |_|_| |_|\___| \_/ |___/|_|\_\\__, |
-%c                                                                   |___/ 
+%c |_|   |_| |_|_|_|    \_/  |_|___/_| |_|_| |_|\___| \_/ |___/|_|\_\__, |
+%c                                                                   |___/
 `,
       "color: #7c8aff",
       "color: #8a7cff",
@@ -129,7 +129,7 @@ export default function EasterEggs() {
       "font-size: 16px; font-weight: bold;"
     );
     console.log(
-      "%c🔍 Curious about the code? Check it out: https://github.com/zenatron/portfolio",
+      "%c🔍 Curious about the code? Check it out: https://github.com/zenatron/website",
       "font-size: 12px;"
     );
     console.log(
@@ -194,6 +194,17 @@ export default function EasterEggs() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [konamiIndex, konamiUnlocked, showToast]);
+
+  // Allow other components (e.g. CommandPalette) to surface toasts.
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<{ icon?: string; title: string; message: string }>).detail;
+      if (!detail) return;
+      showToast(detail.icon ?? "💡", detail.title, detail.message);
+    };
+    window.addEventListener("show-toast", handler);
+    return () => window.removeEventListener("show-toast", handler);
+  }, [showToast]);
 
   // Simple confetti effect
   const triggerConfetti = () => {

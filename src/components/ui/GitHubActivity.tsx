@@ -137,13 +137,17 @@ export default function GitHubActivity() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetch("https://api.github.com/users/zenatron/events/public?per_page=30")
+    // Pre-rendered at build time — see src/pages/api/github/events.json.ts
+    fetch("/api/github/events.json")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch");
         return res.json();
       })
-      .then((events: GitHubEvent[]) => {
-        setActivity(parseEvents(events));
+      .then((payload: { events?: GitHubEvent[]; error?: string }) => {
+        if (payload.error || !payload.events) {
+          throw new Error(payload.error ?? "empty_events");
+        }
+        setActivity(parseEvents(payload.events));
         setLoading(false);
       })
       .catch(() => {

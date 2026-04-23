@@ -205,8 +205,8 @@ export default function AboutPageContent() {
                     >
                       {seconds.toLocaleString()}
                     </span>{" "}
-                    seconds
-                    <motion.span
+                    seconds.
+                    {/* <motion.span
                       animate={{ opacity: [1, 0] }}
                       transition={{
                         duration: 0.6,
@@ -215,7 +215,7 @@ export default function AboutPageContent() {
                       }}
                       className="inline-block w-[2px] h-[1em] ml-0.5 align-text-bottom"
                       style={{ backgroundColor: T.cursor }}
-                    />
+                    /> */}
                   </p>
                 }
               />

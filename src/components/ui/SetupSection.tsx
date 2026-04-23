@@ -60,7 +60,7 @@ const MACHINES: FetchSpec[] = [
       ["Storage", "4TB NVMe"],
       ["Display", "2x 27\" 2K QHD (144Hz)"],
       ["Shell", "zsh + oh-my-zsh"],
-      ["PM", "pacman"],
+      ["PM", "paru"],
       ["Editor", "VS Code · nvim"],
       ["Emulator", "Konsole"],
       ["Theme", "Atom One Dark"],
