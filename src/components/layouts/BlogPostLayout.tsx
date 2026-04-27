@@ -52,18 +52,11 @@ export function BlogPostHeader({
         <div className="hidden sm:block w-[52px] shrink-0" />
       </div>
 
-      {/* Command + metadata body */}
+      {/* Metadata body */}
       <div className="p-3 sm:p-4 md:p-5 font-mono text-sm">
-        {/* Command line */}
-        <div className="flex items-baseline gap-2 flex-wrap">
-          <span style={{ color: T.green }}>$</span>
-          <span style={{ color: T.fg }}>cat</span>
-          <span style={{ color: T.cyan }}>~/blog/{slug}.mdx</span>
-        </div>
-
         {/* Title */}
         <h1
-          className="text-2xl sm:text-3xl md:text-4xl font-bold mt-4 mb-3"
+          className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3"
           style={{
             color: T.fg,
             fontFamily:
@@ -166,43 +159,50 @@ export function BlogPostFooter({
           >
             suggested reads
           </div>
-          <div className="p-3 sm:p-4 md:p-5 font-mono text-sm space-y-3">
+          <ul className="p-3 sm:p-4 md:p-5 font-mono text-sm space-y-4">
             {suggestedPosts.map((post, i) => (
-              <a
-                key={post.slug}
-                href={`/blog/${post.slug}`}
-                className="block group transition-colors duration-150"
-              >
-                <div className="flex items-baseline gap-2 flex-wrap">
-                  <span style={{ color: T.comment }}>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span
-                    className="group-hover:underline"
-                    style={{ color: T.blue }}
+              <li key={post.slug}>
+                <a
+                  href={`/blog/${post.slug}`}
+                  className="block group transition-colors duration-150"
+                >
+                  <p
+                    className="leading-snug"
+                    style={{ paddingLeft: "1.75rem", textIndent: "-1.75rem" }}
                   >
-                    {post.metadata.title}
-                  </span>
-                  {post.metadata.readingTime && (
                     <span
-                      className="text-xs"
+                      className="tabular-nums mr-2"
+                      style={{ color: T.comment }}
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span
+                      className="group-hover:underline break-words"
+                      style={{ color: T.blue }}
+                    >
+                      {post.metadata.title}
+                    </span>
+                  </p>
+                  {post.metadata.excerpt && (
+                    <p
+                      className="text-xs mt-1 line-clamp-2"
+                      style={{ color: T.comment }}
+                    >
+                      {post.metadata.excerpt}
+                    </p>
+                  )}
+                  {post.metadata.readingTime && (
+                    <p
+                      className="text-[11px] mt-1"
                       style={{ color: T.cyan }}
                     >
                       {post.metadata.readingTime}
-                    </span>
+                    </p>
                   )}
-                </div>
-                {post.metadata.excerpt && (
-                  <p
-                    className="ml-6 text-xs mt-0.5 line-clamp-1"
-                    style={{ color: T.comment }}
-                  >
-                    {post.metadata.excerpt}
-                  </p>
-                )}
-              </a>
+                </a>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       )}
 

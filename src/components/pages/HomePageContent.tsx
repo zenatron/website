@@ -204,7 +204,11 @@ const fakeHash = (str: string) => {
 /* ── Date formatting ── */
 const formatDate = (dateStr: string) => {
   const d = new Date(dateStr);
-  return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  });
 };
 
 /* ── Types ── */
@@ -278,7 +282,7 @@ export default function HomePageContent({
 
       <main id="main-content" className="flex-1">
         {/* ─── Hero Section ─── */}
-        <section className="px-4 pb-16 pt-24 sm:pb-20 sm:pt-28 sm:px-6">
+        <section className="px-4 pb-16 pt-10 sm:pb-20 sm:pt-14 sm:px-6">
           <div className="mx-auto max-w-5xl">
             <div className="space-y-8 text-center">
               <div className="space-y-6">

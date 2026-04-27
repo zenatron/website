@@ -53,7 +53,7 @@ function getIcon(item: LinkItem): React.ElementType | null {
 
 export default function LinksClient({ links }: LinksClientProps) {
   return (
-    <div className="px-4 pb-24 pt-24 sm:px-6">
+    <div className="px-4 pb-24 pt-10 sm:px-6">
       <div className="mx-auto max-w-5xl space-y-10">
         {/* Header */}
         <ScrollReveal className="space-y-4 text-center">

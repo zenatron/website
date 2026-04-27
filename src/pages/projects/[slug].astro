@@ -100,8 +100,8 @@ const suggestedProjectCards = await getSuggestedProjects(metadata.slug, 3);
 const suggestedProjects = suggestedProjectCards.map((p) => ({
   slug: p.metadata.slug,
   title: p.metadata.title,
-  type: p.metadata.type,
   description: p.metadata.description,
+  tags: p.metadata.tags,
 }));
 ---
 
@@ -109,7 +109,7 @@ const suggestedProjects = suggestedProjectCards.map((p) => ({
   <div class="relative flex min-h-screen flex-col">
     <KatexStyles client:load />
     <Header client:load />
-    <main class="flex-1 px-4 py-10 pt-20 sm:px-6">
+    <main class="flex-1 px-4 py-10 pt-6 sm:px-6">
       <div class="max-w-5xl mx-auto">
         {/* ── Terminal header (React island) ── */}
         <ProjectHeader
@@ -119,11 +119,8 @@ const suggestedProjects = suggestedProjectCards.map((p) => ({
           client:load
         />
 
-        {/* ── Content body — server-rendered with TUI border ── */}
-        <div
-          class="project-body border-x border-b rounded-b-lg px-4 sm:px-6 py-6"
-          style={`border-color: var(--t-gutter);`}
-        >
+        {/* ── Content body ── */}
+        <div class="project-body">
           {/* Featured Image */}
           {metadata.image && (
             <div

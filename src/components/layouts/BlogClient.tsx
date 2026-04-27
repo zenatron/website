@@ -363,7 +363,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
   const hasActiveFilters = searchQuery !== "" || selectedTag !== null;
 
   return (
-    <div className="px-4 pb-16 pt-24 sm:pb-24 sm:pt-28 sm:px-6">
+    <div className="px-4 pb-16 pt-10 sm:pb-24 sm:pt-14 sm:px-6">
       <div className="mx-auto max-w-5xl">
         {/* Header */}
         <header className="mb-8 sm:mb-16 space-y-4 font-mono">

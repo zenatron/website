@@ -61,89 +61,96 @@ export function ProjectHeader({
 
   return (
     <div
-      className="rounded-t-lg border border-b-0 px-4 sm:px-6 py-3 font-mono"
-      style={{
-        backgroundColor: tA(T.bg, "cc"),
-        borderColor: T.gutter,
-      }}
+      className="rounded-lg border overflow-hidden mb-8"
+      style={{ backgroundColor: tA(T.bg, "80"), borderColor: T.gutter }}
     >
-      {/* Command line */}
-      <div className="text-xs sm:text-sm mb-4 flex items-center gap-2 flex-wrap">
-        <span style={{ color: T.green }}>$</span>
-        <span style={{ color: T.fg }}>cat</span>
-        <span style={{ color: T.cyan }}>~/projects/{metadata.slug}</span>
-      </div>
-
-      {/* Title */}
-      <h1
-        className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2"
-        style={{
-          color: T.fg,
-          fontFamily:
-            '"Atkinson Hyperlegible", system-ui, -apple-system, sans-serif',
-        }}
-      >
-        {metadata.title}
-      </h1>
-
-      {/* Meta row: type, date */}
+      {/* Title bar */}
       <div
-        className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm mb-3"
+        className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 border-b"
+        style={{ borderColor: T.gutter }}
       >
-        <span style={{ color: T.purple }}>{typeLabel}</span>
-        {formattedDate && (
-          <>
-            <span style={{ color: T.gutter }}>|</span>
-            <span style={{ color: T.comment }}>{formattedDate}</span>
-          </>
-        )}
+        <div className="flex items-center gap-1.5 shrink-0">
+          <span
+            className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full opacity-80"
+            style={{ backgroundColor: T.red }}
+          />
+          <span
+            className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full opacity-80"
+            style={{ backgroundColor: T.yellow }}
+          />
+          <span
+            className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full opacity-80"
+            style={{ backgroundColor: T.green }}
+          />
+        </div>
+        <span
+          className="flex-1 text-center font-mono text-[11px] sm:text-xs md:text-sm truncate px-2"
+          style={{ color: T.comment }}
+        >
+          ~/projects/{metadata.slug}.md
+        </span>
+        <div className="hidden sm:block w-[52px] shrink-0" />
       </div>
 
-      {/* Description */}
-      {metadata.description && (
-        <p
-          className="text-sm sm:text-base mb-4 max-w-3xl"
+      {/* Metadata body */}
+      <div className="p-3 sm:p-4 md:p-5 font-mono text-sm">
+        {/* Title */}
+        <h1
+          className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3"
           style={{
-            color: T.comment,
+            color: T.fg,
             fontFamily:
               '"Atkinson Hyperlegible", system-ui, -apple-system, sans-serif',
           }}
         >
-          {metadata.description}
-        </p>
-      )}
+          {metadata.title}
+        </h1>
 
-      {/* Tags */}
-      {metadata.tags && metadata.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-4">
-          {metadata.tags.map((tag) => (
-            <a
-              key={tag}
-              href={`/projects?tag=${encodeURIComponent(tag)}`}
-              className="text-xs sm:text-sm transition-colors duration-150"
-              style={{ color: T.cyan }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = T.purple;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = T.cyan;
-              }}
-            >
-              [{tag}]
-            </a>
-          ))}
+        {/* Meta row */}
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm">
+          {formattedDate && (
+            <span style={{ color: T.green }}>{formattedDate}</span>
+          )}
+          <span style={{ color: T.cyan }}>{typeLabel}</span>
         </div>
-      )}
 
-      {/* Links as terminal commands */}
-      {(links?.github || links?.live || downloads.length > 0) && (
-        <div
-          className="space-y-1.5 text-xs sm:text-sm"
-          style={{
-            borderTop: `1px solid ${T.gutter}`,
-            paddingTop: "0.75rem",
-          }}
-        >
+        {/* Tags */}
+        {metadata.tags && metadata.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-3">
+            {metadata.tags.map((tag) => (
+              <a
+                key={tag}
+                href={`/projects?tag=${encodeURIComponent(tag)}`}
+                className="transition-colors duration-150 hover:opacity-80"
+                style={{ color: T.cyan }}
+                title={`View projects tagged ${tag}`}
+              >
+                [{tag}]
+              </a>
+            ))}
+          </div>
+        )}
+
+        {/* Description */}
+        {metadata.description && (
+          <p
+            className="text-sm sm:text-base mt-4 max-w-3xl"
+            style={{
+              color: T.comment,
+              fontFamily:
+                '"Atkinson Hyperlegible", system-ui, -apple-system, sans-serif',
+            }}
+          >
+            {metadata.description}
+          </p>
+        )}
+
+        {/* Links as terminal commands */}
+        {(links?.github || links?.live || downloads.length > 0) && (
+          <div
+            className="space-y-1.5 text-xs sm:text-sm mt-4 pt-3"
+            style={{ borderTop: `1px solid ${T.gutter}` }}
+          >
           {links?.github && (
             <a
               href={links.github}
@@ -196,8 +203,9 @@ export function ProjectHeader({
               </span>
             </a>
           )}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -288,8 +296,8 @@ export function ProjectDownloadsBlock({
 interface SuggestedProject {
   slug: string;
   title: string;
-  type?: string;
   description?: string;
+  tags?: string[];
 }
 
 interface ProjectFooterProps {
@@ -352,43 +360,52 @@ export function ProjectFooter({
           >
             similar projects
           </div>
-          <div className="p-3 sm:p-4 md:p-5 font-mono text-sm space-y-3">
+          <ul className="p-3 sm:p-4 md:p-5 font-mono text-sm space-y-4">
             {suggestedProjects.map((project, i) => (
-              <a
-                key={project.slug}
-                href={`/projects/${project.slug}`}
-                className="block group transition-colors duration-150"
-              >
-                <div className="flex items-baseline gap-2 flex-wrap">
-                  <span style={{ color: T.comment }}>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span
-                    className="group-hover:underline"
-                    style={{ color: T.blue }}
+              <li key={project.slug}>
+                <a
+                  href={`/projects/${project.slug}`}
+                  className="block group transition-colors duration-150"
+                >
+                  <p
+                    className="leading-snug"
+                    style={{ paddingLeft: "1.75rem", textIndent: "-1.75rem" }}
                   >
-                    {project.title}
-                  </span>
-                  {project.type && (
                     <span
-                      className="text-xs"
+                      className="tabular-nums mr-2"
                       style={{ color: T.comment }}
                     >
-                      {project.type}
+                      {String(i + 1).padStart(2, "0")}
                     </span>
-                  )}
-                </div>
-                {project.description && (
-                  <p
-                    className="ml-6 text-xs mt-0.5 line-clamp-1"
-                    style={{ color: T.comment }}
-                  >
-                    {project.description}
+                    <span
+                      className="group-hover:underline break-words"
+                      style={{ color: T.blue }}
+                    >
+                      {project.title}
+                    </span>
                   </p>
-                )}
-              </a>
+                  {project.description && (
+                    <p
+                      className="text-xs mt-1 line-clamp-2"
+                      style={{ color: T.comment }}
+                    >
+                      {project.description}
+                    </p>
+                  )}
+                  {project.tags && project.tags.length > 0 && (
+                    <p
+                      className="text-[11px] mt-1 flex flex-nowrap gap-2 overflow-hidden whitespace-nowrap"
+                      style={{ color: T.cyan }}
+                    >
+                      {project.tags.slice(0, 3).map((tag) => (
+                        <span key={tag}>[{tag}]</span>
+                      ))}
+                    </p>
+                  )}
+                </a>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       )}
 

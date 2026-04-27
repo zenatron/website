@@ -27,17 +27,18 @@ export default function Header() {
   return (
     <>
       <header
-        className="fixed left-0 right-0 top-0 z-40 border-b backdrop-blur-md"
+        className="sticky top-0 z-40 border-b backdrop-blur-md transform-gpu"
         style={{
           backgroundColor: tA(T.bg, "e6"),
           borderColor: T.gutter,
+          willChange: "transform",
         }}
       >
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6 font-mono">
           {/* Brand */}
           <a
             href="/"
-            className="group flex items-center gap-2.5 rounded border px-3 py-1.5 text-sm transition-all duration-150"
+            className="group flex items-center gap-2.5 rounded border px-1.5 sm:px-3 py-1.5 text-sm transition-all duration-150"
             style={{
               color: T.fg,
               backgroundColor: tA(T.bg, "80"),

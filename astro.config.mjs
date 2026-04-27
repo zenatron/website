@@ -22,7 +22,7 @@ export default defineConfig({
     rehypePlugins: [rehypeSlug, rehypeKatex],
   },
   redirects: {
-    "/principles": "/about#principles",
+    "/principles": "/blog/principles",
   },
   vite: {
     build: {
