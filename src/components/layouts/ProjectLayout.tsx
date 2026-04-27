@@ -45,13 +45,11 @@ function displayUrl(url: string): string {
 interface ProjectHeaderProps {
   metadata: ProjectMeta;
   links?: ProjectLinks;
-  downloads?: Download[];
 }
 
 export function ProjectHeader({
   metadata,
   links = {},
-  downloads = [],
 }: ProjectHeaderProps) {
   const formattedDate = metadata.date
     ? dateFormatter({ date: metadata.date, formatStyle: "long" })
@@ -146,11 +144,8 @@ export function ProjectHeader({
         )}
 
         {/* Links as terminal commands */}
-        {(links?.github || links?.live || downloads.length > 0) && (
-          <div
-            className="space-y-1.5 text-xs sm:text-sm mt-4 pt-3"
-            style={{ borderTop: `1px solid ${T.gutter}` }}
-          >
+        {(links?.github || links?.live) && (
+          <div className="space-y-1.5 text-xs sm:text-sm mt-4">
           {links?.github && (
             <a
               href={links.github}
