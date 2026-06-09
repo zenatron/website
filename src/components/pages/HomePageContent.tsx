@@ -4,7 +4,8 @@ import TerminalWindow, { T, tA } from "@/components/ui/TerminalWindow";
 import ContactModal from "@/components/ui/ContactModal";
 import { motion } from "framer-motion";
 import { QUICK_FACTS } from "@/lib/config";
-import { SiGithub, SiLinkedin } from "react-icons/si";
+import { SiGithub } from "react-icons/si";
+import { FaLinkedin } from "react-icons/fa";
 import {
   CTA_TEXTS,
   TerminalHeader,
@@ -398,7 +399,7 @@ export default function HomePageContent({
                       }}
                     >
                       <span style={{ color: T.gutter }}>└─</span>
-                      <SiLinkedin
+                      <FaLinkedin
                         className="h-3.5 w-3.5 shrink-0"
                         style={{ color: T.comment }}
                       />
