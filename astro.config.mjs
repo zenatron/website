@@ -23,6 +23,7 @@ export default defineConfig({
   },
   redirects: {
     "/principles": "/blog/principles",
+    "/resume": "/downloads/Resume_Phil_Vishnevsky.pdf",
   },
   vite: {
     build: {

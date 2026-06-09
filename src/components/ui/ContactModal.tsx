@@ -1,11 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  FaEnvelope,
-  FaDiscord,
-  FaCalendarAlt,
-} from "react-icons/fa";
+import { FaEnvelope, FaDiscord, FaCalendarAlt, FaLinkedin } from "react-icons/fa";
 import { FaBluesky } from "react-icons/fa6";
-import { SiGithub, SiLinkedin } from "react-icons/si";
+import { SiGithub } from "react-icons/si";
 import { useEffect, useRef, useCallback, useMemo, useState } from "react";
 import { T, tA } from "@/components/ui/TerminalWindow";
 
@@ -52,7 +48,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       },
       {
         name: "LinkedIn",
-        icon: <SiLinkedin className="h-4 w-4" />,
+        icon: <FaLinkedin className="h-4 w-4" />,
         href: "https://www.linkedin.com/in/philvishnevsky/",
         cmd: "open linkedin/philvishnevsky",
         cmdParts: [

@@ -7,7 +7,8 @@ import {
   Palette, ExternalLink,
   ArrowUp, ArrowDown, CornerDownLeft, Command, Tag,
 } from "lucide-react";
-import { SiGithub, SiLinkedin } from "react-icons/si";
+import { FaLinkedin } from "react-icons/fa";
+import { SiGithub } from "react-icons/si";
 import pkg from "../../../package.json";
 
 interface PaletteItem {
@@ -91,7 +92,7 @@ export default function CommandPalette() {
         keywords: "build release semver pkg package",
       },
       { id: "github", label: "GitHub", category: "Links", icon: SiGithub, action: () => window.open("https://github.com/zenatron", "_blank"), keywords: "source code repo" },
-      { id: "linkedin", label: "LinkedIn", category: "Links", icon: SiLinkedin, action: () => window.open("https://www.linkedin.com/in/philvishnevsky/", "_blank"), keywords: "professional network" },
+      { id: "linkedin", label: "LinkedIn", category: "Links", icon: FaLinkedin, action: () => window.open("https://www.linkedin.com/in/philvishnevsky/", "_blank"), keywords: "professional network" },
     ];
 
     return [...nav, ...sections, ...themeItems, ...actions];

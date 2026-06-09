@@ -1,8 +1,8 @@
 import React from "react";
 import type { LinkItem } from "@/types/types";
-import { FaGlobe, FaCalendarAlt } from "react-icons/fa";
+import { FaGlobe, FaCalendarAlt, FaLinkedin } from "react-icons/fa";
 import { FaBluesky } from "react-icons/fa6";
-import { SiGithub, SiLinkedin } from "react-icons/si";
+import { SiGithub } from "react-icons/si";
 
 interface LinkCardProps {
   item: LinkItem;
@@ -10,7 +10,7 @@ interface LinkCardProps {
 
 const iconMap: { [key: string]: React.ElementType } = {
   Github: SiGithub,
-  Linkedin: SiLinkedin,
+  Linkedin: FaLinkedin,
   FaGlobe,
   FaCalendarAlt,
   FaBluesky,
