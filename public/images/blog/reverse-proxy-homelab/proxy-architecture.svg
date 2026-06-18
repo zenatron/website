@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" role="img" aria-labelledby="rp-title rp-desc">
+  <title id="rp-title">Caddy reverse proxy architecture</title>
+  <desc id="rp-desc">A diagram showing a user connecting to Caddy, which routes to multiple backend services with TLS termination and clean domain names.</desc>
+
+  <defs>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#22c55e" />
+    </marker>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#38bdf8" />
+    </marker>
+    <marker id="arrowRed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="640" fill="#0d1117" />
+
+  <!-- Title -->
+  <text x="40" y="50" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="700" fill="#ffffff">Reverse proxy architecture</text>
+  <text x="40" y="78" font-family="system-ui, -apple-system, sans-serif" font-size="15" fill="#8b949e">A single entry point routes traffic to backend services with automatic HTTPS</text>
+
+  <!-- External icon (globe) -->
+  <circle cx="145" cy="168" r="22" fill="none" stroke="#6366f1" stroke-width="2.5"/>
+  <path d="M125 168 Q145 148 165 168 Q145 188 125 168" fill="none" stroke="#6366f1" stroke-width="2"/>
+  <line x1="145" y1="146" x2="145" y2="190" stroke="#6366f1" stroke-width="2"/>
+
+  <!-- User / Internet -->
+  <rect x="60" y="130" width="170" height="76" rx="12" fill="#161b22" stroke="#6366f1" stroke-width="2.5"/>
+  <text x="145" y="164" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="600" fill="#f0f6fc" text-anchor="middle">Internet</text>
+  <text x="145" y="188" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#8b949e" text-anchor="middle">Users &amp; clients</text>
+
+  <!-- TLS arrow from Internet to Caddy -->
+  <line x1="230" y1="168" x2="330" y2="168" stroke="#22c55e" stroke-width="3" marker-end="url(#arrowGreen)"/>
+  <text x="280" y="152" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#22c55e" text-anchor="middle" font-weight="600">TLS (HTTPS 443)</text>
+
+  <!-- Lock icon on TLS -->
+  <rect x="260" y="172" width="14" height="12" rx="2" fill="#22c55e"/>
+  <path d="M263 172 l8 -4 l8 4" fill="none" stroke="#22c55e" stroke-width="2"/>
+
+  <!-- Caddy reverse proxy (center) -->
+  <rect x="350" y="100" width="200" height="136" rx="14" fill="#1a1f2e" stroke="#22c55e" stroke-width="3"/>
+  <text x="450" y="148" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#22c55e" text-anchor="middle">Caddy</text>
+  <text x="450" y="176" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#8b949e" text-anchor="middle">Reverse Proxy</text>
+  <text x="450" y="200" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#8b949e" text-anchor="middle">TLS termination</text>
+  <text x="450" y="220" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#8b949e" text-anchor="middle">Access control</text>
+
+  <!-- Row of backend services -->
+  <!-- Jellyfin -->
+  <rect x="620" y="100" width="160" height="60" rx="10" fill="#161b22" stroke="#6366f1" stroke-width="2"/>
+  <text x="700" y="126" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="600" fill="#f0f6fc" text-anchor="middle">Jellyfin</text>
+  <text x="700" y="145" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="#8b949e" text-anchor="middle">:8096</text>
+
+  <!-- Grafana -->
+  <rect x="800" y="100" width="160" height="60" rx="10" fill="#161b22" stroke="#6366f1" stroke-width="2"/>
+  <text x="880" y="126" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="600" fill="#f0f6fc" text-anchor="middle">Grafana</text>
+  <text x="880" y="145" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="#8b949e" text-anchor="middle">:3000</text>
+
+  <!-- Nextcloud -->
+  <rect x="980" y="100" width="160" height="60" rx="10" fill="#161b22" stroke="#6366f1" stroke-width="2"/>
+  <text x="1060" y="126" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="600" fill="#f0f6fc" text-anchor="middle">Nextcloud</text>
+  <text x="1060" y="145" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="#8b949e" text-anchor="middle">:443</text>
+
+  <!-- Arrows from Caddy to backends -->
+  <line x1="550" y1="120" x2="620" y2="120" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
+  <line x1="550" y1="148" x2="800" y2="120" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
+  <line x1="550" y1="176" x2="980" y2="120" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
+
+  <!-- Clean URL labels under backends -->
+  <text x="700" y="185" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#38bdf8" text-anchor="middle">jellyfin.home.local</text>
+  <text x="880" y="185" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#38bdf8" text-anchor="middle">grafana.home.local</text>
+  <text x="1060" y="185" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#38bdf8" text-anchor="middle">nextcloud.home.local</text>
+
+  <!-- Without reverse proxy section -->
+  <line x1="40" y1="260" x2="1160" y2="260" stroke="#21262d" stroke-width="1"/>
+
+  <text x="40" y="300" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="700" fill="#ffffff">Without a reverse proxy</text>
+
+  <!-- Bad approach boxes -->
+  <rect x="60" y="330" width="260" height="70" rx="10" fill="#1a1f2e" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="190" y="358" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#f0f6fc" text-anchor="middle">192.168.1.50:8096</text>
+  <text x="190" y="385" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#ef4444" text-anchor="middle">Hard to remember</text>
+
+  <rect x="360" y="330" width="260" height="70" rx="10" fill="#1a1f2e" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="490" y="358" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#f0f6fc" text-anchor="middle">192.168.1.50:3000</text>
+  <text x="490" y="385" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#ef4444" text-anchor="middle">Port collision risk</text>
+
+  <rect x="660" y="330" width="260" height="70" rx="10" fill="#1a1f2e" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="790" y="358" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#f0f6fc" text-anchor="middle">Open port on router</text>
+  <text x="790" y="385" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#ef4444" text-anchor="middle">Security exposure</text>
+
+  <!-- Exposed to internet -->
+  <rect x="60" y="430" width="860" height="70" rx="10" fill="#1a1f2e" stroke="#ef4444" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="490" y="460" font-family="system-ui, -apple-system, sans-serif" font-size="15" fill="#ef4444" text-anchor="middle" font-weight="600">Each service exposed to the internet — separate TLS certs, no unified access control</text>
+  <text x="490" y="485" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#8b949e" text-anchor="middle">Management nightmare at scale</text>
+
+  <!-- With reverse proxy section -->
+  <line x1="40" y1="530" x2="1160" y2="530" stroke="#21262d" stroke-width="1"/>
+
+  <text x="40" y="570" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="700" fill="#ffffff">With Caddy</text>
+
+  <rect x="60" y="590" width="860" height="35" rx="8" fill="#161b22" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="490" y="613" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#22c55e" text-anchor="middle" font-weight="600">One port (443) → one TLS cert → clean URLs → centralized access control</text>
+</svg>

@@ -4,6 +4,8 @@ date: "2026-02-25"
 readingTime: "22min"
 excerpt: "How to set up Caddy as a reverse proxy for your self-hosted services, with automatic HTTPS, internal domains, and clean URLs."
 tags: ["self-hosting", "homelab", "caddy", "networking", "security"]
+series: "homelab-networking"
+seriesOrder: 5
 ---
 
 import Callout from '@/components/mdx/Callout';
@@ -14,6 +16,7 @@ You've got services running on different ports: Jellyfin on 8096, Grafana on 300
 A **reverse proxy** solves all of this: one entry point, clean URLs, automatic HTTPS, and centralized access control.
 
 ![Reverse proxy architecture diagram](/images/blog/reverse-proxy-homelab/proxy-architecture.svg)
+*Caddy sits as the single entry point on port 443, handling TLS termination and routing requests to backend services by domain name — each service stays on its own internal port, never exposed directly.*
 
 ## What a reverse proxy actually does
 

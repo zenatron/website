@@ -1,36 +1,82 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
-  <title id="title">Remote access with Tailscale</title>
-  <desc id="desc">A diagram showing a home server accessed via Tailscale without open ports.</desc>
-  <rect width="1200" height="600" fill="#0b0f1a" />
-  <g font-family="Arial, sans-serif" fill="#e6e6e6">
-    <text x="40" y="60" font-size="32" font-weight="700">Self-hosting without open ports</text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="ra-title ra-desc">
+  <title id="ra-title">Remote access with Tailscale</title>
+  <desc id="ra-desc">A diagram showing a home server accessed via Tailscale without open ports.</desc>
 
-  <g stroke="#6366f1" stroke-width="3" fill="none">
-    <rect x="90" y="160" width="260" height="160" rx="18" />
-    <rect x="460" y="160" width="260" height="160" rx="18" />
-    <rect x="830" y="160" width="260" height="160" rx="18" />
-  </g>
-  <g font-family="Arial, sans-serif" fill="#e6e6e6" font-size="20" text-anchor="middle">
-    <text x="220" y="240">Phone</text>
-    <text x="590" y="240">Tailnet</text>
-    <text x="960" y="240">Home server</text>
-  </g>
+  <defs>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#22c55e" />
+    </marker>
+  </defs>
 
-  <g stroke="#22c55e" stroke-width="4" fill="none" stroke-dasharray="10 8">
-    <path d="M350 240 L460 240" />
-    <path d="M720 240 L830 240" />
-  </g>
+  <rect width="1200" height="600" fill="#0d1117" />
 
-  <g fill="#22c55e" font-family="Arial, sans-serif" font-size="16">
-    <text x="380" y="220">Encrypted</text>
-    <text x="750" y="220">Encrypted</text>
-  </g>
+  <!-- Title -->
+  <text x="40" y="52" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="700" fill="#ffffff">Self-hosting without open ports</text>
+  <text x="40" y="80" font-family="system-ui, -apple-system, sans-serif" font-size="15" fill="#8b949e">All traffic routed through the encrypted tailnet — no port forwarding needed</text>
 
-  <g stroke="#ef4444" stroke-width="4" fill="none">
-    <path d="M960 360 L960 500" />
-  </g>
-  <g fill="#ef4444" font-family="Arial, sans-serif" font-size="16" text-anchor="middle">
-    <text x="960" y="530">No public ports</text>
-  </g>
+  <!-- Phone -->
+  <rect x="80" y="180" width="240" height="160" rx="16" fill="#161b22" stroke="#6366f1" stroke-width="2.5"/>
+  <!-- Phone icon -->
+  <rect x="170" y="210" width="60" height="90" rx="8" fill="none" stroke="#6366f1" stroke-width="2"/>
+  <line x1="188" y1="230" x2="212" y2="230" stroke="#6366f1" stroke-width="1.5"/>
+  <circle cx="200" cy="280" r="4" fill="#6366f1"/>
+  <text x="200" y="340" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="600" fill="#f0f6fc" text-anchor="middle">Phone</text>
+  <text x="200" y="360" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#8b949e" text-anchor="middle">Tailscale client</text>
+
+  <!-- Tailnet -->
+  <rect x="440" y="180" width="320" height="160" rx="16" fill="#1a1f2e" stroke="#22c55e" stroke-width="2.5"/>
+  <!-- Network icon -->
+  <circle cx="600" cy="245" r="20" fill="none" stroke="#22c55e" stroke-width="2"/>
+  <circle cx="600" cy="245" r="8" fill="#22c55e"/>
+  <text x="600" y="310" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="700" fill="#22c55e" text-anchor="middle">Tailnet</text>
+  <text x="600" y="330" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#8b949e" text-anchor="middle">Encrypted mesh overlay</text>
+
+  <!-- Home server -->
+  <rect x="880" y="180" width="240" height="160" rx="16" fill="#161b22" stroke="#6366f1" stroke-width="2.5"/>
+  <!-- Server icon -->
+  <rect x="970" y="215" width="60" height="60" rx="4" fill="none" stroke="#6366f1" stroke-width="2"/>
+  <rect x="978" y="225" width="14" height="8" rx="1" fill="#6366f1"/>
+  <rect x="978" y="238" width="14" height="8" rx="1" fill="#6366f1"/>
+  <rect x="978" y="251" width="14" height="8" rx="1" fill="#6366f1"/>
+  <circle cx="1008" cy="235" r="10" fill="none" stroke="#6366f1" stroke-width="1.5"/>
+  <circle cx="1008" cy="235" r="3" fill="#6366f1"/>
+  <text x="1000" y="340" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="600" fill="#f0f6fc" text-anchor="middle">Home server</text>
+  <text x="1000" y="360" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#8b949e" text-anchor="middle">Tailscale + services</text>
+
+  <!-- Encrypted connections -->
+  <!-- Phone to Tailnet -->
+  <line x1="320" y1="260" x2="440" y2="260" stroke="#22c55e" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrowGreen)"/>
+  <!-- Lock icon on connection -->
+  <rect x="360" y="248" width="11" height="9" rx="2" fill="#22c55e"/>
+  <path d="M362 248 l4 -3 l4 3" fill="none" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="380" y="245" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#22c55e" text-anchor="middle" font-weight="600">Encrypted</text>
+
+  <!-- Tailnet to Home server -->
+  <line x1="760" y1="260" x2="880" y2="260" stroke="#22c55e" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrowGreen)"/>
+  <rect x="800" y="248" width="11" height="9" rx="2" fill="#22c55e"/>
+  <path d="M802 248 l4 -3 l4 3" fill="none" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="820" y="245" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#22c55e" text-anchor="middle" font-weight="600">Encrypted</text>
+
+  <!-- No public ports indicator -->
+  <rect x="880" y="380" width="240" height="50" rx="8" fill="#1a1f2e" stroke="#ef4444" stroke-width="2" stroke-dasharray="5 4"/>
+  <text x="1000" y="410" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#ef4444" text-anchor="middle">No public ports open</text>
+
+  <!-- Arrow to no ports -->
+  <line x1="1000" y1="340" x2="1000" y2="380" stroke="#ef4444" stroke-width="2"/>
+  <circle cx="1000" cy="360" r="4" fill="#ef4444"/>
+
+  <!-- Port forwarding comparison -->
+  <line x1="40" y1="470" x2="1160" y2="470" stroke="#21262d" stroke-width="1"/>
+
+  <text x="80" y="510" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="700" fill="#ffffff">Traditional port forwarding</text>
+
+  <rect x="80" y="525" width="520" height="55" rx="10" fill="#1a1f2e" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="340" y="550" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#f0f6fc" text-anchor="middle">Router NAT → open port 443 → public internet → home server</text>
+  <text x="340" y="572" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#ef4444" text-anchor="middle">Attack surface: every open port is a target</text>
+
+  <text x="680" y="510" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="700" fill="#ffffff">Tailscale</text>
+
+  <rect x="680" y="525" width="440" height="55" rx="10" fill="#1a1f2e" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="900" y="550" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#f0f6fc" text-anchor="middle">Client → coordination server → encrypted mesh → zero open ports</text>
+  <text x="900" y="572" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#22c55e" text-anchor="middle">Auth at the identity layer, not the network layer</text>
 </svg>

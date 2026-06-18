@@ -4,6 +4,8 @@ export type BlogMetadata = {
   readingTime?: string;
   excerpt?: string;
   tags?: string[];
+  series?: string;
+  seriesOrder?: number;
 };
 
 export type BlogPost = {

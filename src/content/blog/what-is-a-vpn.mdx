@@ -4,17 +4,21 @@ date: "2026-02-15"
 readingTime: "18min"
 excerpt: "A clear, practical explanation of VPNs, what they protect, what they don't, and how to choose one without the marketing noise."
 tags: ["vpn", "networking", "security", "privacy"]
+series: "homelab-networking"
+seriesOrder: 1
 ---
 
 import Callout from '@/components/mdx/Callout';
-import NerdCorner from '@/components/mdx/NerdCorner';
 
 You're on café Wi‑Fi. Your laptop auto‑connects, your bank app loads, and a tiny voice in your head asks: *"Can anyone see this?"* That's the moment a VPN makes sense — but only if you understand what it **does** and what it **doesn't** do.
 
 This post explains VPNs like a friend would: plain language, real risks, no over‑promising.
 
 ![Diagram showing internet traffic with and without a VPN tunnel](/images/blog/what-is-a-vpn/vpn-tunnel-diagram.svg)
+*Traffic flows compared: without a VPN, your ISP and websites see everything. With a VPN, your ISP sees only encrypted traffic to the VPN server, and websites see the VPN's IP — but the VPN provider inherits visibility.*
+ 
 ![Diagram showing metadata visibility shifting to a VPN provider](/images/blog/what-is-a-vpn/traffic-metadata.svg)
+*A VPN shifts trust: the metadata your ISP used to see now belongs to the VPN provider instead. A reputable no-logs provider with independent audits is essential.*
 
 ## The one‑sentence definition
 
@@ -162,7 +166,7 @@ You'll still find L2TP/IPsec in legacy corporate setups, but there's rarely a go
 
 ### PPTP (avoid this)
 
-**[PPTP](https://en.wikipedia.org/wiki/Point-to-Point_Tunneling_Protocol)** was revolutionary in 1999. Today, it's a security liability. The [MS-CHAPv2 authentication](https://en.wikipedia.org/wiki/MS-CHAP) it uses has been [thoroughly broken](https://www.cloudcracker.com/blog/2012/07/29/cracking-ms-chap-v2/), and the encryption can be cracked in hours. If you see PPTP as an option, run the other way.
+**[PPTP](https://en.wikipedia.org/wiki/Point-to-Point_Tunneling_Protocol)** was revolutionary in 1999. Today, it's a security liability. The [MS-CHAPv2 authentication](https://en.wikipedia.org/wiki/MS-CHAP) it uses has been [thoroughly broken](https://en.wikipedia.org/wiki/MS-CHAP#Security_analysis) since 2012, and the encryption can be cracked in hours. If you see PPTP as an option, run the other way.
 
 ### SSTP
 
@@ -291,17 +295,8 @@ If you want **private remote access**, consider a mesh VPN like Tailscale. If yo
 
 - **"A VPN makes me anonymous."** → Not really. It changes your IP, but tracking still works.
 - **"VPNs are illegal."** → Legal in most countries, but rules vary. Check [this overview](https://www.comparitech.com/vpn/where-are-vpns-legal-banned/).
-- **"Free VPNs are good enough."** → Free often means *you* are the product. [CSIRO's study](https://research.csiro.au/ng/wp-content/uploads/sites/106/2016/08/paper-1.pdf) found 38% of free Android VPN apps contained malware.
+- **"Free VPNs are good enough."** → Free often means *you* are the product. A [2016 CSIRO study](https://arxiv.org/abs/1610.05215) found 38% of free Android VPN apps contained malware.
 - **"A VPN hides me from my employer."** → If your employer controls the device, they likely still have visibility.
-
-## Want a visual explanation? (2‑minute video)
-
-<iframe
-  title="VPN explained in 2 minutes"
-  src="https://www.youtube.com/embed/r4zSScX7u6E"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-  allowFullScreen
-></iframe>
 
 ## Where to go next
 

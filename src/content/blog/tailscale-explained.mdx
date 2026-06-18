@@ -4,6 +4,8 @@ date: "2026-02-17"
 readingTime: "24min"
 excerpt: "A practical, human‑readable breakdown of how Tailscale works, why it's different, and when it's the right tool."
 tags: ["tailscale", "vpn", "networking", "homelab", "wireguard"]
+series: "homelab-networking"
+seriesOrder: 2
 ---
 
 import Callout from '@/components/mdx/Callout';
@@ -11,8 +13,11 @@ import NerdCorner from '@/components/mdx/NerdCorner';
 
 The first time you SSH into your home server from a coffee shop **without** opening a port on your router, it feels like magic. Tailscale is that kind of magic — but it's actually just smart networking built on solid cryptography.
 
-![A simplified tailnet mesh diagram](/images/blog/tailscale-explained/tailnet-mesh.svg)
+![A simplified tailnet mesh diagram showing encrypted peer-to-peer links](/images/blog/tailscale-explained/tailnet-mesh.svg)
+*Every device in your tailnet forms direct WireGuard tunnels — no central server routes your traffic.*
+
 ![Diagram showing control plane coordination and direct data plane traffic](/images/blog/tailscale-explained/control-plane-data-plane.svg)
+*Tailscale's control plane coordinates (keys, ACLs, discovery) while your actual traffic flows directly between devices on the data plane.*
 
 ## What Tailscale is (and is not)
 
@@ -47,7 +52,7 @@ Here's WireGuard's official paper for the curious: [WireGuard: Next Generation K
 
 ### How WireGuard key exchange actually works
 
-Here's where it gets nerdy (in a good way). WireGuard uses the **[Noise Protocol Framework](http://www.noiseprotocol.org/)** — specifically the `Noise_IKpsk2` handshake pattern. Don't worry, I'll translate.
+Here's where it gets nerdy (in a good way). WireGuard uses the **[Noise Protocol Framework](https://noiseprotocol.org/)** — specifically the `Noise_IKpsk2` handshake pattern. Don't worry, I'll translate.
 
 When two devices want to talk:
 
@@ -545,22 +550,13 @@ Ask yourself:
 
 If you answer "yes" to most of these, Tailscale is a strong fit.
 
-## Quick demo video (setup in 5 minutes)
-
-<iframe
-  title="Tailscale quickstart"
-  src="https://www.youtube.com/embed/dJjRr2dK3wI"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-  allowFullScreen
-></iframe>
-
 ## Further reading
 
 - [Tailscale documentation](https://tailscale.com/kb) — the official knowledge base
 - [How Tailscale works](https://tailscale.com/blog/how-tailscale-works) — their own deep-dive
 - [How NAT traversal works](https://tailscale.com/blog/how-nat-traversal-works) — excellent technical explainer
 - [WireGuard whitepaper](https://www.wireguard.com/papers/wireguard.pdf) — the cryptographic foundation
-- [Noise Protocol Framework](http://www.noiseprotocol.org/) — the handshake pattern WireGuard uses
+- [Noise Protocol Framework](https://noiseprotocol.org/) — the handshake pattern WireGuard uses
 - [Headscale documentation](https://github.com/juanfont/headscale/tree/main/docs) — if you want to self-host the control plane
 
 ## Summary
