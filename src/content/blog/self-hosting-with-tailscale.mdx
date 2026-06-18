@@ -4,15 +4,19 @@ date: "2026-02-19"
 readingTime: "25min"
 excerpt: "A practical guide to self‑hosting services and reaching them securely with Tailscale, no port forwarding required."
 tags: ["self-hosting", "tailscale", "homelab", "security", "docker"]
+series: "homelab-networking"
+seriesOrder: 3
 ---
 
 import Callout from '@/components/mdx/Callout';
-import NerdCorner from '@/components/mdx/NerdCorner';
 
 Self‑hosting is empowering — but opening ports on your router can feel like hanging a neon sign that says "Please scan me." There's a better way: **private access via Tailscale**. If you're new here, [self‑hosting](https://en.wikipedia.org/wiki/Self-hosting_(web_services)) just means running services on hardware you control.
 
 ![Remote access diagram showing encrypted tailnet links](/images/blog/self-hosting-with-tailscale/remote-access.svg)
+*All traffic flows through an encrypted mesh overlay — no port forwarding, no public exposure. Your services are invisible to automated internet scans.*
+
 ![Layered security stack for self-hosting](/images/blog/self-hosting-with-tailscale/security-layers.svg)
+*Defense in depth: identity, network, transport, and application layers each provide independent protection. If one layer fails, the others still hold.*
 
 ## Why self‑host in the first place?
 
@@ -656,15 +660,6 @@ tailscale bugreport  # Generates a debug report
 <Callout type="tip" title="Quality of life" showEmoji={true}>
 Give your servers tags and friendly names early. You'll thank yourself later when you're SSH‑ing from a phone.
 </Callout>
-
-## Video walkthrough (hands‑on)
-
-<iframe
-  title="Self-hosting with Tailscale"
-  src="https://www.youtube.com/embed/9pJ7b8d8Wk8"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-  allowFullScreen
-></iframe>
 
 ## Summary
 

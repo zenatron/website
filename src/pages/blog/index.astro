@@ -17,8 +17,32 @@ const blogPosts = posts.map((post: any) => ({
     readingTime: post.data.readingTime,
     excerpt: post.data.excerpt || "",
     tags: post.data.tags || [],
+    series: post.data.series,
+    seriesOrder: post.data.seriesOrder,
   },
 }));
+
+const seriesPosts = posts
+  .filter((p: any) => p.data.series)
+  .sort((a: any, b: any) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0))
+  .map((p: any) => ({
+    slug: p.slug,
+    metadata: {
+      title: p.data.title,
+      date: p.data.date,
+      readingTime: p.data.readingTime,
+      excerpt: p.data.excerpt || "",
+      tags: p.data.tags || [],
+      series: p.data.series,
+      seriesOrder: p.data.seriesOrder,
+    },
+  }));
+
+const series = seriesPosts.length > 0 ? {
+  slug: seriesPosts[0].metadata.series!,
+  title: "Homelab & Networking",
+  posts: seriesPosts,
+} : null;
 ---
 
 <BaseLayout title="Blog | Phil Vishnevsky" ogSlug="blog">

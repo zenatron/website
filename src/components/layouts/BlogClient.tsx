@@ -2,19 +2,21 @@ import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import type { BlogPost } from "@/types/types";
 import dateFormatter from "@/utils/dateFormatter";
-import { Search, X } from "lucide-react";
+import { Search, X, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ContactModal from "@/components/ui/ContactModal";
 import TerminalWindow, { T, tA } from "@/components/ui/TerminalWindow";
+import type { SeriesData } from "@/components/layouts/BlogLayout";
+import SeriesStrip from "@/components/blog/SeriesStrip";
 import {
   CTA_TEXTS,
   CTAButton,
   TerminalDivider,
-  ScrollReveal,
 } from "@/components/ui/TerminalShared";
 
 interface BlogClientProps {
   posts: BlogPost[];
+  series?: SeriesData;
 }
 
 /* ── Deterministic fake git hash ── */
@@ -27,7 +29,44 @@ const fakeHash = (str: string) => {
   return Math.abs(hash).toString(16).slice(0, 7).padStart(7, "0");
 };
 
-export default function BlogClient({ posts }: BlogClientProps) {
+/* ── Highlight search terms in text ── */
+function highlightTextFixed(
+  text: string,
+  query: string
+): { text: string; highlight: boolean }[] {
+  if (!query) return [{ text, highlight: false }];
+  const terms = query
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((t) => t && !t.startsWith("#"));
+  if (terms.length === 0) return [{ text, highlight: false }];
+
+  const pattern = terms
+    .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .join("|");
+  const regex = new RegExp(`(${pattern})`, "gi");
+  const parts: { text: string; highlight: boolean }[] = [];
+  let lastIndex = 0;
+
+  let match;
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push({ text: text.slice(lastIndex, match.index), highlight: false });
+    }
+    parts.push({ text: match[0], highlight: true });
+    lastIndex = match.index + match[0].length;
+    if (!regex.lastIndex) break;
+  }
+  if (lastIndex < text.length) {
+    parts.push({ text: text.slice(lastIndex), highlight: false });
+  }
+  if (parts.length === 0) return [{ text, highlight: false }];
+  return parts;
+}
+
+const POSTS_PER_PAGE = 10;
+
+export default function BlogClient({ posts, series }: BlogClientProps) {
   const [searchParamsObj, setSearchParamsObj] = useState(() => new URLSearchParams(typeof window !== "undefined" ? window.location.search : ""));
   const initialTag = searchParamsObj.get("tag");
 
@@ -37,11 +76,12 @@ export default function BlogClient({ posts }: BlogClientProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [selectedTag, setSelectedTag] = useState<string | null>(initialTag);
+  const [displayCount, setDisplayCount] = useState(POSTS_PER_PAGE);
 
   // Tag autocomplete state
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestionIndex, setSuggestionIndex] = useState(0);
-  const [tagQuery, setTagQuery] = useState(""); // tracks partial tag after #
+  const [tagQuery, setTagQuery] = useState("");
 
   const [ctaIndex, setCtaIndex] = useState(0);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -59,7 +99,6 @@ export default function BlogClient({ posts }: BlogClientProps) {
     return () => clearInterval(interval);
   }, []);
 
-  // Calculate total words across all posts
   const totalWords = useMemo(() => {
     return posts.reduce((acc, post) => {
       const wordCount =
@@ -68,7 +107,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
     }, 0);
   }, [posts]);
 
-  // Sync URL → state on popstate (back/forward navigation)
+  // Sync URL → state on popstate
   useEffect(() => {
     const handlePopState = () => {
       setSearchParamsObj(new URLSearchParams(window.location.search));
@@ -79,7 +118,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  // Slash-to-focus keyboard shortcut
+  // Slash-to-focus
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (
@@ -95,7 +134,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Impatient placeholder - track idle time when focused on empty search
+  // Impatient placeholder
   useEffect(() => {
     let interval: NodeJS.Timeout;
     const input = searchInputRef.current;
@@ -123,14 +162,12 @@ export default function BlogClient({ posts }: BlogClientProps) {
     };
   }, [searchQuery]);
 
-  // Reset idle time when user types
   useEffect(() => {
     if (searchQuery !== "") {
       setIdleTime(0);
     }
   }, [searchQuery]);
 
-  // Dynamic placeholder based on idle time
   const getPlaceholder = () => {
     if (idleTime < 5) return "grep posts... (use # for tags)";
     if (idleTime < 10) return "still thinking?";
@@ -140,13 +177,9 @@ export default function BlogClient({ posts }: BlogClientProps) {
     return "fine. i'll wait. forever, i guess.";
   };
 
-  // Easter egg: Check for "42" search
   const is42Search = searchQuery.trim() === "42";
-
-  // Easter egg: Check for "bug" search
   const isBugSearch = searchQuery.trim().toLowerCase() === "bug";
 
-  // Word count click easter egg messages
   const getWordCountMessage = () => {
     if (wordCountClicks === 0) return null;
     if (wordCountClicks < 2)
@@ -172,33 +205,36 @@ export default function BlogClient({ posts }: BlogClientProps) {
     return "pls read my blog";
   };
 
-  // Get all unique tags
+  // All tags with counts
   const allTags = useMemo(() => {
-    const tags = new Set<string>();
+    const tagCounts = new Map<string, number>();
     posts.forEach((post) => {
-      post.metadata.tags?.forEach((tag) => tags.add(tag));
+      post.metadata.tags?.forEach((tag) => {
+        tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+      });
     });
-    return Array.from(tags).sort();
+    return Array.from(tagCounts.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([tag, count]) => ({ tag, count }));
   }, [posts]);
 
-  // Filtered tag suggestions based on what user is typing after #
   const filteredSuggestions = useMemo(() => {
-    if (!tagQuery) return allTags;
+    if (!tagQuery) return allTags.map((t) => t.tag);
     const query = tagQuery.toLowerCase();
-    return allTags.filter((tag) => tag.toLowerCase().includes(query));
+    return allTags
+      .filter(({ tag }) => tag.toLowerCase().includes(query))
+      .map((t) => t.tag);
   }, [allTags, tagQuery]);
 
-  // Handle input change - detect # for tag autocomplete
+  // Handle input change
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
       setSearchQuery(value);
 
-      // Check if user is typing a tag (starts with # or has # after space)
       const hashIndex = value.lastIndexOf("#");
       if (hashIndex !== -1) {
         const afterHash = value.slice(hashIndex + 1);
-        // Only show suggestions if there's no space after the hash (still typing the tag)
         if (!afterHash.includes(" ")) {
           setTagQuery(afterHash);
           setShowSuggestions(true);
@@ -212,13 +248,13 @@ export default function BlogClient({ posts }: BlogClientProps) {
     []
   );
 
-  // Handle selecting a tag from suggestions or clicking a topic
   const handleTagSelect = useCallback(
     (tag: string | null) => {
       setSelectedTag(tag);
-      setSearchQuery(""); // Clear search when selecting/deselecting tag
+      setSearchQuery("");
       setShowSuggestions(false);
       setTagQuery("");
+      setDisplayCount(POSTS_PER_PAGE);
 
       const url = new URL(window.location.href);
       if (tag) {
@@ -228,13 +264,11 @@ export default function BlogClient({ posts }: BlogClientProps) {
       }
       window.history.pushState({}, "", url.toString());
       setSearchParamsObj(new URLSearchParams(url.search));
-      // Focus back on input
       setTimeout(() => searchInputRef.current?.focus(), 0);
     },
     []
   );
 
-  // Complete the tag from suggestions
   const completeTag = useCallback(
     (tag: string) => {
       handleTagSelect(tag);
@@ -242,7 +276,6 @@ export default function BlogClient({ posts }: BlogClientProps) {
     [handleTagSelect]
   );
 
-  // Handle keyboard in search input
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (showSuggestions && filteredSuggestions.length > 0) {
@@ -269,7 +302,6 @@ export default function BlogClient({ posts }: BlogClientProps) {
         }
       }
 
-      // Handle backspace to delete chip
       if (e.key === "Backspace" && selectedTag && searchQuery === "") {
         e.preventDefault();
         handleTagSelect(null);
@@ -286,7 +318,6 @@ export default function BlogClient({ posts }: BlogClientProps) {
     ]
   );
 
-  // Close suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -302,15 +333,13 @@ export default function BlogClient({ posts }: BlogClientProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Filter posts with chip tag and text search
+  // Filter posts
   const filteredPosts = useMemo(() => {
     return posts.filter((post) => {
-      // Check selected tag first (from chip)
       if (selectedTag !== null && !post.metadata.tags?.includes(selectedTag)) {
         return false;
       }
 
-      // Check search query (text only, no hashtag parsing needed since we use chips)
       const query = searchQuery.trim().toLowerCase();
       if (query) {
         const itemContent =
@@ -320,7 +349,6 @@ export default function BlogClient({ posts }: BlogClientProps) {
           " " +
           (post.searchableContent?.toLowerCase() || "");
 
-        // Split into terms and check each (ignore any # terms as they're being typed)
         const terms = query.split(/\s+/).filter((t) => t && !t.startsWith("#"));
         if (terms.length > 0) {
           const matchesSearch = terms.every((term) =>
@@ -334,11 +362,23 @@ export default function BlogClient({ posts }: BlogClientProps) {
     });
   }, [posts, searchQuery, selectedTag]);
 
-  // Group by year
+  // Reset display count when filters change
+  useEffect(() => {
+    setDisplayCount(POSTS_PER_PAGE);
+  }, [searchQuery, selectedTag]);
+
+  // Visible posts (limited by displayCount)
+  const visiblePosts = useMemo(() => {
+    return filteredPosts.slice(0, displayCount);
+  }, [filteredPosts, displayCount]);
+
+  const hasMore = displayCount < filteredPosts.length;
+
+  // Group visible posts by year
   const groupedPosts = useMemo(() => {
     const groups: { [year: string]: BlogPost[] } = {};
 
-    filteredPosts.forEach((post) => {
+    visiblePosts.forEach((post) => {
       const year = new Date(post.metadata.date).getFullYear().toString();
       if (!groups[year]) groups[year] = [];
       groups[year].push(post);
@@ -347,13 +387,14 @@ export default function BlogClient({ posts }: BlogClientProps) {
     return Object.keys(groups)
       .sort((a, b) => parseInt(b) - parseInt(a))
       .map((year) => ({ year, posts: groups[year] }));
-  }, [filteredPosts]);
+  }, [visiblePosts]);
 
   const clearFilters = () => {
     setSearchQuery("");
     setSelectedTag(null);
     setShowSuggestions(false);
     setTagQuery("");
+    setDisplayCount(POSTS_PER_PAGE);
     const url = new URL(window.location.href);
     url.searchParams.delete("tag");
     window.history.pushState({}, "", url.toString());
@@ -361,6 +402,21 @@ export default function BlogClient({ posts }: BlogClientProps) {
   };
 
   const hasActiveFilters = searchQuery !== "" || selectedTag !== null;
+
+  // Search result description
+  const resultDescription = useMemo(() => {
+    if (!hasActiveFilters) return null;
+    const total = filteredPosts.length;
+    if (total === 0) return "no posts found";
+    const terms: string[] = [];
+    if (selectedTag) terms.push(`tagged "${selectedTag}"`);
+    if (searchQuery) terms.push(`matching "${searchQuery.trim()}"`);
+    const prefix = terms.join(", ");
+    if (hasMore) {
+      return `${total} post${total !== 1 ? "s" : ""} ${prefix} (showing first ${displayCount})`;
+    }
+    return `${total} post${total !== 1 ? "s" : ""} ${prefix}`;
+  }, [hasActiveFilters, filteredPosts.length, selectedTag, searchQuery, hasMore, displayCount]);
 
   return (
     <div className="px-4 pb-16 pt-10 sm:pb-24 sm:pt-14 sm:px-6">
@@ -397,25 +453,22 @@ export default function BlogClient({ posts }: BlogClientProps) {
           </p>
         </header>
 
+        {/* Series Strip */}
+        {series && <SeriesStrip series={series} />}
+
         {/* Filters */}
-        <div className="mb-12 space-y-4 font-mono">
+        <div className="mb-8 space-y-4 font-mono">
           {/* Search with chip + autocomplete */}
           <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2" style={{ color: T.comment }} />
 
-            {/* Container with chip + input */}
             <div
               className="flex w-full items-center gap-1.5 rounded border py-2 pl-10 pr-12 transition-colors"
               style={{
                 backgroundColor: T.bg,
                 borderColor: T.gutter,
               }}
-              onFocus={() => {
-                const el = document.querySelector('[data-search-container]') as HTMLElement;
-                if (el) el.style.borderColor = tA(T.purple, "66");
-              }}
             >
-              {/* Tag chip */}
               {selectedTag && (
                 <span
                   ref={chipRef}
@@ -435,7 +488,6 @@ export default function BlogClient({ posts }: BlogClientProps) {
                 </span>
               )}
 
-              {/* Input */}
               <input
                 ref={searchInputRef}
                 data-search-container
@@ -447,10 +499,8 @@ export default function BlogClient({ posts }: BlogClientProps) {
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
                 onFocus={(e) => {
-                  // Style parent border
                   const parent = e.currentTarget.parentElement;
                   if (parent) parent.style.borderColor = tA(T.purple, "66");
-                  // Show suggestions if user had typed a partial tag
                   if (searchQuery.includes("#")) {
                     setShowSuggestions(true);
                   }
@@ -464,7 +514,6 @@ export default function BlogClient({ posts }: BlogClientProps) {
               />
             </div>
 
-            {/* Keyboard hint */}
             <kbd
               className="absolute right-3 top-1/2 -translate-y-1/2 hidden rounded border px-1.5 py-0.5 text-[10px] sm:inline-block font-mono"
               style={{ borderColor: T.gutter, backgroundColor: tA(T.gutter, "40"), color: T.comment }}
@@ -489,12 +538,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
                         key={tag}
                         type="button"
                         onClick={() => completeTag(tag)}
-                        className={cn(
-                          "flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm transition-colors",
-                          index === suggestionIndex
-                            ? ""
-                            : ""
-                        )}
+                        className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm transition-colors"
                         style={{
                           backgroundColor: index === suggestionIndex ? tA(T.purple, "20") : "transparent",
                           color: index === suggestionIndex ? T.purple : T.fg,
@@ -556,12 +600,12 @@ export default function BlogClient({ posts }: BlogClientProps) {
             </div>
           )}
 
-          {/* Tags */}
+          {/* Tags with counts */}
           <div className="flex flex-wrap items-center gap-2">
             <span className="mr-1 text-xs uppercase tracking-wider" style={{ color: T.comment }}>
               topics:
             </span>
-            {allTags.slice(0, 8).map((tag) => (
+            {allTags.slice(0, 8).map(({ tag, count }) => (
               <button
                 key={tag}
                 onClick={() =>
@@ -586,7 +630,7 @@ export default function BlogClient({ posts }: BlogClientProps) {
                   }
                 }}
               >
-                [{tag}]
+                [{tag}] <span className="opacity-60">({count})</span>
               </button>
             ))}
             {hasActiveFilters && (
@@ -602,6 +646,17 @@ export default function BlogClient({ posts }: BlogClientProps) {
               </button>
             )}
           </div>
+
+          {/* Search result count */}
+          {resultDescription && (
+            <div
+              className="text-xs font-mono"
+              style={{ color: T.comment }}
+            >
+              <span style={{ color: T.green }}>$</span>{" "}
+              found <span style={{ color: T.purple }}>{resultDescription}</span>
+            </div>
+          )}
         </div>
 
         {/* Posts */}
@@ -648,7 +703,6 @@ export default function BlogClient({ posts }: BlogClientProps) {
                   />
                 </div>
 
-                {/* Posts in TerminalWindow */}
                 <TerminalWindow
                   title={`~/blog/${group.year}`}
                   noPadding
@@ -678,11 +732,16 @@ export default function BlogClient({ posts }: BlogClientProps) {
                       const hash = fakeHash(post.slug);
                       const isLast = i === group.posts.length - 1;
                       const prefix = isLast ? "└─" : "├─";
+                      const titleParts = highlightTextFixed(post.metadata.title, searchQuery);
+                      const excerptParts = post.metadata.excerpt
+                        ? highlightTextFixed(post.metadata.excerpt, searchQuery)
+                        : null;
+
                       return (
                         <a
                           key={post.slug}
                           href={`/blog/${post.slug}`}
-                          className="group flex items-start sm:items-center gap-3 sm:gap-4 px-3 sm:px-4 py-3 sm:py-4 transition-colors duration-150 font-mono text-sm md:text-base"
+                          className="group block px-3 sm:px-4 py-3 sm:py-4 transition-colors duration-150"
                           style={{
                             borderBottom: isLast
                               ? "none"
@@ -695,60 +754,125 @@ export default function BlogClient({ posts }: BlogClientProps) {
                             e.currentTarget.style.backgroundColor = "transparent";
                           }}
                         >
-                          <span
-                            className="shrink-0 hidden sm:inline text-xs md:text-sm"
-                            style={{ color: T.gutter }}
-                          >
-                            {prefix}
-                          </span>
-                          <div className="shrink-0 flex flex-col items-start leading-tight">
-                            <span
-                              className="text-xs md:text-sm"
-                              style={{ color: T.yellow }}
-                            >
-                              {hash}
-                            </span>
-                            <span className="text-[11px] tabular-nums" style={{ color: T.green }}>
-                              {dateFormatter({
-                                date: post.metadata.date,
-                                month: "short",
-                                day: "numeric",
-                              })}
-                            </span>
-                            {post.metadata.readingTime && (
-                              <span className="text-[11px]" style={{ color: T.cyan }}>
-                                {post.metadata.readingTime}
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                              <span className="font-medium transition-colors duration-150" style={{ color: T.fg }}>
-                                <span className="group-hover:hidden">{post.metadata.title}</span>
-                                <span className="hidden group-hover:inline" style={{ color: T.purple }}>{post.metadata.title}</span>
-                              </span>
+                          {/* Main row */}
+                          <div className="flex items-start gap-3 sm:gap-4">
+                            {/* Tree prefix + hash: hidden on mobile */}
+                            <div className="shrink-0 hidden sm:flex items-center gap-2 font-mono text-xs md:text-sm">
+                              <span style={{ color: T.gutter }}>{prefix}</span>
+                              <span style={{ color: T.yellow }}>{hash}</span>
                             </div>
-                            {post.metadata.excerpt && (
-                              <p className="text-xs mt-1 truncate" style={{ color: T.comment }}>
-                                {post.metadata.excerpt}
-                              </p>
-                            )}
+
+                            {/* Content column */}
+                            <div className="flex-1 min-w-0">
+                              {/* Title row */}
+                              <div className="flex items-start gap-2">
+                                <div className="flex-1 min-w-0 font-mono text-sm md:text-base font-medium leading-snug">
+                                  <span className="group-hover:hidden">
+                                    {titleParts.map((part, j) =>
+                                      part.highlight ? (
+                                        <mark key={j} style={{ backgroundColor: tA(T.yellow, "40"), color: T.yellow, borderRadius: 2, padding: "0 1px" }}>
+                                          {part.text}
+                                        </mark>
+                                      ) : (
+                                        <span key={j} style={{ color: T.fg }}>{part.text}</span>
+                                      )
+                                    )}
+                                  </span>
+                                  <span className="hidden group-hover:inline">
+                                    {titleParts.map((part, j) =>
+                                      part.highlight ? (
+                                        <mark key={j} style={{ backgroundColor: tA(T.yellow, "40"), color: T.yellow, borderRadius: 2, padding: "0 1px" }}>
+                                          {part.text}
+                                        </mark>
+                                      ) : (
+                                        <span key={j} style={{ color: T.purple }}>{part.text}</span>
+                                      )
+                                    )}
+                                  </span>
+                                </div>
+                                {/* Arrow: visible on mobile, opacity transition on desktop */}
+                                <span
+                                  className="shrink-0 font-mono text-sm md:text-base transition-opacity duration-150 opacity-60 sm:opacity-0 sm:group-hover:opacity-100"
+                                  style={{ color: T.purple }}
+                                >
+                                  ↗
+                                </span>
+                              </div>
+
+                              {/* Metadata row */}
+                              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+                                {/* Date + reading time: always visible */}
+                                <span className="font-mono text-[11px] sm:text-xs tabular-nums" style={{ color: T.green }}>
+                                  {dateFormatter({
+                                    date: post.metadata.date,
+                                    month: "short",
+                                    day: "numeric",
+                                  })}
+                                </span>
+                                {post.metadata.readingTime && (
+                                  <span className="font-mono text-[11px] sm:text-xs" style={{ color: T.cyan }}>
+                                    {post.metadata.readingTime}
+                                  </span>
+                                )}
+
+                                {/* Tags: hidden on mobile */}
+                                {post.metadata.tags && post.metadata.tags.length > 0 && (
+                                  <span className="hidden md:inline-flex items-center gap-1">
+                                    {post.metadata.tags.slice(0, 2).map((tag) => (
+                                      <button
+                                        key={tag}
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                          handleTagSelect(tag);
+                                        }}
+                                        className="font-mono text-[10px] sm:text-xs rounded px-1.5 py-0.5 transition-colors duration-150"
+                                        style={{
+                                          color: selectedTag === tag ? T.purple : T.cyan,
+                                          backgroundColor: selectedTag === tag ? tA(T.purple, "15") : "transparent",
+                                          border: `1px solid ${selectedTag === tag ? tA(T.purple, "30") : "transparent"}`,
+                                        }}
+                                        onMouseEnter={(e2) => {
+                                          e2.currentTarget.style.backgroundColor = selectedTag === tag
+                                            ? tA(T.purple, "25")
+                                            : tA(T.gutter, "40");
+                                        }}
+                                        onMouseLeave={(e2) => {
+                                          e2.currentTarget.style.backgroundColor = selectedTag === tag
+                                            ? tA(T.purple, "15")
+                                            : "transparent";
+                                        }}
+                                        title={`Filter by ${tag}`}
+                                      >
+                                        [{tag}]
+                                      </button>
+                                    ))}
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Excerpt */}
+                              {post.metadata.excerpt && (
+                                <p
+                                  className="mt-1 font-mono text-[11px] sm:text-xs line-clamp-1"
+                                  style={{ color: T.comment }}
+                                >
+                                  {excerptParts
+                                    ? excerptParts.map((part, j) =>
+                                        part.highlight ? (
+                                          <mark key={j} style={{ backgroundColor: tA(T.yellow, "30"), color: T.yellow, borderRadius: 2, padding: "0 1px" }}>
+                                            {part.text}
+                                          </mark>
+                                        ) : (
+                                          <span key={j}>{part.text}</span>
+                                        )
+                                      )
+                                    : post.metadata.excerpt}
+                                </p>
+                              )}
+                            </div>
                           </div>
-                          <div className="hidden md:flex items-center gap-2 shrink-0">
-                            {post.metadata.tags && post.metadata.tags.slice(0, 2).map((tag) => (
-                              <span key={tag} className="text-[11px]">
-                                <span style={{ color: T.gutter }}>[</span>
-                                <span style={{ color: T.cyan }}>{tag}</span>
-                                <span style={{ color: T.gutter }}>]</span>
-                              </span>
-                            ))}
-                          </div>
-                          <span
-                            className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 shrink-0"
-                            style={{ color: T.purple }}
-                          >
-                            ↗
-                          </span>
                         </a>
                       );
                     })}
@@ -758,6 +882,33 @@ export default function BlogClient({ posts }: BlogClientProps) {
             ))
           )}
         </div>
+
+        {/* Load more button */}
+        {hasMore && (
+          <div className="mt-8 text-center">
+            <button
+              onClick={() => setDisplayCount((c) => c + POSTS_PER_PAGE)}
+              className="group inline-flex items-center gap-2 rounded px-5 py-2.5 font-mono text-sm transition-all duration-200 hover:brightness-125"
+              style={{
+                backgroundColor: tA(T.purple, "18"),
+                border: `1px solid ${tA(T.purple, "44")}`,
+                color: T.purple,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = tA(T.purple, "28");
+                e.currentTarget.style.borderColor = tA(T.purple, "66");
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = tA(T.purple, "18");
+                e.currentTarget.style.borderColor = tA(T.purple, "44");
+              }}
+            >
+              <span style={{ color: T.green }}>$</span>
+              <span>load more posts</span>
+              <ChevronDown className="h-4 w-4 transition-transform duration-200 group-hover:translate-y-0.5" />
+            </button>
+          </div>
+        )}
 
         {/* Bottom CTA */}
         <div className="mt-16 text-center space-y-6">
