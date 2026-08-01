@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<rect width="960" height="720" fill="#ffffff"/>
+<defs>
+<marker id="ah_adb5bd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#adb5bd"/></marker>
+<marker id="ah_1971c2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#1971c2"/></marker>
+<marker id="ah_2f9e44" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#2f9e44"/></marker>
+<marker id="ah_1e1e1e" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#1e1e1e"/></marker>
+</defs>
+<rect x="150" y="70" width="220" height="60" rx="10" fill="#a5d8ff" fill-opacity="1.0" stroke="#1971c2" stroke-width="2"/>
+<rect x="620" y="70" width="220" height="60" rx="10" fill="#b2f2bb" fill-opacity="1.0" stroke="#2f9e44" stroke-width="2"/>
+<rect x="560" y="300" width="340" height="70" rx="10" fill="#b2f2bb" fill-opacity="1.0" stroke="#2f9e44" stroke-width="2"/>
+<rect x="110" y="520" width="800" height="70" rx="10" fill="#ffd8a8" fill-opacity="1.0" stroke="#e8590c" stroke-width="2"/>
+<line x1="260.0" y1="130" x2="260.0" y2="690" stroke="#adb5bd" stroke-width="2" stroke-dasharray="8 6"/>
+<line x1="730.0" y1="130" x2="730.0" y2="690" stroke="#adb5bd" stroke-width="2" stroke-dasharray="8 6"/>
+<line x1="260.0" y1="275" x2="730.0" y2="275" stroke="#1971c2" stroke-width="3" marker-end="url(#ah_1971c2)"/>
+<line x1="730.0" y1="495" x2="260.0" y2="495" stroke="#2f9e44" stroke-width="3" marker-end="url(#ah_2f9e44)"/>
+<line x1="260.0" y1="660" x2="730.0" y2="660" stroke="#1e1e1e" stroke-width="3" marker-start="url(#ah_1e1e1e)" marker-end="url(#ah_1e1e1e)"/>
+<text x="40" y="44.0" font-size="24" fill="#1e1e1e" text-anchor="start">WireGuard  Noise_IKpsk2  Handshake  (1-RTT)</text>
+<text x="260.0" y="106.75" font-size="18" fill="#1e1e1e" text-anchor="middle">Initiator  (Device A)</text>
+<text x="730.0" y="106.75" font-size="18" fill="#1e1e1e" text-anchor="middle">Responder  (Device B)</text>
+<text x="130" y="185.0" font-size="15" fill="#1971c2" text-anchor="start">generates ephemeral</text>
+<text x="130" y="203.75" font-size="15" fill="#1971c2" text-anchor="start">keypair e_i</text>
+<text x="270.0" y="250.0" font-size="15" fill="#1e1e1e" text-anchor="start">1.  Initiation msg:  e_i(pub),  enc{ s_i(pub) },  enc{ timestamp }</text>
+<text x="730.0" y="331.25" font-size="15" fill="#1e1e1e" text-anchor="middle">DH1 = e_i x s_r</text>
+<text x="730.0" y="350.0" font-size="15" fill="#1e1e1e" text-anchor="middle">DH2 = s_i x s_r</text>
+<text x="810" y="415.0" font-size="15" fill="#2f9e44" text-anchor="end">generates ephemeral</text>
+<text x="810" y="433.75" font-size="15" fill="#2f9e44" text-anchor="end">keypair e_r</text>
+<text x="280.0" y="470.0" font-size="15" fill="#1e1e1e" text-anchor="start">2.  Response msg:  e_r(pub),  enc{ empty }</text>
+<text x="510.0" y="551.25" font-size="15" fill="#1e1e1e" text-anchor="middle">DH3 = e_i x e_r   -&gt;   mix all DH via HKDF   -&gt;   mix pre-shared key (psk2)</text>
+<text x="510.0" y="570.0" font-size="15" fill="#1e1e1e" text-anchor="middle">=&gt;  symmetric session keys  (ChaCha20-Poly1305)</text>
+<text x="290.0" y="635.0" font-size="15" fill="#1e1e1e" text-anchor="start">3.  Encrypted transport data  (forward-secret, E2E)</text>
+</svg>

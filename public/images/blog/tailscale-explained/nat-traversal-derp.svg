@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="720" viewBox="0 0 1000 720" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<rect width="1000" height="720" fill="#ffffff"/>
+<defs>
+<marker id="ah_1e1e1e" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#1e1e1e"/></marker>
+<marker id="ah_2f9e44" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#2f9e44"/></marker>
+<marker id="ah_e8590c" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#e8590c"/></marker>
+</defs>
+<rect x="40" y="300" width="250" height="220" rx="10" fill="#ffec99" fill-opacity="1.0" stroke="#f08c00" stroke-width="2" stroke-dasharray="8 6"/>
+<rect x="710" y="300" width="250" height="220" rx="10" fill="#ffec99" fill-opacity="1.0" stroke="#f08c00" stroke-width="2" stroke-dasharray="8 6"/>
+<rect x="75" y="400" width="180" height="70" rx="10" fill="#a5d8ff" fill-opacity="1.0" stroke="#1971c2" stroke-width="2"/>
+<rect x="745" y="400" width="180" height="70" rx="10" fill="#a5d8ff" fill-opacity="1.0" stroke="#1971c2" stroke-width="2"/>
+<rect x="410" y="70" width="200" height="60" rx="10" fill="#b2f2bb" fill-opacity="1.0" stroke="#2f9e44" stroke-width="2"/>
+<rect x="400" y="180" width="220" height="70" rx="10" fill="#b2f2bb" fill-opacity="1.0" stroke="#2f9e44" stroke-width="2"/>
+<rect x="410" y="560" width="200" height="70" rx="10" fill="#ffd8a8" fill-opacity="1.0" stroke="#e8590c" stroke-width="2"/>
+<line x1="200" y1="400" x2="470" y2="130" stroke="#1e1e1e" stroke-width="2" stroke-dasharray="8 6" marker-end="url(#ah_1e1e1e)"/>
+<line x1="800" y1="400" x2="560" y2="130" stroke="#1e1e1e" stroke-width="2" stroke-dasharray="8 6" marker-end="url(#ah_1e1e1e)"/>
+<line x1="255" y1="430" x2="400" y2="240" stroke="#2f9e44" stroke-width="2" marker-end="url(#ah_2f9e44)"/>
+<line x1="745" y1="430" x2="620" y2="240" stroke="#2f9e44" stroke-width="2" marker-end="url(#ah_2f9e44)"/>
+<line x1="255" y1="445" x2="745" y2="445" stroke="#2f9e44" stroke-width="4" marker-start="url(#ah_2f9e44)" marker-end="url(#ah_2f9e44)"/>
+<line x1="200" y1="470" x2="470" y2="590" stroke="#e8590c" stroke-width="3" stroke-dasharray="8 6" marker-start="url(#ah_e8590c)" marker-end="url(#ah_e8590c)"/>
+<line x1="800" y1="470" x2="560" y2="590" stroke="#e8590c" stroke-width="3" stroke-dasharray="8 6" marker-start="url(#ah_e8590c)" marker-end="url(#ah_e8590c)"/>
+<text x="40" y="42.0" font-size="22" fill="#1e1e1e" text-anchor="start">NAT Traversal:  STUN Hole-Punching  with  DERP Fallback</text>
+<text x="58" y="328.0" font-size="16" fill="#f08c00" text-anchor="start">NAT  A</text>
+<text x="728" y="328.0" font-size="16" fill="#f08c00" text-anchor="start">NAT  B</text>
+<text x="165.0" y="441.75" font-size="18" fill="#1e1e1e" text-anchor="middle">Device A</text>
+<text x="835.0" y="441.75" font-size="18" fill="#1e1e1e" text-anchor="middle">Device B</text>
+<text x="510.0" y="106.375" font-size="17" fill="#1e1e1e" text-anchor="middle">STUN server</text>
+<text x="510.0" y="211.0" font-size="16" fill="#1e1e1e" text-anchor="middle">Coordination</text>
+<text x="510.0" y="231.0" font-size="16" fill="#1e1e1e" text-anchor="middle">server (control)</text>
+<text x="510.0" y="601.375" font-size="17" fill="#1e1e1e" text-anchor="middle">DERP relay</text>
+<text x="250" y="224.0" font-size="14" fill="#1e1e1e" text-anchor="start">1.  STUN: learn my</text>
+<text x="250" y="241.5" font-size="14" fill="#1e1e1e" text-anchor="start">public ip:port</text>
+<text x="810" y="224.0" font-size="14" fill="#1e1e1e" text-anchor="end">1.  STUN: learn my</text>
+<text x="810" y="241.5" font-size="14" fill="#1e1e1e" text-anchor="end">public ip:port</text>
+<text x="360" y="309.0" font-size="14" fill="#2f9e44" text-anchor="start">2.  register + exchange peer public addrs (metadata)</text>
+<text x="360" y="415.0" font-size="15" fill="#2f9e44" text-anchor="start">3.  simultaneous send = hole punch  -&gt;  DIRECT P2P</text>
+<text x="300" y="654.0" font-size="14" fill="#e8590c" text-anchor="start">4.  fallback when hole-punch fails (symmetric NAT / UDP blocked):</text>
+<text x="300" y="676.0" font-size="14" fill="#e8590c" text-anchor="start">     encrypted WireGuard blobs relayed  -  DERP can&#x27;t read them</text>
+</svg>

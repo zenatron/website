@@ -26,6 +26,9 @@ export default defineConfig({
     "/resume": "/downloads/Resume_Phil_Vishnevsky.pdf",
   },
   vite: {
+    server: {
+      allowedHosts: ['cachyos'],
+    },
     build: {
       rollupOptions: {
         output: {
