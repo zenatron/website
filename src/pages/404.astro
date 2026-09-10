@@ -2,5 +2,41 @@
 import Shell from "@/layouts/Shell.astro";
 ---
 <Shell title="404 | Phil Vishnevsky">
-  <h1>Not found</h1>
+  <h1 class="sr-only">Page not found</h1>
+  {/* The one place the terminal metaphor can be loud, because a 404
+      genuinely is an error. */}
+  <p class="err" data-404>zsh: no such file or directory:</p>
+  <p class="hint">Try the explorer on the left, or press <kbd data-keycap-hint>⌘K</kbd> to search.</p>
 </Shell>
+
+<style>
+  .err {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-md);
+    color: var(--c-red);
+    word-break: break-all;
+  }
+  .hint {
+    margin-top: var(--s-4);
+    font-size: var(--t-sans-md);
+    color: var(--c-muted);
+  }
+  kbd {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+    border: 1px solid var(--c-hairline);
+    padding: 2px 6px;
+  }
+</style>
+
+<script>
+  // The path is only known in the browser, since this page is static.
+  document.addEventListener("astro:page-load", () => {
+    const el = document.querySelector("[data-404]");
+    if (el) el.textContent = `zsh: no such file or directory: ${location.pathname}`;
+    const kbd = document.querySelector("[data-keycap-hint]");
+    const platform = (navigator as any).userAgentData?.platform ?? navigator.platform ?? "";
+    if (kbd) kbd.textContent = /mac/i.test(platform) ? "⌘K" : "Ctrl K";
+  });
+</script>

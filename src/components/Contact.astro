@@ -1,0 +1,57 @@
+---
+/**
+ * Click-to-cycle. The joke survives; the unrequested motion does not.
+ * Labels are sentence-case phrases because they are the author's voice
+ * now, not paths.
+ *
+ * The button only cycles, and the address beside it only mails — a
+ * control that sometimes navigates and sometimes doesn't is a worse joke
+ * than either half.
+ */
+import { CONTACT_LABELS, SITE } from "@/data/site";
+---
+<p class="contact">
+  <button type="button" data-contact data-labels={JSON.stringify(CONTACT_LABELS)}>
+    {CONTACT_LABELS[0]}
+  </button>
+  <span class="sep" aria-hidden="true">—</span>
+  <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+</p>
+
+<style>
+  .contact {
+    margin-top: var(--s-6);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s-2);
+    font-size: var(--t-sans-md);
+  }
+  button {
+    cursor: pointer;
+    color: var(--c-text);
+    text-align: left;
+  }
+  button:hover { color: var(--c-mint); }
+  .sep { color: var(--c-dim); }
+  a {
+    color: var(--c-mint);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+</style>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const el = document.querySelector<HTMLButtonElement>("[data-contact]");
+    if (!el || el.dataset.wired) return;
+    el.dataset.wired = "1";
+    const labels: string[] = JSON.parse(el.dataset.labels ?? "[]");
+    let i = 0;
+    el.addEventListener("click", () => {
+      i = (i + 1) % labels.length;
+      el.textContent = labels[i];
+    });
+  });
+</script>

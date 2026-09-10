@@ -1,0 +1,102 @@
+/* Long-form content. The author's voice, so: sans, with mono only where
+   the machine speaks — code, and nothing else. */
+
+.prose {
+  max-width: 68ch;
+  font-size: var(--t-sans-md);
+  line-height: 1.65;
+  color: var(--c-text);
+}
+
+.prose > * + * { margin-top: var(--s-4); }
+
+.prose h2,
+.prose h3,
+.prose h4 {
+  margin-top: var(--s-6);
+  margin-bottom: var(--s-3);
+  font-weight: 500;
+  line-height: 1.2;
+}
+.prose h2 { font-size: var(--t-sans-xl); }
+.prose h3 { font-size: var(--t-sans-lg); }
+.prose h4 { font-size: var(--t-sans-md); color: var(--c-muted); }
+
+.prose a {
+  color: var(--c-mint);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.prose strong { font-weight: 500; color: var(--c-text); }
+.prose em { font-style: italic; }
+
+.prose ul,
+.prose ol { padding-left: var(--s-5); }
+.prose li + li { margin-top: var(--s-2); }
+.prose li::marker { color: var(--c-dim); }
+
+.prose blockquote {
+  border-left: 2px solid var(--c-hairline);
+  padding-left: var(--s-4);
+  color: var(--c-muted);
+}
+
+.prose :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: var(--t-mono-md);
+  color: var(--c-mint);
+  background: var(--c-raised);
+  padding: 1px 5px;
+  font-variant-ligatures: none;
+}
+
+.prose pre {
+  background: var(--c-void);
+  border: 1px solid var(--c-hairline);
+  padding: var(--s-4);
+  overflow-x: auto;
+  font-size: var(--t-mono-md);
+  line-height: 1.6;
+}
+.prose pre code {
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+  background: none;
+  padding: 0;
+}
+
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--c-hairline);
+  margin-block: var(--s-6);
+}
+
+.prose img {
+  border: 1px solid var(--c-hairline);
+}
+
+/* Tables get their own scroll container rather than widening the page. */
+.prose .table-wrap { overflow-x: auto; }
+.prose table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: var(--t-sans-sm);
+}
+.prose th,
+.prose td {
+  border: 1px solid var(--c-hairline);
+  padding: var(--s-2) var(--s-3);
+  text-align: left;
+}
+.prose th {
+  font-weight: 500;
+  color: var(--c-muted);
+}
+
+/* Heading anchors from rehype-slug, offset so they clear nothing sticky. */
+.prose :is(h2, h3, h4) { scroll-margin-top: var(--s-5); }
+
+.prose .katex { font-size: 1.05em; }
+.prose .katex-display { overflow-x: auto; overflow-y: hidden; padding-block: var(--s-2); }

@@ -1,9 +1,25 @@
 ---
 import Shell from "@/layouts/Shell.astro";
+import Cells from "@/components/Cells.astro";
 import { getAllBlogPosts } from "@/lib/blog";
+
 const posts = await getAllBlogPosts();
+const cells = posts.map((p) => ({
+  title: p.data.title,
+  href: `/blog/${p.slug}`,
+  description: p.data.excerpt || undefined,
+  tags: p.data.tags ?? [],
+}));
 ---
-<Shell title="Blog | Phil Vishnevsky" ogSlug="blog">
+<Shell title="Blog | Phil Vishnevsky" description="Thoughts on code, tools, and building things." ogSlug="blog">
   <h1>Blog</h1>
-  <ul>{posts.map((p) => <li><a href={`/blog/${p.slug}`}>{p.data.title}</a></li>)}</ul>
+  <Cells cells={cells} />
 </Shell>
+
+<style>
+  h1 {
+    font-size: var(--t-sans-xl);
+    font-weight: 500;
+    margin-bottom: var(--s-5);
+  }
+</style>

@@ -1,9 +1,25 @@
 ---
 import Shell from "@/layouts/Shell.astro";
+import Cells from "@/components/Cells.astro";
 import { getAllProjects, projectSlug } from "@/lib/projects";
+
 const projects = await getAllProjects();
+const cells = projects.map((p) => ({
+  title: p.data.title,
+  href: `/projects/${projectSlug(p)}`,
+  description: p.data.description || undefined,
+  tags: p.data.tags ?? [],
+}));
 ---
-<Shell title="Projects | Phil Vishnevsky" ogSlug="projects">
+<Shell title="Projects | Phil Vishnevsky" description="My experiments, projects, and failures." ogSlug="projects">
   <h1>Projects</h1>
-  <ul>{projects.map((p) => <li><a href={`/projects/${projectSlug(p)}`}>{p.data.title}</a></li>)}</ul>
+  <Cells cells={cells} />
 </Shell>
+
+<style>
+  h1 {
+    font-size: var(--t-sans-xl);
+    font-weight: 500;
+    margin-bottom: var(--s-5);
+  }
+</style>

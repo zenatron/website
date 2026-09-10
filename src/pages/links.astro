@@ -1,6 +1,43 @@
 ---
 import Shell from "@/layouts/Shell.astro";
+import { links } from "@/lib/links";
 ---
 <Shell title="Links | Phil Vishnevsky" description="A collection of my important links." ogSlug="links">
   <h1>Links</h1>
+  <ul class="links hairline-col">
+    {links.map((link) => (
+      <li>
+        <a href={link.url} rel={link.url.startsWith("http") ? "noopener noreferrer" : undefined}>
+          <span class="title">{link.title}</span>
+          {link.description && <span class="desc">{link.description}</span>}
+        </a>
+      </li>
+    ))}
+  </ul>
 </Shell>
+
+<style>
+  h1 {
+    font-size: var(--t-sans-xl);
+    font-weight: 500;
+    margin-bottom: var(--s-5);
+  }
+  .links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: 68ch;
+  }
+  .links li { transition: background var(--dur-state) var(--ease); }
+  .links li:hover { background: var(--c-raised); }
+  .links a {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s-1) var(--s-3);
+    padding: var(--s-3) var(--s-4);
+    color: inherit;
+  }
+  .title { font-size: var(--t-sans-md); color: var(--c-mint); }
+  .desc { font-size: var(--t-sans-sm); color: var(--c-muted); }
+</style>

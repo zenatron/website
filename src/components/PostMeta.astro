@@ -1,0 +1,36 @@
+---
+/**
+ * Two facts, one separator, sentence case, sans.
+ * Deliberately not the all-caps middle-dot mono eyebrow — that stacks
+ * three machine-voice elements into one line and reads as a template.
+ */
+interface Props { date?: string | Date; readingTime?: string; }
+const { date, readingTime } = Astro.props;
+
+function monthYear(value: string | Date): string | null {
+  const d = new Date(value);
+  return Number.isNaN(d.getTime())
+    ? null
+    : d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+}
+
+/** Frontmatter stores "7min"; the pane reads "7 min read". */
+function minutes(value: string): string {
+  const n = value.match(/\d+/)?.[0];
+  return n ? `${n} min read` : value;
+}
+
+const parts = [
+  date ? monthYear(date) : null,
+  readingTime ? minutes(readingTime) : null,
+].filter(Boolean);
+---
+{parts.length > 0 && <p class="meta">{parts.join(" · ")}</p>}
+
+<style>
+  .meta {
+    font-size: var(--t-sans-sm);
+    color: var(--c-dim);
+    margin-top: var(--s-2);
+  }
+</style>

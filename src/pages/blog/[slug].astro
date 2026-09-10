@@ -1,6 +1,10 @@
 ---
 import { getCollection } from "astro:content";
 import Shell from "@/layouts/Shell.astro";
+import PostMeta from "@/components/PostMeta.astro";
+import Tags from "@/components/Tags.astro";
+import Cells from "@/components/Cells.astro";
+import { getSuggestedPosts } from "@/lib/blog";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
@@ -9,8 +13,64 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await post.render();
+
+// Only pages that actually render math pay for the KaTeX stylesheet.
+const hasMath = /\$\$|\\\(|\\\[|\$[^$\n]+\$/.test(post.body ?? "");
+
+const suggested = (await getSuggestedPosts(post.slug, 3)).map((p) => ({
+  title: p.data.title,
+  href: `/blog/${p.slug}`,
+  description: p.data.excerpt || undefined,
+  tags: p.data.tags ?? [],
+}));
 ---
-<Shell title={`${post.data.title} | Phil Vishnevsky`} ogSlug={`blog/${post.slug}`}>
-  <h1>{post.data.title}</h1>
-  <Content />
+
+<Shell
+  title={`${post.data.title} | Phil Vishnevsky`}
+  description={post.data.excerpt}
+  ogSlug={`blog/${post.slug}`}
+  math={hasMath}
+>
+  <article>
+    <header>
+      <h1>{post.data.title}</h1>
+      <PostMeta date={post.data.date} readingTime={post.data.readingTime} />
+      {post.data.tags && post.data.tags.length > 0 && (
+        <div class="tagrow"><Tags tags={post.data.tags} /></div>
+      )}
+    </header>
+
+    <div class="prose"><Content /></div>
+  </article>
+
+  {suggested.length > 0 && (
+    <section class="more">
+      <h2>More writing</h2>
+      <Cells cells={suggested} />
+    </section>
+  )}
 </Shell>
+
+<style>
+  header {
+    padding-bottom: var(--s-5);
+    margin-bottom: var(--s-5);
+    border-bottom: 1px solid var(--c-hairline);
+  }
+  h1 {
+    font-size: var(--t-sans-xl);
+    font-weight: 500;
+    max-width: 34ch;
+  }
+  .tagrow { margin-top: var(--s-4); }
+  .more {
+    margin-top: var(--s-8);
+    padding-top: var(--s-5);
+    border-top: 1px solid var(--c-hairline);
+  }
+  .more h2 {
+    font-size: var(--t-sans-lg);
+    font-weight: 500;
+    margin-bottom: var(--s-4);
+  }
+</style>

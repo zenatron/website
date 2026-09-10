@@ -1,6 +1,9 @@
 ---
 import Shell from "@/layouts/Shell.astro";
-import { getAllProjects, projectSlug } from "@/lib/projects";
+import PostMeta from "@/components/PostMeta.astro";
+import Tags from "@/components/Tags.astro";
+import Cells from "@/components/Cells.astro";
+import { getAllProjects, getSuggestedProjects, projectSlug } from "@/lib/projects";
 
 export async function getStaticPaths() {
   const projects = await getAllProjects();
@@ -11,9 +14,101 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
+const slug = projectSlug(entry);
 const { Content } = await entry.render();
+const hasMath = /\$\$|\\\(|\\\[|\$[^$\n]+\$/.test(entry.body ?? "");
+
+const external = [
+  entry.data.github && { label: "Source", href: entry.data.github },
+  (entry.data.live || entry.data.demoUrl) && {
+    label: "Live",
+    href: entry.data.live || entry.data.demoUrl,
+  },
+].filter(Boolean) as { label: string; href: string }[];
+
+const downloads = entry.data.downloads ?? [];
+
+const suggested = (await getSuggestedProjects(slug, 3)).map((p) => ({
+  title: p.data.title,
+  href: `/projects/${projectSlug(p)}`,
+  description: p.data.description || undefined,
+  tags: p.data.tags ?? [],
+}));
 ---
-<Shell title={`${entry.data.title} | Phil Vishnevsky`} ogSlug={`projects/${projectSlug(entry)}`}>
-  <h1>{entry.data.title}</h1>
-  <Content />
+
+<Shell
+  title={`${entry.data.title} | Phil Vishnevsky`}
+  description={entry.data.description}
+  ogSlug={`projects/${slug}`}
+  math={hasMath}
+>
+  <article>
+    <header>
+      <h1>{entry.data.title}</h1>
+      <PostMeta date={entry.data.date} />
+      {entry.data.tags && entry.data.tags.length > 0 && (
+        <div class="tagrow"><Tags tags={entry.data.tags} /></div>
+      )}
+      {(external.length > 0 || downloads.length > 0) && (
+        <ul class="actions hairline-row">
+          {external.map((link) => (
+            <li><a href={link.href} rel="noopener noreferrer">{link.label}</a></li>
+          ))}
+          {downloads.map((d) => (
+            <li>
+              <a href={`/downloads/${d.filename}`} download>{d.label ?? d.filename}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </header>
+
+    <div class="prose"><Content /></div>
+  </article>
+
+  {suggested.length > 0 && (
+    <section class="more">
+      <h2>More projects</h2>
+      <Cells cells={suggested} />
+    </section>
+  )}
 </Shell>
+
+<style>
+  header {
+    padding-bottom: var(--s-5);
+    margin-bottom: var(--s-5);
+    border-bottom: 1px solid var(--c-hairline);
+  }
+  h1 {
+    font-size: var(--t-sans-xl);
+    font-weight: 500;
+    max-width: 34ch;
+  }
+  .tagrow { margin-top: var(--s-4); }
+  .actions {
+    list-style: none;
+    margin: var(--s-4) 0 0;
+    padding: 0;
+    width: fit-content;
+    flex-wrap: wrap;
+  }
+  .actions a {
+    display: block;
+    padding: var(--s-2) var(--s-4);
+    font-size: var(--t-sans-sm);
+    color: var(--c-mint);
+    transition: background var(--dur-state) var(--ease);
+  }
+  .actions a:hover { background: var(--c-raised); }
+  .more {
+    margin-top: var(--s-8);
+    padding-top: var(--s-5);
+    border-top: 1px solid var(--c-hairline);
+  }
+  .more h2 {
+    font-size: var(--t-sans-lg);
+    font-weight: 500;
+    margin-bottom: var(--s-4);
+  }
+</style>

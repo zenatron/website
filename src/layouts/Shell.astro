@@ -14,12 +14,15 @@ interface Props {
   title?: string;
   description?: string;
   ogSlug?: string;
+  /** Loads the self-hosted KaTeX stylesheet, only on pages that need it. */
+  math?: boolean;
 }
 
 const {
   title = "Phil Vishnevsky | SWE, AI Enthusiast, and Homelabber",
   description = "I'm a software engineer crafting AI projects, tools, homelabs, and games. Explore my portfolio, technical blog posts, and latest development work.",
   ogSlug = "home",
+  math = false,
 } = Astro.props;
 
 const ogUrl = new URL(`/og/${ogSlug}.png`, Astro.site).href;
@@ -46,6 +49,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preload" href="/fonts/atkinson-hyperlegible-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/inter-tight-latin.woff2" as="font" type="font/woff2" crossorigin />
+    {math && <link rel="stylesheet" href="/katex/katex.css" />}
     <script is:inline>document.documentElement.classList.add("js")</script>
     <ClientRouter />
   </head>
@@ -91,12 +95,19 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     padding: var(--s-2) var(--s-4);
   }
 
+  /*
+   * The gutter lives on the body. `margin: 24px auto` on the window gives
+   * no side gutter at all until max-width binds, so the window went
+   * edge-to-edge everywhere between 640px and 1168px.
+   */
+  body { padding: var(--s-5); }
+
   .window {
     display: flex;
     flex-direction: column;
     max-width: var(--w-content);
     min-height: calc(100vh - var(--s-5) * 2);
-    margin: var(--s-5) auto;
+    margin-inline: auto;
     background: var(--c-void);
     border: 1px solid var(--c-hairline);
     border-radius: var(--radius-window);
@@ -144,8 +155,8 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
   .scrim[hidden] { display: none; }
 
   @media (max-width: 640px) {
+    body { padding: 0; }
     .window {
-      margin: 0;
       border: 0;
       border-radius: 0;
       min-height: 100vh;

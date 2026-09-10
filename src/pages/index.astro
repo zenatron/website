@@ -1,8 +1,70 @@
 ---
 import Shell from "@/layouts/Shell.astro";
-import { SITE, INTRO } from "@/data/site";
+import Cells from "@/components/Cells.astro";
+import Contact from "@/components/Contact.astro";
+import { SITE, INTRO, FACTS } from "@/data/site";
+import { getAllBlogPosts } from "@/lib/blog";
+import { getAllProjects, projectSlug } from "@/lib/projects";
+
+const [posts, projects] = await Promise.all([getAllBlogPosts(), getAllProjects()]);
+
+const latest = [
+  ...projects.slice(0, 3).map((p) => ({
+    title: p.data.title,
+    href: `/projects/${projectSlug(p)}`,
+    description: p.data.description || undefined,
+    tags: p.data.tags ?? [],
+  })),
+  ...posts.slice(0, 3).map((p) => ({
+    title: p.data.title,
+    href: `/blog/${p.slug}`,
+    description: p.data.excerpt || undefined,
+    tags: p.data.tags ?? [],
+  })),
+];
 ---
+
 <Shell>
   <h1>{SITE.name}</h1>
-  <p>{INTRO}</p>
+  <p class="intro">{INTRO}</p>
+
+  <hr />
+
+  <p class="facts">{FACTS.join(" · ")}</p>
+
+  <hr />
+
+  <h2>Latest</h2>
+  <Cells cells={latest} />
+
+  <Contact />
 </Shell>
+
+<style>
+  h1 {
+    font-size: var(--t-sans-2xl);
+    font-weight: 500;
+    line-height: 1.2;
+  }
+  .intro {
+    margin-top: var(--s-4);
+    max-width: 68ch;
+    font-size: var(--t-sans-md);
+    line-height: 1.65;
+  }
+  /* One fact about the author, not a data table. */
+  .facts {
+    font-size: var(--t-sans-sm);
+    color: var(--c-muted);
+  }
+  hr {
+    border: 0;
+    border-top: 1px solid var(--c-hairline);
+    margin-block: var(--s-5);
+  }
+  h2 {
+    font-size: var(--t-sans-xl);
+    font-weight: 500;
+    margin-bottom: var(--s-4);
+  }
+</style>

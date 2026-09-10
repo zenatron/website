@@ -1,6 +1,204 @@
 ---
 import Shell from "@/layouts/Shell.astro";
+import Contact from "@/components/Contact.astro";
+import { SITE } from "@/data/site";
+import { TIMELINE, NOW, PRINCIPLES, MACHINES } from "@/data/about";
+import { FAVORITES, CATEGORY_LABELS, type Favorite } from "@/data/favorites";
+
+const categories = [...new Set(FAVORITES.map((f) => f.category))] as Favorite["category"][];
 ---
-<Shell title="About | Phil Vishnevsky" ogSlug="about">
+
+<Shell title="About | Phil Vishnevsky" description="The story so far." ogSlug="about">
   <h1>About</h1>
+  <p class="lede">I write code, break things, and occasionally ship something useful.</p>
+
+  <section id="resume">
+    <h2>Experience</h2>
+    <ul class="rows hairline-col">
+      {TIMELINE.map((item) => (
+        <li>
+          <span class="when">{item.year}</span>
+          <span class="what">
+            <span class="what-title">{item.title}</span>
+            <span class="what-desc">{item.description}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+    <p class="action">
+      <a href={SITE.resume}>Download the full resume</a>
+    </p>
+  </section>
+
+  <section id="now">
+    <h2>Now</h2>
+    {NOW.map((group) => (
+      <div class="group">
+        <h3>{group.heading}</h3>
+        <ul class="rows hairline-col">
+          {group.items.map((item) => (
+            <li>
+              <span class="what"><span class="what-title">{item.name}</span></span>
+              <span class="status">{item.status}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </section>
+
+  <section id="principles">
+    <h2>Principles</h2>
+    <ul class="manifesto">
+      {PRINCIPLES.map((line) => <li>{line}</li>)}
+    </ul>
+    <p class="action"><a href="/blog/principles">Read the long version</a></p>
+  </section>
+
+  <section id="hobbies">
+    <h2>Things I like</h2>
+    {categories.map((category) => (
+      <div class="group">
+        <h3>{CATEGORY_LABELS[category]}</h3>
+        <ul class="rows hairline-col">
+          {FAVORITES.filter((f) => f.category === category).map((item) => (
+            <li>
+              <span class="what">
+                {item.url ? (
+                  <a class="what-title" href={item.url} rel="noopener noreferrer">{item.name}</a>
+                ) : (
+                  <span class="what-title">{item.name}</span>
+                )}
+                {item.description && <span class="what-desc">{item.description}</span>}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </section>
+
+  <section id="setup">
+    <h2>Setup</h2>
+    <div class="machines">
+      {MACHINES.map((machine) => (
+        <div class="machine">
+          <h3>{machine.name}</h3>
+          <dl>
+            {machine.fields.map(([label, value]) => (
+              <div class="field">
+                <dt>{label}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <Contact />
 </Shell>
+
+<style>
+  h1 {
+    font-size: var(--t-sans-2xl);
+    font-weight: 500;
+  }
+  .lede {
+    margin-top: var(--s-4);
+    max-width: 68ch;
+    color: var(--c-muted);
+  }
+  section {
+    margin-top: var(--s-7);
+    scroll-margin-top: var(--s-5);
+  }
+  h2 {
+    font-size: var(--t-sans-xl);
+    font-weight: 500;
+    margin-bottom: var(--s-4);
+  }
+  h3 {
+    font-size: var(--t-sans-lg);
+    font-weight: 500;
+    margin-bottom: var(--s-3);
+  }
+  .group + .group { margin-top: var(--s-5); }
+
+  .rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: 68ch;
+  }
+  .rows li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s-1) var(--s-4);
+    padding: var(--s-3) var(--s-4);
+    transition: background var(--dur-state) var(--ease);
+  }
+  .rows li:hover { background: var(--c-raised); }
+
+  /* Years, statuses and spec labels are machine-voice; the rest is prose. */
+  .when,
+  .status {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-dim);
+    flex: 0 0 auto;
+  }
+  /* Fixed column so the titles align down the list. */
+  .when { flex: 0 0 14ch; }
+  @media (max-width: 520px) {
+    .when { flex: 0 0 100%; }
+  }
+  .status { margin-left: auto; }
+
+  .what {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s-1) var(--s-3);
+    min-width: 0;
+  }
+  .what-title { font-size: var(--t-sans-md); }
+  a.what-title { color: var(--c-mint); }
+  .what-desc { font-size: var(--t-sans-sm); color: var(--c-muted); }
+
+  .manifesto {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--t-sans-lg);
+  }
+  .manifesto li + li { margin-top: var(--s-2); }
+
+  .action { margin-top: var(--s-4); }
+  .action a {
+    font-size: var(--t-sans-sm);
+    color: var(--c-mint);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+
+  .machines {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--s-5);
+    max-width: 68ch;
+  }
+  dl { margin: 0; }
+  .field {
+    display: flex;
+    gap: var(--s-3);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    line-height: 1.9;
+  }
+  dt { flex: 0 0 9ch; color: var(--c-dim); }
+  dd { margin: 0; min-width: 0; color: var(--c-muted); }
+</style>
