@@ -26,15 +26,15 @@ function fonts() {
   if (!cached) {
     cached = {
       mono: font("AtkinsonHyperlegibleMono-Regular.ttf"),
-      sans: font("InterTight-Regular.ttf"),
-      sansMedium: font("InterTight-Medium.ttf"),
+      sans: font("Gantari-Regular.ttf"),
+      sansMedium: font("Gantari-SemiBold.ttf"),
     };
   }
   return cached;
 }
 
 const MONO = "Atkinson Hyperlegible Mono";
-const SANS = "Inter Tight";
+const SANS = "Gantari";
 
 interface OGOptions {
   title: string;
@@ -68,7 +68,7 @@ export async function generateOGImage({
         height: H,
         display: "flex",
         flexDirection: "column",
-        backgroundColor: P.void,
+        backgroundColor: P.bg,
         border: `1px solid ${P.hairline}`,
         fontFamily: SANS,
       },
@@ -135,7 +135,7 @@ export async function generateOGImage({
                 props: {
                   style: {
                     fontSize: 62,
-                    fontWeight: 500,
+                    fontWeight: 600,
                     lineHeight: 1.15,
                     color: P.text,
                     // Satori has no line clamp; the pane is sized to fit ~3 lines.
@@ -168,7 +168,7 @@ export async function generateOGImage({
                       style: {
                         fontFamily: MONO,
                         fontSize: 20,
-                        color: P.mint,
+                        color: P.link,
                         padding: "6px 14px",
                         border: `1px solid ${P.hairline}`,
                         // Shared edge: neighbours collapse their borders.
@@ -200,7 +200,7 @@ export async function generateOGImage({
               color: P.dim,
             },
             children: [
-              { type: "div", props: { style: { color: P.amber }, children: "main" } },
+              { type: "div", props: { style: { color: P.accent }, children: "main" } },
               { type: "div", props: { style: { marginLeft: 24 }, children: "UTF-8" } },
               { type: "div", props: { style: { flex: 1 } } },
               { type: "div", props: { children: "pvi.sh" } },
@@ -216,7 +216,7 @@ export async function generateOGImage({
     height: H,
     fonts: [
       { name: SANS, data: sans, weight: 400, style: "normal" },
-      { name: SANS, data: sansMedium, weight: 500, style: "normal" },
+      { name: SANS, data: sansMedium, weight: 600, style: "normal" },
       { name: MONO, data: mono, weight: 400, style: "normal" },
     ],
   });

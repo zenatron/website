@@ -26,15 +26,17 @@ const config: Config = {
       trafficlight: "var(--c-trafficlight)",
       scrim: "var(--c-scrim)",
     },
-    // Radius: the window shell, and nothing else.
+    // Radius is a real scale now; forms are soft rather than square.
     borderRadius: {
       none: "0",
+      sm: "var(--radius-sm)",
+      card: "var(--radius-card)",
       window: "var(--radius-window)",
+      pill: "var(--radius-pill)",
     },
     // Depth comes from surface value and hairlines.
     boxShadow: { none: "none" },
-    // Two weights. Emphasis is size and color, never heaviness.
-    fontWeight: { normal: "400", medium: "500" },
+    fontWeight: { normal: "400", medium: "500", semibold: "600", bold: "700" },
     fontFamily: {
       mono: "var(--font-mono)",
       sans: "var(--font-sans)",
@@ -43,11 +45,13 @@ const config: Config = {
       "mono-xs": "var(--t-mono-xs)",
       "mono-sm": "var(--t-mono-sm)",
       "mono-md": "var(--t-mono-md)",
+      "sans-xs": "var(--t-sans-xs)",
       "sans-sm": "var(--t-sans-sm)",
       "sans-md": "var(--t-sans-md)",
       "sans-lg": "var(--t-sans-lg)",
       "sans-xl": "var(--t-sans-xl)",
       "sans-2xl": "var(--t-sans-2xl)",
+      "sans-3xl": "var(--t-sans-3xl)",
     },
     spacing: {
       0: "0",

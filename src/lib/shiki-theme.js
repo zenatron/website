@@ -1,60 +1,52 @@
 /**
- * Shiki theme, built from the palette and nothing else.
+ * Shiki themes built from the palette, one per site theme.
  *
- * Code blocks are the most visually prominent element on the site, so a
- * stock theme would smuggle a dozen off-palette hues past the three-color
- * rule. Syntax gets the same vocabulary as everything else:
- *   muted -> comments (recede)
- *   mint  -> strings and values (navigable/literal)
- *   amber -> keywords and constants (structural)
- *   text  -> everything else
- *   red   -> genuine syntax errors
+ * Code blocks are the most visually prominent element on a post, so a
+ * stock theme would smuggle a dozen off-palette hues onto the page.
+ * Syntax borrows the site's own vocabulary:
+ *   muted  -> comments        link   -> strings and values
+ *   accent -> keywords        violet -> functions and types
+ *   danger -> genuine errors
  */
-const c = {
-  void: "#0E1013",
-  text: "#E6E1D8",
-  muted: "#8A9099",
-  amber: "#FFB454",
-  mint: "#7FD1B9",
-  red: "#E5484D",
+function theme(name, type, c) {
+  return {
+    name,
+    type,
+    colors: { "editor.background": c.bg, "editor.foreground": c.text },
+    tokenColors: [
+      { scope: ["comment", "punctuation.definition.comment"], settings: { foreground: c.muted } },
+      {
+        scope: ["string", "string.quoted", "string.template", "constant.other.symbol", "markup.inline.raw"],
+        settings: { foreground: c.link },
+      },
+      {
+        scope: ["keyword", "storage", "storage.type", "storage.modifier", "constant.language",
+                "constant.numeric", "support.type", "entity.name.tag", "keyword.operator.expression",
+                "variable.language"],
+        settings: { foreground: c.accent },
+      },
+      {
+        scope: ["entity.name.function", "support.function", "entity.name.type", "entity.name.class"],
+        settings: { foreground: c.violet },
+      },
+      {
+        scope: ["punctuation", "meta.brace", "keyword.operator", "punctuation.separator"],
+        settings: { foreground: c.muted },
+      },
+      { scope: ["invalid", "invalid.illegal", "markup.deleted"], settings: { foreground: c.danger } },
+      { scope: ["variable", "variable.parameter"], settings: { foreground: c.text } },
+    ],
+  };
+}
+
+const light = {
+  bg: "#F2EFE8", text: "#35312A", muted: "#635D52",
+  accent: "#935D0F", link: "#1E7657", danger: "#B93A28", violet: "#6A4BC4",
+};
+const dark = {
+  bg: "#100F0C", text: "#EDE7DA", muted: "#A69E8D",
+  accent: "#FFB454", link: "#7FD1B9", danger: "#F2695E", violet: "#BCA4FF",
 };
 
-export default {
-  name: "pvish",
-  type: "dark",
-  colors: {
-    "editor.background": c.void,
-    "editor.foreground": c.text,
-  },
-  tokenColors: [
-    { scope: ["comment", "punctuation.definition.comment"], settings: { foreground: c.muted } },
-    {
-      scope: ["string", "string.quoted", "string.template", "constant.other.symbol", "markup.inline.raw"],
-      settings: { foreground: c.mint },
-    },
-    {
-      scope: [
-        "keyword",
-        "storage",
-        "storage.type",
-        "storage.modifier",
-        "constant.language",
-        "constant.numeric",
-        "support.type",
-        "entity.name.tag",
-        "keyword.operator.expression",
-        "variable.language",
-      ],
-      settings: { foreground: c.amber },
-    },
-    {
-      scope: ["punctuation", "meta.brace", "keyword.operator", "punctuation.separator"],
-      settings: { foreground: c.muted },
-    },
-    { scope: ["invalid", "invalid.illegal", "markup.deleted"], settings: { foreground: c.red } },
-    {
-      scope: ["entity.name.function", "support.function", "entity.name.type", "variable", "variable.parameter"],
-      settings: { foreground: c.text },
-    },
-  ],
-};
+export const pvishLight = theme("pvish-light", "light", light);
+export const pvishDark = theme("pvish-dark", "dark", dark);

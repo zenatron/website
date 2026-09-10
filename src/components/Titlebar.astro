@@ -4,6 +4,7 @@
  * astro:page-load rather than re-rendered, because the node never remounts.
  */
 import { SITE } from "@/data/site";
+import ThemeToggle from "@/components/ThemeToggle.astro";
 ---
 
 <div class="titlebar" transition:persist="titlebar">
@@ -16,6 +17,7 @@ import { SITE } from "@/data/site";
 
   <span class="path" data-titlebar-path>{SITE.user}@{SITE.host} — ~</span>
 
+  <ThemeToggle />
   <kbd class="keycap" data-keycap>⌘K</kbd>
 </div>
 
@@ -61,8 +63,8 @@ import { SITE } from "@/data/site";
     font-size: var(--t-mono-xs);
     color: var(--c-muted);
     border: 1px solid var(--c-hairline);
-    padding: 2px 6px;
-    border-radius: 0;
+    padding: 3px 7px;
+    border-radius: var(--radius-sm);
     line-height: 1;
   }
 

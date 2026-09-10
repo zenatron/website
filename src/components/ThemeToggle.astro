@@ -1,0 +1,36 @@
+---
+/**
+ * Three states: follow the system, force light, force dark.
+ * Sits in the titlebar, next to the ⌘K keycap.
+ */
+---
+<button class="theme" type="button" data-theme-toggle aria-label="Theme: follow system">
+  <span class="glyph" aria-hidden="true">
+    <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.4">
+      <circle cx="8" cy="8" r="3.4" />
+      <path class="rays" d="M8 .8v2M8 13.2v2M.8 8h2M13.2 8h2M2.9 2.9l1.4 1.4M11.7 11.7l1.4 1.4M13.1 2.9l-1.4 1.4M4.3 11.7l-1.4 1.4" stroke-linecap="round" />
+    </svg>
+  </span>
+</button>
+
+<style>
+  .theme {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: var(--radius-sm);
+    color: var(--c-muted);
+    cursor: pointer;
+    transition: background var(--dur-state) var(--ease), color var(--dur-state) var(--ease);
+  }
+  .theme:hover {
+    background: var(--c-raised);
+    color: var(--c-text);
+  }
+  /* Explicit choice reads as "you are here"; following the system doesn't. */
+  .theme[data-mode="light"],
+  .theme[data-mode="dark"] { color: var(--c-accent); }
+  .theme[data-mode="dark"] .rays { opacity: 0.25; }
+</style>

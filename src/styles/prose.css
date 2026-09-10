@@ -4,7 +4,7 @@
 .prose {
   max-width: 68ch;
   font-size: var(--t-sans-md);
-  line-height: 1.65;
+  line-height: 1.7;
   color: var(--c-text);
 }
 
@@ -15,15 +15,16 @@
 .prose h4 {
   margin-top: var(--s-6);
   margin-bottom: var(--s-3);
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 .prose h2 { font-size: var(--t-sans-xl); }
 .prose h3 { font-size: var(--t-sans-lg); }
 .prose h4 { font-size: var(--t-sans-md); color: var(--c-muted); }
 
 .prose a {
-  color: var(--c-mint);
+  color: var(--c-link);
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-thickness: 1px;
@@ -38,7 +39,7 @@
 .prose li::marker { color: var(--c-muted); }
 
 .prose blockquote {
-  border-left: 2px solid var(--c-hairline);
+  border-left: 3px solid var(--c-hairline-strong);
   padding-left: var(--s-4);
   color: var(--c-muted);
 }
@@ -46,15 +47,17 @@
 .prose :not(pre) > code {
   font-family: var(--font-mono);
   font-size: var(--t-mono-md);
-  color: var(--c-mint);
-  background: var(--c-raised);
-  padding: 1px 5px;
+  color: var(--c-link);
+  background: var(--c-tint-link);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
   font-variant-ligatures: none;
 }
 
 .prose pre {
-  background: var(--c-void);
+  background: var(--c-sunken);
   border: 1px solid var(--c-hairline);
+  border-radius: var(--radius-card);
   padding: var(--s-4);
   overflow-x: auto;
   font-size: var(--t-mono-md);
@@ -75,6 +78,7 @@
 
 .prose img {
   border: 1px solid var(--c-hairline);
+  border-radius: var(--radius-card);
 }
 
 /* Tables get their own scroll container rather than widening the page. */
@@ -100,3 +104,17 @@
 
 .prose .katex { font-size: 1.05em; }
 .prose .katex-display { overflow-x: auto; overflow-y: hidden; padding-block: var(--s-2); }
+
+/* Shiki dual-theme: the dark palette swaps in with the site's theme. */
+:root[data-theme="dark"] .prose .astro-code,
+:root[data-theme="dark"] .prose .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .prose .astro-code,
+  :root:not([data-theme="light"]) .prose .astro-code span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
+}

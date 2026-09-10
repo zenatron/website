@@ -4,22 +4,42 @@ import Cells from "@/components/Cells.astro";
 import { getAllProjects, projectSlug } from "@/lib/projects";
 
 const projects = await getAllProjects();
+
+const monthYear = (v: string | Date | undefined) => {
+  if (!v) return undefined;
+  const d = new Date(v);
+  return Number.isNaN(d.getTime())
+    ? undefined
+    : d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+};
+
 const cells = projects.map((p) => ({
   title: p.data.title,
   href: `/projects/${projectSlug(p)}`,
+  slug: projectSlug(p),
   description: p.data.description || undefined,
   tags: p.data.tags ?? [],
+  meta: monthYear(p.data.date),
 }));
 ---
 <Shell title="Projects | Phil Vishnevsky" description="My experiments, projects, and failures." ogSlug="projects">
-  <h1>Projects</h1>
+  <header class="pagehead">
+    <h1>Projects</h1>
+    <p>Experiments, coursework, and things I built because they didn't exist yet.</p>
+  </header>
   <Cells cells={cells} />
 </Shell>
 
 <style>
+  .pagehead { margin-bottom: var(--s-6); }
   h1 {
-    font-size: var(--t-sans-xl);
-    font-weight: 500;
-    margin-bottom: var(--s-5);
+    font-size: var(--t-sans-2xl);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  .pagehead p {
+    margin-top: var(--s-3);
+    max-width: 56ch;
+    color: var(--c-muted);
   }
 </style>

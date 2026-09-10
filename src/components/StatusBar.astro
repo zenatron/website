@@ -53,7 +53,7 @@ const buildLabel = new Date(buildTime).toLocaleString("en-US", {
 
   /* Amber means "you are here" — this is the branch the site was built from. */
   .branch {
-    color: var(--c-amber);
+    color: var(--c-accent);
     user-select: text;
   }
 
@@ -70,13 +70,13 @@ const buildLabel = new Date(buildTime).toLocaleString("en-US", {
     display: inline-flex;
     align-items: center;
     gap: var(--s-2);
-    color: var(--c-mint);
+    color: var(--c-link);
   }
   .deploy i {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--c-mint);
+    background: var(--c-link);
   }
 
   /* Two items below 640px: branch and deploy status. */

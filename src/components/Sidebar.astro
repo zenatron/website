@@ -108,7 +108,7 @@ const files = [
     font-size: var(--t-mono-xs);
     color: var(--c-dim);
     letter-spacing: 0.08em;
-    padding-inline: var(--s-3);
+    padding-inline: var(--s-4);
     margin-bottom: var(--s-2);
   }
 
@@ -131,11 +131,12 @@ const files = [
     position: relative;
     display: flex;
     align-items: center;
-    padding-left: var(--s-3);
+    margin-inline: var(--s-2);
+    padding-left: var(--s-2);
+    border-radius: var(--radius-sm);
     font-family: var(--font-mono);
     font-size: var(--t-mono-sm);
     line-height: 2.1;
-    border-left: 2px solid transparent;
     transition: background var(--dur-state) var(--ease);
   }
 
@@ -161,13 +162,9 @@ const files = [
   .row:hover a { color: var(--c-text); }
 
   .row[data-active] {
-    background: var(--c-raised);
-    /* -2px so the accent does not shift the text. */
-    margin-left: -2px;
-    padding-left: calc(var(--s-3) + 2px);
-    border-left-color: var(--c-amber);
+    background: var(--c-tint-accent);
   }
-  .row[data-active] a { color: var(--c-text); }
+  .row[data-active] a { color: var(--c-accent); }
 
   /*
    * A CSS-drawn disclosure triangle, so no glyph enters the copy.
@@ -177,7 +174,7 @@ const files = [
   .twisty {
     position: absolute;
     z-index: 1;
-    left: var(--s-3);
+    left: var(--s-2);
     top: 0;
     bottom: 0;
     width: var(--s-4);

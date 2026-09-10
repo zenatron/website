@@ -1,7 +1,7 @@
 ---
 /** Demo component for the MDX post. Interactive, ~10 lines of inline JS. */
 ---
-<div class="counter hairline-row" data-counter>
+<div class="counter" data-counter>
   <output data-count>0</output>
   <button type="button" data-step="1">+1</button>
   <button type="button" data-step="-1">-1</button>
@@ -9,14 +9,21 @@
 </div>
 
 <style>
-  .counter { margin-block: var(--s-5); width: fit-content; }
+  .counter {
+    margin-block: var(--s-5);
+    width: fit-content;
+    display: flex;
+    gap: var(--s-2);
+  }
   .counter > * {
     padding: var(--s-2) var(--s-4);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-sm);
     font-family: var(--font-mono);
     font-size: var(--t-mono-md);
   }
-  output { color: var(--c-amber); min-width: 6ch; text-align: center; }
-  button { cursor: pointer; color: var(--c-mint); transition: background var(--dur-state) var(--ease); }
+  output { color: var(--c-accent); min-width: 6ch; text-align: center; }
+  button { cursor: pointer; color: var(--c-link); transition: background var(--dur-state) var(--ease); }
   button:hover { background: var(--c-raised); }
 </style>
 

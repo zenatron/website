@@ -1,26 +1,32 @@
 ---
-/**
- * Shared-edge cells. Interior lines are 1px, not 2px, because neighbours
- * collapse their borders rather than each drawing their own.
- */
+/** Cards lead with artwork. Without it they read as a list of filenames. */
 import Tags from "@/components/Tags.astro";
+import Cover from "@/components/Cover.astro";
 
 interface Cell {
   title: string;
   href: string;
   description?: string;
   tags?: string[];
+  meta?: string;
+  slug?: string;
 }
-interface Props { cells: Cell[]; }
+interface Props { cells: Cell[]; columns?: number; }
 const { cells } = Astro.props;
 ---
 
 <ul class="cells">
   {cells.map((cell) => (
-    <li>
+    <li class="cell">
       <a href={cell.href}>
-        <span class="title">{cell.title}</span>
-        {cell.description && <span class="desc">{cell.description}</span>}
+        <span class="art"><Cover slug={cell.slug ?? cell.href} /></span>
+        <span class="body">
+          <span class="head">
+            <span class="title">{cell.title}</span>
+            {cell.meta && <span class="meta">{cell.meta}</span>}
+          </span>
+          {cell.description && <span class="desc">{cell.description}</span>}
+        </span>
       </a>
       {cell.tags && cell.tags.length > 0 && (
         <div class="tagrow"><Tags tags={cell.tags} max={3} /></div>
@@ -35,41 +41,64 @@ const { cells } = Astro.props;
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 0;
-    border-top: 1px solid var(--c-hairline);
-    border-left: 1px solid var(--c-hairline);
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--s-5);
   }
-  .cells li {
+
+  .cell {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: var(--s-3);
-    padding: var(--s-4);
     min-width: 0;
-    border-right: 1px solid var(--c-hairline);
-    border-bottom: 1px solid var(--c-hairline);
-    transition: background var(--dur-state) var(--ease);
   }
-  /* The entire hover state. No lift, no scale, no border change. */
-  .cells li:hover { background: var(--c-raised); }
 
-  .cells a {
+  .cell a {
     display: flex;
     flex-direction: column;
-    gap: var(--s-2);
+    gap: var(--s-3);
     color: inherit;
-    text-decoration: none;
+    min-width: 0;
   }
-  /* One link per cell; the tag row rides along rather than nesting inside. */
-  .cells a::after { content: ""; position: absolute; inset: 0; }
-  .cells li { position: relative; }
+  .cell a::after { content: ""; position: absolute; inset: 0; }
 
+  .art {
+    display: block;
+    aspect-ratio: 16 / 9;
+    max-width: 100%;
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--c-hairline);
+    transition: border-color var(--dur-state) var(--ease);
+  }
+  .cell:hover .art { border-color: var(--c-hairline-strong); }
+
+  .head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-3);
+  }
   .title {
     font-size: var(--t-sans-lg);
-    font-weight: 500;
+    font-weight: 600;
     line-height: 1.25;
+    letter-spacing: -0.02em;
+    min-width: 0;
+  }
+  .cell:hover .title { color: var(--c-link); }
+  .title { transition: color var(--dur-state) var(--ease); }
+
+  .meta {
+    flex: 0 0 auto;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+    white-space: nowrap;
   }
   .desc {
+    display: block;
+    margin-top: var(--s-2);
     font-size: var(--t-sans-sm);
     color: var(--c-muted);
     line-height: 1.5;

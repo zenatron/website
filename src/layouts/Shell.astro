@@ -48,9 +48,26 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     <meta name="twitter:image" content={ogUrl} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preload" href="/fonts/atkinson-hyperlegible-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/inter-tight-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/gantari-latin.woff2" as="font" type="font/woff2" crossorigin />
     {math && <link rel="stylesheet" href="/katex/katex.css" />}
-    <script is:inline>document.documentElement.classList.add("js")</script>
+    <script is:inline>
+      // Blocking, so the correct theme is painted on the first frame.
+      (function () {
+        var r = document.documentElement;
+        r.classList.add("js");
+        try {
+          var t = localStorage.getItem("theme");
+          if (t === "light" || t === "dark") r.setAttribute("data-theme", t);
+        } catch (e) {}
+      })();
+      document.addEventListener("astro:after-swap", function () {
+        try {
+          var t = localStorage.getItem("theme");
+          if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+          else document.documentElement.removeAttribute("data-theme");
+        } catch (e) {}
+      });
+    </script>
     <ClientRouter />
   </head>
 
@@ -72,6 +89,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     <Terminal transition:persist="terminal" />
 
     <script>
+      import "@/scripts/theme";
       import "@/scripts/shell";
       import "@/scripts/sidebar";
       import "@/scripts/clock";
@@ -91,7 +109,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     z-index: 10;
     background: var(--c-raised);
     color: var(--c-text);
-    border: 1px solid var(--c-amber);
+    border: 1px solid var(--c-accent);
     padding: var(--s-2) var(--s-4);
   }
 
@@ -108,7 +126,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     max-width: var(--w-content);
     min-height: calc(100vh - var(--s-5) * 2);
     margin-inline: auto;
-    background: var(--c-void);
+    background: var(--c-bg);
     border: 1px solid var(--c-hairline);
     border-radius: var(--radius-window);
     overflow: hidden;

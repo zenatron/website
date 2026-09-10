@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import Shell from "@/layouts/Shell.astro";
 import PostMeta from "@/components/PostMeta.astro";
 import Tags from "@/components/Tags.astro";
+import Cover from "@/components/Cover.astro";
 import Cells from "@/components/Cells.astro";
 import { getSuggestedPosts } from "@/lib/blog";
 
@@ -20,6 +21,7 @@ const hasMath = /\$\$|\\\(|\\\[|\$[^$\n]+\$/.test(post.body ?? "");
 const suggested = (await getSuggestedPosts(post.slug, 3)).map((p) => ({
   title: p.data.title,
   href: `/blog/${p.slug}`,
+  slug: p.slug,
   description: p.data.excerpt || undefined,
   tags: p.data.tags ?? [],
 }));
@@ -32,6 +34,7 @@ const suggested = (await getSuggestedPosts(post.slug, 3)).map((p) => ({
   math={hasMath}
 >
   <article>
+    <div class="hero" aria-hidden="true"><Cover slug={post.slug} cols={24} rows={8} /></div>
     <header>
       <h1>{post.data.title}</h1>
       <PostMeta date={post.data.date} readingTime={post.data.readingTime} />
@@ -52,15 +55,23 @@ const suggested = (await getSuggestedPosts(post.slug, 3)).map((p) => ({
 </Shell>
 
 <style>
+  .hero {
+    aspect-ratio: 21 / 7;
+    overflow: hidden;
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
+    margin-bottom: var(--s-5);
+  }
   header {
     padding-bottom: var(--s-5);
-    margin-bottom: var(--s-5);
+    margin-bottom: var(--s-6);
     border-bottom: 1px solid var(--c-hairline);
   }
   h1 {
-    font-size: var(--t-sans-xl);
-    font-weight: 500;
-    max-width: 34ch;
+    font-size: var(--t-sans-2xl);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    max-width: 26ch;
   }
   .tagrow { margin-top: var(--s-4); }
   .more {
@@ -69,8 +80,8 @@ const suggested = (await getSuggestedPosts(post.slug, 3)).map((p) => ({
     border-top: 1px solid var(--c-hairline);
   }
   .more h2 {
-    font-size: var(--t-sans-lg);
-    font-weight: 500;
-    margin-bottom: var(--s-4);
+    font-size: var(--t-sans-xl);
+    font-weight: 600;
+    margin-bottom: var(--s-5);
   }
 </style>

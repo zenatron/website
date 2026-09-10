@@ -25,10 +25,15 @@ const label = title ?? type;
 <style>
   .callout {
     margin-block: var(--s-5);
-    padding-left: var(--s-4);
-    border-left: 2px solid var(--c-hairline);
+    padding: var(--s-4);
+    background: var(--c-chrome);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
   }
-  .callout.error { border-left-color: var(--c-red); }
+  .callout.error {
+    background: var(--c-tint-orange);
+    border-color: var(--c-danger);
+  }
 
   .label {
     font-family: var(--font-mono);
@@ -36,7 +41,7 @@ const label = title ?? type;
     color: var(--c-muted);
     margin-bottom: var(--s-2);
   }
-  .callout.error .label { color: var(--c-red); }
+  .callout.error .label { color: var(--c-danger); }
 
   .body > :global(* + *) { margin-top: var(--s-3); }
 </style>

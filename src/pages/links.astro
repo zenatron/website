@@ -4,7 +4,7 @@ import { links } from "@/lib/links";
 ---
 <Shell title="Links | Phil Vishnevsky" description="A collection of my important links." ogSlug="links">
   <h1>Links</h1>
-  <ul class="links hairline-col">
+  <ul class="links">
     {links.map((link) => (
       <li>
         <a href={link.url} rel={link.url.startsWith("http") ? "noopener noreferrer" : undefined}>
@@ -18,26 +18,35 @@ import { links } from "@/lib/links";
 
 <style>
   h1 {
-    font-size: var(--t-sans-xl);
-    font-weight: 500;
+    font-size: var(--t-sans-2xl);
+    font-weight: 700;
+    letter-spacing: -0.03em;
     margin-bottom: var(--s-5);
   }
   .links {
     list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--s-3);
     margin: 0;
     padding: 0;
-    max-width: 68ch;
   }
-  .links li { transition: background var(--dur-state) var(--ease); }
-  .links li:hover { background: var(--c-raised); }
+  .links li {
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
+    transition: background var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease);
+  }
+  .links li:hover {
+    background: var(--c-chrome);
+    border-color: var(--c-hairline-strong);
+  }
   .links a {
     display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--s-1) var(--s-3);
-    padding: var(--s-3) var(--s-4);
+    flex-direction: column;
+    gap: var(--s-1);
+    padding: var(--s-4);
     color: inherit;
   }
-  .title { font-size: var(--t-sans-md); color: var(--c-mint); }
+  .title { font-size: var(--t-sans-md); font-weight: 600; color: var(--c-link); }
   .desc { font-size: var(--t-sans-sm); color: var(--c-muted); }
 </style>

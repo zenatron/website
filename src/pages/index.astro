@@ -2,69 +2,172 @@
 import Shell from "@/layouts/Shell.astro";
 import Cells from "@/components/Cells.astro";
 import Contact from "@/components/Contact.astro";
-import { SITE, INTRO, FACTS } from "@/data/site";
+import Mark from "@/components/Mark.astro";
+import Cover from "@/components/Cover.astro";
+import { SITE } from "@/data/site";
 import { getAllBlogPosts } from "@/lib/blog";
 import { getAllProjects, projectSlug } from "@/lib/projects";
 
 const [posts, projects] = await Promise.all([getAllBlogPosts(), getAllProjects()]);
 
-const latest = [
-  ...projects.slice(0, 3).map((p) => ({
-    title: p.data.title,
-    href: `/projects/${projectSlug(p)}`,
-    description: p.data.description || undefined,
-    tags: p.data.tags ?? [],
-  })),
-  ...posts.slice(0, 3).map((p) => ({
-    title: p.data.title,
-    href: `/blog/${p.slug}`,
-    description: p.data.excerpt || undefined,
-    tags: p.data.tags ?? [],
-  })),
-];
+const monthYear = (v: string | Date | undefined) => {
+  if (!v) return undefined;
+  const d = new Date(v);
+  return Number.isNaN(d.getTime())
+    ? undefined
+    : d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+};
+
+const latestProjects = projects.slice(0, 3).map((p) => ({
+  title: p.data.title,
+  href: `/projects/${projectSlug(p)}`,
+  slug: projectSlug(p),
+  description: p.data.description || undefined,
+  tags: p.data.tags ?? [],
+  meta: monthYear(p.data.date),
+}));
+
+const latestPosts = posts.slice(0, 3).map((p) => ({
+  title: p.data.title,
+  href: `/blog/${p.slug}`,
+  slug: p.slug,
+  description: p.data.excerpt || undefined,
+  tags: p.data.tags ?? [],
+  meta: monthYear(p.data.date),
+}));
 ---
 
 <Shell>
-  <h1>{SITE.name}</h1>
-  <p class="intro">{INTRO}</p>
+  <section class="hero">
+    <div class="intro">
+      <h1>{SITE.name}</h1>
+      <p class="statement">
+        a full-stack engineer in <Mark hue="violet">Hartford</Mark>
+        building <Mark hue="blue">servers,</Mark>
+        <Mark hue="green">web apps,</Mark> and
+        <Mark hue="orange">games</Mark> that don't break in production.
+      </p>
 
-  <hr />
+      <div class="currently">
+        <p class="label">currently</p>
+        <ul>
+          <li><span class="star" aria-hidden="true">*</span>open to <Mark hue="accent">opportunities</Mark></li>
+          <li><span class="star" aria-hidden="true">*</span>building a <Mark hue="link">FLAC organizer</Mark> and tools for card games</li>
+          <li><span class="star" aria-hidden="true">*</span>running a homelab that mostly stays up</li>
+        </ul>
+      </div>
+    </div>
 
-  <p class="facts">{FACTS.join(" · ")}</p>
+    <div class="art" aria-hidden="true"><Cover slug="phil-vishnevsky-home" cols={16} rows={12} /></div>
+  </section>
 
-  <hr />
+  <section class="group">
+    <div class="grouphead">
+      <h2>Projects</h2>
+      <a href="/projects">All projects</a>
+    </div>
+    <Cells cells={latestProjects} />
+  </section>
 
-  <h2>Latest</h2>
-  <Cells cells={latest} />
+  <section class="group">
+    <div class="grouphead">
+      <h2>Writing</h2>
+      <a href="/blog">All posts</a>
+    </div>
+    <Cells cells={latestPosts} />
+  </section>
 
   <Contact />
 </Shell>
 
 <style>
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: var(--s-7);
+    align-items: center;
+    padding-block: var(--s-6) var(--s-8);
+  }
+
   h1 {
-    font-size: var(--t-sans-2xl);
-    font-weight: 500;
-    line-height: 1.2;
+    font-size: var(--t-sans-3xl);
+    font-weight: 700;
+    letter-spacing: -0.035em;
   }
-  .intro {
+
+  .statement {
     margin-top: var(--s-4);
-    max-width: 68ch;
-    font-size: var(--t-sans-md);
-    line-height: 1.65;
+    font-size: var(--t-sans-xl);
+    font-weight: 400;
+    line-height: 1.45;
+    letter-spacing: -0.02em;
+    max-width: 22ch;
   }
-  /* One fact about the author, not a data table. */
-  .facts {
+
+  .currently { margin-top: var(--s-6); }
+  .label {
+    font-size: var(--t-sans-sm);
+    color: var(--c-dim);
+    margin-bottom: var(--s-2);
+  }
+  .currently ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     font-size: var(--t-sans-sm);
     color: var(--c-muted);
   }
-  hr {
-    border: 0;
-    border-top: 1px solid var(--c-hairline);
-    margin-block: var(--s-5);
+  /* Hanging indent, not flex: the sentence has to wrap as one flow, or
+     an inline highlight drags the words after it out of line. */
+  .currently li {
+    padding-block: 4px;
+    padding-left: 1.4em;
+    text-indent: -1.4em;
+    line-height: 1.8;
   }
-  h2 {
+  .star {
+    color: var(--c-accent);
+    display: inline-block;
+    width: 1.4em;
+    text-indent: 0;
+  }
+
+  .art {
+    aspect-ratio: 4 / 3;
+    max-width: 100%;
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--c-hairline);
+  }
+
+  .group { padding-block: var(--s-6); }
+  .group + .group { border-top: 1px solid var(--c-hairline); }
+
+  .grouphead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-4);
+    margin-bottom: var(--s-5);
+  }
+  .grouphead h2 {
     font-size: var(--t-sans-xl);
-    font-weight: 500;
-    margin-bottom: var(--s-4);
+    font-weight: 600;
+  }
+  .grouphead a {
+    font-size: var(--t-sans-sm);
+    color: var(--c-link);
+  }
+  .grouphead a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  @media (max-width: 860px) {
+    .hero {
+      grid-template-columns: 1fr;
+      gap: var(--s-5);
+      padding-block: var(--s-5) var(--s-6);
+    }
+    .art { order: -1; aspect-ratio: 16 / 9; }
+    .statement { max-width: none; font-size: var(--t-sans-lg); }
+    h1 { font-size: var(--t-sans-2xl); }
   }
 </style>

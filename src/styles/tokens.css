@@ -1,86 +1,164 @@
 /*
    pvi.sh design tokens — the single source of truth.
    No raw hex value may appear anywhere else in the codebase.
- */
+
+   Two themes. Light is warm paper; dark is warm ink. Both are first
+   class: every token is defined in both, and nothing is defined only
+   inside a media query.
+*/
 
 :root {
   /* Surfaces — ascending elevation */
-  --c-void:      #0E1013;  /* window backdrop, behind all chrome */
-  --c-chrome:    #16191E;  /* titlebar, status bar, sidebar bg */
-  --c-raised:    #1E2228;  /* active row, hover state, terminal bg */
+  --c-bg:        #FDFCF9;  /* page ground */
+  --c-chrome:    #F6F3ED;  /* titlebar, status bar, sidebar */
+  --c-raised:    #EFEBE2;  /* hover, active row, terminal */
+  --c-sunken:    #F2EFE8;  /* code blocks, insets */
 
   /* Structure */
-  --c-hairline:  #2A2F37;  /* every border on the site, 1px */
+  --c-hairline:  #E4DFD4;
+  --c-hairline-strong: #D3CCBE;
 
-  /* Text — three levels, no more */
-  --c-text:      #E6E1D8;  /* primary. warm off-white, NOT #fff */
-  --c-muted:     #8A9099;  /* secondary prose, inactive nav */
-  --c-dim:       #5A6069;  /* metadata, disabled, placeholder */
+  /* Text — warm, never pure black */
+  --c-text:      #35312A;
+  --c-muted:     #635D52;
+  --c-dim:       #6C665B;
 
-  /* Chroma — three colors, one job each */
-  --c-amber:     #FFB454;  /* CURRENT / ACTIVE only */
-  --c-mint:      #7FD1B9;  /* NAVIGABLE only (links, paths, tags) */
-  --c-red:       #E5484D;  /* GENUINE FAILURE only */
+  /* Accents. Each has a job; the hues are for personality. */
+  --c-accent:    #935D0F;  /* CURRENT / ACTIVE */
+  --c-link:      #1E7657;  /* NAVIGABLE */
+  --c-danger:    #B93A28;  /* GENUINE FAILURE */
 
-  /* Non-palette values that are structurally required.
-     Traffic lights are inert texture; the scrim is a flat wash of --c-void. */
-  --c-trafficlight: #3A3F47;
-  --c-scrim:        rgba(14, 16, 19, 0.72);
+  --c-hue-violet: #6A4BC4;
+  --c-hue-orange: #A44F1D;
+  --c-hue-blue:   #24688F;
+  --c-hue-green:  #397430;
+
+  /* Soft tints behind highlighted words and pills */
+  --c-tint-accent: #FBF0D8;
+  --c-tint-link:   #DCF0E6;
+  --c-tint-violet: #ECE6FB;
+  --c-tint-orange: #FCE8DA;
+  --c-tint-blue:   #DDECF6;
+  --c-tint-green:  #E4F2DE;
+
+  --c-trafficlight: #D8D2C6;
+  --c-scrim:        rgba(53, 49, 42, 0.32);
+
+  color-scheme: light;
 }
 
-/*  Type
-   Monospace is the machine's voice. Sans-serif is the author's.
-   Nothing else decides which family to use.
- */
+:root[data-theme="dark"] {
+  --c-bg:        #14130F;
+  --c-chrome:    #1C1A16;
+  --c-raised:    #26231D;
+  --c-sunken:    #100F0C;
 
+  --c-hairline:  #332F27;
+  --c-hairline-strong: #464035;
+
+  --c-text:      #EDE7DA;
+  --c-muted:     #A69E8D;
+  --c-dim:       #948B7C;
+
+  --c-accent:    #FFB454;
+  --c-link:      #7FD1B9;
+  --c-danger:    #F2695E;
+
+  --c-hue-violet: #BCA4FF;
+  --c-hue-orange: #FFA06B;
+  --c-hue-blue:   #7FBDE8;
+  --c-hue-green:  #9BD68A;
+
+  --c-tint-accent: #3A2E19;
+  --c-tint-link:   #17352C;
+  --c-tint-violet: #2A2340;
+  --c-tint-orange: #3A2418;
+  --c-tint-blue:   #162A38;
+  --c-tint-green:  #1E2E18;
+
+  --c-trafficlight: #454036;
+  --c-scrim:        rgba(10, 9, 7, 0.62);
+
+  color-scheme: dark;
+}
+
+/* System preference, unless the visitor has chosen. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --c-bg:        #14130F;
+    --c-chrome:    #1C1A16;
+    --c-raised:    #26231D;
+    --c-sunken:    #100F0C;
+
+    --c-hairline:  #332F27;
+    --c-hairline-strong: #464035;
+
+    --c-text:      #EDE7DA;
+    --c-muted:     #A69E8D;
+    --c-dim:       #948B7C;
+
+    --c-accent:    #FFB454;
+    --c-link:      #7FD1B9;
+    --c-danger:    #F2695E;
+
+    --c-hue-violet: #BCA4FF;
+    --c-hue-orange: #FFA06B;
+    --c-hue-blue:   #7FBDE8;
+    --c-hue-green:  #9BD68A;
+
+    --c-tint-accent: #3A2E19;
+    --c-tint-link:   #17352C;
+    --c-tint-violet: #2A2340;
+    --c-tint-orange: #3A2418;
+    --c-tint-blue:   #162A38;
+    --c-tint-green:  #1E2E18;
+
+    --c-trafficlight: #454036;
+    --c-scrim:        rgba(10, 9, 7, 0.62);
+
+    color-scheme: dark;
+  }
+}
+
+/* Type: Gantari is the author's voice, mono is the machine's. */
 :root {
   --font-mono: 'Atkinson Hyperlegible Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-  --font-sans: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans: 'Gantari', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-  /* Mono — CHROME ONLY. Hard ceiling at 13px. */
-  --t-mono-xs:  11px;  /* status bar, keycaps, metadata */
-  --t-mono-sm:  12px;  /* sidebar tree, titlebar path, tags */
-  --t-mono-md:  13px;  /* terminal I/O, inline code */
+  /* Mono stays chrome, and chrome stays small. */
+  --t-mono-xs:  11px;
+  --t-mono-sm:  12px;
+  --t-mono-md:  13px;
 
-  /* Sans — content */
-  --t-sans-sm:  14px;  /* captions, secondary prose */
-  --t-sans-md:  16px;  /* body prose */
-  --t-sans-lg:  20px;  /* h3 */
-  --t-sans-xl:  27px;  /* h2, post titles */
-  --t-sans-2xl: 44px;  /* h1, homepage headline */
+  /* Sans */
+  --t-sans-xs:  13px;
+  --t-sans-sm:  15px;
+  --t-sans-md:  17px;
+  --t-sans-lg:  21px;
+  --t-sans-xl:  30px;
+  --t-sans-2xl: 40px;
+  --t-sans-3xl: 56px;
 }
 
-/*  Space and structure */
-
+/* Space and structure */
 :root {
   --s-1: 4px;   --s-2: 8px;   --s-3: 12px;  --s-4: 16px;
   --s-5: 24px;  --s-6: 32px;  --s-7: 48px;  --s-8: 64px;
 
-  --radius-window: 10px;  /* the ONLY radius on the site */
-  --radius-inner:  0px;   /* everything inside the window */
+  --radius-window: 16px;
+  --radius-card:   12px;
+  --radius-sm:      8px;
+  --radius-pill:  999px;
 
-  --h-titlebar:  38px;
-  --h-statusbar: 26px;
-  --w-sidebar:   186px;
-  --w-content:   1120px;  /* max window width */
+  --h-titlebar:  40px;
+  --h-statusbar: 28px;
+  --w-sidebar:   200px;
+  --w-content:  1160px;
 }
 
-/*  Motion — two durations, total */
-
+/* Motion — two durations, total. */
 :root {
-  --dur-state: 120ms;  /* hover, focus, tab switch, tooltip */
-  --dur-pane:  380ms;  /* route transition, terminal open/close */
+  --dur-state: 120ms;
+  --dur-pane:  380ms;
   --ease:      cubic-bezier(.2, 0, .4, 1);
 }
-
-/*  Shared-edge hairline grid
-   No element inside the window floats free of a border it shares
-   with a neighbour. Adjacent elements collapse their edges.
- */
-
-.hairline-row { display: flex; }
-.hairline-row > * { border: 1px solid var(--c-hairline); }
-.hairline-row > * + * { border-left: 0; }
-
-.hairline-col > * { border: 1px solid var(--c-hairline); }
-.hairline-col > * + * { border-top: 0; }

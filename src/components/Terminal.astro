@@ -89,6 +89,7 @@ const payload = {
     padding: 0;
     border: 0;
     border-bottom: 1px solid var(--c-hairline);
+    border-radius: 0 0 var(--radius-card) var(--radius-card);
     background: var(--c-raised);
     color: var(--c-text);
     height: 42vh;
@@ -126,8 +127,8 @@ const payload = {
   }
 
   .prompt { flex: 0 0 auto; }
-  .who { color: var(--c-mint); }
-  .cwd { color: var(--c-amber); }
+  .who { color: var(--c-link); }
+  .cwd { color: var(--c-accent); }
   .sigil { color: var(--c-muted); }
 
   .field {
@@ -162,7 +163,7 @@ const payload = {
     width: 7px;
     height: 15px;
     vertical-align: text-bottom;
-    background: var(--c-amber);
+    background: var(--c-accent);
   }
   @media (prefers-reduced-motion: no-preference) {
     .term[data-focused="true"] :global(.caret) {
@@ -173,7 +174,7 @@ const payload = {
     50% { opacity: 0; }
   }
 
-  :global(.line-err) { color: var(--c-red); }
+  :global(.line-err) { color: var(--c-danger); }
   :global(.line-dim) { color: var(--c-muted); }
-  :global(.line-dir) { color: var(--c-mint); }
+  :global(.line-dir) { color: var(--c-link); }
 </style>

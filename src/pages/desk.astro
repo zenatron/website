@@ -40,7 +40,7 @@ import { DESK } from "@/data/desk";
       <span class="pv-name" data-pv-name></span>
     </div>
     <img data-pv-img alt="" />
-    <div class="pv-meta hairline-row">
+    <div class="pv-meta">
       <span data-pv-dims></span>
       <span data-pv-note></span>
     </div>
@@ -52,7 +52,8 @@ import { DESK } from "@/data/desk";
 <style>
   h1 {
     font-size: var(--t-sans-2xl);
-    font-weight: 500;
+    font-weight: 700;
+    letter-spacing: -0.03em;
   }
   .lede {
     margin-top: var(--s-4);
@@ -63,7 +64,9 @@ import { DESK } from "@/data/desk";
     position: relative;
     margin-top: var(--s-5);
     min-height: 520px;
+    background: var(--c-chrome);
     border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
   }
 
   .icon {
@@ -79,11 +82,16 @@ import { DESK } from "@/data/desk";
     border: 1px solid transparent;
     touch-action: none;
   }
-  .icon[data-selected] { border-color: var(--c-amber); }
+  .icon { border-radius: var(--radius-card); }
+  .icon[data-selected] {
+    border-color: var(--c-accent);
+    background: var(--c-tint-accent);
+  }
   .icon img {
     width: 100%;
     height: auto;
     border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-sm);
     pointer-events: none;
   }
   .file {
@@ -101,6 +109,8 @@ import { DESK } from "@/data/desk";
   .preview {
     padding: 0;
     border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
+    overflow: hidden;
     background: var(--c-chrome);
     color: var(--c-text);
     max-width: min(680px, calc(100vw - var(--s-6)));
@@ -131,7 +141,11 @@ import { DESK } from "@/data/desk";
     color: var(--c-muted);
   }
   .preview img { width: 100%; height: auto; display: block; }
-  .pv-meta { border-top: 1px solid var(--c-hairline); }
+  .pv-meta {
+    display: flex;
+    border-top: 1px solid var(--c-hairline);
+  }
+  .pv-meta > span + span { border-left: 1px solid var(--c-hairline); }
   .pv-meta > span {
     padding: var(--s-2) var(--s-3);
     font-family: var(--font-mono);

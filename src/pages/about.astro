@@ -14,7 +14,7 @@ const categories = [...new Set(FAVORITES.map((f) => f.category))] as Favorite["c
 
   <section id="resume">
     <h2>Experience</h2>
-    <ul class="rows hairline-col">
+    <ul class="rows">
       {TIMELINE.map((item) => (
         <li>
           <span class="when">{item.year}</span>
@@ -35,7 +35,7 @@ const categories = [...new Set(FAVORITES.map((f) => f.category))] as Favorite["c
     {NOW.map((group) => (
       <div class="group">
         <h3>{group.heading}</h3>
-        <ul class="rows hairline-col">
+        <ul class="rows">
           {group.items.map((item) => (
             <li>
               <span class="what"><span class="what-title">{item.name}</span></span>
@@ -60,7 +60,7 @@ const categories = [...new Set(FAVORITES.map((f) => f.category))] as Favorite["c
     {categories.map((category) => (
       <div class="group">
         <h3>{CATEGORY_LABELS[category]}</h3>
-        <ul class="rows hairline-col">
+        <ul class="rows">
           {FAVORITES.filter((f) => f.category === category).map((item) => (
             <li>
               <span class="what">
@@ -103,7 +103,8 @@ const categories = [...new Set(FAVORITES.map((f) => f.category))] as Favorite["c
 <style>
   h1 {
     font-size: var(--t-sans-2xl);
-    font-weight: 500;
+    font-weight: 700;
+    letter-spacing: -0.03em;
   }
   .lede {
     margin-top: var(--s-4);
@@ -116,12 +117,12 @@ const categories = [...new Set(FAVORITES.map((f) => f.category))] as Favorite["c
   }
   h2 {
     font-size: var(--t-sans-xl);
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: var(--s-4);
   }
   h3 {
     font-size: var(--t-sans-lg);
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: var(--s-3);
   }
   .group + .group { margin-top: var(--s-5); }
@@ -131,7 +132,11 @@ const categories = [...new Set(FAVORITES.map((f) => f.category))] as Favorite["c
     margin: 0;
     padding: 0;
     max-width: 68ch;
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
+    overflow: hidden;
   }
+  .rows li + li { border-top: 1px solid var(--c-hairline); }
   .rows li {
     display: flex;
     flex-wrap: wrap;
@@ -165,7 +170,7 @@ const categories = [...new Set(FAVORITES.map((f) => f.category))] as Favorite["c
     min-width: 0;
   }
   .what-title { font-size: var(--t-sans-md); }
-  a.what-title { color: var(--c-mint); }
+  a.what-title { color: var(--c-link); }
   .what-desc { font-size: var(--t-sans-sm); color: var(--c-muted); }
 
   .manifesto {
@@ -179,7 +184,7 @@ const categories = [...new Set(FAVORITES.map((f) => f.category))] as Favorite["c
   .action { margin-top: var(--s-4); }
   .action a {
     font-size: var(--t-sans-sm);
-    color: var(--c-mint);
+    color: var(--c-link);
     text-decoration: underline;
     text-underline-offset: 3px;
     text-decoration-thickness: 1px;

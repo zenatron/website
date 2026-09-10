@@ -1,0 +1,17 @@
+---
+/** An inline highlighted word. The site's one bit of typographic play. */
+interface Props { hue?: "violet" | "orange" | "blue" | "green" | "accent" | "link"; }
+const { hue = "accent" } = Astro.props;
+---
+<span class="mark" style={`--fg: var(--c-hue-${hue}, var(--c-${hue})); --bg: var(--c-tint-${hue});`}><slot /></span>
+
+<style>
+  .mark {
+    color: var(--fg);
+    background: var(--bg);
+    padding: 0.06em 0.3em;
+    border-radius: var(--radius-sm);
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+</style>

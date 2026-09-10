@@ -30,7 +30,12 @@ export default defineConfig({
     // Shiki mapped onto the palette. Shipping github-dark or dracula would
     // drop a dozen off-palette colors into the most prominent element on
     // the site — see src/lib/shiki-theme.js.
-    shikiConfig: { theme: (await import("./src/lib/shiki-theme.js")).default },
+    shikiConfig: {
+      themes: {
+        light: (await import("./src/lib/shiki-theme.js")).pvishLight,
+        dark: (await import("./src/lib/shiki-theme.js")).pvishDark,
+      },
+    },
   },
   redirects: {
     "/principles": "/blog/principles",

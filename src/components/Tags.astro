@@ -1,38 +1,45 @@
 ---
-/** A shared-edge row: three tags form one continuous hairline, not three pills. */
+/** Soft tinted pills. The tint is derived from the tag, so a given tag
+    keeps its colour everywhere it appears on the site. */
 interface Props { tags: string[]; max?: number; }
 const { tags, max } = Astro.props;
 const shown = max ? tags.slice(0, max) : tags;
+
+const HUES = ["violet", "orange", "blue", "green", "accent", "link"];
+function hueFor(tag: string): string {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < tag.length; i++) { h ^= tag.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return HUES[(h >>> 0) % HUES.length];
+}
 ---
 {shown.length > 0 && (
   <ul class="tags">
-    {shown.map((tag) => <li>{tag}</li>)}
+    {shown.map((tag) => {
+      const hue = hueFor(tag);
+      return (
+        <li style={`--fg: var(--c-hue-${hue}, var(--c-${hue})); --bg: var(--c-tint-${hue});`}>{tag}</li>
+      );
+    })}
   </ul>
 )}
 
 <style>
-  /*
-   * Shared edges that survive wrapping. The .hairline-row utility drops
-   * the left border of every sibling, which leaves the first tag on each
-   * wrapped line open-ended; overlapping by 1px instead keeps every box
-   * closed and every interior line 1px.
-   */
   .tags {
     list-style: none;
     display: flex;
     flex-wrap: wrap;
+    gap: var(--s-2);
     margin: 0;
     padding: 0;
-    width: fit-content;
   }
   .tags li {
-    border: 1px solid var(--c-hairline);
-    margin-left: -1px;
-    margin-top: -1px;
     font-family: var(--font-mono);
     font-size: var(--t-mono-sm);
-    color: var(--c-mint);
-    padding: 3px 9px;
-    line-height: 1.4;
+    line-height: 1.5;
+    color: var(--fg);
+    background: var(--bg);
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
   }
 </style>
