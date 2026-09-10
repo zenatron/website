@@ -1,0 +1,167 @@
+---
+import Shell from "@/layouts/Shell.astro";
+import { DESK } from "@/data/desk";
+---
+
+<Shell title="Desk | Phil Vishnevsky" description="Things on my desk, and in my rack." ogSlug="desk">
+  <h1>Desk</h1>
+  <p class="lede">Things I actually use. Drag them around.</p>
+
+  <div class="desk" data-desk>
+    {DESK.map((o, i) => (
+      <button
+        class="icon"
+        type="button"
+        data-object={i}
+        data-x={o.x}
+        data-y={o.y}
+        style={`--x:${o.x}%; --y:${o.y}%`}
+        aria-haspopup="dialog"
+      >
+        <picture>
+          <source srcset={`/images/desk/${o.src}.avif`} type="image/avif" />
+          <img
+            src={`/images/desk/${o.src}.webp`}
+            width={o.width}
+            height={o.height}
+            alt={o.alt}
+            loading="lazy"
+            draggable="false"
+          />
+        </picture>
+        <span class="file">{o.file}</span>
+      </button>
+    ))}
+  </div>
+
+  <dialog class="preview" data-preview tabindex="-1">
+    <div class="pv-title">
+      <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="pv-name" data-pv-name></span>
+    </div>
+    <img data-pv-img alt="" />
+    <div class="pv-meta hairline-row">
+      <span data-pv-dims></span>
+      <span data-pv-note></span>
+    </div>
+  </dialog>
+
+  <script type="application/json" data-desk-data set:html={JSON.stringify(DESK)} />
+</Shell>
+
+<style>
+  h1 {
+    font-size: var(--t-sans-2xl);
+    font-weight: 500;
+  }
+  .lede {
+    margin-top: var(--s-4);
+    color: var(--c-muted);
+  }
+
+  .desk {
+    position: relative;
+    margin-top: var(--s-5);
+    min-height: 520px;
+    border: 1px solid var(--c-hairline);
+  }
+
+  .icon {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: 152px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+    padding: var(--s-2);
+    cursor: pointer;
+    border: 1px solid transparent;
+    touch-action: none;
+  }
+  .icon[data-selected] { border-color: var(--c-amber); }
+  .icon img {
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--c-hairline);
+    pointer-events: none;
+  }
+  .file {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-muted);
+    /* Break at the hyphens a filename already has, not mid-word. */
+    word-break: normal;
+    overflow-wrap: break-word;
+    text-align: left;
+    line-height: 1.4;
+  }
+
+  /* Preview */
+  .preview {
+    padding: 0;
+    border: 1px solid var(--c-hairline);
+    background: var(--c-chrome);
+    color: var(--c-text);
+    max-width: min(680px, calc(100vw - var(--s-6)));
+  }
+  .preview::backdrop { background: var(--c-scrim); }
+  /* The dialog is a container, not a control; a ring on it reads as
+     selection state rather than focus. Modality is the affordance. */
+  .preview:focus,
+  .preview:focus-visible { outline: none; }
+  .pv-title {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    height: var(--h-titlebar);
+    padding-inline: var(--s-3);
+    border-bottom: 1px solid var(--c-hairline);
+  }
+  .lights { display: flex; gap: var(--s-2); }
+  .lights i {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--c-trafficlight);
+  }
+  .pv-name {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-muted);
+  }
+  .preview img { width: 100%; height: auto; display: block; }
+  .pv-meta { border-top: 1px solid var(--c-hairline); }
+  .pv-meta > span {
+    padding: var(--s-2) var(--s-3);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+  }
+  .pv-meta > span:last-child {
+    flex: 1 1 auto;
+    color: var(--c-muted);
+  }
+
+  /*
+   * Below 900px: a static grid, tap to open. Touch dragging fights scroll
+   * and there is nothing to gain from it.
+   */
+  @media (max-width: 900px) {
+    .desk {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--s-3);
+      padding: var(--s-3);
+      min-height: 0;
+    }
+    .icon {
+      position: static;
+      width: auto;
+    }
+  }
+</style>
+
+<script>
+  import "@/scripts/desk";
+</script>
