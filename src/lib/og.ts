@@ -26,15 +26,15 @@ function fonts() {
   if (!cached) {
     cached = {
       mono: font("AtkinsonHyperlegibleMono-Regular.ttf"),
-      sans: font("Gantari-Regular.ttf"),
-      sansMedium: font("Gantari-SemiBold.ttf"),
+      sans: font("AtkinsonHyperlegibleNext-Regular.ttf"),
+      sansMedium: font("AtkinsonHyperlegibleNext-SemiBold.ttf"),
     };
   }
   return cached;
 }
 
 const MONO = "Atkinson Hyperlegible Mono";
-const SANS = "Gantari";
+const SANS = "Atkinson Hyperlegible Next";
 
 interface OGOptions {
   title: string;

@@ -120,10 +120,15 @@
   }
 }
 
-/* Type: Gantari is the author's voice, mono is the machine's. */
+/*
+   Type: one superfamily, split by role. Atkinson Hyperlegible Next is the
+   author's voice, Atkinson Hyperlegible Mono the machine's — both drawn
+   by the Braille Institute for legibility first, so the pairing is a
+   family relationship rather than two unrelated typefaces.
+*/
 :root {
   --font-mono: 'Atkinson Hyperlegible Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-  --font-sans: 'Gantari', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   /* Mono stays chrome, and chrome stays small. */
   --t-mono-xs:  11px;
