@@ -1,8 +1,94 @@
 ---
-/** Phase 2 stub — becomes the real explorer tree in phase 3. */
+/**
+ * The nav is an actual file listing — rows are real content-collection
+ * slugs — which is what earns the file-tree presentation.
+ *
+ * Persisted across navigation, so the active row and expanded state are
+ * re-synced by scripts/sidebar.ts rather than re-rendered here.
+ */
+import { getAllBlogPosts } from "@/lib/blog";
+import { getAllProjects, projectSlug } from "@/lib/projects";
+
+const CAP = 8;
+
+const posts = await getAllBlogPosts();
+const projects = await getAllProjects();
+
+const tree = [
+  {
+    name: "projects",
+    href: "/projects",
+    children: projects.map((p) => ({
+      name: `${projectSlug(p)}.mdx`,
+      href: `/projects/${projectSlug(p)}`,
+    })),
+  },
+  {
+    name: "blog",
+    href: "/blog",
+    children: posts.map((p) => ({
+      name: `${p.slug}.mdx`,
+      href: `/blog/${p.slug}`,
+    })),
+  },
+];
+
+const files = [
+  { name: "about", href: "/about" },
+  { name: "links", href: "/links" },
+];
 ---
+
 <nav id="sidebar" class="sidebar" aria-label="Site" transition:persist="sidebar">
   <p class="explorer">explorer</p>
+
+  <ul class="tree">
+    <li class="row"><a href="/" data-nav>home</a></li>
+
+    {
+      tree.map((folder) => {
+        const shown = folder.children.slice(0, CAP);
+        const truncated = folder.children.length > CAP;
+        return (
+          <li>
+            <div class="row" data-row>
+              <button
+                class="twisty"
+                type="button"
+                aria-expanded="false"
+                aria-controls={`group-${folder.name}`}
+                data-twisty={folder.name}
+              >
+                <span class="sr-only">Toggle {folder.name}</span>
+                <span class="tri" aria-hidden="true" />
+              </button>
+              <a href={folder.href} data-nav>{folder.name}</a>
+            </div>
+
+            <ul class="group" id={`group-${folder.name}`} data-group={folder.name} hidden>
+              {shown.map((child) => (
+                <li class="row">
+                  <a href={child.href} data-nav>{child.name}</a>
+                </li>
+              ))}
+              {truncated && (
+                <li class="row more">
+                  <a href={folder.href} data-nav>
+                    <span class="sr-only">All {folder.name}</span>
+                    <span aria-hidden="true">…</span>
+                  </a>
+                </li>
+              )}
+            </ul>
+          </li>
+        );
+      })
+    }
+
+    {files.map((f) => (
+      <li class="row"><a href={f.href} data-nav>{f.name}</a></li>
+    ))}
+  </ul>
 </nav>
 
 <style>
@@ -12,14 +98,98 @@
     background: var(--c-chrome);
     border-right: 1px solid var(--c-hairline);
     padding-block: var(--s-3);
+    overflow-y: auto;
   }
+
+  /* The only letter-spaced text on the site, and the only section label. */
   .explorer {
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
     color: var(--c-dim);
     letter-spacing: 0.08em;
     padding-inline: var(--s-3);
+    margin-bottom: var(--s-2);
   }
+
+  .tree,
+  .group {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-left: var(--s-3);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    line-height: 2.1;
+    border-left: 2px solid transparent;
+    transition: background var(--dur-state) var(--ease);
+  }
+
+  .row a {
+    flex: 1 1 auto;
+    min-width: 0;
+    /* Clears the twisty's column, so folders and leaves align. */
+    padding-left: var(--s-4);
+    padding-right: var(--s-3);
+    color: var(--c-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color var(--dur-state) var(--ease);
+  }
+
+  /* Nesting is one level, expressed as indentation. No connector glyphs. */
+  .group .row a {
+    padding-left: calc(var(--s-4) + var(--s-5));
+  }
+
+  .row:hover { background: var(--c-raised); }
+  .row:hover a { color: var(--c-text); }
+
+  .row[data-active] {
+    background: var(--c-raised);
+    /* -2px so the accent does not shift the text. */
+    margin-left: -2px;
+    padding-left: calc(var(--s-3) + 2px);
+    border-left-color: var(--c-amber);
+  }
+  .row[data-active] a { color: var(--c-text); }
+
+  /*
+   * A CSS-drawn disclosure triangle, so no glyph enters the copy.
+   * Absolutely positioned and raised above the anchor, which spans the
+   * full row so the whole row stays a click target for the index route.
+   */
+  .twisty {
+    position: absolute;
+    z-index: 1;
+    left: var(--s-3);
+    top: 0;
+    bottom: 0;
+    width: var(--s-4);
+    display: grid;
+    place-items: center;
+    padding: 0;
+    cursor: pointer;
+  }
+  .tri {
+    width: 0;
+    height: 0;
+    border-top: 3.5px solid transparent;
+    border-bottom: 3.5px solid transparent;
+    border-left: 5px solid var(--c-dim);
+    transition: transform var(--dur-state) var(--ease);
+  }
+  .twisty[aria-expanded="true"] .tri { transform: rotate(90deg); }
+  .row:hover .tri { border-left-color: var(--c-text); }
+
+  .more a { color: var(--c-dim); letter-spacing: 0.1em; }
+
   @media (max-width: 900px) {
     .sidebar {
       position: absolute;
