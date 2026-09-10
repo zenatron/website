@@ -40,7 +40,7 @@ let lastInvoker: HTMLElement | null = null;
 
 const $ = <T extends Element>(sel: string) => document.querySelector<T>(sel);
 
-/* ── storage ─────────────────────────────────────────────────── */
+/* storage */
 
 function load<T>(key: string, fallback: T): T {
   try {
@@ -58,7 +58,7 @@ function save(key: string, value: unknown) {
   }
 }
 
-/* ── output ──────────────────────────────────────────────────── */
+/* output */
 
 type Line = { text: string; cls?: string };
 
@@ -87,7 +87,7 @@ function flush() {
   render(lines);
 }
 
-/* ── path resolution ─────────────────────────────────────────── */
+/* path resolution */
 
 function dirAt(path: string): Dir | null {
   return data.fs[path] ?? null;
@@ -155,7 +155,7 @@ function resolveFile(arg: string): Node | null {
   return null;
 }
 
-/* ── commands ────────────────────────────────────────────────── */
+/* commands */
 
 const COMMANDS: Record<string, { help: string; run: (arg: string) => void }> = {
   help: {
@@ -283,7 +283,7 @@ function fail(message: string) {
   print(message, "line-err");
 }
 
-/* ── tab completion ──────────────────────────────────────────── */
+/* tab completion */
 
 function longestCommonPrefix(items: string[]): string {
   if (!items.length) return "";
@@ -323,7 +323,7 @@ function complete(input: HTMLInputElement) {
   syncMirror();
 }
 
-/* ── prompt + mirror ─────────────────────────────────────────── */
+/* prompt + mirror */
 
 function promptText(): string {
   return `phil@pvish ${cwd} $ `;
@@ -348,7 +348,7 @@ function syncMirror() {
   mirror.append(document.createTextNode(input.value.slice(pos)));
 }
 
-/* ── run ─────────────────────────────────────────────────────── */
+/* run */
 
 function submit(raw: string) {
   const value = raw.trim();
@@ -373,7 +373,7 @@ function submit(raw: string) {
   flush();
 }
 
-/* ── open / close ────────────────────────────────────────────── */
+/* open / close */
 
 function dialog(): HTMLDialogElement | null {
   return $<HTMLDialogElement>("#terminal");
@@ -416,7 +416,7 @@ function close() {
   lastInvoker?.focus?.();
 }
 
-/* ── wiring ──────────────────────────────────────────────────── */
+/* wiring */
 
 function isTyping(el: EventTarget | null): boolean {
   const node = el as HTMLElement | null;

@@ -47,7 +47,7 @@ function init() {
 
   const canDrag = () => window.matchMedia("(min-width: 901px)").matches;
 
-  /* ── restore positions ─────────────────────────────────────── */
+  /* restore positions */
   const positions = load();
   for (const icon of icons) {
     const saved = positions[icon.dataset.object!];
@@ -57,7 +57,7 @@ function init() {
     }
   }
 
-  /* ── selection ─────────────────────────────────────────────── */
+  /* selection */
   function select(icon: HTMLElement | null) {
     for (const i of icons) i.removeAttribute("data-selected");
     icon?.setAttribute("data-selected", "");
@@ -66,7 +66,7 @@ function init() {
     if (e.target === desk) select(null);
   });
 
-  /* ── preview ───────────────────────────────────────────────── */
+  /* preview */
   let lastInvoker: HTMLElement | null = null;
 
   function openPreview(index: number, invoker: HTMLElement) {
@@ -90,7 +90,7 @@ function init() {
   });
   dialog.addEventListener("close", () => lastInvoker?.focus());
 
-  /* ── drag ──────────────────────────────────────────────────── */
+  /* drag */
   let dragging: HTMLElement | null = null;
   let moved = false;
   let originX = 0;

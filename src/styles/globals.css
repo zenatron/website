@@ -110,9 +110,9 @@
  * Under `reduce`, the site is fully usable with zero animation.
  *
  * `transition-property: none` rather than a near-zero duration: the usual
- * reset leaves every element computing `transition: all`, which is the
- * one thing the motion audit is meant to rule out. This removes the
- * transition instead of shortening it.
+ * reset leaves every element still computing a transition on every
+ * property, which is the one thing the motion audit is meant to rule out.
+ * This removes the transition instead of shortening it.
  */
 @media (prefers-reduced-motion: reduce) {
   *,
