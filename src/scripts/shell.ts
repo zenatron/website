@@ -31,7 +31,7 @@ function syncKeycap() {
   el.textContent = /mac/i.test(platform) ? "⌘K" : "Ctrl K";
 }
 
-/* ── Mobile drawer ─────────────────────────────────────────────── */
+/*  Mobile drawer */
 
 function setDrawer(open: boolean) {
   const sidebar = document.getElementById("sidebar");

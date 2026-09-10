@@ -1,7 +1,7 @@
-/* ──────────────────────────────────────────────────────────────
+/*
    pvi.sh design tokens — the single source of truth.
    No raw hex value may appear anywhere else in the codebase.
-   ────────────────────────────────────────────────────────────── */
+ */
 
 :root {
   /* Surfaces — ascending elevation */
@@ -28,10 +28,10 @@
   --c-scrim:        rgba(14, 16, 19, 0.72);
 }
 
-/* ── Type ─────────────────────────────────────────────────────
+/*  Type
    Monospace is the machine's voice. Sans-serif is the author's.
    Nothing else decides which family to use.
-   ────────────────────────────────────────────────────────────── */
+ */
 
 :root {
   --font-mono: 'Atkinson Hyperlegible Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
@@ -50,7 +50,7 @@
   --t-sans-2xl: 44px;  /* h1, homepage headline */
 }
 
-/* ── Space and structure ─────────────────────────────────────── */
+/*  Space and structure */
 
 :root {
   --s-1: 4px;   --s-2: 8px;   --s-3: 12px;  --s-4: 16px;
@@ -65,7 +65,7 @@
   --w-content:   1120px;  /* max window width */
 }
 
-/* ── Motion — two durations, total ───────────────────────────── */
+/*  Motion — two durations, total */
 
 :root {
   --dur-state: 120ms;  /* hover, focus, tab switch, tooltip */
@@ -73,10 +73,10 @@
   --ease:      cubic-bezier(.2, 0, .4, 1);
 }
 
-/* ── Shared-edge hairline grid ────────────────────────────────
+/*  Shared-edge hairline grid
    No element inside the window floats free of a border it shares
    with a neighbour. Adjacent elements collapse their edges.
-   ────────────────────────────────────────────────────────────── */
+ */
 
 .hairline-row { display: flex; }
 .hairline-row > * { border: 1px solid var(--c-hairline); }

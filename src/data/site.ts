@@ -19,7 +19,7 @@ export const INTRO =
 /** One fact about the author, not a data table. Rendered as a single line. */
 export const FACTS = ["Hartford, CT", "SWE, AI, games", "open to opportunities"];
 
-/** Answers `whoami` in the terminal. This is where the deleted `$ whoami` block went. */
+/** Answers `whoami` in the terminal. This is where the old homepage identity block went. */
 export const WHOAMI = [
   "Phil Vishnevsky — full-stack engineer in Hartford, CT.",
   "Servers, developer tooling, web apps, and indie games.",
@@ -49,12 +49,4 @@ export const CONTACT_LABELS = [
   "Let's talk",
   "Slide into my DMs",
   "Make my day",
-];
-
-export const SOCIALS = [
-  { label: "GitHub", url: "https://github.com/zenatron" },
-  { label: "LinkedIn", url: "https://www.linkedin.com/in/philvishnevsky/" },
-  { label: "Bluesky", url: "https://bsky.app/profile/zenatron.bsky.social" },
-  { label: "Underscore Games", url: "https://underscore.games" },
-  { label: "Calendar", url: "https://fantastical.app/philv" },
 ];
