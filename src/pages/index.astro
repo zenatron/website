@@ -76,16 +76,16 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
     <div class="art"><HeroArt /></div>
   </section>
 
-  <section class="group">
-    <div class="grouphead">
+  <section class="band">
+    <div class="bandhead">
       <h2>Projects</h2>
       <a href="/projects">All projects</a>
     </div>
     <Cells cells={latestProjects} />
   </section>
 
-  <section class="group">
-    <div class="grouphead">
+  <section class="band">
+    <div class="bandhead">
       <h2>Writing</h2>
       <a href="/blog">All posts</a>
     </div>
@@ -168,26 +168,26 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
 
   .art { max-width: 100%; }
 
-  .group { padding-block: var(--s-6); }
-  .group + .group { border-top: 1px solid var(--c-hairline); }
+  .band { padding-block: var(--s-6); }
+  .band + .band { border-top: 1px solid var(--c-hairline); }
 
-  .grouphead {
+  .bandhead {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     gap: var(--s-4);
     margin-bottom: var(--s-5);
   }
-  .grouphead h2 {
+  .bandhead h2 {
     font-size: var(--t-sans-xl);
     font-weight: 600;
   }
-  .grouphead a {
+  .bandhead a {
     font-size: var(--t-sans-sm);
     color: var(--c-link);
   }
   @media (hover: hover) {
-    .grouphead a:hover {
+    .bandhead a:hover {
     text-decoration: underline; text-underline-offset: 3px;
     }
   }

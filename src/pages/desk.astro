@@ -1,10 +1,60 @@
 ---
 import Shell from "@/layouts/Shell.astro";
 import { DESK } from "@/data/desk";
+import { FAVORITES } from "@/data/favorites";
 import { MACHINES, NOW, PRINCIPLES } from "@/data/about";
 import { FORTUNES } from "@/data/site";
 
-/** Every window's contents, resolved at build time. */
+/**
+ * The desk is one table: the apps I use and the things worth opening,
+ * scattered on it. Icons are shown exactly as they ship — full colour,
+ * no tint — because an app icon is already a designed object.
+ */
+
+/** Deterministic jitter, so the scatter is organic but never moves. */
+function seed(s: string) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return (h >>> 0) / 0xffffffff;
+}
+function jitter(name: string) {
+  const a = seed(name), b = seed(name + "y"), c = seed(name + "r"), d = seed(name + "s");
+  return {
+    x: (a - 0.5) * 46,          // percent of a cell
+    y: (b - 0.5) * 34,
+    rot: (c - 0.5) * 13,        // degrees
+    scale: 0.86 + d * 0.32,
+  };
+}
+
+const apps = FAVORITES.filter((f) => f.logo);
+
+type Item =
+  | { kind: "app"; name: string; note?: string; href?: string; logo: string; appIcon: boolean; darkTile: boolean }
+  | { kind: "file"; name: string; note?: string; file: string; href?: string; deskKind: string; badge: string; hue: string };
+
+const items: Item[] = [
+  ...DESK.map((o) => ({
+    kind: "file" as const,
+    name: o.file,
+    note: o.note,
+    file: o.file,
+    href: o.href,
+    deskKind: o.kind,
+    badge: o.badge,
+    hue: o.hue,
+  })),
+  ...apps.map((a) => ({
+    kind: "app" as const,
+    name: a.name,
+    note: a.description,
+    href: a.url,
+    logo: a.logo!,
+    appIcon: Boolean(a.appIcon),
+    darkTile: Boolean(a.darkTile),
+  })),
+];
+
 const windows = {
   neofetch: MACHINES.map((m) => ({ name: m.name, fields: m.fields })),
   now: NOW,
@@ -13,27 +63,62 @@ const windows = {
 };
 ---
 
-<Shell title="Desk | Phil Vishnevsky" description="A desktop of things worth opening." ogSlug="desk">
+<Shell title="Desk | Phil Vishnevsky" description="The apps I use and the things worth opening, on one table." ogSlug="desk">
   <header class="pagehead">
     <h1>Desk</h1>
-    <p>Everything here opens. Drag the icons around, double-click to look inside.</p>
+    <p>
+      {apps.length} apps I actually use, and a few things worth opening.
+      Hover for what they are.
+    </p>
   </header>
 
-  <div class="desk" data-desk>
-    {DESK.map((o, i) => (
-      <button
-        class="icon"
-        type="button"
-        data-object={i}
-        data-kind={o.kind}
-        data-href={o.href}
-        style={`--x:${o.x}%; --y:${o.y}%; --fg: var(--c-hue-${o.hue}, var(--c-${o.hue})); --bg: var(--c-tint-${o.hue})`}
-        aria-haspopup={o.kind === "link" ? undefined : "dialog"}
-      >
-        <span class="badge" aria-hidden="true">{o.badge}</span>
-        <span class="file">{o.file}</span>
-      </button>
-    ))}
+  <div class="surface">
+    <ul class="objects">
+      {items.map((item) => {
+        const j = jitter(item.name);
+        const style = `--x:${j.x}%; --y:${j.y}%; --rot:${j.rot}deg; --scale:${j.scale}`;
+        return (
+          <li style={style}>
+            {item.kind === "app" ? (
+              <a href={item.href} rel="noopener noreferrer" class="obj">
+                <span class:list={["icon", !item.appIcon && "tiled", item.darkTile && "ondark"]}>
+                  <img src={`/logos/${item.logo}`} alt="" width="64" height="64" loading="lazy" decoding="async" />
+                </span>
+                <span class="label">
+                  <span class="lname">{item.name}</span>
+                  {item.note && <span class="lnote">{item.note}</span>}
+                </span>
+              </a>
+            ) : item.deskKind === "link" ? (
+              <a href={item.href} class="obj" style={`--fg: var(--c-hue-${item.hue}, var(--c-${item.hue})); --bg: var(--c-tint-${item.hue})`}>
+                <span class="icon file"><span class="badge" aria-hidden="true">{item.badge}</span></span>
+                <span class="label">
+                  <span class="lname">{item.file}</span>
+                  {item.note && <span class="lnote">{item.note}</span>}
+                </span>
+              </a>
+            ) : (
+              <button
+                type="button"
+                class="obj"
+                data-open-file={item.deskKind}
+                data-file-name={item.file}
+                data-file-note={item.note}
+                style={`--fg: var(--c-hue-${item.hue}, var(--c-${item.hue})); --bg: var(--c-tint-${item.hue})`}
+              >
+                <span class="icon file">
+                  <span class="badge" aria-hidden="true">{item.badge}</span>
+                </span>
+                <span class="label">
+                  <span class="lname">{item.file}</span>
+                  {item.note && <span class="lnote">{item.note}</span>}
+                </span>
+              </button>
+            )}
+          </li>
+        );
+      })}
+    </ul>
   </div>
 
   <dialog class="win" data-win>
@@ -45,7 +130,6 @@ const windows = {
     <div class="win-foot" data-win-foot></div>
   </dialog>
 
-  <script type="application/json" data-desk-items set:html={JSON.stringify(DESK)} />
   <script type="application/json" data-desk-windows set:html={JSON.stringify(windows)} />
 </Shell>
 
@@ -62,59 +146,124 @@ const windows = {
     color: var(--c-muted);
   }
 
-  .desk {
+  /*
+   * The desk surface: a dot grid, like graph paper under the objects.
+   * Not called `.table` — that's a Tailwind display utility, and it wins.
+   */
+  .surface {
     position: relative;
-    min-height: 460px;
-    background: var(--c-chrome);
+    padding: var(--s-6) var(--s-5);
     border: 1px solid var(--c-hairline);
     border-radius: var(--radius-card);
+    background-color: var(--c-chrome);
+    background-image: radial-gradient(var(--c-hairline) 1.4px, transparent 1.4px);
+    background-size: 22px 22px;
+    background-position: -11px -11px;
+  }
+
+  .objects {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+    gap: var(--s-5) var(--s-3);
+  }
+  /* The grid keeps it responsive; the jitter keeps it from looking like
+     a grid. Positions are seeded by name, so nothing ever moves. */
+  .objects li {
+    display: grid;
+    place-items: center;
+    transform: translate(var(--x), var(--y)) rotate(var(--rot));
+  }
+
+  .obj {
+    position: relative;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    color: inherit;
+    cursor: pointer;
   }
 
   .icon {
-    position: absolute;
-    left: var(--x);
-    top: var(--y);
-    width: 116px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--s-2);
-    padding: var(--s-3) var(--s-2);
-    border: 1px solid transparent;
-    border-radius: var(--radius-card);
-    cursor: pointer;
-    touch-action: none;
-    transition: background var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease);
-  }
-  @media (hover: hover) {
-    .icon:hover {
-    background: var(--c-raised);
-    }
-  }
-  .icon[data-selected] {
-    background: var(--bg);
-    border-color: var(--fg);
-  }
-
-  .badge {
     display: grid;
     place-items: center;
-    width: 46px;
-    height: 46px;
-    border-radius: var(--radius-card);
+    width: calc(64px * var(--scale));
+    height: calc(64px * var(--scale));
+    transition: transform var(--dur-state) var(--ease), filter var(--dur-state) var(--ease);
+  }
+  .icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* Glyph logos get a tile so they read as an app icon like the rest. */
+  .tiled {
+    background: var(--c-bg);
+    border: 1px solid var(--c-hairline);
+    border-radius: 22%;
+    padding: 19%;
+  }
+  /* Artwork drawn in white needs a dark tile, or it vanishes. Declared
+     after .tiled, and compounded, so the cascade can't undo it. */
+  .tiled.ondark {
+    background: var(--c-tile-dark);
+    border-color: transparent;
+  }
+
+  .file {
     background: var(--bg);
+    border-radius: 22%;
     color: var(--fg);
+  }
+  .badge {
     font-family: var(--font-mono);
-    font-size: var(--t-sans-lg);
+    font-size: calc(20px * var(--scale));
     line-height: 1;
   }
-  .file {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    color: var(--c-muted);
+
+  /* The label is absolutely placed so revealing it moves nothing. */
+  .label {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%) rotate(calc(var(--rot) * -1));
+    width: max-content;
+    max-width: 150px;
+    display: grid;
+    gap: 1px;
+    justify-items: center;
     text-align: center;
-    word-break: break-word;
-    line-height: 1.35;
+    padding: 5px 9px;
+    border-radius: var(--radius-sm);
+    background: var(--c-bg);
+    border: 1px solid var(--c-hairline);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-state) var(--ease);
+    z-index: 2;
+  }
+  .lname {
+    font-size: var(--t-sans-xs);
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .lnote {
+    font-size: var(--t-mono-xs);
+    font-family: var(--font-mono);
+    color: var(--c-muted);
+    line-height: 1.3;
+  }
+
+  .obj:focus-visible .label { opacity: 1; }
+  .obj:focus-visible .icon { transform: translateY(-6px) scale(1.08); }
+  @media (hover: hover) {
+    .obj:hover .label { opacity: 1; }
+    .obj:hover .icon { transform: translateY(-6px) scale(1.08); }
+    /* Everything else settles back while one object is picked up. */
+    .objects:hover li:not(:hover) .icon { filter: saturate(0.82) opacity(0.86); }
   }
 
   /* Window */
@@ -130,7 +279,6 @@ const windows = {
   }
   .win::backdrop { background: var(--c-scrim); }
   .win:focus, .win:focus-visible { outline: none; }
-
   .win-bar {
     display: flex;
     align-items: center;
@@ -141,18 +289,12 @@ const windows = {
     border-bottom: 1px solid var(--c-hairline);
   }
   .lights { display: flex; gap: var(--s-2); }
-  .lights i {
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    background: var(--c-trafficlight);
-  }
+  .lights i { width: 11px; height: 11px; border-radius: 50%; background: var(--c-trafficlight); }
   .win-name {
     font-family: var(--font-mono);
     font-size: var(--t-mono-sm);
     color: var(--c-muted);
   }
-
   .win-body {
     padding: var(--s-4);
     overflow-y: auto;
@@ -168,7 +310,6 @@ const windows = {
   }
   .win-foot:empty { display: none; }
 
-  /* Window content, built by desk.ts */
   .win-body :global(.spec) {
     display: grid;
     grid-template-columns: 9ch minmax(0, 1fr);
@@ -205,24 +346,18 @@ const windows = {
     color: var(--c-dim);
     flex: 0 0 auto;
   }
-  .win-body :global(.line) {
-    font-size: var(--t-sans-lg);
-    line-height: 1.6;
-  }
-  .win-body :global(.quote) {
-    font-size: var(--t-sans-md);
-    line-height: 1.6;
-  }
+  .win-body :global(.line) { font-size: var(--t-sans-lg); line-height: 1.6; }
+  .win-body :global(.quote) { font-size: var(--t-sans-md); line-height: 1.6; }
 
-  @media (max-width: 900px) {
-    .desk {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
-      gap: var(--s-2);
-      padding: var(--s-3);
-      min-height: 0;
+  @media (max-width: 640px) {
+    .surface { padding: var(--s-5) var(--s-3); }
+    .objects {
+      grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+      gap: var(--s-5) var(--s-2);
     }
-    .icon { position: static; width: auto; }
+    /* Touch has no hover, so the labels sit under every object. */
+    .label { opacity: 1; position: static; transform: none; border: 0; background: none; padding: 4px 0 0; max-width: 92px; }
+    .lnote { display: none; }
   }
 </style>
 

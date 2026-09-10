@@ -19,8 +19,8 @@ function hueFor(s: string) {
 const picks = FAVORITES.filter((f) => f.logo && !f.flat).slice(0, 16);
 ---
 
-<a class="heroart" href="/stack" aria-label={`the stack — ${picks.length}+ tools and apps I use`}>
-  <span class="grid" aria-hidden="true">
+<a class="heroart" href="/desk" aria-label={`the desk — ${picks.length}+ tools and apps I use`}>
+  <span class="logogrid" aria-hidden="true">
     {picks.map((item) => {
       const hue = hueFor(item.name);
       return (
@@ -32,7 +32,7 @@ const picks = FAVORITES.filter((f) => f.logo && !f.flat).slice(0, 16);
       );
     })}
   </span>
-  <span class="caption">the stack <span aria-hidden="true">&rarr;</span></span>
+  <span class="caption">the desk <span aria-hidden="true">&rarr;</span></span>
 </a>
 
 <style>
@@ -43,7 +43,7 @@ const picks = FAVORITES.filter((f) => f.logo && !f.flat).slice(0, 16);
     color: inherit;
   }
 
-  .grid {
+  .logogrid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: var(--s-2);
@@ -54,7 +54,7 @@ const picks = FAVORITES.filter((f) => f.logo && !f.flat).slice(0, 16);
     transition: border-color var(--dur-state) var(--ease);
   }
   @media (hover: hover) {
-    .heroart:hover .grid {
+    .heroart:hover .logogrid {
     border-color: var(--c-hairline-strong);
     }
   }
@@ -85,6 +85,6 @@ const picks = FAVORITES.filter((f) => f.logo && !f.flat).slice(0, 16);
   }
 
   @media (max-width: 860px) {
-    .grid { grid-template-columns: repeat(6, 1fr); }
+    .logogrid { grid-template-columns: repeat(6, 1fr); }
   }
 </style>

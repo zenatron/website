@@ -10,7 +10,7 @@ export interface LinkItem {
 }
 
 /**
- * Where to find Phil — distinct from /stack, which is what he uses.
+ * Where to find Phil — distinct from /desk, which is what he uses.
  */
 export const links: LinkItem[] = [
   {

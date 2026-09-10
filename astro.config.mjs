@@ -41,6 +41,7 @@ export default defineConfig({
     },
   },
   redirects: {
+    "/stack": "/desk",
     "/principles": "/blog/principles",
     "/resume": "/downloads/Resume_Phil_Vishnevsky.pdf",
   },

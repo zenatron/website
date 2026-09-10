@@ -1,10 +1,10 @@
 /**
- * The desk: a working desktop where every icon opens something true.
+ * The things on the desk that aren't apps.
  *
- * Nothing here is a placeholder. Each window renders data that already
- * exists elsewhere in the repo — the machine specs from about.ts, the
- * Now list, the principles, the fortunes — so the page can't drift out
- * of sync with the rest of the site.
+ * Each one opens a window rendering data that already exists elsewhere in
+ * the repo — the machine specs from about.ts, the Now list, the
+ * principles, the fortunes — so the page can't drift out of sync with the
+ * rest of the site.
  */
 export type DeskKind = "neofetch" | "text" | "list" | "fortune" | "link";
 
@@ -28,6 +28,5 @@ export const DESK: DeskItem[] = [
   { file: "now.txt",       kind: "list",     badge: "≡",  hue: "blue",   x: 26, y: 10, note: "What I'm building, learning and reading." },
   { file: "principles.md", kind: "text",     badge: "¶",  hue: "violet", x: 48, y: 6,  note: "The whole essay in four lines." },
   { file: "fortune",       kind: "fortune",  badge: "★",  hue: "accent", x: 70, y: 12, note: "Roll again." },
-  { file: "stack/",        kind: "link",     badge: "▤",  hue: "orange", x: 10, y: 46, href: "/stack", note: "28 tools and apps I actually use." },
   { file: "resume.pdf",    kind: "link",     badge: "↧",  hue: "link",   x: 34, y: 52, href: "/downloads/Resume_Phil_Vishnevsky.pdf", note: "The formal version." },
 ];

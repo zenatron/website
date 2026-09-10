@@ -37,7 +37,6 @@ const tree = [
 
 const files = [
   { name: "about", href: "/about" },
-  { name: "stack", href: "/stack" },
   { name: "desk", href: "/desk" },
   { name: "elsewhere", href: "/links" },
 ];
@@ -90,7 +89,7 @@ const files = [
               <span class="count" aria-hidden="true">{folder.children.length}</span>
             </div>
 
-            <ul class="group" id={`group-${folder.name}`} data-group={folder.name}>
+            <ul class="children" id={`group-${folder.name}`} data-group={folder.name}>
               <li class="row index-row">
                 <a href={folder.href} data-nav>All {folder.name}</a>
               </li>
@@ -177,7 +176,7 @@ const files = [
   .searchbar input::-webkit-search-cancel-button { -webkit-appearance: none; }
 
   .tree,
-  .group {
+  .children {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -185,7 +184,7 @@ const files = [
 
   /* Groups collapse only once JS has run; without it the whole site is
      still reachable from the sidebar. */
-  :global(.js) .group:not([data-open="true"]) { display: none; }
+  :global(.js) .children:not([data-open="true"]) { display: none; }
   .twisty { display: none; }
   :global(.js) .twisty { display: grid; }
 
@@ -214,7 +213,7 @@ const files = [
     text-overflow: ellipsis;
     transition: color var(--dur-state) var(--ease);
   }
-  .group .row a { padding-left: calc(var(--s-4) + var(--s-3)); }
+  .children .row a { padding-left: calc(var(--s-4) + var(--s-3)); }
 
   .count {
     flex: 0 0 auto;
@@ -266,7 +265,7 @@ const files = [
   /* Overflow rows exist in the document but are folded away until asked
      for, or until the filter needs to reach them. */
   :global(.js) .group:not([data-all="true"]) .row[data-overflow] { display: none; }
-  :global(.js) .group[data-searching="true"] .row[data-overflow] { display: flex; }
+  :global(.js) .children[data-searching="true"] .row[data-overflow] { display: flex; }
 
   .more button {
     flex: 1 1 auto;

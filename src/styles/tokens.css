@@ -41,6 +41,7 @@
   --c-tint-blue:   #DDECF6;
   --c-tint-green:  #E4F2DE;
 
+  --c-tile-dark:    #24211C;
   --c-trafficlight: #D8D2C6;
   --c-scrim:        rgba(53, 49, 42, 0.46);
 
@@ -76,6 +77,7 @@
   --c-tint-blue:   #162A38;
   --c-tint-green:  #1E2E18;
 
+  --c-tile-dark:    #24211C;
   --c-trafficlight: #454036;
   --c-scrim:        rgba(10, 9, 7, 0.62);
 
@@ -113,7 +115,8 @@
     --c-tint-blue:   #162A38;
     --c-tint-green:  #1E2E18;
 
-    --c-trafficlight: #454036;
+    --c-tile-dark:    #24211C;
+  --c-trafficlight: #454036;
     --c-scrim:        rgba(10, 9, 7, 0.62);
 
     color-scheme: dark;

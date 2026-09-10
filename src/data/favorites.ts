@@ -12,16 +12,17 @@ export interface Favorite {
   /** Filename under /public/logos. Absent for the hobbies, which aren't brands. */
   logo?: string;
   /**
-   * A transparent-background glyph used for the tinted (masked) state,
-   * when the full-colour `logo` is a solid backplate that would mask
-   * into a blob. The `logo` is still what's shown on hover.
+   * The artwork is drawn in white for dark backgrounds, so it needs a dark
+   * tile or it renders invisible.
    */
-  mark?: string;
+  darkTile?: boolean;
   /**
-   * No maskable artwork exists, so the tile falls back to a monogram
-   * rather than a grey logo that breaks the monochrome wall.
+   * The artwork already carries its own backplate, so it reads as a macOS
+   * app icon on its own. Glyphs on transparency get a tile behind them
+   * instead. Measured from alpha coverage; override by hand if a logo is
+   * ever replaced.
    */
-  flat?: boolean;
+  appIcon?: boolean;
 }
 
 export const FAVORITES: Favorite[] = [
@@ -50,6 +51,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Ghostty",
     logo: "ghostty.svg",
+    appIcon: true,
     description: "cool terminal",
     url: "https://ghostty.org",
     category: "tools",
@@ -73,7 +75,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Todoist",
     logo: "todoist.svg",
-    mark: "todoist-mark.svg",
+    appIcon: true,
     description: "how i get sh*t done",
     url: "https://todoist.com",
     category: "apps",
@@ -81,7 +83,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Vivaldi",
     logo: "vivaldi.svg",
-    mark: "vivaldi-mark.svg",
+    appIcon: true,
     description: "function-first browser",
     url: "https://vivaldi.com",
     category: "apps",
@@ -89,7 +91,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Fantastical",
     logo: "fantastical.webp",
-    flat: true,
+    appIcon: true,
     description: "book a call!",
     url: "https://fantastical.app/philv",
     category: "apps",
@@ -114,7 +116,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "LinkedIn",
     logo: "linkedin.svg",
-    mark: "linkedin-mark.svg",
+    appIcon: true,
     description: '"professional" networking',
     url: "https://www.linkedin.com/in/philvishnevsky/",
     category: "apps",
@@ -131,6 +133,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Spotify",
     logo: "spotify.svg",
+    appIcon: true,
     description: "you know this one",
     url: "https://spotify.com",
     category: "apps",
@@ -138,7 +141,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Steam",
     logo: "steam.svg",
-    mark: "steam-mark.svg",
+    appIcon: true,
     description: "games besides minecraft",
     url: "https://store.steampowered.com",
     category: "apps",
@@ -146,6 +149,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "CurseForge",
     logo: "curseforge-dark.svg",
+    darkTile: true,
     description: "modded minecraft",
     url: "https://curseforge.com",
     category: "apps",
@@ -153,7 +157,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "OBS Studio",
     logo: "obsstudio.svg",
-    mark: "obsstudio-mark.svg",
+    appIcon: true,
     description: "streaming & recording",
     url: "https://obsproject.com",
     category: "tools",
@@ -170,7 +174,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "OpenWebUI",
     logo: "open-webui.svg",
-    flat: true,
+    appIcon: true,
     description: "altman\'s worst nightmare",
     url: "https://github.com/open-webui/open-webui",
     category: "tools",
@@ -192,6 +196,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Karakeep",
     logo: "hoarder.svg",
+    appIcon: true,
     description: "bookmark manager",
     url: "https://github.com/karakeep-app/karakeep",
     category: "tools",
@@ -206,6 +211,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Tinyauth",
     logo: "tinyauth.svg",
+    appIcon: true,
     description: "auth server",
     url: "https://tinyauth.app",
     category: "tools",
@@ -213,7 +219,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Pocket ID",
     logo: "pocket-id.svg",
-    mark: "pocket-id-mark.svg",
+    appIcon: true,
     description: "oidc provider",
     url: "https://pocket-id.org",
     category: "tools",
@@ -228,6 +234,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "CrowdSec",
     logo: "crowdsec.svg",
+    appIcon: true,
     description: "security engine",
     url: "https://crowdsec.net",
     category: "tools",
