@@ -92,7 +92,11 @@ const withArt = await Promise.all(
     color: inherit;
     transition: background var(--dur-state) var(--ease);
   }
-  .part a:hover { background: var(--c-raised); }
+  @media (hover: hover) {
+    .part a:hover {
+    background: var(--c-raised);
+    }
+  }
 
   /* The running number is what makes it read as one sequence. */
   .n {
@@ -101,7 +105,11 @@ const withArt = await Promise.all(
     color: var(--c-dim);
     text-align: right;
   }
-  .part a:hover .n { color: var(--c-accent); }
+  @media (hover: hover) {
+    .part a:hover .n {
+    color: var(--c-accent);
+    }
+  }
 
   .art {
     display: block;
@@ -119,7 +127,11 @@ const withArt = await Promise.all(
     font-weight: 600;
     line-height: 1.3;
   }
-  .part a:hover .t { color: var(--c-link); }
+  @media (hover: hover) {
+    .part a:hover .t {
+    color: var(--c-link);
+    }
+  }
   .x {
     display: block;
     margin-top: 2px;

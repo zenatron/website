@@ -24,7 +24,11 @@
   }
   output { color: var(--c-accent); min-width: 6ch; text-align: center; }
   button { cursor: pointer; color: var(--c-link); transition: background var(--dur-state) var(--ease); }
-  button:hover { background: var(--c-raised); }
+  @media (hover: hover) {
+    button:hover {
+    background: var(--c-raised);
+    }
+  }
 </style>
 
 <script>

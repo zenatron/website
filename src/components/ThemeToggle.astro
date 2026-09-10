@@ -25,9 +25,11 @@
     cursor: pointer;
     transition: background var(--dur-state) var(--ease), color var(--dur-state) var(--ease);
   }
-  .theme:hover {
+  @media (hover: hover) {
+    .theme:hover {
     background: var(--c-raised);
     color: var(--c-text);
+    }
   }
   /* Explicit choice reads as "you are here"; following the system doesn't. */
   .theme[data-mode="light"],

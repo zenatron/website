@@ -74,7 +74,11 @@ const { cells } = Astro.props;
     border: 1px solid var(--c-hairline);
     transition: border-color var(--dur-state) var(--ease);
   }
-  .cell:hover .art { border-color: var(--c-hairline-strong); }
+  @media (hover: hover) {
+    .cell:hover .art {
+    border-color: var(--c-hairline-strong);
+    }
+  }
 
   .head {
     display: flex;
@@ -89,7 +93,11 @@ const { cells } = Astro.props;
     letter-spacing: -0.02em;
     min-width: 0;
   }
-  .cell:hover .title { color: var(--c-link); }
+  @media (hover: hover) {
+    .cell:hover .title {
+    color: var(--c-link);
+    }
+  }
   .title { transition: color var(--dur-state) var(--ease); }
 
   .meta {

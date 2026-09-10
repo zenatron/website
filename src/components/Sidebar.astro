@@ -154,7 +154,11 @@ const files = [
     line-height: 1;
     cursor: pointer;
   }
-  .close:hover { background: var(--c-raised); color: var(--c-text); }
+  @media (hover: hover) {
+    .close:hover {
+    background: var(--c-raised); color: var(--c-text);
+    }
+  }
 
   .filterbar { padding-inline: var(--s-3); margin-bottom: var(--s-2); }
   .filterbar input {
@@ -216,8 +220,16 @@ const files = [
     color: var(--c-dim);
   }
 
-  .row:hover { background: var(--c-raised); }
-  .row:hover a { color: var(--c-text); }
+  @media (hover: hover) {
+    .row:hover {
+    background: var(--c-raised);
+    }
+  }
+  @media (hover: hover) {
+    .row:hover a {
+    color: var(--c-text);
+    }
+  }
 
   .row[data-active] { background: var(--c-tint-accent); }
   .row[data-active] a { color: var(--c-accent); }
@@ -242,7 +254,11 @@ const files = [
     transition: transform var(--dur-state) var(--ease);
   }
   .twisty[aria-expanded="true"] .tri { transform: rotate(90deg); }
-  .row:hover .tri { border-left-color: var(--c-text); }
+  @media (hover: hover) {
+    .row:hover .tri {
+    border-left-color: var(--c-text);
+    }
+  }
 
   /* Overflow rows exist in the document but are folded away until asked
      for, or until the filter needs to reach them. */
@@ -258,8 +274,10 @@ const files = [
     cursor: pointer;
     transition: color var(--dur-state) var(--ease);
   }
-  .row:hover .more button,
-  .more button:hover { color: var(--c-text); }
+  @media (hover: hover) {
+    .row:hover .more button,
+    .more button:hover { color: var(--c-text); }
+  }
 
   .empty {
     padding-inline: var(--s-4);

@@ -65,7 +65,11 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     color: var(--c-muted);
     transition: color var(--dur-state) var(--ease), background var(--dur-state) var(--ease);
   }
-  a:hover { color: var(--c-text); background: var(--c-chrome); }
+  @media (hover: hover) {
+    a:hover {
+    color: var(--c-text); background: var(--c-chrome);
+    }
+  }
   a[data-current] {
     color: var(--c-accent);
     background: var(--c-tint-accent);

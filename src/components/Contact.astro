@@ -32,7 +32,11 @@ import { CONTACT_LABELS, SITE } from "@/data/site";
     color: var(--c-text);
     text-align: left;
   }
-  button:hover { color: var(--c-link); }
+  @media (hover: hover) {
+    button:hover {
+    color: var(--c-link);
+    }
+  }
   .sep { color: var(--c-dim); }
   a {
     color: var(--c-link);

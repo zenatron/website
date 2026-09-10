@@ -86,7 +86,11 @@ const windows = {
     touch-action: none;
     transition: background var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease);
   }
-  .icon:hover { background: var(--c-raised); }
+  @media (hover: hover) {
+    .icon:hover {
+    background: var(--c-raised);
+    }
+  }
   .icon[data-selected] {
     background: var(--bg);
     border-color: var(--fg);

@@ -134,7 +134,11 @@ const suggested = await Promise.all((await getSuggestedProjects(slug, 3)).map(as
     color: var(--c-link);
     transition: background var(--dur-state) var(--ease);
   }
-  .actions a:hover { background: var(--c-raised); }
+  @media (hover: hover) {
+    .actions a:hover {
+    background: var(--c-raised);
+    }
+  }
   .more {
     margin-top: var(--s-8);
     padding-top: var(--s-5);

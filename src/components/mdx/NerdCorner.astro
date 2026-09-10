@@ -32,7 +32,11 @@ const { title = "Deep dive", subtitle, defaultOpen = false } = Astro.props;
     align-items: baseline;
     transition: background var(--dur-state) var(--ease);
   }
-  summary:hover { background: var(--c-raised); }
+  @media (hover: hover) {
+    summary:hover {
+    background: var(--c-raised);
+    }
+  }
   .title { font-size: var(--t-sans-md); }
   .subtitle {
     font-family: var(--font-mono);

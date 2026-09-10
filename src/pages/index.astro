@@ -160,7 +160,11 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
     font-size: var(--t-sans-sm);
     color: var(--c-link);
   }
-  .grouphead a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  @media (hover: hover) {
+    .grouphead a:hover {
+    text-decoration: underline; text-underline-offset: 3px;
+    }
+  }
 
   @media (max-width: 860px) {
     .hero {

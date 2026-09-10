@@ -78,9 +78,11 @@ function hueFor(s: string) {
     border-radius: var(--radius-card);
     transition: background var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease);
   }
-  .places li:hover {
+  @media (hover: hover) {
+    .places li:hover {
     background: var(--bg);
     border-color: transparent;
+    }
   }
   .places a {
     display: flex;
@@ -100,7 +102,11 @@ function hueFor(s: string) {
     background: var(--bg);
     position: relative;
   }
-  .places li:hover .mark { background: var(--c-bg); }
+  @media (hover: hover) {
+    .places li:hover .mark {
+    background: var(--c-bg);
+    }
+  }
   .mono {
     position: absolute;
     inset: 8px;

@@ -94,7 +94,11 @@ const categories = [...new Set(withLogos.map((f) => f.category))];
     transition: background var(--dur-state) var(--ease), color var(--dur-state) var(--ease),
       border-color var(--dur-state) var(--ease);
   }
-  .filters button:hover { color: var(--c-text); background: var(--c-chrome); }
+  @media (hover: hover) {
+    .filters button:hover {
+    color: var(--c-text); background: var(--c-chrome);
+    }
+  }
   .filters button[aria-pressed="true"] {
     color: var(--c-accent);
     background: var(--c-tint-accent);
@@ -127,10 +131,15 @@ const categories = [...new Set(withLogos.map((f) => f.category))];
     border-radius: var(--radius-card);
     transition: background var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease);
   }
-  .tile > :global(*:hover),
   .tile > :global(*:focus-visible) {
     background: var(--bg);
     border-color: transparent;
+  }
+  @media (hover: hover) {
+    .tile > :global(*:hover) {
+      background: var(--bg);
+      border-color: transparent;
+    }
   }
 
   .glyph {
@@ -164,10 +173,12 @@ const categories = [...new Set(withLogos.map((f) => f.category))];
     opacity: 0;
     transition: opacity var(--dur-state) var(--ease), filter var(--dur-state) var(--ease);
   }
-  .tile > :global(*:hover) .mono,
   .tile > :global(*:focus-visible) .mono { opacity: 0; }
-  .tile > :global(*:hover) .glyph img,
   .tile > :global(*:focus-visible) .glyph img { opacity: 1; }
+  @media (hover: hover) {
+    .tile > :global(*:hover) .mono { opacity: 0; }
+    .tile > :global(*:hover) .glyph img { opacity: 1; }
+  }
 
   /*
    * Backplate logos can't be masked into a silhouette, so they desaturate
@@ -178,8 +189,10 @@ const categories = [...new Set(withLogos.map((f) => f.category))];
     opacity: 1;
     filter: grayscale(1) contrast(0.85) opacity(0.55);
   }
-  .tile[data-flat] > :global(*:hover) .glyph img,
   .tile[data-flat] > :global(*:focus-visible) .glyph img { filter: none; }
+  @media (hover: hover) {
+    .tile[data-flat] > :global(*:hover) .glyph img { filter: none; }
+  }
 
   .name {
     font-size: var(--t-sans-sm);

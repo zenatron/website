@@ -53,7 +53,11 @@ const picks = FAVORITES.filter((f) => f.logo && !f.flat).slice(0, 16);
     border-radius: var(--radius-card);
     transition: border-color var(--dur-state) var(--ease);
   }
-  .heroart:hover .grid { border-color: var(--c-hairline-strong); }
+  @media (hover: hover) {
+    .heroart:hover .grid {
+    border-color: var(--c-hairline-strong);
+    }
+  }
 
   .cell {
     aspect-ratio: 1;
@@ -66,17 +70,19 @@ const picks = FAVORITES.filter((f) => f.logo && !f.flat).slice(0, 16);
     mask-position: center;
     -webkit-mask-size: 62%;
     mask-size: 62%;
-    opacity: 0.9;
-    transition: opacity var(--dur-state) var(--ease), transform var(--dur-state) var(--ease);
+    opacity: 1;
   }
-  .heroart:hover .cell { opacity: 1; }
 
   .caption {
     align-self: flex-start;
     font-size: var(--t-sans-sm);
     color: var(--c-link);
   }
-  .heroart:hover .caption { text-decoration: underline; text-underline-offset: 3px; }
+  @media (hover: hover) {
+    .heroart:hover .caption {
+    text-decoration: underline; text-underline-offset: 3px;
+    }
+  }
 
   @media (max-width: 860px) {
     .grid { grid-template-columns: repeat(6, 1fr); }
