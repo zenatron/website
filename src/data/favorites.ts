@@ -12,10 +12,14 @@ export interface Favorite {
   /** Filename under /public/logos. Absent for the hobbies, which aren't brands. */
   logo?: string;
   /**
-   * The artwork is a solid backplate with the identity knocked out in
-   * white, so masking it yields a blob. Those get a grayscale treatment
-   * at rest instead. Seeded by measuring alpha coverage and white
-   * knockout; override by hand if a logo is ever replaced.
+   * A transparent-background glyph used for the tinted (masked) state,
+   * when the full-colour `logo` is a solid backplate that would mask
+   * into a blob. The `logo` is still what's shown on hover.
+   */
+  mark?: string;
+  /**
+   * No maskable artwork exists, so the tile falls back to a monogram
+   * rather than a grey logo that breaks the monochrome wall.
    */
   flat?: boolean;
 }
@@ -69,7 +73,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Todoist",
     logo: "todoist.svg",
-    flat: true,
+    mark: "todoist-mark.svg",
     description: "how i get sh*t done",
     url: "https://todoist.com",
     category: "apps",
@@ -77,7 +81,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Vivaldi",
     logo: "vivaldi.svg",
-    flat: true,
+    mark: "vivaldi-mark.svg",
     description: "function-first browser",
     url: "https://vivaldi.com",
     category: "apps",
@@ -110,7 +114,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "LinkedIn",
     logo: "linkedin.svg",
-    flat: true,
+    mark: "linkedin-mark.svg",
     description: '"professional" networking',
     url: "https://www.linkedin.com/in/philvishnevsky/",
     category: "apps",
@@ -134,7 +138,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Steam",
     logo: "steam.svg",
-    flat: true,
+    mark: "steam-mark.svg",
     description: "games besides minecraft",
     url: "https://store.steampowered.com",
     category: "apps",
@@ -149,7 +153,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "OBS Studio",
     logo: "obsstudio.svg",
-    flat: true,
+    mark: "obsstudio-mark.svg",
     description: "streaming & recording",
     url: "https://obsproject.com",
     category: "tools",
@@ -209,7 +213,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Pocket ID",
     logo: "pocket-id.svg",
-    flat: true,
+    mark: "pocket-id-mark.svg",
     description: "oidc provider",
     url: "https://pocket-id.org",
     category: "tools",

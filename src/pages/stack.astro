@@ -51,7 +51,9 @@ const categories = [...new Set(withLogos.map((f) => f.category))];
             aria-label={item.description ? `${item.name} — ${item.description}` : item.name}
           >
             <span class="glyph">
-              {!item.flat && <span class="mono" style={`--src: url(/logos/${item.logo})`}></span>}
+              {item.flat
+                ? <span class="monogram">{item.name.charAt(0)}</span>
+                : <span class="mono" style={`--src: url(/logos/${item.mark ?? item.logo})`}></span>}
               <img src={`/logos/${item.logo}`} alt="" width="40" height="40" loading="lazy" decoding="async" />
             </span>
             <span class="name">{item.name}</span>
@@ -181,17 +183,24 @@ const categories = [...new Set(withLogos.map((f) => f.category))];
   }
 
   /*
-   * Backplate logos can't be masked into a silhouette, so they desaturate
-   * at rest and come back to full colour on hover — same behaviour, a
-   * different mechanism.
+   * Where no maskable glyph exists at all, a monogram in the item's hue —
+   * the wall stays monochrome at rest rather than carrying two grey
+   * logos that read as a mistake.
    */
-  .tile[data-flat] .glyph img {
-    opacity: 1;
-    filter: grayscale(1) contrast(0.85) opacity(0.55);
+  .monogram {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-size: 26px;
+    line-height: 1;
+    color: var(--fg);
+    transition: opacity var(--dur-state) var(--ease);
   }
-  .tile[data-flat] > :global(*:focus-visible) .glyph img { filter: none; }
+  .tile > :global(*:focus-visible) .monogram { opacity: 0; }
   @media (hover: hover) {
-    .tile[data-flat] > :global(*:hover) .glyph img { filter: none; }
+    .tile > :global(*:hover) .monogram { opacity: 0; }
   }
 
   .name {
@@ -209,9 +218,9 @@ const categories = [...new Set(withLogos.map((f) => f.category))];
 
   /* Touch has no hover, so show brand colour outright. */
   @media (hover: none) {
-    .mono { opacity: 0; }
+    .mono,
+    .monogram { opacity: 0; }
     .glyph img { opacity: 1; }
-    .tile[data-flat] .glyph img { filter: none; }
   }
 </style>
 
