@@ -1,0 +1,63 @@
+---
+title: "πCompress"
+description: "A data compression tool that reliably makes files bigger, by looking your bytes up inside the first million digits of π."
+type: "tool"
+slug: "pi-compress"
+date: "2026-04-01"
+tags: ["Rust", "compression", "April Fools", "π"]
+github: "https://github.com/zenatron/pi-compress"
+---
+
+import TerminalFrame from '@/components/mdx/TerminalFrame.astro';
+import Callout from '@/components/mdx/Callout.astro';
+
+A "compression" tool built on the idea that the digits of π contain every
+possible finite sequence of numbers — so rather than storing your data, you can
+just store *where to find it in π*.
+
+It works. The output is consistently larger than the input.
+
+## The algorithm
+
+1. Convert each byte of the input to its two-digit hex representation — `H`
+   becomes `0x48` becomes `"48"`.
+2. Search for that hex string inside the first million digits of π.
+3. Take the greedy longest match: the largest chunk of input whose hex
+   representation appears in π.
+4. Verify the run found in π actually converts back to the original bytes. This
+   step exists because skipping it produced hilarious but incorrect results.
+5. Emit instructions rather than data — `Pi[index] (N bytes)` for a hit, or
+   `Raw[0xHH]` for a byte that couldn't be found.
+
+<Callout type="note" title="The flaw at the centre of it">
+π contains only the digits 0–9, so the search can only ever match hex strings
+that happen to contain no letters. `1234` might be found. `4a8b` never will.
+Roughly a third of all byte pairs are unreachable by construction, and each one
+falls back to storing itself — plus an index.
+</Callout>
+
+<TerminalFrame title="the output">
+```
+Pi[45219] (2 bytes)
+Raw[0x4a]
+Pi[901]   (3 bytes)
+Raw[0x8b]
+```
+</TerminalFrame>
+
+Every hit costs an index — often 6 digits — to encode two bytes. Every miss
+costs the original byte plus the framing. Both directions lose.
+
+## Why
+
+Mostly to find out. The premise that π is a normal number is genuinely unproven,
+and building the thing that depends on it is a faster way to understand why that
+matters than reading about it.
+
+Written in Rust, which was the actual point: a million-digit search per chunk is
+the kind of hot loop where the language choice shows up immediately.
+
+<Callout type="warning" title="Do not use this">
+It is slower than every real compressor and produces larger output than doing
+nothing at all. It shipped on the first of April.
+</Callout>

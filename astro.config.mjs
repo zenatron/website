@@ -35,6 +35,9 @@ export default defineConfig({
         light: (await import("./src/lib/shiki-theme.js")).pvishLight,
         dark: (await import("./src/lib/shiki-theme.js")).pvishDark,
       },
+      // Shiki has no Caddyfile grammar and 15 blocks were falling back to
+      // plaintext. nginx is close enough to colour directives and braces.
+      langAlias: { caddyfile: "nginx", Caddyfile: "nginx" },
     },
   },
   redirects: {

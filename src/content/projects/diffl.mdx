@@ -1,0 +1,44 @@
+---
+title: "diffl"
+description: "A browser-only file comparison tool — diff text, Markdown and PDFs without a single byte leaving the tab."
+type: "tool"
+slug: "diffl"
+date: "2025-07-18"
+tags: ["Next.js", "TypeScript", "PDF.js", "client-side"]
+github: "https://github.com/zenatron/diffl"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+
+A web app for comparing two files and seeing exactly what changed. Paste text or
+upload plain text, Markdown or PDFs, and get a diff back.
+
+The constraint that shaped it: **everything runs client-side**. Parsing,
+diffing and rendering all happen in the tab, in memory. There is no server to
+send a document to, because there is no server.
+
+## Two ways to read a diff
+
+- **Git-style** — the familiar line-by-line view, with additions and deletions
+  in place. Good when you want the context around a change.
+- **List of changes** — only the differences, condensed. Good when the files are
+  long and mostly identical.
+
+## What it tells you about the files
+
+Reading time, character count and word count for each side, plus the numbers on
+the difference itself — lines changed and characters differing. Enough to answer
+"how different are these, really" before reading a single line of the diff.
+
+<Callout type="tip" title="PDFs never leave the tab">
+PDF parsing runs through PDF.js in the browser. That matters more than it
+sounds: the documents people most want to diff — contracts, statements, drafts —
+are exactly the ones they should not be uploading to someone else's server to
+compare.
+</Callout>
+
+## Built with
+
+Next.js 15 and TypeScript, Tailwind for styling, PDF.js for document parsing, and
+`diff` for the comparison itself. It deploys as a static bundle, which is the
+natural consequence of nothing needing to run server-side.

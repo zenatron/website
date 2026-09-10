@@ -124,3 +124,56 @@
 .prose .frame {
   max-width: none;
 }
+
+/* Code block chrome, added by scripts/code.ts. Overlaid on the block
+   rather than stacked above it, so adding it shifts nothing. */
+.prose .codewrap {
+  position: relative;
+  margin-block: var(--s-4);
+}
+.prose .codewrap pre { margin: 0; }
+
+.prose .codebar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-2) var(--s-3);
+  pointer-events: none;
+}
+.prose .codelang {
+  font-family: var(--font-mono);
+  font-size: var(--t-mono-xs);
+  color: var(--c-dim);
+}
+.prose .codelang:empty { display: none; }
+
+.prose .codecopy {
+  pointer-events: auto;
+  font-family: var(--font-mono);
+  font-size: var(--t-mono-xs);
+  color: var(--c-muted);
+  background: var(--c-chrome);
+  border: 1px solid var(--c-hairline);
+  border-radius: var(--radius-sm);
+  padding: 3px 9px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--dur-state) var(--ease), color var(--dur-state) var(--ease);
+}
+.prose .codecopy[data-done] { color: var(--c-link); opacity: 1; }
+.prose .codecopy:focus-visible { opacity: 1; }
+
+/* Revealed on hover where there's a pointer; always visible on touch,
+   which has no hover to reveal it with. */
+@media (hover: hover) {
+  .prose .codewrap:hover .codecopy { opacity: 1; }
+}
+@media (hover: none) {
+  .prose .codecopy { opacity: 1; }
+}
+
+/* Keep the first line clear of the chrome. */
+.prose .codewrap pre { padding-top: calc(var(--s-4) + var(--s-3)); }

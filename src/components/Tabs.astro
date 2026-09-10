@@ -1,0 +1,93 @@
+---
+/**
+ * Open files, the way an editor shows them.
+ *
+ * The strip persists across navigation and is filled in by scripts/tabs.ts
+ * — it's session state, not page state, so there is nothing to render on
+ * the server. With JS off it stays empty and collapses to nothing, and
+ * the explorer is still the whole navigation story.
+ */
+---
+<nav class="tabs" aria-label="Open files" data-tabs hidden transition:persist="tabs">
+  <ul data-tablist></ul>
+</nav>
+
+<style>
+  .tabs {
+    flex: 0 0 auto;
+    display: flex;
+    background: var(--c-chrome);
+    border-bottom: 1px solid var(--c-hairline);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs[hidden] { display: none; }
+
+  .tabs :global(ul) {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    min-width: min-content;
+  }
+
+  .tabs :global(li) {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    border-right: 1px solid var(--c-hairline);
+    background: var(--c-chrome);
+    transition: background var(--dur-state) var(--ease);
+  }
+  @media (hover: hover) {
+    .tabs :global(li:hover) { background: var(--c-raised); }
+  }
+
+  /* The active tab shares the content pane's surface, so it reads as
+     attached to what's below it rather than sitting on the bar. */
+  .tabs :global(li[data-active]) {
+    background: var(--c-bg);
+    box-shadow: inset 0 2px 0 var(--c-accent);
+  }
+
+  .tabs :global(li a) {
+    display: block;
+    max-width: 22ch;
+    padding: 9px var(--s-2) 9px var(--s-3);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    line-height: 1.4;
+    color: var(--c-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .tabs :global(li[data-active] a) { color: var(--c-text); }
+
+  .tabs :global(li button) {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    margin-right: var(--s-2);
+    border-radius: var(--radius-sm);
+    color: var(--c-dim);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    line-height: 1;
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .tabs :global(li button:hover) {
+      background: var(--c-hairline);
+      color: var(--c-text);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .tabs :global(li a) { max-width: 16ch; }
+    .tabs :global(li button) { width: 30px; height: 30px; }
+  }
+</style>
