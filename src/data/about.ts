@@ -67,12 +67,12 @@ export const MACHINES = [
   {
     name: "macbook",
     fields: [
-      ["OS", "macOS Sequoia"],
+      ["OS", "macOS 27"],
       ["Kernel", "arm64 (Apple Silicon)"],
-      ["CPU", "Apple M1 Pro (8-core)"],
-      ["GPU", "Apple M1 Pro (14-core)"],
-      ["Memory", "16GB unified"],
-      ["Storage", "512GB NVMe"],
+      ["CPU", "Apple M5 Max (18-core)"],
+      ["GPU", "Apple M5 Max (40-core)"],
+      ["Memory", "48GB unified"],
+      ["Storage", "2TB NVMe"],
       ["Display", '14.2" Liquid Retina XDR (120Hz)'],
       ["Shell", "zsh + oh-my-zsh"],
       ["PM", "brew"],
