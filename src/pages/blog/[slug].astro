@@ -1,12 +1,14 @@
 ---
 import { getCollection } from "astro:content";
 import Shell from "@/layouts/Shell.astro";
-import { cardArt } from "@/lib/cardart";
 import PostMeta from "@/components/PostMeta.astro";
 import Tags from "@/components/Tags.astro";
-import CardArt from "@/components/CardArt.astro";
 import Cells from "@/components/Cells.astro";
-import { getSuggestedPosts } from "@/lib/blog";
+import CardArt from "@/components/CardArt.astro";
+import Toc from "@/components/Toc.astro";
+import PostNav from "@/components/PostNav.astro";
+import { cardArt } from "@/lib/cardart";
+import { getAllBlogPosts, getSuggestedPosts } from "@/lib/blog";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
@@ -14,21 +16,58 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { Content } = await post.render();
+const rendered = await post.render();
+const { Content } = rendered;
+const headings = rendered.headings ?? [];
+
+const heroArt = await cardArt({
+  slug: post.slug,
+  title: post.data.title,
+  collection: "blog",
+  context: "hero",
+});
 
 // Only pages that actually render math pay for the KaTeX stylesheet.
-const heroArt = await cardArt({ slug: post.slug, title: post.data.title, collection: "blog", context: "hero" });
-
 const hasMath = /\$\$|\\\(|\\\[|\$[^$\n]+\$/.test(post.body ?? "");
 
-const suggested = await Promise.all((await getSuggestedPosts(post.slug, 3)).map(async (p) => ({
-  title: p.data.title,
-  href: `/blog/${p.slug}`,
-  slug: p.slug,
-  description: p.data.excerpt || undefined,
-  tags: p.data.tags ?? [],
-  art: await cardArt({ slug: p.slug, title: p.data.title, collection: "blog" }),
-})));
+/* ── what to read next ─────────────────────────────────────── */
+const all = await getAllBlogPosts();
+const seriesKey = post.data.series;
+
+let prev = null;
+let next = null;
+let seriesTitle: string | undefined;
+
+if (seriesKey) {
+  const parts = all
+    .filter((p) => p.data.series === seriesKey)
+    .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0));
+  const i = parts.findIndex((p) => p.slug === post.slug);
+  const at = (n: number) =>
+    parts[n] ? { slug: parts[n].slug, title: parts[n].data.title, order: parts[n].data.seriesOrder } : null;
+  prev = at(i - 1);
+  next = at(i + 1);
+  seriesTitle = "Homelab & networking";
+} else {
+  // Chronological, and `all` is already newest-first.
+  const i = all.findIndex((p) => p.slug === post.slug);
+  const at = (n: number) => (all[n] ? { slug: all[n].slug, title: all[n].data.title } : null);
+  prev = at(i + 1);
+  next = at(i - 1);
+}
+
+const suggested = seriesKey
+  ? []
+  : await Promise.all(
+      (await getSuggestedPosts(post.slug, 3)).map(async (p) => ({
+        title: p.data.title,
+        href: `/blog/${p.slug}`,
+        slug: p.slug,
+        description: p.data.excerpt || undefined,
+        tags: p.data.tags ?? [],
+        art: await cardArt({ slug: p.slug, title: p.data.title, collection: "blog" }),
+      }))
+    );
 ---
 
 <Shell
@@ -37,28 +76,64 @@ const suggested = await Promise.all((await getSuggestedPosts(post.slug, 3)).map(
   ogSlug={`blog/${post.slug}`}
   math={hasMath}
 >
-  <article>
-    <div class="hero"><CardArt art={heroArt} slug={post.slug} crop /></div>
-    <header>
-      <h1>{post.data.title}</h1>
-      <PostMeta date={post.data.date} readingTime={post.data.readingTime} />
-      {post.data.tags && post.data.tags.length > 0 && (
-        <div class="tagrow"><Tags tags={post.data.tags} /></div>
+  <div class="progress" data-progress aria-hidden="true"></div>
+
+  <div class="layout">
+    <article>
+      <div class="hero"><CardArt art={heroArt} slug={post.slug} crop /></div>
+      <header>
+        <h1>{post.data.title}</h1>
+        <PostMeta date={post.data.date} readingTime={post.data.readingTime} />
+        {post.data.tags && post.data.tags.length > 0 && (
+          <div class="tagrow"><Tags tags={post.data.tags} /></div>
+        )}
+      </header>
+
+      <div class="prose"><Content /></div>
+
+      <PostNav prev={prev} next={next} seriesTitle={seriesTitle} />
+
+      {suggested.length > 0 && (
+        <section class="more">
+          <h2>More writing</h2>
+          <Cells cells={suggested} />
+        </section>
       )}
-    </header>
+    </article>
 
-    <div class="prose"><Content /></div>
-  </article>
-
-  {suggested.length > 0 && (
-    <section class="more">
-      <h2>More writing</h2>
-      <Cells cells={suggested} />
-    </section>
-  )}
+    <Toc headings={headings} />
+  </div>
 </Shell>
 
 <style>
+  /* A 2px rule that fills as you read. Cheap, and it lives in the frame
+     rather than floating over the content. */
+  .progress {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    height: 2px;
+    margin: calc(var(--s-5) * -1) calc(var(--s-6) * -1) 0;
+    background: var(--c-hairline);
+  }
+  .progress::after {
+    content: "";
+    display: block;
+    height: 100%;
+    width: calc(var(--p, 0) * 100%);
+    background: var(--c-accent);
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 210px;
+    gap: var(--s-6);
+    padding-top: var(--s-5);
+  }
+  @media (max-width: 1080px) {
+    .layout { grid-template-columns: minmax(0, 1fr); }
+  }
+
   .hero {
     container-type: inline-size;
     aspect-ratio: 21 / 7;
@@ -79,8 +154,9 @@ const suggested = await Promise.all((await getSuggestedPosts(post.slug, 3)).map(
     max-width: 26ch;
   }
   .tagrow { margin-top: var(--s-4); }
+
   .more {
-    margin-top: var(--s-8);
+    margin-top: var(--s-7);
     padding-top: var(--s-5);
     border-top: 1px solid var(--c-hairline);
   }
@@ -89,4 +165,12 @@ const suggested = await Promise.all((await getSuggestedPosts(post.slug, 3)).map(
     font-weight: 600;
     margin-bottom: var(--s-5);
   }
+
+  @media (max-width: 640px) {
+    .progress { margin-inline: calc(var(--s-4) * -1); }
+  }
 </style>
+
+<script>
+  import "@/scripts/toc";
+</script>

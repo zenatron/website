@@ -14,7 +14,9 @@ function hueFor(s: string) {
 }
 
 // Masked logos only: the flat ones can't be tinted into a silhouette.
-const picks = FAVORITES.filter((f) => f.logo && !f.flat).slice(0, 12);
+// Sixteen, not twelve: four rows balances the height of the text column
+// beside it, which otherwise left ~220px of dead space in the row.
+const picks = FAVORITES.filter((f) => f.logo && !f.flat).slice(0, 16);
 ---
 
 <a class="heroart" href="/stack" aria-label={`the stack — ${picks.length}+ tools and apps I use`}>

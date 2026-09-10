@@ -1,0 +1,93 @@
+---
+/**
+ * What to read next. A post inside an ordered series should hand you the
+ * next part, not a generic "more writing" grid — that's the whole point
+ * of having ordered it.
+ */
+interface Entry { slug: string; title: string; order?: number; }
+interface Props { prev?: Entry | null; next?: Entry | null; seriesTitle?: string; }
+const { prev, next, seriesTitle } = Astro.props;
+---
+
+{(prev || next) && (
+  <nav class="postnav" aria-label={seriesTitle ? `${seriesTitle} series` : "More posts"}>
+    {seriesTitle && <p class="series-label">{seriesTitle}</p>}
+    <div class="pair">
+      {prev ? (
+        <a href={`/blog/${prev.slug}`} class="side prev">
+          <span class="dir">{seriesTitle ? "Previous part" : "Previous"}</span>
+          <span class="t">{prev.order != null && <em>{String(prev.order).padStart(2, "0")}</em>}{prev.title}</span>
+        </a>
+      ) : <span class="side empty"></span>}
+
+      {next ? (
+        <a href={`/blog/${next.slug}`} class="side next">
+          <span class="dir">{seriesTitle ? "Next part" : "Next"}</span>
+          <span class="t">{next.order != null && <em>{String(next.order).padStart(2, "0")}</em>}{next.title}</span>
+        </a>
+      ) : <span class="side empty"></span>}
+    </div>
+  </nav>
+)}
+
+<style>
+  .postnav {
+    margin-top: var(--s-7);
+    padding-top: var(--s-5);
+    border-top: 1px solid var(--c-hairline);
+  }
+  .series-label {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: 0.08em;
+    color: var(--c-accent);
+    margin-bottom: var(--s-3);
+  }
+  .pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-3);
+  }
+  .side {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-1);
+    padding: var(--s-4);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
+    color: inherit;
+    min-width: 0;
+    transition: background var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease);
+  }
+  a.side:hover {
+    background: var(--c-chrome);
+    border-color: var(--c-hairline-strong);
+  }
+  .empty { border: 0; }
+  .next { text-align: right; }
+
+  .dir {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+  }
+  .t {
+    font-size: var(--t-sans-md);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  a.side:hover .t { color: var(--c-link); }
+  .t em {
+    font-style: normal;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-accent);
+    margin-right: var(--s-2);
+  }
+
+  @media (max-width: 640px) {
+    .pair { grid-template-columns: 1fr; }
+    .next { text-align: left; }
+    .empty { display: none; }
+  }
+</style>

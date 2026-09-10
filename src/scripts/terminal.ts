@@ -496,6 +496,13 @@ function init() {
     }
   });
 
+  // The titlebar keycap and anything else that wants to teach the terminal.
+  for (const trigger of document.querySelectorAll<HTMLElement>("[data-open-terminal]")) {
+    if (trigger.dataset.wired) continue;
+    trigger.dataset.wired = "1";
+    trigger.addEventListener("click", () => (dlg.open ? close() : open()));
+  }
+
   window.addEventListener("resize", () => dlg.open && position());
   document.addEventListener("astro:page-load", () => {
     syncPrompt();

@@ -18,7 +18,10 @@ import ThemeToggle from "@/components/ThemeToggle.astro";
   <span class="path" data-titlebar-path>{SITE.user}@{SITE.host} — ~</span>
 
   <ThemeToggle />
-  <kbd class="keycap" data-keycap>⌘K</kbd>
+  <button class="keycap" type="button" data-open-terminal>
+    <span class="sr-only">Open terminal</span>
+    <kbd data-keycap aria-hidden="true">⌘K</kbd>
+  </button>
 </div>
 
 <style>

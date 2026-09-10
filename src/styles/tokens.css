@@ -158,7 +158,7 @@
   --h-titlebar:  40px;
   --h-statusbar: 28px;
   --w-sidebar:   312px;  /* fits the longest real filename: projects-system-documentation.mdx */
-  --w-content:  1160px;
+  --w-content:  1280px;
 }
 
 /* Motion — two durations, total. */

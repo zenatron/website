@@ -1,0 +1,77 @@
+---
+/**
+ * The outline pane. Long posts here run 25 minutes across a dozen
+ * headings, and there was no way to see the shape of one or jump inside
+ * it — which the editor metaphor should have solved on day one.
+ */
+interface Heading { depth: number; slug: string; text: string; }
+interface Props { headings: Heading[]; }
+const { headings } = Astro.props;
+
+// h2 and h3 only: h4s make the rail longer than the article feels.
+const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+{items.length > 2 && (
+  <nav class="toc" aria-labelledby="toc-label" data-toc>
+    <div class="inner">
+    <p class="toc-head" id="toc-label">outline</p>
+    <ol>
+      {items.map((h) => (
+        <li class:list={[`d${h.depth}`]}>
+          <a href={`#${h.slug}`} data-toc-link={h.slug}>{h.text}</a>
+        </li>
+      ))}
+    </ol>
+    </div>
+  </nav>
+)}
+
+<style>
+  /*
+   * The grid item stretches and the inner block is what sticks. Putting
+   * `position: sticky` on the item itself with `align-self: start`
+   * collapses it to content height, leaving sticky nothing to travel
+   * inside — so the outline just scrolls away.
+   */
+  .toc {
+    height: 100%;
+    padding-left: var(--s-4);
+    border-left: 1px solid var(--c-hairline);
+  }
+  .inner {
+    position: sticky;
+    top: var(--s-5);
+    max-height: calc(100vh - var(--s-7));
+    overflow-y: auto;
+  }
+  .toc-head {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: 0.08em;
+    color: var(--c-dim);
+    margin-bottom: var(--s-3);
+  }
+  ol { list-style: none; margin: 0; padding: 0; }
+  li { margin-block: 1px; }
+  .d3 a { padding-left: var(--s-3); font-size: var(--t-sans-xs); }
+
+  a {
+    display: block;
+    padding: 3px var(--s-2);
+    border-radius: var(--radius-sm);
+    font-size: var(--t-sans-sm);
+    line-height: 1.35;
+    color: var(--c-muted);
+    transition: color var(--dur-state) var(--ease), background var(--dur-state) var(--ease);
+  }
+  a:hover { color: var(--c-text); background: var(--c-chrome); }
+  a[data-current] {
+    color: var(--c-accent);
+    background: var(--c-tint-accent);
+  }
+
+  @media (max-width: 1080px) {
+    .toc { display: none; }
+  }
+</style>

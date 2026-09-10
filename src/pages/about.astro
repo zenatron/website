@@ -1,63 +1,120 @@
 ---
 import Shell from "@/layouts/Shell.astro";
 import Contact from "@/components/Contact.astro";
+import Mark from "@/components/Mark.astro";
 import { SITE } from "@/data/site";
 import { TIMELINE, NOW, PRINCIPLES, MACHINES } from "@/data/about";
 import { FAVORITES } from "@/data/favorites";
 
 const HOBBIES = FAVORITES.filter((f) => f.category === "hobbies");
 const toolCount = FAVORITES.filter((f) => f.logo).length;
+
+/** One hue per principle, so the four lines read as four distinct ideas. */
+const PRINCIPLE_HUES = ["violet", "blue", "green", "orange"] as const;
+const NOW_HUES = ["accent", "blue", "violet"] as const;
+const KIND_LABEL: Record<string, string> = {
+  work: "work",
+  education: "study",
+  milestone: "milestone",
+};
 ---
 
 <Shell title="About | Phil Vishnevsky" description="The story so far." ogSlug="about">
-  <h1>About</h1>
-  <p class="lede">I write code, break things, and occasionally ship something useful.</p>
+  <section class="hero">
+    <div class="portrait">
+      <img
+        src="/images/phil_headshot_scaled.webp"
+        alt="Phil Vishnevsky"
+        width="518"
+        height="345"
+        loading="eager"
+        decoding="async"
+      />
+    </div>
+    <div class="lede">
+      <h1>About</h1>
+      <p>
+        I write code, break things, and occasionally ship something useful.
+        Mostly <Mark hue="blue">servers</Mark>, developer tooling, and
+        <Mark hue="orange">games</Mark> — from a desk in Hartford, Connecticut.
+      </p>
+    </div>
+  </section>
 
-  <section id="resume">
-    <h2>Experience</h2>
-    <ul class="rows">
-      {TIMELINE.map((item) => (
-        <li>
-          <span class="when">{item.year}</span>
-          <span class="what">
-            <span class="what-title">{item.title}</span>
-            <span class="what-desc">{item.description}</span>
-          </span>
+  <section id="principles" class="band">
+    <h2 class="eyebrow">Principles</h2>
+    <ol class="manifesto">
+      {PRINCIPLES.map((line, i) => (
+        <li style={`--fg: var(--c-hue-${PRINCIPLE_HUES[i % PRINCIPLE_HUES.length]})`}>
+          <span class="n" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+          <span class="say">{line}</span>
         </li>
       ))}
-    </ul>
-    <p class="action">
-      <a href={SITE.resume}>Download the full resume</a>
-    </p>
-  </section>
-
-  <section id="now">
-    <h2>Now</h2>
-    {NOW.map((group) => (
-      <div class="group">
-        <h3>{group.heading}</h3>
-        <ul class="rows">
-          {group.items.map((item) => (
-            <li>
-              <span class="what"><span class="what-title">{item.name}</span></span>
-              <span class="status">{item.status}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    ))}
-  </section>
-
-  <section id="principles">
-    <h2>Principles</h2>
-    <ul class="manifesto">
-      {PRINCIPLES.map((line) => <li>{line}</li>)}
-    </ul>
+    </ol>
     <p class="action"><a href="/blog/principles">Read the long version</a></p>
   </section>
 
-  <section id="hobbies">
-    <h2>Outside the terminal</h2>
+  <section id="now" class="band">
+    <h2 class="eyebrow">Now</h2>
+    <div class="nowgrid">
+      {NOW.map((group, i) => (
+        <div class="panel" style={`--fg: var(--c-hue-${NOW_HUES[i % NOW_HUES.length]}); --bg: var(--c-tint-${NOW_HUES[i % NOW_HUES.length]})`}>
+          <p class="panel-head">{group.heading}</p>
+          <ul>
+            {group.items.map((item) => (
+              <li>
+                <span class="what">{item.name}</span>
+                <span class="status">{item.status}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section id="resume" class="band">
+    <h2 class="eyebrow">Experience</h2>
+    <ol class="timeline">
+      {TIMELINE.map((item) => (
+        <li>
+          <span class="when">{item.year}</span>
+          <span class="dot" aria-hidden="true"></span>
+          <span class="entry">
+            <span class="role">{item.title}</span>
+            <span class="detail">{item.description}</span>
+            <span class="kind">{KIND_LABEL[item.kind] ?? item.kind}</span>
+          </span>
+        </li>
+      ))}
+    </ol>
+    <p class="action"><a href={SITE.resume}>Download the full resume</a></p>
+  </section>
+
+  <section id="setup" class="band">
+    <h2 class="eyebrow">Setup</h2>
+    <div class="machines">
+      {MACHINES.map((machine) => (
+        <div class="win">
+          <div class="win-bar">
+            <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="win-name">phil@{machine.name}</span>
+          </div>
+          <dl class="spec">
+            {machine.fields.map(([label, value]) => (
+              <>
+                <dt>{label}</dt>
+                <dd>{value}</dd>
+              </>
+            ))}
+          </dl>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section id="hobbies" class="band">
+    <h2 class="eyebrow">Outside the terminal</h2>
     <ul class="hobbies">
       {HOBBIES.map((item) => (
         <li>
@@ -66,106 +123,210 @@ const toolCount = FAVORITES.filter((f) => f.logo).length;
         </li>
       ))}
     </ul>
-    <p class="action">
-      <a href="/stack">See the {toolCount} tools and apps I use</a>
-    </p>
-  </section>
-
-  <section id="setup">
-    <h2>Setup</h2>
-    <div class="machines">
-      {MACHINES.map((machine) => (
-        <div class="machine">
-          <h3>{machine.name}</h3>
-          <dl>
-            {machine.fields.map(([label, value]) => (
-              <div class="field">
-                <dt>{label}</dt>
-                <dd>{value}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      ))}
-    </div>
+    <p class="action"><a href="/stack">See the {toolCount} tools and apps I use</a></p>
   </section>
 
   <Contact />
 </Shell>
 
 <style>
+  /* Hero */
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+    gap: var(--s-6);
+    align-items: center;
+    padding-block: var(--s-4) var(--s-6);
+  }
+  .portrait {
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: var(--c-chrome);
+  }
+  .portrait img { width: 100%; height: auto; display: block; }
+
   h1 {
     font-size: var(--t-sans-2xl);
     font-weight: 700;
     letter-spacing: -0.03em;
   }
-  .lede {
-    margin-top: var(--s-4);
-    max-width: 68ch;
-    color: var(--c-muted);
+  .lede p {
+    margin-top: var(--s-3);
+    font-size: var(--t-sans-lg);
+    line-height: 1.55;
+    max-width: 40ch;
   }
-  section {
-    margin-top: var(--s-7);
+
+  /* Bands */
+  .band {
+    padding-block: var(--s-6);
+    border-top: 1px solid var(--c-hairline);
     scroll-margin-top: var(--s-5);
   }
-  h2 {
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: 0.08em;
+    color: var(--c-dim);
+    font-weight: 400;
+    margin-bottom: var(--s-5);
+  }
+
+  /* Principles — the strongest four lines on the site, set like it. */
+  .manifesto {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-4);
+  }
+  .manifesto li {
+    display: grid;
+    grid-template-columns: 3.5ch minmax(0, 1fr);
+    gap: var(--s-4);
+    align-items: baseline;
+  }
+  .manifesto .n {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--fg);
+  }
+  .manifesto .say {
     font-size: var(--t-sans-xl);
     font-weight: 600;
-    margin-bottom: var(--s-4);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
   }
-  h3 {
-    font-size: var(--t-sans-lg);
+
+  /* Now */
+  .nowgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--s-4);
+  }
+  .panel {
+    padding: var(--s-4);
+    background: var(--bg);
+    border-radius: var(--radius-card);
+  }
+  .panel-head {
+    font-size: var(--t-sans-sm);
     font-weight: 600;
+    color: var(--fg);
     margin-bottom: var(--s-3);
   }
-  .group + .group { margin-top: var(--s-5); }
+  .panel ul { list-style: none; margin: 0; padding: 0; }
+  .panel li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s-3);
+    padding-block: var(--s-2);
+  }
+  .panel li + li { border-top: 1px solid var(--c-hairline); }
+  .what { font-size: var(--t-sans-sm); }
+  .status {
+    flex: 0 0 auto;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-muted);
+  }
 
-  .rows {
+  /* Experience — a rail, so it reads as a sequence. */
+  .timeline {
     list-style: none;
     margin: 0;
     padding: 0;
     max-width: 68ch;
-    border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-card);
-    overflow: hidden;
   }
-  .rows li + li { border-top: 1px solid var(--c-hairline); }
-  .rows li {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--s-1) var(--s-4);
-    padding: var(--s-3) var(--s-4);
-    transition: background var(--dur-state) var(--ease);
+  .timeline li {
+    position: relative;
+    display: grid;
+    grid-template-columns: 12ch 1px minmax(0, 1fr);
+    gap: 0 var(--s-4);
+    padding-bottom: var(--s-5);
   }
-  .rows li:hover { background: var(--c-raised); }
-
-  /* Years, statuses and spec labels are machine-voice; the rest is prose. */
-  .when,
-  .status {
+  .timeline li:last-child { padding-bottom: 0; }
+  .when {
     font-family: var(--font-mono);
     font-size: var(--t-mono-sm);
     color: var(--c-muted);
-    flex: 0 0 auto;
+    padding-top: 2px;
   }
-  /* Fixed column so the titles align down the list. */
-  .when { flex: 0 0 14ch; }
-  @media (max-width: 520px) {
-    .when { flex: 0 0 100%; }
+  .dot {
+    position: relative;
+    background: var(--c-hairline);
   }
-  .status { margin-left: auto; }
+  .timeline li:last-child .dot { background: transparent; }
+  .dot::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 4px;
+    width: 7px;
+    height: 7px;
+    margin-left: -3.5px;
+    border-radius: 50%;
+    background: var(--c-accent);
+  }
+  .entry { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .role { font-size: var(--t-sans-md); font-weight: 600; }
+  .detail { font-size: var(--t-sans-sm); color: var(--c-muted); }
+  .kind {
+    margin-top: var(--s-1);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+  }
 
-  .what {
+  /* Setup — the same window the desk uses. */
+  .machines {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--s-4);
+  }
+  .win {
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: var(--c-bg);
+  }
+  .win-bar {
     display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--s-1) var(--s-3);
-    min-width: 0;
+    align-items: center;
+    gap: var(--s-3);
+    height: var(--h-titlebar);
+    padding-inline: var(--s-3);
+    background: var(--c-chrome);
+    border-bottom: 1px solid var(--c-hairline);
   }
-  .what-title { font-size: var(--t-sans-md); }
-  a.what-title { color: var(--c-link); }
-  .what-desc { font-size: var(--t-sans-sm); color: var(--c-muted); }
+  .lights { display: flex; gap: var(--s-2); }
+  .lights i {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--c-trafficlight);
+  }
+  .win-name {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-accent);
+  }
+  .spec {
+    display: grid;
+    grid-template-columns: 9ch minmax(0, 1fr);
+    gap: 0 var(--s-3);
+    margin: 0;
+    padding: var(--s-4);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    line-height: 1.95;
+  }
+  .spec dt { color: var(--c-dim); }
+  .spec dd { margin: 0; color: var(--c-muted); min-width: 0; }
 
+  /* Hobbies */
   .hobbies {
     list-style: none;
     display: flex;
@@ -186,15 +347,7 @@ const toolCount = FAVORITES.filter((f) => f.logo).length;
   .hobby-name { font-size: var(--t-sans-sm); }
   .hobby-desc { font-size: var(--t-sans-xs); color: var(--c-muted); }
 
-  .manifesto {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    font-size: var(--t-sans-lg);
-  }
-  .manifesto li + li { margin-top: var(--s-2); }
-
-  .action { margin-top: var(--s-4); }
+  .action { margin-top: var(--s-5); }
   .action a {
     font-size: var(--t-sans-sm);
     color: var(--c-link);
@@ -203,20 +356,13 @@ const toolCount = FAVORITES.filter((f) => f.logo).length;
     text-decoration-thickness: 1px;
   }
 
-  .machines {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--s-5);
-    max-width: 68ch;
+  @media (max-width: 720px) {
+    .hero {
+      grid-template-columns: 1fr;
+      gap: var(--s-4);
+    }
+    .portrait { max-width: 220px; }
+    .manifesto .say { font-size: var(--t-sans-lg); }
+    .timeline li { grid-template-columns: 10ch 1px minmax(0, 1fr); }
   }
-  dl { margin: 0; }
-  .field {
-    display: flex;
-    gap: var(--s-3);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    line-height: 1.9;
-  }
-  dt { flex: 0 0 9ch; color: var(--c-muted); }
-  dd { margin: 0; min-width: 0; color: var(--c-muted); }
 </style>

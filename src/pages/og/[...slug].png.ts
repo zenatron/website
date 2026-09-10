@@ -12,7 +12,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     { params: { slug: "blog" }, props: { title: "Blog", subtitle: "Thoughts on code, tools, and building things", type: "page", tags: [] } },
     { params: { slug: "projects" }, props: { title: "Projects", subtitle: "My experiments, projects, and failures", type: "page", tags: [] } },
     { params: { slug: "about" }, props: { title: "About", subtitle: "The story so far", type: "page", tags: [], variant: "about" } },
-    { params: { slug: "links" }, props: { title: "Links", subtitle: "Find me elsewhere on the internet", type: "page", tags: [] } },
+    { params: { slug: "links" }, props: { title: "Elsewhere", subtitle: "Where to find me on the rest of the internet", type: "page", tags: [] } },
     { params: { slug: "desk" }, props: { title: "Desk", subtitle: "Things I actually use", type: "page", tags: [] } },
     { params: { slug: "stack" }, props: { title: "Stack", subtitle: "The tools and apps I actually use", type: "page", tags: [] } },
 

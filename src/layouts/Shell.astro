@@ -129,7 +129,10 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     background: var(--c-bg);
     border: 1px solid var(--c-hairline);
     border-radius: var(--radius-window);
-    overflow: hidden;
+    /* `clip`, not `hidden`: hidden makes the window a scroll container,
+       which silently disables position:sticky for everything inside it —
+       the post outline and the reading-progress rule both depend on it. */
+    overflow: clip;
   }
 
   /* Sidebar + content. `position: relative` anchors the mobile drawer. */
