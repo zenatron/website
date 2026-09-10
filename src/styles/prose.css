@@ -35,7 +35,7 @@
 .prose ul,
 .prose ol { padding-left: var(--s-5); }
 .prose li + li { margin-top: var(--s-2); }
-.prose li::marker { color: var(--c-dim); }
+.prose li::marker { color: var(--c-muted); }
 
 .prose blockquote {
   border-left: 2px solid var(--c-hairline);

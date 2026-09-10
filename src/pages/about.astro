@@ -147,7 +147,7 @@ const categories = [...new Set(FAVORITES.map((f) => f.category))] as Favorite["c
   .status {
     font-family: var(--font-mono);
     font-size: var(--t-mono-sm);
-    color: var(--c-dim);
+    color: var(--c-muted);
     flex: 0 0 auto;
   }
   /* Fixed column so the titles align down the list. */
@@ -199,6 +199,6 @@ const categories = [...new Set(FAVORITES.map((f) => f.category))] as Favorite["c
     font-size: var(--t-mono-sm);
     line-height: 1.9;
   }
-  dt { flex: 0 0 9ch; color: var(--c-dim); }
+  dt { flex: 0 0 9ch; color: var(--c-muted); }
   dd { margin: 0; min-width: 0; color: var(--c-muted); }
 </style>

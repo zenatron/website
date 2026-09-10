@@ -4,7 +4,7 @@
  * Code blocks are the most visually prominent element on the site, so a
  * stock theme would smuggle a dozen off-palette hues past the three-color
  * rule. Syntax gets the same vocabulary as everything else:
- *   dim   -> comments (recede)
+ *   muted -> comments (recede)
  *   mint  -> strings and values (navigable/literal)
  *   amber -> keywords and constants (structural)
  *   text  -> everything else
@@ -14,7 +14,6 @@ const c = {
   void: "#0E1013",
   text: "#E6E1D8",
   muted: "#8A9099",
-  dim: "#5A6069",
   amber: "#FFB454",
   mint: "#7FD1B9",
   red: "#E5484D",
@@ -28,7 +27,7 @@ export default {
     "editor.foreground": c.text,
   },
   tokenColors: [
-    { scope: ["comment", "punctuation.definition.comment"], settings: { foreground: c.dim } },
+    { scope: ["comment", "punctuation.definition.comment"], settings: { foreground: c.muted } },
     {
       scope: ["string", "string.quoted", "string.template", "constant.other.symbol", "markup.inline.raw"],
       settings: { foreground: c.mint },
