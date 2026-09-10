@@ -3,9 +3,10 @@ import Shell from "@/layouts/Shell.astro";
 import Contact from "@/components/Contact.astro";
 import { SITE } from "@/data/site";
 import { TIMELINE, NOW, PRINCIPLES, MACHINES } from "@/data/about";
-import { FAVORITES, CATEGORY_LABELS, type Favorite } from "@/data/favorites";
+import { FAVORITES } from "@/data/favorites";
 
-const categories = [...new Set(FAVORITES.map((f) => f.category))] as Favorite["category"][];
+const HOBBIES = FAVORITES.filter((f) => f.category === "hobbies");
+const toolCount = FAVORITES.filter((f) => f.logo).length;
 ---
 
 <Shell title="About | Phil Vishnevsky" description="The story so far." ogSlug="about">
@@ -56,26 +57,18 @@ const categories = [...new Set(FAVORITES.map((f) => f.category))] as Favorite["c
   </section>
 
   <section id="hobbies">
-    <h2>Things I like</h2>
-    {categories.map((category) => (
-      <div class="group">
-        <h3>{CATEGORY_LABELS[category]}</h3>
-        <ul class="rows">
-          {FAVORITES.filter((f) => f.category === category).map((item) => (
-            <li>
-              <span class="what">
-                {item.url ? (
-                  <a class="what-title" href={item.url} rel="noopener noreferrer">{item.name}</a>
-                ) : (
-                  <span class="what-title">{item.name}</span>
-                )}
-                {item.description && <span class="what-desc">{item.description}</span>}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    ))}
+    <h2>Outside the terminal</h2>
+    <ul class="hobbies">
+      {HOBBIES.map((item) => (
+        <li>
+          <span class="hobby-name">{item.name}</span>
+          {item.description && <span class="hobby-desc">{item.description}</span>}
+        </li>
+      ))}
+    </ul>
+    <p class="action">
+      <a href="/stack">See the {toolCount} tools and apps I use</a>
+    </p>
   </section>
 
   <section id="setup">
@@ -172,6 +165,26 @@ const categories = [...new Set(FAVORITES.map((f) => f.category))] as Favorite["c
   .what-title { font-size: var(--t-sans-md); }
   a.what-title { color: var(--c-link); }
   .what-desc { font-size: var(--t-sans-sm); color: var(--c-muted); }
+
+  .hobbies {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    margin: 0;
+    padding: 0;
+    max-width: 68ch;
+  }
+  .hobbies li {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-2);
+    padding: 6px 14px;
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-pill);
+  }
+  .hobby-name { font-size: var(--t-sans-sm); }
+  .hobby-desc { font-size: var(--t-sans-xs); color: var(--c-muted); }
 
   .manifesto {
     list-style: none;
