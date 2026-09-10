@@ -42,7 +42,7 @@
   --c-tint-green:  #E4F2DE;
 
   --c-trafficlight: #D8D2C6;
-  --c-scrim:        rgba(53, 49, 42, 0.32);
+  --c-scrim:        rgba(53, 49, 42, 0.46);
 
   color-scheme: light;
 }
@@ -157,7 +157,7 @@
 
   --h-titlebar:  40px;
   --h-statusbar: 28px;
-  --w-sidebar:   200px;
+  --w-sidebar:   312px;  /* fits the longest real filename: projects-system-documentation.mdx */
   --w-content:  1160px;
 }
 

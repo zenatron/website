@@ -41,9 +41,16 @@ function setDrawer(open: boolean) {
   sidebar.dataset.open = String(open);
   toggle.setAttribute("aria-expanded", String(open));
   scrim.hidden = !open;
+  // Focus moves into the drawer so the keyboard lands where the eye does.
+  if (open) sidebar.querySelector<HTMLElement>("[data-filter]")?.focus();
 }
 
 function wireDrawer() {
+  const closer = document.querySelector<HTMLButtonElement>("[data-drawer-close]");
+  if (closer && !closer.dataset.wired) {
+    closer.dataset.wired = "1";
+    closer.addEventListener("click", () => setDrawer(false));
+  }
   const toggle = document.querySelector<HTMLButtonElement>(".drawer-toggle");
   const scrim = document.querySelector<HTMLElement>("[data-scrim]");
   if (toggle && !toggle.dataset.wired) {

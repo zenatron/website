@@ -1,10 +1,12 @@
 ---
 /**
  * The nav is an actual file listing — rows are real content-collection
- * slugs — which is what earns the file-tree presentation.
+ * slugs — which is what earns the file-tree presentation. That only
+ * holds up if the names are readable, so the rail is wide enough to fit
+ * the longest one and the drawer is wide enough on a phone.
  *
- * Persisted across navigation, so the active row and expanded state are
- * re-synced by scripts/sidebar.ts rather than re-rendered here.
+ * Persisted across navigation, so active state, expansion and the filter
+ * are re-synced by scripts/sidebar.ts rather than re-rendered here.
  */
 import { getAllBlogPosts } from "@/lib/blog";
 import { getAllProjects, projectSlug } from "@/lib/projects";
@@ -42,15 +44,35 @@ const files = [
 ---
 
 <nav id="sidebar" class="sidebar" aria-label="Site" transition:persist="sidebar">
-  <p class="explorer">explorer</p>
+  <div class="head">
+    <p class="explorer" id="explorer-label">explorer</p>
+    <button class="close" type="button" data-drawer-close>
+      <span class="sr-only">Close menu</span>
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
 
-  <ul class="tree">
+  <div class="filterbar">
+    <label class="sr-only" for="tree-filter">Filter files</label>
+    <input
+      id="tree-filter"
+      type="search"
+      placeholder="filter"
+      autocomplete="off"
+      spellcheck="false"
+      data-filter
+    />
+  </div>
+
+  <ul class="tree" data-tree>
     <li class="row"><a href="/" data-nav>home</a></li>
 
     {
       tree.map((folder) => {
-        const shown = folder.children.slice(0, CAP);
-        const truncated = folder.children.length > CAP;
+        // Every child is rendered; the ones past the cap are hidden until
+        // the folder is expanded in full or the filter is searching. A
+        // filter that can only see 8 of 20 posts isn't a filter.
+        const overflow = Math.max(0, folder.children.length - CAP);
         return (
           <li>
             <div class="row" data-row>
@@ -65,20 +87,20 @@ const files = [
                 <span class="tri" aria-hidden="true" />
               </button>
               <a href={folder.href} data-nav>{folder.name}</a>
+              <span class="count" aria-hidden="true">{folder.children.length}</span>
             </div>
 
             <ul class="group" id={`group-${folder.name}`} data-group={folder.name}>
-              {shown.map((child) => (
-                <li class="row">
+              {folder.children.map((child, i) => (
+                <li class="row" data-overflow={i >= CAP ? "" : undefined}>
                   <a href={child.href} data-nav>{child.name}</a>
                 </li>
               ))}
-              {truncated && (
+              {overflow > 0 && (
                 <li class="row more">
-                  <a href={folder.href} data-nav>
-                    <span class="sr-only">All {folder.name}</span>
-                    <span aria-hidden="true">…</span>
-                  </a>
+                  <button type="button" data-more={folder.name} aria-expanded="false">
+                    <span data-more-label>{overflow} more…</span>
+                  </button>
                 </li>
               )}
             </ul>
@@ -91,35 +113,61 @@ const files = [
       <li class="row"><a href={f.href} data-nav>{f.name}</a></li>
     ))}
   </ul>
+
+  <p class="empty" data-empty hidden>No match.</p>
 </nav>
 
 <style>
   .sidebar {
+    display: flex;
+    flex-direction: column;
     flex: 0 0 var(--w-sidebar);
     width: var(--w-sidebar);
     background: var(--c-chrome);
     border-right: 1px solid var(--c-hairline);
-    padding-block: var(--s-3);
+    padding-block: var(--s-3) var(--s-4);
     overflow-y: auto;
   }
 
-  /* The only letter-spaced text on the site, and the only section label. */
+  .head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: var(--s-4) var(--s-3);
+    margin-bottom: var(--s-2);
+  }
+  /* The only letter-spaced text on the site. */
   .explorer {
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
     color: var(--c-dim);
     letter-spacing: 0.08em;
-    padding-inline: var(--s-4);
-    margin-bottom: var(--s-2);
   }
+  .close {
+    display: none;
+    width: 30px;
+    height: 30px;
+    place-items: center;
+    border-radius: var(--radius-sm);
+    color: var(--c-muted);
+    font-size: var(--t-sans-lg);
+    line-height: 1;
+    cursor: pointer;
+  }
+  .close:hover { background: var(--c-raised); color: var(--c-text); }
 
-  /*
-   * Groups collapse only once JS has run. Without it every row stays in
-   * the document and the whole site is still reachable from the sidebar.
-   */
-  :global(.js) .group:not([data-open="true"]) { display: none; }
-  .twisty { display: none; }
-  :global(.js) .twisty { display: grid; }
+  .filterbar { padding-inline: var(--s-3); margin-bottom: var(--s-2); }
+  .filterbar input {
+    width: 100%;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-text);
+    background: var(--c-bg);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-sm);
+    padding: 5px 9px;
+  }
+  .filterbar input::-webkit-search-cancel-button { -webkit-appearance: none; }
 
   .tree,
   .group {
@@ -127,6 +175,12 @@ const files = [
     margin: 0;
     padding: 0;
   }
+
+  /* Groups collapse only once JS has run; without it the whole site is
+     still reachable from the sidebar. */
+  :global(.js) .group:not([data-open="true"]) { display: none; }
+  .twisty { display: none; }
+  :global(.js) .twisty { display: grid; }
 
   .row {
     position: relative;
@@ -140,38 +194,34 @@ const files = [
     line-height: 2.1;
     transition: background var(--dur-state) var(--ease);
   }
+  .row[hidden] { display: none; }
 
   .row a {
     flex: 1 1 auto;
     min-width: 0;
-    /* Clears the twisty's column, so folders and leaves align. */
     padding-left: var(--s-4);
-    padding-right: var(--s-3);
+    padding-right: var(--s-2);
     color: var(--c-muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     transition: color var(--dur-state) var(--ease);
   }
+  .group .row a { padding-left: calc(var(--s-4) + var(--s-3)); }
 
-  /* Nesting is one level, expressed as indentation. No connector glyphs. */
-  .group .row a {
-    padding-left: calc(var(--s-4) + var(--s-5));
+  .count {
+    flex: 0 0 auto;
+    padding-right: var(--s-3);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
   }
 
   .row:hover { background: var(--c-raised); }
   .row:hover a { color: var(--c-text); }
 
-  .row[data-active] {
-    background: var(--c-tint-accent);
-  }
+  .row[data-active] { background: var(--c-tint-accent); }
   .row[data-active] a { color: var(--c-accent); }
 
-  /*
-   * A CSS-drawn disclosure triangle, so no glyph enters the copy.
-   * Absolutely positioned and raised above the anchor, which spans the
-   * full row so the whole row stays a click target for the index route.
-   */
   .twisty {
     position: absolute;
     z-index: 1;
@@ -188,13 +238,35 @@ const files = [
     height: 0;
     border-top: 3.5px solid transparent;
     border-bottom: 3.5px solid transparent;
-    border-left: 5px solid var(--c-muted);
+    border-left: 5px solid var(--c-dim);
     transition: transform var(--dur-state) var(--ease);
   }
   .twisty[aria-expanded="true"] .tri { transform: rotate(90deg); }
   .row:hover .tri { border-left-color: var(--c-text); }
 
-  .more a { color: var(--c-muted); letter-spacing: 0.1em; }
+  /* Overflow rows exist in the document but are folded away until asked
+     for, or until the filter needs to reach them. */
+  :global(.js) .group:not([data-all="true"]) .row[data-overflow] { display: none; }
+  :global(.js) .group[data-searching="true"] .row[data-overflow] { display: flex; }
+
+  .more button {
+    flex: 1 1 auto;
+    text-align: left;
+    padding-left: calc(var(--s-4) + var(--s-3));
+    padding-right: var(--s-2);
+    color: var(--c-dim);
+    cursor: pointer;
+    transition: color var(--dur-state) var(--ease);
+  }
+  .row:hover .more button,
+  .more button:hover { color: var(--c-text); }
+
+  .empty {
+    padding-inline: var(--s-4);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-dim);
+  }
 
   @media (max-width: 900px) {
     .sidebar {
@@ -202,9 +274,14 @@ const files = [
       inset-block: 0;
       inset-inline-start: 0;
       z-index: 3;
+      /* Wide enough for the longest real filename on a phone. */
+      flex-basis: min(86vw, 320px);
+      width: min(86vw, 320px);
       transform: translateX(-100%);
       transition: transform var(--dur-state) var(--ease);
     }
     .sidebar[data-open="true"] { transform: translateX(0); }
+    .close { display: grid; }
+    .row { line-height: 2.4; }
   }
 </style>
