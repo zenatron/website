@@ -1,0 +1,93 @@
+---
+title: "preamble"
+description: "A terminal music-library manager in Rust — scans, de-duplicates, and enriches a FLAC collection from a keyboard-driven TUI."
+type: "tool"
+slug: "preamble"
+date: "2026-07-27"
+tags: ["Rust", "TUI", "ratatui", "SQLite", "audio"]
+featured: true
+github: "https://github.com/zenatron/preamble"
+---
+
+import TerminalFrame from '@/components/mdx/TerminalFrame.astro';
+import Callout from '@/components/mdx/Callout.astro';
+
+A terminal music-library manager written in Rust. It walks a directory tree,
+reads tags from audio files, stores everything in a local SQLite database, and
+puts a fast keyboard- and mouse-driven TUI on top for browsing, de-duplicating,
+enriching, editing, and curating a collection.
+
+This is the one I actually use. My library had accumulated a decade of
+duplicates, half-tagged rips, and files that decoded to silence — and no GUI
+tool would tell me which was which without a lot of clicking.
+
+<TerminalFrame title="preamble --help">
+```
+preamble [OPTIONS]
+
+  -p, --path <PATH>  Library directory to open (or create)
+  -v, --version      Print version and exit
+  -h, --help         Print this help and exit
+```
+</TerminalFrame>
+
+## What it does
+
+- **Scanning** — concurrent tag reading and BLAKE3 hashing across many audio
+  formats, with live progress and three-layer duplicate detection.
+- **Browsing** — sortable columns, faceted filters, debounced search, album and
+  artist grouping, mouse support, scrollbars.
+- **Duplicates** — hash- and ISRC-based groups with a side-by-side comparison
+  and one-key keeper resolution.
+- **Trash** — non-destructive, staged deletion that quarantines files and is
+  fully undoable.
+- **Enrichment** — AcoustID fingerprinting plus MusicBrainz metadata, with a
+  dead-letter and retry view for the ones that fail.
+- **Tag editing** — edit in place; changes are written to the file *and* the
+  database.
+- **Watch mode** — auto-import new files as they appear.
+- **Integrity** — health checks for zero-byte files, decode errors, hash
+  mismatches and low bitrate, plus incremental rescans.
+- **Reporting** — a statistics screen and CSV, JSON, M3U and duplicate-report
+  exports.
+
+## Driving it
+
+Everything is one keystroke. The full map lives in the README, but this is the
+core of it:
+
+<TerminalFrame title="keys">
+```
+  ↑ ↓      navigate rows / groups / duplicate members
+  Tab      switch tabs
+  /        search — title, artist, album, album-artist, genre
+  f        filter facets: format, min bitrate, missing ISRC, unhealthy
+  s / S    cycle sort field / flip direction
+  g        group library by artist or album (Enter drills in)
+  Space    toggle row selection
+  d        flag selected → Trash   (in Trash: purge to quarantine)
+  k        duplicates: keep the highlighted member, flag the rest
+  e        run the enrichment pipeline
+  m        edit the highlighted track's tags
+  z        undo the last action
+  q        quit
+```
+</TerminalFrame>
+
+<Callout type="note" title="Nothing is destroyed in place">
+Deletion is staged. `d` flags a track to Trash, purging moves it to a
+quarantine directory rather than unlinking it, and `z` undoes the last action.
+The database is the source of truth for what happened; the files are only ever
+moved.
+</Callout>
+
+## Why Rust
+
+The scan is the hot path — hashing and tag-reading tens of thousands of files —
+and it wanted real concurrency without a garbage collector pausing in the middle
+of it. `ratatui` handles the TUI, `lofty` the tag I/O, and BLAKE3 the content
+hashing. SQLite keeps the whole library queryable without running a server.
+
+Prebuilt binaries are published on GitHub Releases for macOS, Linux and Windows,
+and the installer scripts are signed — `gh attestation verify` will check one
+before you run it.

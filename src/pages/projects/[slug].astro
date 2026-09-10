@@ -18,11 +18,12 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const slug = projectSlug(entry);
 const { Content } = await entry.render();
-const heroArt = cardArt({
+const heroArt = await cardArt({
   slug,
   title: entry.data.title,
   thumbnail: entry.data.thumbnail,
   collection: "projects",
+  context: "hero",
 });
 
 const hasMath = /\$\$|\\\(|\\\[|\$[^$\n]+\$/.test(entry.body ?? "");
@@ -37,19 +38,19 @@ const external = [
 
 const downloads = entry.data.downloads ?? [];
 
-const suggested = (await getSuggestedProjects(slug, 3)).map((p) => ({
+const suggested = await Promise.all((await getSuggestedProjects(slug, 3)).map(async (p) => ({
   title: p.data.title,
   href: `/projects/${projectSlug(p)}`,
   slug: projectSlug(p),
   description: p.data.description || undefined,
   tags: p.data.tags ?? [],
-  art: cardArt({
+  art: await cardArt({
     slug: projectSlug(p),
     title: p.data.title,
     thumbnail: p.data.thumbnail,
     collection: "projects",
   }),
-}));
+})));
 ---
 
 <Shell

@@ -1,91 +1,33 @@
 /**
- * The desk: a macOS Desktop of real objects.
+ * The desk: a working desktop where every icon opens something true.
  *
- * `file` is the name shown under the icon — the object's identity in the
- * metaphor. `src` is the basename under /images/desk/, served as AVIF
- * with a WebP fallback.
- *
- * The images are placeholders at the correct dimensions. Replacing them
- * is a drop-in: keep the filename and the width/height, and the layout,
- * the Preview window and the metadata row all follow.
+ * Nothing here is a placeholder. Each window renders data that already
+ * exists elsewhere in the repo — the machine specs from about.ts, the
+ * Now list, the principles, the fortunes — so the page can't drift out
+ * of sync with the rest of the site.
  */
-export interface DeskObject {
+export type DeskKind = "neofetch" | "text" | "list" | "fortune" | "link";
+
+export interface DeskItem {
+  /** The filename shown under the icon. */
   file: string;
-  src: string;
-  width: number;
-  height: number;
-  alt: string;
-  note: string;
-  /** Starting position as a percentage of the pane, before any dragging. */
+  kind: DeskKind;
+  /** Icon glyph, drawn as a small mono monogram rather than an image. */
+  badge: string;
+  hue: "violet" | "orange" | "blue" | "green" | "accent" | "link";
+  /** Starting position, percent of the desk surface. */
   x: number;
   y: number;
+  /** For kind: "link" — where double-clicking goes. */
+  href?: string;
+  note?: string;
 }
 
-export const DESK: DeskObject[] = [
-  {
-    file: "thinkpad-t480.png",
-    src: "thinkpad-t480",
-    width: 800, height: 600,
-    alt: "A ThinkPad T480 laptop",
-    note: "Coreboot, 32GB, two batteries. The one that refuses to die.",
-    x: 4, y: 6,
-  },
-  {
-    file: "proxmox-cluster.jpg",
-    src: "proxmox-cluster",
-    width: 800, height: 533,
-    alt: "A three-node Proxmox cluster in a rack",
-    note: "Three nodes, more uptime than my sleep schedule.",
-    x: 26, y: 14,
-  },
-  {
-    file: "unraid-array.png",
-    src: "unraid-array",
-    width: 800, height: 600,
-    alt: "An Unraid disk array",
-    note: "Where the FLAC library lives, and occasionally rebuilds.",
-    x: 50, y: 4,
-  },
-  {
-    file: "caddy-sticker.png",
-    src: "caddy-sticker",
-    width: 600, height: 600,
-    alt: "A Caddy server sticker",
-    note: "Automatic HTTPS deserves a laptop lid slot.",
-    x: 70, y: 20,
-  },
-  {
-    file: "ghostty-config.png",
-    src: "ghostty-config",
-    width: 800, height: 500,
-    alt: "A Ghostty terminal configuration",
-    note: "The terminal this whole site is impersonating.",
-    x: 12, y: 44,
-  },
-  {
-    file: "keyboard.jpg",
-    src: "keyboard",
-    width: 800, height: 450,
-    alt: "A mechanical keyboard",
-    note: "Tactile, not clicky. I do have colleagues.",
-    x: 44, y: 52,
-  },
+export const DESK: DeskItem[] = [
+  { file: "neofetch",      kind: "neofetch", badge: "»_", hue: "green",  x: 4,  y: 6,  note: "The two machines this site gets written on." },
+  { file: "now.txt",       kind: "list",     badge: "≡",  hue: "blue",   x: 26, y: 10, note: "What I'm building, learning and reading." },
+  { file: "principles.md", kind: "text",     badge: "¶",  hue: "violet", x: 48, y: 6,  note: "The whole essay in four lines." },
+  { file: "fortune",       kind: "fortune",  badge: "★",  hue: "accent", x: 70, y: 12, note: "Roll again." },
+  { file: "stack/",        kind: "link",     badge: "▤",  hue: "orange", x: 10, y: 46, href: "/stack", note: "28 tools and apps I actually use." },
+  { file: "resume.pdf",    kind: "link",     badge: "↧",  hue: "link",   x: 34, y: 52, href: "/downloads/Resume_Phil_Vishnevsky.pdf", note: "The formal version." },
 ];
-
-/*
- * TODO — replace the placeholders in public/images/desk/ with real photos.
- *
- * Each object needs an .avif and a .webp at the exact width/height above,
- * longest edge 800px. Nothing else changes: the filename, the note, the
- * layout, the Preview window and the metadata row all read from here.
- *
- *   thinkpad-t480     800x600   the T480 itself
- *   proxmox-cluster   800x533   the three nodes / the rack
- *   unraid-array      800x600   the array, or its dashboard
- *   caddy-sticker     600x600   the sticker, square crop
- *   ghostty-config    800x500   a Ghostty window
- *   keyboard          800x450   the board, top-down
- *
- * If an object changes, update `width`/`height` here to match the file —
- * they are what reserves layout space and what the Preview row reports.
- */

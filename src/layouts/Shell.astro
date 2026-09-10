@@ -76,7 +76,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
 
     <div class="window">
       <Titlebar />
-      <div class="frame">
+      <div class="shell-body">
         <Sidebar />
         <main id="main-content" class="pane" transition:name="pane">
           <slot />
@@ -133,7 +133,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
   }
 
   /* Sidebar + content. `position: relative` anchors the mobile drawer. */
-  .frame {
+  .shell-body {
     position: relative;
     display: flex;
     flex: 1 1 auto;

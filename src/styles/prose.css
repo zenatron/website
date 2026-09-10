@@ -118,3 +118,9 @@
     background-color: var(--shiki-dark-bg) !important;
   }
 }
+
+/* Components that are allowed to exceed the 68ch measure. */
+.prose .screens,
+.prose .frame {
+  max-width: none;
+}

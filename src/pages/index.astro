@@ -19,30 +19,30 @@ const monthYear = (v: string | Date | undefined) => {
     : d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 };
 
-const latestProjects = projects.slice(0, 3).map((p) => ({
+const latestProjects = await Promise.all(projects.slice(0, 3).map(async (p) => ({
   title: p.data.title,
   href: `/projects/${projectSlug(p)}`,
   slug: projectSlug(p),
   description: p.data.description || undefined,
   tags: p.data.tags ?? [],
   meta: monthYear(p.data.date),
-  art: cardArt({
+  art: await cardArt({
     slug: projectSlug(p),
     title: p.data.title,
     thumbnail: p.data.thumbnail,
     collection: "projects",
   }),
-}));
+})));
 
-const latestPosts = posts.slice(0, 3).map((p) => ({
+const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
   title: p.data.title,
   href: `/blog/${p.slug}`,
   slug: p.slug,
   description: p.data.excerpt || undefined,
   tags: p.data.tags ?? [],
   meta: monthYear(p.data.date),
-  art: cardArt({ slug: p.slug, title: p.data.title, collection: "blog" }),
-}));
+  art: await cardArt({ slug: p.slug, title: p.data.title, collection: "blog" }),
+})));
 ---
 
 <Shell>

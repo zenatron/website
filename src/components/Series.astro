@@ -10,7 +10,13 @@ import { cardArt } from "@/lib/cardart";
 interface Entry { slug: string; title: string; excerpt?: string; order: number; readingTime?: string; }
 interface Props { title: string; blurb: string; entries: Entry[]; }
 const { title, blurb, entries } = Astro.props;
-const [lead, ...rest] = entries;
+// Resolved up front: cardArt is async and the template can't await per row.
+const withArt = await Promise.all(
+  entries.map(async (e) => ({
+    ...e,
+    art: await cardArt({ slug: e.slug, title: e.title, collection: "blog" }),
+  }))
+);
 ---
 
 <section class="series">
@@ -21,12 +27,12 @@ const [lead, ...rest] = entries;
   </div>
 
   <ol class="parts">
-    {entries.map((e, i) => (
+    {withArt.map((e, i) => (
       <li class:list={["part", i === 0 && "first"]}>
         <a href={`/blog/${e.slug}`}>
           <span class="n">{String(e.order).padStart(2, "0")}</span>
           <span class="art">
-            <CardArt art={cardArt({ slug: e.slug, title: e.title, collection: "blog" })} slug={e.slug} crop />
+            <CardArt art={e.art} slug={e.slug} crop />
           </span>
           <span class="text">
             <span class="t">{e.title}</span>

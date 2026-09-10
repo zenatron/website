@@ -1,0 +1,59 @@
+---
+/**
+ * A window frame around terminal text, for CLI projects that have no
+ * screenshots. The content is whatever the project's own README
+ * documents — nothing here invents program output.
+ */
+interface Props { title?: string; }
+const { title = "zsh" } = Astro.props;
+---
+<div class="frame">
+  <div class="bar">
+    <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="title">{title}</span>
+  </div>
+  <div class="body"><slot /></div>
+</div>
+
+<style>
+  .frame {
+    margin-block: var(--s-5);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: var(--c-sunken);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    height: var(--h-titlebar);
+    padding-inline: var(--s-3);
+    background: var(--c-chrome);
+    border-bottom: 1px solid var(--c-hairline);
+  }
+  .lights { display: flex; gap: var(--s-2); }
+  .lights i {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--c-trafficlight);
+  }
+  .title {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-muted);
+  }
+  .body {
+    padding: var(--s-4);
+    overflow-x: auto;
+  }
+  /* The slot carries a fenced code block; strip its own chrome. */
+  .body :global(pre) {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+  }
+</style>

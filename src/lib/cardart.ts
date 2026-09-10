@@ -11,6 +11,7 @@
  */
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
+import sharp from "sharp";
 
 export type CardArt =
   | { kind: "image"; src: string }
@@ -44,14 +45,31 @@ function typographic(title: string): { lead: string; rest: string } {
     : { lead: words.slice(0, 2).join(" "), rest: words.slice(2).join(" ") };
 }
 
-export function cardArt(opts: {
+/** Portrait art cropped into a 21:7 hero band becomes an unreadable zoom. */
+async function isPortrait(src: string): Promise<boolean> {
+  try {
+    const { width = 0, height = 0 } = await sharp(join(process.cwd(), "public", src.replace(/^\//, ""))).metadata();
+    return height > width;
+  } catch {
+    return false;
+  }
+}
+
+export async function cardArt(opts: {
   slug: string;
   title: string;
   thumbnail?: string;
   collection: "blog" | "projects";
-}): CardArt {
+  /** A hero band is wide; a card is not. */
+  context?: "card" | "hero";
+}): Promise<CardArt> {
+  const context = opts.context ?? "card";
   if (opts.thumbnail && existsSync(join(process.cwd(), "public", opts.thumbnail.replace(/^\//, "")))) {
-    return { kind: "image", src: opts.thumbnail };
+    // A phone screenshot makes a fine card and a terrible banner.
+    if (!(context === "hero" && (await isPortrait(opts.thumbnail)))) {
+      return { kind: "image", src: opts.thumbnail };
+    }
+    return { kind: "type", ...typographic(opts.title) };
   }
   if (opts.collection === "blog") {
     const diagram = firstDiagram(opts.slug);

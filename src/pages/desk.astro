@@ -1,11 +1,23 @@
 ---
 import Shell from "@/layouts/Shell.astro";
 import { DESK } from "@/data/desk";
+import { MACHINES, NOW, PRINCIPLES } from "@/data/about";
+import { FORTUNES } from "@/data/site";
+
+/** Every window's contents, resolved at build time. */
+const windows = {
+  neofetch: MACHINES.map((m) => ({ name: m.name, fields: m.fields })),
+  now: NOW,
+  principles: PRINCIPLES,
+  fortunes: FORTUNES,
+};
 ---
 
-<Shell title="Desk | Phil Vishnevsky" description="Things on my desk, and in my rack." ogSlug="desk">
-  <h1>Desk</h1>
-  <p class="lede">Things I actually use. Drag them around.</p>
+<Shell title="Desk | Phil Vishnevsky" description="A desktop of things worth opening." ogSlug="desk">
+  <header class="pagehead">
+    <h1>Desk</h1>
+    <p>Everything here opens. Drag the icons around, double-click to look inside.</p>
+  </header>
 
   <div class="desk" data-desk>
     {DESK.map((o, i) => (
@@ -13,57 +25,46 @@ import { DESK } from "@/data/desk";
         class="icon"
         type="button"
         data-object={i}
-        data-x={o.x}
-        data-y={o.y}
-        style={`--x:${o.x}%; --y:${o.y}%`}
-        aria-haspopup="dialog"
+        data-kind={o.kind}
+        data-href={o.href}
+        style={`--x:${o.x}%; --y:${o.y}%; --fg: var(--c-hue-${o.hue}, var(--c-${o.hue})); --bg: var(--c-tint-${o.hue})`}
+        aria-haspopup={o.kind === "link" ? undefined : "dialog"}
       >
-        <picture>
-          <source srcset={`/images/desk/${o.src}.avif`} type="image/avif" />
-          <img
-            src={`/images/desk/${o.src}.webp`}
-            width={o.width}
-            height={o.height}
-            alt={o.alt}
-            loading="lazy"
-            draggable="false"
-          />
-        </picture>
+        <span class="badge" aria-hidden="true">{o.badge}</span>
         <span class="file">{o.file}</span>
       </button>
     ))}
   </div>
 
-  <dialog class="preview" data-preview tabindex="-1">
-    <div class="pv-title">
+  <dialog class="win" data-win>
+    <div class="win-bar">
       <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
-      <span class="pv-name" data-pv-name></span>
+      <span class="win-name" data-win-name></span>
     </div>
-    <img data-pv-img alt="" />
-    <div class="pv-meta">
-      <span data-pv-dims></span>
-      <span data-pv-note></span>
-    </div>
+    <div class="win-body" data-win-body></div>
+    <div class="win-foot" data-win-foot></div>
   </dialog>
 
-  <script type="application/json" data-desk-data set:html={JSON.stringify(DESK)} />
+  <script type="application/json" data-desk-items set:html={JSON.stringify(DESK)} />
+  <script type="application/json" data-desk-windows set:html={JSON.stringify(windows)} />
 </Shell>
 
 <style>
+  .pagehead { margin-bottom: var(--s-5); }
   h1 {
     font-size: var(--t-sans-2xl);
     font-weight: 700;
     letter-spacing: -0.03em;
   }
-  .lede {
-    margin-top: var(--s-4);
+  .pagehead p {
+    margin-top: var(--s-3);
+    max-width: 56ch;
     color: var(--c-muted);
   }
 
   .desk {
     position: relative;
-    margin-top: var(--s-5);
-    min-height: 520px;
+    min-height: 460px;
     background: var(--c-chrome);
     border: 1px solid var(--c-hairline);
     border-radius: var(--radius-card);
@@ -73,59 +74,66 @@ import { DESK } from "@/data/desk";
     position: absolute;
     left: var(--x);
     top: var(--y);
-    width: 152px;
+    width: 116px;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: var(--s-2);
-    padding: var(--s-2);
-    cursor: pointer;
+    padding: var(--s-3) var(--s-2);
     border: 1px solid transparent;
+    border-radius: var(--radius-card);
+    cursor: pointer;
     touch-action: none;
+    transition: background var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease);
   }
-  .icon { border-radius: var(--radius-card); }
+  .icon:hover { background: var(--c-raised); }
   .icon[data-selected] {
-    border-color: var(--c-accent);
-    background: var(--c-tint-accent);
+    background: var(--bg);
+    border-color: var(--fg);
   }
-  .icon img {
-    width: 100%;
-    height: auto;
-    border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-sm);
-    pointer-events: none;
+
+  .badge {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: var(--radius-card);
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-mono);
+    font-size: var(--t-sans-lg);
+    line-height: 1;
   }
   .file {
     font-family: var(--font-mono);
     font-size: var(--t-mono-sm);
     color: var(--c-muted);
-    /* Break at the hyphens a filename already has, not mid-word. */
-    word-break: normal;
-    overflow-wrap: break-word;
-    text-align: left;
-    line-height: 1.4;
+    text-align: center;
+    word-break: break-word;
+    line-height: 1.35;
   }
 
-  /* Preview */
-  .preview {
+  /* Window */
+  .win {
     padding: 0;
+    width: min(560px, calc(100vw - var(--s-6)));
+    max-height: min(70vh, 620px);
+    background: var(--c-bg);
+    color: var(--c-text);
     border: 1px solid var(--c-hairline);
     border-radius: var(--radius-card);
     overflow: hidden;
-    background: var(--c-chrome);
-    color: var(--c-text);
-    max-width: min(680px, calc(100vw - var(--s-6)));
   }
-  .preview::backdrop { background: var(--c-scrim); }
-  /* The dialog is a container, not a control; a ring on it reads as
-     selection state rather than focus. Modality is the affordance. */
-  .preview:focus,
-  .preview:focus-visible { outline: none; }
-  .pv-title {
+  .win::backdrop { background: var(--c-scrim); }
+  .win:focus, .win:focus-visible { outline: none; }
+
+  .win-bar {
     display: flex;
     align-items: center;
     gap: var(--s-3);
     height: var(--h-titlebar);
     padding-inline: var(--s-3);
+    background: var(--c-chrome);
     border-bottom: 1px solid var(--c-hairline);
   }
   .lights { display: flex; gap: var(--s-2); }
@@ -135,44 +143,82 @@ import { DESK } from "@/data/desk";
     border-radius: 50%;
     background: var(--c-trafficlight);
   }
-  .pv-name {
+  .win-name {
     font-family: var(--font-mono);
     font-size: var(--t-mono-sm);
     color: var(--c-muted);
   }
-  .preview img { width: 100%; height: auto; display: block; }
-  .pv-meta {
-    display: flex;
-    border-top: 1px solid var(--c-hairline);
+
+  .win-body {
+    padding: var(--s-4);
+    overflow-y: auto;
+    max-height: calc(70vh - var(--h-titlebar) - 44px);
   }
-  .pv-meta > span + span { border-left: 1px solid var(--c-hairline); }
-  .pv-meta > span {
+  .win-foot {
     padding: var(--s-2) var(--s-3);
+    border-top: 1px solid var(--c-hairline);
+    background: var(--c-chrome);
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
     color: var(--c-muted);
   }
-  .pv-meta > span:last-child {
-    flex: 1 1 auto;
-    color: var(--c-muted);
+  .win-foot:empty { display: none; }
+
+  /* Window content, built by desk.ts */
+  .win-body :global(.spec) {
+    display: grid;
+    grid-template-columns: 9ch minmax(0, 1fr);
+    gap: 0 var(--s-3);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    line-height: 1.95;
+  }
+  .win-body :global(.spec dt) { color: var(--c-dim); }
+  .win-body :global(.spec dd) { margin: 0; color: var(--c-text); }
+  .win-body :global(.host) {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-md);
+    color: var(--c-accent);
+    margin-bottom: var(--s-2);
+  }
+  .win-body :global(.host + .spec) { margin-bottom: var(--s-5); }
+  .win-body :global(.group-head) {
+    font-size: var(--t-sans-sm);
+    font-weight: 600;
+    margin-bottom: var(--s-2);
+  }
+  .win-body :global(.group + .group) { margin-top: var(--s-5); }
+  .win-body :global(.row) {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s-4);
+    padding-block: 3px;
+    font-size: var(--t-sans-sm);
+  }
+  .win-body :global(.row span:last-child) {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+    flex: 0 0 auto;
+  }
+  .win-body :global(.line) {
+    font-size: var(--t-sans-lg);
+    line-height: 1.6;
+  }
+  .win-body :global(.quote) {
+    font-size: var(--t-sans-md);
+    line-height: 1.6;
   }
 
-  /*
-   * Below 900px: a static grid, tap to open. Touch dragging fights scroll
-   * and there is nothing to gain from it.
-   */
   @media (max-width: 900px) {
     .desk {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--s-3);
+      grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+      gap: var(--s-2);
       padding: var(--s-3);
       min-height: 0;
     }
-    .icon {
-      position: static;
-      width: auto;
-    }
+    .icon { position: static; width: auto; }
   }
 </style>
 

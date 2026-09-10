@@ -1,53 +1,53 @@
 /**
- * The desk. Dragging is a pointer-only enhancement layered on top of a
- * grid of buttons that already works with the keyboard alone — and, on
- * mobile, on top of a static grid that never moves.
+ * The desk. Dragging is a pointer-only enhancement over a grid of buttons
+ * that already works from the keyboard, and on mobile over a static grid
+ * that never moves.
  *
- * Transform-only, no library, no animation: the icon tracks the pointer
- * 1:1 because anything else feels like lag.
+ * Every window's contents come from the same data the rest of the site
+ * renders, serialised into the page at build time.
  */
-
-interface DeskObject {
+interface DeskItem {
   file: string;
-  src: string;
-  width: number;
-  height: number;
-  alt: string;
-  note: string;
-  x: number;
-  y: number;
+  kind: "neofetch" | "text" | "list" | "fortune" | "link";
+  href?: string;
+  note?: string;
+}
+interface Windows {
+  neofetch: { name: string; fields: [string, string][] }[];
+  now: { heading: string; items: { name: string; status: string }[] }[];
+  principles: string[];
+  fortunes: string[];
 }
 
 const KEY = "desk-positions";
 
 function load(): Record<string, { x: number; y: number }> {
-  try {
-    return JSON.parse(sessionStorage.getItem(KEY) ?? "{}");
-  } catch {
-    return {};
-  }
+  try { return JSON.parse(sessionStorage.getItem(KEY) ?? "{}"); } catch { return {}; }
 }
-function save(positions: Record<string, { x: number; y: number }>) {
-  try {
-    sessionStorage.setItem(KEY, JSON.stringify(positions));
-  } catch {
-    /* private browsing — positions just won't persist */
-  }
+function save(v: unknown) {
+  try { sessionStorage.setItem(KEY, JSON.stringify(v)); } catch { /* private browsing */ }
+}
+
+function el<T extends HTMLElement>(tag: string, cls?: string, text?: string): T {
+  const n = document.createElement(tag) as T;
+  if (cls) n.className = cls;
+  if (text !== undefined) n.textContent = text;
+  return n;
 }
 
 function init() {
   const desk = document.querySelector<HTMLElement>("[data-desk]");
-  const raw = document.querySelector<HTMLScriptElement>("[data-desk-data]")?.textContent;
-  if (!desk || !raw || desk.dataset.wired) return;
+  const itemsRaw = document.querySelector<HTMLScriptElement>("[data-desk-items]")?.textContent;
+  const winsRaw = document.querySelector<HTMLScriptElement>("[data-desk-windows]")?.textContent;
+  if (!desk || !itemsRaw || !winsRaw || desk.dataset.wired) return;
   desk.dataset.wired = "1";
 
-  const objects: DeskObject[] = JSON.parse(raw);
-  const dialog = document.querySelector<HTMLDialogElement>("[data-preview]")!;
+  const items: DeskItem[] = JSON.parse(itemsRaw);
+  const W: Windows = JSON.parse(winsRaw);
+  const dialog = document.querySelector<HTMLDialogElement>("[data-win]")!;
   const icons = [...desk.querySelectorAll<HTMLElement>("[data-object]")];
-
   const canDrag = () => window.matchMedia("(min-width: 901px)").matches;
 
-  /* restore positions */
   const positions = load();
   for (const icon of icons) {
     const saved = positions[icon.dataset.object!];
@@ -57,91 +57,105 @@ function init() {
     }
   }
 
-  /* selection */
   function select(icon: HTMLElement | null) {
     for (const i of icons) i.removeAttribute("data-selected");
     icon?.setAttribute("data-selected", "");
   }
-  desk.addEventListener("pointerdown", (e) => {
-    if (e.target === desk) select(null);
-  });
+  desk.addEventListener("pointerdown", (e) => { if (e.target === desk) select(null); });
 
-  /* preview */
+  /* ── window contents ─────────────────────────────────────── */
+
+  function render(kind: DeskItem["kind"]): HTMLElement {
+    const box = el<HTMLDivElement>("div");
+
+    if (kind === "neofetch") {
+      for (const m of W.neofetch) {
+        box.append(el("p", "host", `phil@${m.name}`));
+        const dl = el<HTMLDListElement>("dl", "spec");
+        for (const [k, v] of m.fields) {
+          dl.append(el("dt", undefined, k), el("dd", undefined, v));
+        }
+        box.append(dl);
+      }
+    } else if (kind === "list") {
+      for (const g of W.now) {
+        const group = el("div", "group");
+        group.append(el("p", "group-head", g.heading));
+        for (const it of g.items) {
+          const row = el("div", "row");
+          row.append(el("span", undefined, it.name), el("span", undefined, it.status));
+          group.append(row);
+        }
+        box.append(group);
+      }
+    } else if (kind === "text") {
+      for (const line of W.principles) box.append(el("p", "line", line));
+    } else if (kind === "fortune") {
+      box.append(el("p", "quote", W.fortunes[Math.floor(Math.random() * W.fortunes.length)]));
+    }
+    return box;
+  }
+
   let lastInvoker: HTMLElement | null = null;
 
-  function openPreview(index: number, invoker: HTMLElement) {
-    const o = objects[index];
+  function open(index: number, invoker: HTMLElement) {
+    const item = items[index];
+    if (item.kind === "link" && item.href) {
+      location.href = item.href;
+      return;
+    }
     lastInvoker = invoker;
-    dialog.querySelector("[data-pv-name]")!.textContent = o.file;
-    const img = dialog.querySelector<HTMLImageElement>("[data-pv-img]")!;
-    img.src = `/images/desk/${o.src}.webp`;
-    img.alt = o.alt;
-    img.width = o.width;
-    img.height = o.height;
-    dialog.querySelector("[data-pv-dims]")!.textContent = `${o.width} × ${o.height}`;
-    dialog.querySelector("[data-pv-note]")!.textContent = o.note;
-    // The filename is the dialog's accessible name.
-    dialog.setAttribute("aria-label", o.file);
+    dialog.querySelector("[data-win-name]")!.textContent = item.file;
+    const body = dialog.querySelector<HTMLElement>("[data-win-body]")!;
+    body.textContent = "";
+    body.append(render(item.kind));
+    dialog.querySelector("[data-win-foot]")!.textContent = item.note ?? "";
+    dialog.setAttribute("aria-label", item.file);
     dialog.showModal();
   }
 
-  dialog.addEventListener("click", (e) => {
-    if (e.target === dialog) dialog.close();
-  });
+  dialog.addEventListener("click", (e) => { if (e.target === dialog) dialog.close(); });
   dialog.addEventListener("close", () => lastInvoker?.focus());
 
-  /* drag */
+  /* ── drag ────────────────────────────────────────────────── */
+
   let dragging: HTMLElement | null = null;
   let moved = false;
-  let originX = 0;
-  let originY = 0;
-  let startLeft = 0;
-  let startTop = 0;
+  let ox = 0, oy = 0, sl = 0, st = 0;
 
   for (const icon of icons) {
     const index = Number(icon.dataset.object);
 
-    // Keyboard and assistive tech get the object without any dragging.
-    icon.addEventListener("click", () => {
-      if (moved) return; // the pointerup that ends a drag is not a click
-      select(icon);
-    });
-    icon.addEventListener("dblclick", () => openPreview(index, icon));
+    icon.addEventListener("click", () => { if (!moved) select(icon); });
+    icon.addEventListener("dblclick", () => open(index, icon));
     icon.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         select(icon);
-        openPreview(index, icon);
+        open(index, icon);
       }
     });
 
     icon.addEventListener("pointerdown", (e) => {
       if (!canDrag() || e.button !== 0) return;
-      dragging = icon;
-      moved = false;
-      originX = e.clientX;
-      originY = e.clientY;
-      const deskRect = desk.getBoundingClientRect();
-      const iconRect = icon.getBoundingClientRect();
-      startLeft = iconRect.left - deskRect.left;
-      startTop = iconRect.top - deskRect.top;
+      dragging = icon; moved = false;
+      ox = e.clientX; oy = e.clientY;
+      const d = desk.getBoundingClientRect(), r = icon.getBoundingClientRect();
+      sl = r.left - d.left; st = r.top - d.top;
       icon.setPointerCapture(e.pointerId);
       select(icon);
     });
 
     icon.addEventListener("pointermove", (e) => {
       if (dragging !== icon) return;
-      const dx = e.clientX - originX;
-      const dy = e.clientY - originY;
+      const dx = e.clientX - ox, dy = e.clientY - oy;
       if (!moved && Math.hypot(dx, dy) < 3) return;
       moved = true;
-      const deskRect = desk.getBoundingClientRect();
-      const maxX = deskRect.width - icon.offsetWidth;
-      const maxY = deskRect.height - icon.offsetHeight;
-      const x = Math.min(Math.max(startLeft + dx, 0), Math.max(maxX, 0));
-      const y = Math.min(Math.max(startTop + dy, 0), Math.max(maxY, 0));
-      icon.style.setProperty("--x", `${(x / deskRect.width) * 100}%`);
-      icon.style.setProperty("--y", `${(y / deskRect.height) * 100}%`);
+      const d = desk.getBoundingClientRect();
+      const x = Math.min(Math.max(sl + dx, 0), Math.max(d.width - icon.offsetWidth, 0));
+      const y = Math.min(Math.max(st + dy, 0), Math.max(d.height - icon.offsetHeight, 0));
+      icon.style.setProperty("--x", `${(x / d.width) * 100}%`);
+      icon.style.setProperty("--y", `${(y / d.height) * 100}%`);
     });
 
     const end = (e: PointerEvent) => {
@@ -156,7 +170,6 @@ function init() {
         };
         save(all);
       }
-      // Let the click handler see `moved`, then reset it.
       setTimeout(() => (moved = false), 0);
     };
     icon.addEventListener("pointerup", end);

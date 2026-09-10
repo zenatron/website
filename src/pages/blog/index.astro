@@ -38,15 +38,15 @@ const inSeries = posts
 
 const rest = posts.filter((p) => p.data.series !== seriesKey);
 
-const cells = rest.map((p) => ({
+const cells = await Promise.all(rest.map(async (p) => ({
   title: p.data.title,
   href: `/blog/${p.slug}`,
   slug: p.slug,
   description: p.data.excerpt || undefined,
   tags: p.data.tags ?? [],
   meta: monthYear(p.data.date),
-  art: cardArt({ slug: p.slug, title: p.data.title, collection: "blog" }),
-}));
+  art: await cardArt({ slug: p.slug, title: p.data.title, collection: "blog" }),
+})));
 ---
 <Shell title="Blog | Phil Vishnevsky" description="Thoughts on code, tools, and building things." ogSlug="blog">
   <header class="pagehead">

@@ -1,0 +1,78 @@
+---
+title: "Ledger"
+description: "A self-hosted budget tracker for households — ask before you buy or record it after, then see where the money actually went."
+type: "app"
+slug: "ledger"
+date: "2026-09-08"
+tags: ["SvelteKit", "Bun", "PostgreSQL", "Drizzle", "self-hosted"]
+featured: true
+thumbnail: "/images/projects/ledger/ledger.webp"
+github: "https://github.com/zenatron/ledger"
+live: "https://ledger.pvi.sh"
+---
+
+import Screens from '@/components/mdx/Screens.astro';
+import Callout from '@/components/mdx/Callout.astro';
+
+A self-hosted budget tracker for households. Every purchase is either a request
+or a record, and each member's policy decides which — so one person can be asked
+to check in above fifty dollars while another just logs things afterwards.
+Designed for phones, and run entirely on your own server.
+
+SvelteKit 2 with Svelte 5 runes, Bun, PostgreSQL 17 and Drizzle. Authentication
+comes from an external [Pocket ID](https://pocket-id.org) instance over OIDC,
+passkeys only. Deployment is one app container and a database behind a reverse
+proxy.
+
+<Screens shots={[
+  { src: "/images/projects/ledger/ledger.webp", alt: "The ledger view with Safe to Spend at the top", caption: "safe-to-spend" },
+  { src: "/images/projects/ledger/buckets.webp", alt: "Buckets moving money aside on a schedule", caption: "buckets" },
+  { src: "/images/projects/ledger/harmony.webp", alt: "Harmony answering a plain-language question about spending", caption: "harmony" },
+  { src: "/images/projects/ledger/calendar.webp", alt: "A month of spending laid out on a calendar", caption: "calendar" },
+  { src: "/images/projects/ledger/map.webp", alt: "A month of purchases drawn on a map, sized by amount", caption: "map" },
+  { src: "/images/projects/ledger/ledger-dark.webp", alt: "The same ledger view in dark mode", caption: "dark" },
+]} />
+
+## Safe to Spend
+
+One figure at the top of the ledger showing what is actually free for the rest
+of the month. It starts from income and subtracts what has already gone out,
+what is committed to buckets, and what is scheduled to recur before the month
+closes. It is the number the whole app exists to make honest.
+
+## Harmony
+
+Ask a question in ordinary language and get an answer computed from your own
+figures. The parser runs locally and ships with the app, so it works with no
+model behind it and nothing leaves the server.
+
+## The rest of it
+
+- **Buckets** move money aside on a schedule, each with an owner and an optional
+  goal. Charging a purchase to one draws it down instead of counting against the
+  month.
+- **Reconcile** imports a CSV or a PDF and ticks it against what is recorded.
+  PDFs are parsed in the browser, so the statement never leaves the device —
+  only the date, amount and description are sent.
+- **The map** draws the month by where you were, sized by spend and coloured by
+  category, with bubbles that cluster in screen pixels so a pinch re-clusters
+  them.
+- **Assistants** connect over bearer tokens scoped to read, log or approve, plus
+  an MCP server, so Claude or an editor can query the workspace directly.
+- **Notifications** go over Web Push or ntfy, routed per member, per event and
+  per channel — and a channel with nothing behind it is disabled rather than
+  silently armed.
+- **Workspaces** with invite codes, owner and member roles, per-member approval
+  policies, and a switcher for anyone in more than one.
+
+<Callout type="tip" title="There's a live demo">
+[ledger.pvi.sh](https://ledger.pvi.sh) needs no signup. It runs the real
+application against Postgres compiled to WASM in the browser tab, over invented
+seed data — so it is the actual app, not a video of it.
+</Callout>
+
+## Why self-hosted
+
+Household spending is about as sensitive as personal data gets, and every hosted
+budgeting app I looked at wanted a bank connection to work at all. This one
+holds nothing I have not typed into it, on hardware I own.

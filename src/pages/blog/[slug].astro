@@ -17,18 +17,18 @@ const { post } = Astro.props;
 const { Content } = await post.render();
 
 // Only pages that actually render math pay for the KaTeX stylesheet.
-const heroArt = cardArt({ slug: post.slug, title: post.data.title, collection: "blog" });
+const heroArt = await cardArt({ slug: post.slug, title: post.data.title, collection: "blog", context: "hero" });
 
 const hasMath = /\$\$|\\\(|\\\[|\$[^$\n]+\$/.test(post.body ?? "");
 
-const suggested = (await getSuggestedPosts(post.slug, 3)).map((p) => ({
+const suggested = await Promise.all((await getSuggestedPosts(post.slug, 3)).map(async (p) => ({
   title: p.data.title,
   href: `/blog/${p.slug}`,
   slug: p.slug,
   description: p.data.excerpt || undefined,
   tags: p.data.tags ?? [],
-  art: cardArt({ slug: p.slug, title: p.data.title, collection: "blog" }),
-}));
+  art: await cardArt({ slug: p.slug, title: p.data.title, collection: "blog" }),
+})));
 ---
 
 <Shell

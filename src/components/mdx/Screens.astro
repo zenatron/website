@@ -1,0 +1,55 @@
+---
+/**
+ * A row of phone screenshots. The images are 786x1704 exports, so they
+ * are shown at device proportions rather than cropped into cards.
+ */
+interface Shot { src: string; alt: string; caption?: string; }
+interface Props { shots: Shot[]; }
+const { shots } = Astro.props;
+---
+<div class="screens">
+  <ul>
+    {shots.map((s) => (
+      <li>
+        <img src={s.src} alt={s.alt} width="786" height="1704" loading="lazy" decoding="async" />
+        {s.caption && <span class="cap">{s.caption}</span>}
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .screens {
+    margin-block: var(--s-6);
+    /* Wider than the prose measure: these want room. */
+    width: min(100%, 1000px);
+  }
+  ul {
+    list-style: none;
+    display: flex;
+    gap: var(--s-4);
+    margin: 0;
+    padding: 0 0 var(--s-3);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+  li {
+    flex: 0 0 clamp(160px, 30vw, 236px);
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+  }
+  img {
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
+    background: var(--c-chrome);
+  }
+  .cap {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-muted);
+  }
+</style>

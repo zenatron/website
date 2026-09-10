@@ -14,20 +14,20 @@ const monthYear = (v: string | Date | undefined) => {
     : d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 };
 
-const cells = projects.map((p) => ({
+const cells = await Promise.all(projects.map(async (p) => ({
   title: p.data.title,
   href: `/projects/${projectSlug(p)}`,
   slug: projectSlug(p),
   description: p.data.description || undefined,
   tags: p.data.tags ?? [],
   meta: monthYear(p.data.date),
-  art: cardArt({
+  art: await cardArt({
     slug: projectSlug(p),
     title: p.data.title,
     thumbnail: p.data.thumbnail,
     collection: "projects",
   }),
-}));
+})));
 ---
 <Shell title="Projects | Phil Vishnevsky" description="My experiments, projects, and failures." ogSlug="projects">
   <header class="pagehead">
