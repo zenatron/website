@@ -65,7 +65,7 @@ const files = [
               <a href={folder.href} data-nav>{folder.name}</a>
             </div>
 
-            <ul class="group" id={`group-${folder.name}`} data-group={folder.name} hidden>
+            <ul class="group" id={`group-${folder.name}`} data-group={folder.name}>
               {shown.map((child) => (
                 <li class="row">
                   <a href={child.href} data-nav>{child.name}</a>
@@ -110,6 +110,14 @@ const files = [
     padding-inline: var(--s-3);
     margin-bottom: var(--s-2);
   }
+
+  /*
+   * Groups collapse only once JS has run. Without it every row stays in
+   * the document and the whole site is still reachable from the sidebar.
+   */
+  :global(.js) .group:not([data-open="true"]) { display: none; }
+  .twisty { display: none; }
+  :global(.js) .twisty { display: grid; }
 
   .tree,
   .group {
@@ -172,7 +180,6 @@ const files = [
     top: 0;
     bottom: 0;
     width: var(--s-4);
-    display: grid;
     place-items: center;
     padding: 0;
     cursor: pointer;

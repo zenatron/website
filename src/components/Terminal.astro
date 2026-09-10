@@ -1,0 +1,179 @@
+---
+/**
+ * One keyboard-invoked overlay that genuinely navigates the site.
+ *
+ * The filesystem below is not a simulation — it is built from the same
+ * content collections the sidebar and the routes are built from, so `ls`
+ * cannot drift from what the site actually serves.
+ */
+import { getAllBlogPosts } from "@/lib/blog";
+import { getAllProjects, projectSlug } from "@/lib/projects";
+import { SITE, WHOAMI, FORTUNES } from "@/data/site";
+
+const posts = await getAllBlogPosts();
+const projects = await getAllProjects();
+
+interface Node {
+  name: string;
+  href: string;
+  title?: string;
+  date?: string;
+  desc?: string;
+}
+
+const fs: Record<string, { dirs: string[]; files: Node[] }> = {
+  "~": {
+    dirs: ["projects", "blog"],
+    files: [
+      { name: "about", href: "/about" },
+      { name: "desk", href: "/desk" },
+      { name: "links", href: "/links" },
+    ],
+  },
+  "~/projects": {
+    dirs: [],
+    files: projects.map((p) => ({
+      name: projectSlug(p),
+      href: `/projects/${projectSlug(p)}`,
+      title: p.data.title,
+      date: p.data.date ? String(p.data.date) : undefined,
+      desc: p.data.description || undefined,
+    })),
+  },
+  "~/blog": {
+    dirs: [],
+    files: posts.map((p) => ({
+      name: p.slug,
+      href: `/blog/${p.slug}`,
+      title: p.data.title,
+      date: String(p.data.date),
+      desc: p.data.excerpt || undefined,
+    })),
+  },
+};
+
+const payload = {
+  fs,
+  whoami: WHOAMI,
+  fortunes: FORTUNES,
+  resume: SITE.resume,
+  github: SITE.github,
+  email: SITE.email,
+};
+---
+
+<dialog id="terminal" class="term" aria-label="Terminal">
+  <div class="scrollback" data-scrollback aria-live="polite" aria-atomic="false"></div>
+
+  <form class="inputline" data-form autocomplete="off">
+    <label class="sr-only" for="term-input">Terminal input</label>
+    <span class="prompt" aria-hidden="true">
+      <span class="who">phil@pvish</span>
+      <span class="cwd" data-cwd>~</span>
+      <span class="sigil">$</span>
+    </span>
+    <span class="field">
+      <span class="mirror" data-mirror aria-hidden="true"></span>
+      <input id="term-input" type="text" data-input spellcheck="false" autocapitalize="off" />
+    </span>
+  </form>
+</dialog>
+
+<script type="application/json" data-term-fs set:html={JSON.stringify(payload)} />
+
+<style>
+  .term {
+    /* Positioned against the site window's box by terminal.ts. */
+    position: fixed;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-bottom: 1px solid var(--c-hairline);
+    background: var(--c-raised);
+    color: var(--c-text);
+    height: 42vh;
+    max-height: 420px;
+    display: none;
+    flex-direction: column;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-md);
+    line-height: 1.6;
+  }
+  .term[open] { display: flex; }
+
+  .term::backdrop { background: var(--c-scrim); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .term[open] { animation: term-in var(--dur-pane) var(--ease) both; }
+  }
+  @keyframes term-in {
+    from { transform: translateY(-100%); }
+  }
+
+  .scrollback {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: var(--s-3) var(--s-4) 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .inputline {
+    flex: 0 0 auto;
+    display: flex;
+    gap: var(--s-2);
+    padding: var(--s-2) var(--s-4) var(--s-3);
+  }
+
+  .prompt { flex: 0 0 auto; }
+  .who { color: var(--c-mint); }
+  .cwd { color: var(--c-amber); }
+  .sigil { color: var(--c-muted); }
+
+  .field {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  /* The real input is transparent; `.mirror` draws the text and the caret. */
+  .field input {
+    width: 100%;
+    color: transparent;
+    caret-color: transparent;
+    outline: none;
+    font: inherit;
+  }
+  .mirror {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    white-space: pre;
+    overflow: hidden;
+  }
+
+  /*
+   * Scrollback lines and the caret are created by terminal.ts, so they
+   * carry no scoping attribute — these rules must be global to reach them.
+   */
+
+  /* The only looping animation on the site. */
+  :global(.caret) {
+    display: inline-block;
+    width: 7px;
+    height: 15px;
+    vertical-align: text-bottom;
+    background: var(--c-amber);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .term[data-focused="true"] :global(.caret) {
+      animation: blink 1s step-end infinite;
+    }
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  :global(.line-err) { color: var(--c-red); }
+  :global(.line-dim) { color: var(--c-dim); }
+  :global(.line-dir) { color: var(--c-mint); }
+</style>

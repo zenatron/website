@@ -28,7 +28,7 @@ function applyExpanded(set: Set<string>) {
   document.querySelectorAll<HTMLElement>("[data-group]").forEach((group) => {
     const name = group.dataset.group!;
     const open = set.has(name);
-    group.hidden = !open;
+    group.dataset.open = String(open);
     document
       .querySelector(`[data-twisty="${name}"]`)
       ?.setAttribute("aria-expanded", String(open));
