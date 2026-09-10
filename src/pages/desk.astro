@@ -152,7 +152,7 @@ const windows = {
    */
   .surface {
     position: relative;
-    padding: var(--s-6) var(--s-5);
+    padding: var(--s-6) var(--s-5) var(--s-8);
     border: 1px solid var(--c-hairline);
     border-radius: var(--radius-card);
     background-color: var(--c-chrome);
@@ -172,9 +172,19 @@ const windows = {
   /* The grid keeps it responsive; the jitter keeps it from looking like
      a grid. Positions are seeded by name, so nothing ever moves. */
   .objects li {
+    position: relative;
     display: grid;
     place-items: center;
     transform: translate(var(--x), var(--y)) rotate(var(--rot));
+  }
+  /*
+   * Each item's transform makes it its own stacking context, so a label's
+   * z-index only ever applied inside its own object — later siblings
+   * painted straight over it. Lift the whole object instead.
+   */
+  .objects li:hover,
+  .objects li:focus-within {
+    z-index: 5;
   }
 
   .obj {
