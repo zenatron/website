@@ -79,7 +79,7 @@ function wireTwisties() {
   });
 }
 
-/* ── filter ──────────────────────────────────────────────────── */
+/* ── search ──────────────────────────────────────────────────── */
 
 /** Do the query's characters appear in order? `revprox` matches the post. */
 function subsequence(needle: string, hay: string): boolean {
@@ -104,8 +104,8 @@ function wireMore() {
   });
 }
 
-function wireFilter() {
-  const input = document.querySelector<HTMLInputElement>("[data-filter]");
+function wireSearch() {
+  const input = document.querySelector<HTMLInputElement>("[data-search]");
   const empty = document.querySelector<HTMLElement>("[data-empty]");
   if (!input || input.dataset.wired) return;
   input.dataset.wired = "1";
@@ -119,7 +119,7 @@ function wireFilter() {
       document.querySelectorAll<HTMLElement>("[data-group]").forEach((g) => {
         delete g.dataset.searching;
       });
-      // Restore whatever was expanded before the filter forced them open.
+      // Restore whatever was expanded before the search forced them open.
       syncActive();
       if (empty) empty.hidden = true;
       return;
@@ -134,7 +134,7 @@ function wireFilter() {
       row.hidden = !match;
       if (match) hits += 1;
     }
-    // While filtering, every folder is open and unfolded so that matches
+    // While searching, every folder is open and unfolded so that matches
     // past the display cap are reachable.
     document.querySelectorAll<HTMLElement>("[data-group]").forEach((g) => {
       g.dataset.open = "true";
@@ -169,8 +169,8 @@ function wireFilter() {
 function sync() {
   wireTwisties();
   wireMore();
-  wireFilter();
-  const input = document.querySelector<HTMLInputElement>("[data-filter]");
+  wireSearch();
+  const input = document.querySelector<HTMLInputElement>("[data-search]");
   if (input) input.value = "";
   document.querySelectorAll<HTMLElement>("#sidebar .row").forEach((r) => (r.hidden = false));
   const empty = document.querySelector<HTMLElement>("[data-empty]");

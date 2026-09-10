@@ -56,14 +56,21 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
         <Mark hue="orange">games</Mark> that don't break in production.
       </p>
 
-      <div class="currently">
-        <p class="label">currently</p>
-        <ul>
-          <li><span class="star" aria-hidden="true">*</span>open to <Mark hue="accent">opportunities</Mark></li>
-          <li><span class="star" aria-hidden="true">*</span>building a <Mark hue="link">FLAC organizer</Mark> and tools for card games</li>
-          <li><span class="star" aria-hidden="true">*</span>running a homelab that mostly stays up</li>
-        </ul>
-      </div>
+      <p class="currently-label">currently</p>
+      <dl class="currently">
+        <div class="row">
+          <dt style="--fg: var(--c-accent); --bg: var(--c-tint-accent)">open</dt>
+          <dd>to <Mark hue="accent">opportunities</Mark></dd>
+        </div>
+        <div class="row">
+          <dt style="--fg: var(--c-hue-green); --bg: var(--c-tint-green)">building</dt>
+          <dd>a <Mark hue="link">FLAC organizer</Mark>, and tools for card games</dd>
+        </div>
+        <div class="row">
+          <dt style="--fg: var(--c-hue-blue); --bg: var(--c-tint-blue)">running</dt>
+          <dd>a homelab that mostly stays up</dd>
+        </div>
+      </dl>
     </div>
 
     <div class="art"><HeroArt /></div>
@@ -112,32 +119,51 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
     max-width: 22ch;
   }
 
-  .currently { margin-top: var(--s-6); }
-  .label {
-    font-size: var(--t-sans-sm);
+  /*
+   * Each line gets a real labelled column instead of a loose asterisk:
+   * the state is a mono chip, the thing itself stays in the author's
+   * voice. The chip column is fixed so the sentences align down the list.
+   */
+  .currently-label {
+    margin-top: var(--s-6);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: 0.08em;
     color: var(--c-dim);
-    margin-bottom: var(--s-2);
   }
-  .currently ul {
-    list-style: none;
+  .currently {
+    margin: var(--s-3) 0 0;
+    display: grid;
+    gap: var(--s-2);
+  }
+  .currently .row {
+    display: grid;
+    grid-template-columns: 9ch minmax(0, 1fr);
+    gap: var(--s-3);
+    align-items: baseline;
+  }
+  .currently dt {
+    justify-self: start;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--fg);
+    background: var(--bg);
+    padding: 3px 8px;
+    border-radius: var(--radius-pill);
+    line-height: 1.4;
+  }
+  .currently dd {
     margin: 0;
-    padding: 0;
     font-size: var(--t-sans-sm);
+    line-height: 1.6;
     color: var(--c-muted);
   }
-  /* Hanging indent, not flex: the sentence has to wrap as one flow, or
-     an inline highlight drags the words after it out of line. */
-  .currently li {
-    padding-block: 4px;
-    padding-left: 1.4em;
-    text-indent: -1.4em;
-    line-height: 1.8;
-  }
-  .star {
-    color: var(--c-accent);
-    display: inline-block;
-    width: 1.4em;
-    text-indent: 0;
+
+  @media (max-width: 480px) {
+    .currently .row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--s-1);
+    }
   }
 
   .art { max-width: 100%; }

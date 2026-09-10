@@ -42,10 +42,10 @@ function setDrawer(open: boolean) {
   toggle.setAttribute("aria-expanded", String(open));
   scrim.hidden = !open;
   // Focus moves into the drawer so the keyboard lands where the eye does —
-  // but never on touch, where focusing a field summons the on-screen
-  // keyboard over the very list you just asked to see.
+  // but never on touch, where focusing the search field summons the
+  // on-screen keyboard over the very list you just asked to see.
   if (open && window.matchMedia("(hover: hover)").matches) {
-    sidebar.querySelector<HTMLElement>("[data-filter]")?.focus();
+    sidebar.querySelector<HTMLElement>("[data-search]")?.focus();
   } else if (open) {
     sidebar.querySelector<HTMLElement>("[data-drawer-close]")?.focus();
   }

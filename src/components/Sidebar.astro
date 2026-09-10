@@ -52,15 +52,15 @@ const files = [
     </button>
   </div>
 
-  <div class="filterbar">
-    <label class="sr-only" for="tree-filter">Filter files</label>
+  <div class="searchbar">
+    <label class="sr-only" for="tree-search">Search files</label>
     <input
-      id="tree-filter"
+      id="tree-search"
       type="search"
-      placeholder="filter"
+      placeholder="search"
       autocomplete="off"
       spellcheck="false"
-      data-filter
+      data-search
     />
   </div>
 
@@ -163,8 +163,8 @@ const files = [
     }
   }
 
-  .filterbar { padding-inline: var(--s-3); margin-bottom: var(--s-2); }
-  .filterbar input {
+  .searchbar { padding-inline: var(--s-3); margin-bottom: var(--s-2); }
+  .searchbar input {
     width: 100%;
     font-family: var(--font-mono);
     font-size: var(--t-mono-sm);
@@ -174,7 +174,7 @@ const files = [
     border-radius: var(--radius-sm);
     padding: 5px 9px;
   }
-  .filterbar input::-webkit-search-cancel-button { -webkit-appearance: none; }
+  .searchbar input::-webkit-search-cancel-button { -webkit-appearance: none; }
 
   .tree,
   .group {
@@ -308,7 +308,7 @@ const files = [
     .close { display: grid; }
 
     /* 16px or iOS zooms the page when the field takes focus. */
-    .filterbar input {
+    .searchbar input {
       font-size: 16px;
       padding: 10px 12px;
     }
