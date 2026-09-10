@@ -1,0 +1,86 @@
+/* ──────────────────────────────────────────────────────────────
+   pvi.sh design tokens — the single source of truth.
+   No raw hex value may appear anywhere else in the codebase.
+   ────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Surfaces — ascending elevation */
+  --c-void:      #0E1013;  /* window backdrop, behind all chrome */
+  --c-chrome:    #16191E;  /* titlebar, status bar, sidebar bg */
+  --c-raised:    #1E2228;  /* active row, hover state, terminal bg */
+
+  /* Structure */
+  --c-hairline:  #2A2F37;  /* every border on the site, 1px */
+
+  /* Text — three levels, no more */
+  --c-text:      #E6E1D8;  /* primary. warm off-white, NOT #fff */
+  --c-muted:     #8A9099;  /* secondary prose, inactive nav */
+  --c-dim:       #5A6069;  /* metadata, disabled, placeholder */
+
+  /* Chroma — three colors, one job each */
+  --c-amber:     #FFB454;  /* CURRENT / ACTIVE only */
+  --c-mint:      #7FD1B9;  /* NAVIGABLE only (links, paths, tags) */
+  --c-red:       #E5484D;  /* GENUINE FAILURE only */
+
+  /* Non-palette values that are structurally required.
+     Traffic lights are inert texture; the scrim is a flat wash of --c-void. */
+  --c-trafficlight: #3A3F47;
+  --c-scrim:        rgba(14, 16, 19, 0.72);
+}
+
+/* ── Type ─────────────────────────────────────────────────────
+   Monospace is the machine's voice. Sans-serif is the author's.
+   Nothing else decides which family to use.
+   ────────────────────────────────────────────────────────────── */
+
+:root {
+  --font-mono: 'Atkinson Hyperlegible Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --font-sans: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Mono — CHROME ONLY. Hard ceiling at 13px. */
+  --t-mono-xs:  11px;  /* status bar, keycaps, metadata */
+  --t-mono-sm:  12px;  /* sidebar tree, titlebar path, tags */
+  --t-mono-md:  13px;  /* terminal I/O, inline code */
+
+  /* Sans — content */
+  --t-sans-sm:  14px;  /* captions, secondary prose */
+  --t-sans-md:  16px;  /* body prose */
+  --t-sans-lg:  20px;  /* h3 */
+  --t-sans-xl:  27px;  /* h2, post titles */
+  --t-sans-2xl: 44px;  /* h1, homepage headline */
+}
+
+/* ── Space and structure ─────────────────────────────────────── */
+
+:root {
+  --s-1: 4px;   --s-2: 8px;   --s-3: 12px;  --s-4: 16px;
+  --s-5: 24px;  --s-6: 32px;  --s-7: 48px;  --s-8: 64px;
+
+  --radius-window: 10px;  /* the ONLY radius on the site */
+  --radius-inner:  0px;   /* everything inside the window */
+
+  --h-titlebar:  38px;
+  --h-statusbar: 26px;
+  --w-sidebar:   186px;
+  --w-content:   1120px;  /* max window width */
+}
+
+/* ── Motion — two durations, total ───────────────────────────── */
+
+:root {
+  --dur-state: 120ms;  /* hover, focus, tab switch, tooltip */
+  --dur-pane:  380ms;  /* route transition, terminal open/close */
+  --ease:      cubic-bezier(.2, 0, .4, 1);
+}
+
+/* ── Shared-edge hairline grid ────────────────────────────────
+   No element inside the window floats free of a border it shares
+   with a neighbour. Adjacent elements collapse their edges.
+   ────────────────────────────────────────────────────────────── */
+
+.hairline-row { display: flex; }
+.hairline-row > * { border: 1px solid var(--c-hairline); }
+.hairline-row > * + * { border-left: 0; }
+
+.hairline-col > * { border: 1px solid var(--c-hairline); }
+.hairline-col > * + * { border-top: 0; }

@@ -1,62 +1,92 @@
 import type { Config } from "tailwindcss";
 
+/**
+ * Every value resolves to a token in src/styles/tokens.css.
+ * Tailwind's default colors, radii, shadows and durations are REPLACED,
+ * not extended — leaving `bg-slate-800` or `rounded-lg` reachable
+ * guarantees they end up in the codebase.
+ */
 const config: Config = {
-  content: [
-    "./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}",
-  ],
+  content: ["./src/**/*.{astro,html,js,jsx,md,mdx,ts,tsx}"],
   theme: {
+    colors: {
+      transparent: "transparent",
+      current: "currentColor",
+      inherit: "inherit",
+      void: "var(--c-void)",
+      chrome: "var(--c-chrome)",
+      raised: "var(--c-raised)",
+      hairline: "var(--c-hairline)",
+      text: "var(--c-text)",
+      muted: "var(--c-muted)",
+      dim: "var(--c-dim)",
+      amber: "var(--c-amber)",
+      mint: "var(--c-mint)",
+      red: "var(--c-red)",
+      trafficlight: "var(--c-trafficlight)",
+      scrim: "var(--c-scrim)",
+    },
+    // Radius: the window shell, and nothing else.
+    borderRadius: {
+      none: "0",
+      window: "var(--radius-window)",
+    },
+    // Depth comes from surface value and hairlines.
+    boxShadow: { none: "none" },
+    // Two weights. Emphasis is size and color, never heaviness.
+    fontWeight: { normal: "400", medium: "500" },
+    fontFamily: {
+      mono: "var(--font-mono)",
+      sans: "var(--font-sans)",
+    },
+    fontSize: {
+      "mono-xs": "var(--t-mono-xs)",
+      "mono-sm": "var(--t-mono-sm)",
+      "mono-md": "var(--t-mono-md)",
+      "sans-sm": "var(--t-sans-sm)",
+      "sans-md": "var(--t-sans-md)",
+      "sans-lg": "var(--t-sans-lg)",
+      "sans-xl": "var(--t-sans-xl)",
+      "sans-2xl": "var(--t-sans-2xl)",
+    },
+    spacing: {
+      0: "0",
+      1: "var(--s-1)",
+      2: "var(--s-2)",
+      3: "var(--s-3)",
+      4: "var(--s-4)",
+      5: "var(--s-5)",
+      6: "var(--s-6)",
+      7: "var(--s-7)",
+      8: "var(--s-8)",
+      px: "1px",
+      full: "100%",
+    },
+    transitionDuration: {
+      state: "var(--dur-state)",
+      pane: "var(--dur-pane)",
+    },
+    transitionTimingFunction: { DEFAULT: "var(--ease)" },
     extend: {
-      colors: {
-        "primary-bg": "var(--primary-bg)",
-        "secondary-bg": "var(--secondary-bg)",
-        "primary-text": "var(--primary-text)",
-        "secondary-text": "var(--secondary-text)",
-        accent: "var(--accent)",
-        "btn-primary": "var(--btn-primary)",
-        "btn-primary-hover": "var(--btn-primary-hover)",
-        "code-bg": "var(--code-bg)",
-        "code-text": "var(--code-text)",
-        "muted-text": "var(--secondary-text)",
-        btnPrimary: "var(--btn-primary)",
-        btnPrimaryHover: "var(--btn-primary-hover)",
+      borderWidth: { 2: "2px" },
+      maxWidth: {
+        content: "var(--w-content)",
+        prose: "68ch",
       },
-      boxShadow: {
-        soft: "var(--shadow-soft)",
-        hard: "var(--shadow-hard)",
+      height: {
+        titlebar: "var(--h-titlebar)",
+        statusbar: "var(--h-statusbar)",
       },
-      borderColor: {
-        light: "var(--border-light)",
-        dark: "var(--border-dark)",
-      },
-      keyframes: {
-        shine: {
-          "0%": { "background-position": "100%" },
-          "100%": { "background-position": "-100%" },
-        },
-        gradient: {
-          "0%": { "background-position": "0% 50%" },
-          "50%": { "background-position": "100% 50%" },
-          "100%": { "background-position": "0% 50%" },
-        },
-        starMovementTop: {
-          "0%": { transform: "translateX(0)" },
-          "100%": { transform: "translateX(500%)" },
-        },
-        starMovementBottom: {
-          "0%": { transform: "translateX(0)" },
-          "100%": { transform: "translateX(-500%)" },
-        },
-      },
-      animation: {
-        shine: "shine 5s linear infinite",
-        gradient: "gradient 8s linear infinite",
-        "star-movement-top": "starMovementTop var(--speed, 6s) linear infinite",
-        "star-movement-bottom":
-          "starMovementBottom var(--speed, 6s) linear infinite",
+      width: { sidebar: "var(--w-sidebar)" },
+      lineHeight: {
+        head: "1.2",
+        prose: "1.65",
+        tree: "2.1",
+        term: "1.6",
       },
     },
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [],
 };
 
 export default config;
