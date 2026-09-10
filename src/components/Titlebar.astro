@@ -1,0 +1,97 @@
+---
+/**
+ * Persistent across navigation. The path is re-synced by shell.ts on
+ * astro:page-load rather than re-rendered, because the node never remounts.
+ */
+import { SITE } from "@/data/site";
+---
+
+<div class="titlebar" transition:persist="titlebar">
+  <button class="drawer-toggle" type="button" aria-expanded="false" aria-controls="sidebar">
+    <span class="sr-only">Menu</span>
+    <span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>
+  </button>
+
+  <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+
+  <span class="path" data-titlebar-path>{SITE.user}@{SITE.host} — ~</span>
+
+  <kbd class="keycap" data-keycap>⌘K</kbd>
+</div>
+
+<style>
+  .titlebar {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    height: var(--h-titlebar);
+    flex: 0 0 var(--h-titlebar);
+    padding-inline: var(--s-3);
+    background: var(--c-chrome);
+    border-bottom: 1px solid var(--c-hairline);
+  }
+
+  .lights {
+    display: flex;
+    gap: var(--s-2);
+    flex: 0 0 auto;
+  }
+  .lights i {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--c-trafficlight);
+  }
+
+  .path {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .keycap {
+    flex: 0 0 auto;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+    border: 1px solid var(--c-hairline);
+    padding: 2px 6px;
+    border-radius: 0;
+    line-height: 1;
+  }
+
+  /* The drawer toggle only exists below 900px. */
+  .drawer-toggle {
+    display: none;
+    flex: 0 0 auto;
+    padding: var(--s-2);
+    margin-inline-start: calc(var(--s-2) * -1);
+    cursor: pointer;
+  }
+  .bars {
+    display: block;
+    width: 14px;
+  }
+  .bars i {
+    display: block;
+    height: 1px;
+    background: var(--c-muted);
+  }
+  .bars i + i {
+    margin-top: 3px;
+  }
+
+  @media (max-width: 900px) {
+    .drawer-toggle { display: block; }
+  }
+
+  @media (max-width: 640px) {
+    .lights { display: none; }
+  }
+</style>

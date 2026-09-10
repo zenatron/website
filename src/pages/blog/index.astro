@@ -1,55 +1,9 @@
 ---
-import BaseLayout from "@/layouts/BaseLayout.astro";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import BlogLayout from "@/components/layouts/BlogLayout";
-import BackToTopButton from "@/components/ui/BackToTopButton";
+import Shell from "@/layouts/Shell.astro";
 import { getAllBlogPosts } from "@/lib/blog";
-
 const posts = await getAllBlogPosts();
-
-const blogPosts = posts.map((post: any) => ({
-  slug: post.slug,
-  searchableContent: post.searchableContent,
-  metadata: {
-    title: post.data.title,
-    date: post.data.date,
-    readingTime: post.data.readingTime,
-    excerpt: post.data.excerpt || "",
-    tags: post.data.tags || [],
-    series: post.data.series,
-    seriesOrder: post.data.seriesOrder,
-  },
-}));
-
-const seriesPosts = posts
-  .filter((p: any) => p.data.series)
-  .sort((a: any, b: any) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0))
-  .map((p: any) => ({
-    slug: p.slug,
-    metadata: {
-      title: p.data.title,
-      date: p.data.date,
-      readingTime: p.data.readingTime,
-      excerpt: p.data.excerpt || "",
-      tags: p.data.tags || [],
-      series: p.data.series,
-      seriesOrder: p.data.seriesOrder,
-    },
-  }));
-
-const series = seriesPosts.length > 0 ? {
-  slug: seriesPosts[0].metadata.series!,
-  title: "Homelab & Networking",
-  posts: seriesPosts,
-} : null;
 ---
-
-<BaseLayout title="Blog | Phil Vishnevsky" ogSlug="blog">
-  <div class="relative flex min-h-screen flex-col">
-    <Header client:load />
-    <BlogLayout posts={blogPosts} client:load />
-    <Footer client:load />
-    <BackToTopButton client:load />
-  </div>
-</BaseLayout>
+<Shell title="Blog | Phil Vishnevsky" ogSlug="blog">
+  <h1>Blog</h1>
+  <ul>{posts.map((p) => <li><a href={`/blog/${p.slug}`}>{p.data.title}</a></li>)}</ul>
+</Shell>

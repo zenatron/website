@@ -1,0 +1,34 @@
+---
+/** Phase 2 stub — becomes the real explorer tree in phase 3. */
+---
+<nav id="sidebar" class="sidebar" aria-label="Site" transition:persist="sidebar">
+  <p class="explorer">explorer</p>
+</nav>
+
+<style>
+  .sidebar {
+    flex: 0 0 var(--w-sidebar);
+    width: var(--w-sidebar);
+    background: var(--c-chrome);
+    border-right: 1px solid var(--c-hairline);
+    padding-block: var(--s-3);
+  }
+  .explorer {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+    letter-spacing: 0.08em;
+    padding-inline: var(--s-3);
+  }
+  @media (max-width: 900px) {
+    .sidebar {
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      z-index: 3;
+      transform: translateX(-100%);
+      transition: transform var(--dur-state) var(--ease);
+    }
+    .sidebar[data-open="true"] { transform: translateX(0); }
+  }
+</style>

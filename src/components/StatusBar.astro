@@ -1,0 +1,24 @@
+---
+/** Phase 2 stub — becomes real, and true, in phase 4. */
+---
+<div class="statusbar" aria-hidden="true" transition:persist="statusbar">
+  <span class="branch">{__GIT_BRANCH__}</span>
+</div>
+
+<style>
+  .statusbar {
+    display: flex;
+    align-items: center;
+    gap: var(--s-4);
+    height: var(--h-statusbar);
+    flex: 0 0 var(--h-statusbar);
+    padding-inline: var(--s-3);
+    background: var(--c-chrome);
+    border-top: 1px solid var(--c-hairline);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+    user-select: none;
+  }
+  .branch { color: var(--c-amber); }
+</style>

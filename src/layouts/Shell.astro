@@ -1,0 +1,148 @@
+---
+/**
+ * The whole site is one macOS window that never navigates away.
+ * Titlebar, sidebar and status bar persist; only the content pane swaps.
+ */
+import "@/styles/globals.css";
+import { ClientRouter } from "astro:transitions";
+import Titlebar from "@/components/Titlebar.astro";
+import Sidebar from "@/components/Sidebar.astro";
+import StatusBar from "@/components/StatusBar.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogSlug?: string;
+}
+
+const {
+  title = "Phil Vishnevsky | SWE, AI Enthusiast, and Homelabber",
+  description = "I'm a software engineer crafting AI projects, tools, homelabs, and games. Explore my portfolio, technical blog posts, and latest development work.",
+  ogSlug = "home",
+} = Astro.props;
+
+const ogUrl = new URL(`/og/${ogSlug}.png`, Astro.site).href;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogUrl} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" href="/fonts/atkinson-hyperlegible-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-tight-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <ClientRouter />
+  </head>
+
+  <body>
+    <a href="#main-content" class="skip">Skip to main content</a>
+
+    <div class="window">
+      <Titlebar />
+      <div class="frame">
+        <Sidebar />
+        <main id="main-content" class="pane" transition:name="pane">
+          <slot />
+        </main>
+        <div class="scrim" hidden data-scrim></div>
+      </div>
+      <StatusBar />
+    </div>
+
+    <script>
+      import "@/scripts/shell";
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  .skip {
+    position: absolute;
+    left: -9999px;
+  }
+  .skip:focus {
+    left: var(--s-4);
+    top: var(--s-4);
+    z-index: 10;
+    background: var(--c-raised);
+    color: var(--c-text);
+    border: 1px solid var(--c-amber);
+    padding: var(--s-2) var(--s-4);
+  }
+
+  .window {
+    display: flex;
+    flex-direction: column;
+    max-width: var(--w-content);
+    min-height: calc(100vh - var(--s-5) * 2);
+    margin: var(--s-5) auto;
+    background: var(--c-void);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-window);
+    overflow: hidden;
+  }
+
+  /* Sidebar + content. `position: relative` anchors the mobile drawer. */
+  .frame {
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  /* min-width: 0 keeps long code blocks from blowing out the flex layout. */
+  .pane {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: var(--s-5) var(--s-6);
+  }
+
+  /* Route changes are a pane swap, not a page fade. */
+  @media (prefers-reduced-motion: no-preference) {
+    ::view-transition-old(pane) {
+      animation: pane-out var(--dur-pane) var(--ease) both;
+    }
+    ::view-transition-new(pane) {
+      animation: pane-in var(--dur-pane) var(--ease) both;
+    }
+  }
+  @keyframes pane-out {
+    to { opacity: 0; transform: translateY(6px); }
+  }
+  @keyframes pane-in {
+    from { opacity: 0; }
+  }
+
+  /* The scrim that dims the window behind the mobile drawer. */
+  .scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    background: var(--c-scrim);
+  }
+  .scrim[hidden] { display: none; }
+
+  @media (max-width: 640px) {
+    .window {
+      margin: 0;
+      border: 0;
+      border-radius: 0;
+      min-height: 100vh;
+    }
+    .pane { padding: var(--s-4); }
+  }
+</style>

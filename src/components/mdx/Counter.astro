@@ -1,0 +1,41 @@
+---
+/** Demo component for the MDX post. Interactive, ~10 lines of inline JS. */
+---
+<div class="counter hairline-row" data-counter>
+  <output data-count>0</output>
+  <button type="button" data-step="1">+1</button>
+  <button type="button" data-step="-1">-1</button>
+  <button type="button" data-reset>Reset</button>
+</div>
+
+<style>
+  .counter { margin-block: var(--s-5); width: fit-content; }
+  .counter > * {
+    padding: var(--s-2) var(--s-4);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-md);
+  }
+  output { color: var(--c-amber); min-width: 6ch; text-align: center; }
+  button { cursor: pointer; color: var(--c-mint); transition: background var(--dur-state) var(--ease); }
+  button:hover { background: var(--c-raised); }
+</style>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll<HTMLElement>("[data-counter]").forEach((root) => {
+      const out = root.querySelector<HTMLOutputElement>("[data-count]")!;
+      let n = 0;
+      const render = () => (out.textContent = String(n));
+      root.querySelectorAll<HTMLButtonElement>("[data-step]").forEach((b) =>
+        b.addEventListener("click", () => {
+          n += Number(b.dataset.step);
+          render();
+        })
+      );
+      root.querySelector("[data-reset]")?.addEventListener("click", () => {
+        n = 0;
+        render();
+      });
+    });
+  });
+</script>

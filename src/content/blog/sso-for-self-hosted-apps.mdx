@@ -8,8 +8,8 @@ series: "homelab-networking"
 seriesOrder: 4
 ---
 
-import Callout from '@/components/mdx/Callout';
-import NerdCorner from '@/components/mdx/NerdCorner';
+import Callout from '@/components/mdx/Callout.astro';
+import NerdCorner from '@/components/mdx/NerdCorner.astro';
 
 You've got Jellyfin, Nextcloud, Grafana, n8n, and a dozen other services running on your homelab. Each one has its own login. Some use email, some use usernames, and you've probably reused the same password more times than you'd like to admit.
 
@@ -63,7 +63,7 @@ Some apps don't support SSO at all. For those, you put an **auth layer in front*
 
 This is where tools like **Tinyauth** and **Authelia** come in — they handle the authentication check, and the proxy (Caddy, Nginx, Traefik) enforces it.
 
-<NerdCorner client:load title="How forward auth actually works" subtitle="The HTTP headers and trust model">
+<NerdCorner title="How forward auth actually works" subtitle="The HTTP headers and trust model">
 
 When you use forward auth, here's the flow:
 

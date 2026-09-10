@@ -6,7 +6,7 @@ excerpt: "A behind-the-scenes look at how my Astro + MDX pipeline works, how I r
 tags: ["mdx", "astro", "performance", "web-dev"]
 ---
 
-import Callout from '@/components/mdx/Callout';
+import Callout from '@/components/mdx/Callout.astro';
 
 I wanted a blog that felt like **[Markdown](https://en.wikipedia.org/wiki/Markdown)**, but could still render React components, callouts, and embeds without turning into a templating mess. **[MDX](https://mdxjs.com/)** hit the sweet spot — and **[Astro](https://astro.build/)** makes it fly.
 
@@ -22,7 +22,7 @@ If you've used a static site generator before, MDX feels like "Markdown with sup
 Example:
 
 ```mdx
-import Callout from '@/components/mdx/Callout';
+import Callout from '@/components/mdx/Callout.astro';
 
 <Callout type="info" title="Quick tip">
   This is an MDX component rendered inside your post.

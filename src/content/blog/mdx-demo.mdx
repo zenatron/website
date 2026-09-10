@@ -6,8 +6,8 @@ excerpt: "Test to see how MDX gets rendered on my site!"
 tags: ["mdx", "markdown", "latex", "web-dev"]
 ---
 
-import Counter from '@/components/mdx/Counter';
-import Callout from '@/components/mdx/Callout';
+import Counter from '@/components/mdx/Counter.astro';
+import Callout from '@/components/mdx/Callout.astro';
 
 This is a demo of MDX rendering on my site. MDX allows you to use React components in your Markdown!
 
@@ -22,7 +22,7 @@ This is a demo of MDX rendering on my site. MDX allows you to use React componen
 
 Here's a simple counter component:
 
-<Counter client:load />
+<Counter />
 
 ## Math Support
 

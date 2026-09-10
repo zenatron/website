@@ -1,0 +1,46 @@
+---
+/** A disclosure. `<details>` means it works with JS disabled. */
+interface Props {
+  title?: string;
+  subtitle?: string;
+  defaultOpen?: boolean;
+}
+const { title = "Deep dive", subtitle, defaultOpen = false } = Astro.props;
+---
+
+<details class="nerd" open={defaultOpen}>
+  <summary>
+    <span class="title">{title}</span>
+    {subtitle && <span class="subtitle">{subtitle}</span>}
+  </summary>
+  <div class="body"><slot /></div>
+</details>
+
+<style>
+  .nerd {
+    margin-block: var(--s-5);
+    border: 1px solid var(--c-hairline);
+  }
+  summary {
+    cursor: pointer;
+    padding: var(--s-3) var(--s-4);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-1) var(--s-3);
+    align-items: baseline;
+    transition: background var(--dur-state) var(--ease);
+  }
+  summary:hover { background: var(--c-raised); }
+  .title { font-size: var(--t-sans-md); }
+  .subtitle {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-dim);
+  }
+  .body {
+    padding: 0 var(--s-4) var(--s-4);
+    border-top: 1px solid var(--c-hairline);
+    padding-top: var(--s-4);
+  }
+  .body > :global(* + *) { margin-top: var(--s-3); }
+</style>

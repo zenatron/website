@@ -16,4 +16,5 @@ export const PALETTE = {
   amber: "#FFB454",
   mint: "#7FD1B9",
   red: "#E5484D",
+  trafficlight: "#3A3F47",
 } as const;

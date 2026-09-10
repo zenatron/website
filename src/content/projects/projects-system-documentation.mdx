@@ -8,8 +8,8 @@ tags: ["documentation", "mdx", "reference", "guide"]
 featured: false
 ---
 
-import Counter from '@/components/mdx/Counter';
-import Callout from '@/components/mdx/Callout';
+import Counter from '@/components/mdx/Counter.astro';
+import Callout from '@/components/mdx/Callout.astro';
 
 # Projects System Documentation
 
@@ -230,7 +230,7 @@ You can import and use React components in your MDX:
 
 #### Counter Component
 
-<Counter client:load />
+<Counter />
 
 #### Callout Component
 
@@ -249,8 +249,8 @@ You can import and use React components in your MDX:
 To use these, import them at the top of your MDX file:
 
 ```mdx
-import Counter from '@/components/mdx/Counter';
-import Callout from '@/components/mdx/Callout';
+import Counter from '@/components/mdx/Counter.astro';
+import Callout from '@/components/mdx/Callout.astro';
 ```
 
 ### 5. Tables

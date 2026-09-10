@@ -1,0 +1,42 @@
+---
+/**
+ * Callouts are distinguished by a left hairline and a mono label naming
+ * the type — not by a hue and not by an emoji. Only `error` takes red,
+ * because red on this site means something actually failed.
+ *
+ * `showEmoji` is still accepted so the 46 existing usages keep parsing;
+ * it does nothing.
+ */
+interface Props {
+  type?: "info" | "warning" | "error" | "success" | "note" | "tip" | "custom";
+  title?: string;
+  showEmoji?: boolean;
+  class?: string;
+}
+const { type = "info", title, class: className } = Astro.props;
+const label = title ?? type;
+---
+
+<aside class:list={["callout", type, className]}>
+  <p class="label">{label}</p>
+  <div class="body"><slot /></div>
+</aside>
+
+<style>
+  .callout {
+    margin-block: var(--s-5);
+    padding-left: var(--s-4);
+    border-left: 2px solid var(--c-hairline);
+  }
+  .callout.error { border-left-color: var(--c-red); }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-dim);
+    margin-bottom: var(--s-2);
+  }
+  .callout.error .label { color: var(--c-red); }
+
+  .body > :global(* + *) { margin-top: var(--s-3); }
+</style>
