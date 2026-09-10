@@ -1,5 +1,6 @@
 ---
 import Shell from "@/layouts/Shell.astro";
+import { cardArt } from "@/lib/cardart";
 import Cells from "@/components/Cells.astro";
 import { getAllProjects, projectSlug } from "@/lib/projects";
 
@@ -20,6 +21,12 @@ const cells = projects.map((p) => ({
   description: p.data.description || undefined,
   tags: p.data.tags ?? [],
   meta: monthYear(p.data.date),
+  art: cardArt({
+    slug: projectSlug(p),
+    title: p.data.title,
+    thumbnail: p.data.thumbnail,
+    collection: "projects",
+  }),
 }));
 ---
 <Shell title="Projects | Phil Vishnevsky" description="My experiments, projects, and failures." ogSlug="projects">

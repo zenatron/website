@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "diagrams:retheme": "node scripts/retheme-diagrams.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",

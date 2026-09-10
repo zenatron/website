@@ -8,16 +8,17 @@ series: "homelab-networking"
 seriesOrder: 1
 ---
 
+import Diagram from '@/components/mdx/Diagram.astro';
 import Callout from '@/components/mdx/Callout.astro';
 
 You're on café Wi‑Fi. Your laptop auto‑connects, your bank app loads, and a tiny voice in your head asks: *"Can anyone see this?"* That's the moment a VPN makes sense — but only if you understand what it **does** and what it **doesn't** do.
 
 This post explains VPNs like a friend would: plain language, real risks, no over‑promising.
 
-![Diagram showing internet traffic with and without a VPN tunnel](/images/blog/what-is-a-vpn/vpn-tunnel-diagram.svg)
+<Diagram src="/images/blog/what-is-a-vpn/vpn-tunnel-diagram.svg" alt="Diagram showing internet traffic with and without a VPN tunnel" />
 *Traffic flows compared: without a VPN, your ISP and websites see everything. With a VPN, your ISP sees only encrypted traffic to the VPN server, and websites see the VPN's IP — but the VPN provider inherits visibility.*
  
-![Diagram showing metadata visibility shifting to a VPN provider](/images/blog/what-is-a-vpn/traffic-metadata.svg)
+<Diagram src="/images/blog/what-is-a-vpn/traffic-metadata.svg" alt="Diagram showing metadata visibility shifting to a VPN provider" />
 *A VPN shifts trust: the metadata your ISP used to see now belongs to the VPN provider instead. A reputable no-logs provider with independent audits is essential.*
 
 ## The one‑sentence definition

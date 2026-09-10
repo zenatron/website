@@ -1,0 +1,119 @@
+---
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import type { CardArt } from "@/lib/cardart";
+
+interface Props {
+  art: CardArt;
+  slug: string;
+  /** Crop into the artwork instead of shrinking all of it to fit. */
+  crop?: boolean;
+}
+const { art, slug, crop = false } = Astro.props;
+
+const HUES = ["violet", "orange", "blue", "green", "accent", "link"] as const;
+function hueFor(s: string) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return HUES[(h >>> 0) % HUES.length];
+}
+const hue = hueFor(slug);
+
+// Diagrams are inlined so they inherit the theme, same as in the post body.
+let svg = "";
+if (art.kind === "diagram") {
+  svg = readFileSync(join(process.cwd(), "public", art.src.replace(/^\//, "")), "utf8")
+    .replace(/<\?xml[\s\S]*?\?>/, "")
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/<svg([^>]*)>/, (m, a) => {
+      const cleaned = a
+        .replace(/\s(width|height)="[^"]*"/g, "")
+        .replace(/\srole="[^"]*"/g, "")
+        .replace(/\spreserveAspectRatio="[^"]*"/g, "");
+      // A whole diagram shrunk to thumbnail size is illegible noise, so
+      // small cards crop into it instead.
+      const par = crop ? ' preserveAspectRatio="xMidYMid slice"' : "";
+      return `<svg${cleaned}${par} aria-hidden="true" focusable="false">`;
+    });
+}
+---
+
+<span
+  class:list={["art", art.kind, crop && "crop"]}
+  style={`--fg: var(--c-hue-${hue}, var(--c-${hue})); --bg: var(--c-tint-${hue});`}
+  aria-hidden="true"
+>
+  {art.kind === "image" && <img src={art.src} alt="" loading="lazy" decoding="async" />}
+  {art.kind === "diagram" && <span class="svgwrap" set:html={svg} />}
+  {art.kind === "type" && (
+    <span class="type-inner">
+      <span class="lead">{art.lead}</span>
+      {art.rest && <span class="rest">{art.rest}</span>}
+    </span>
+  )}
+</span>
+
+<style>
+  .art {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+    overflow: hidden;
+  }
+
+  /*
+   * Thumbnails are matplotlib charts on white. Full-bleed they read as a
+   * bright slab, especially in dark mode, so they sit inset on the card's
+   * tint like paper on a mat. Hero banners still crop.
+   */
+  .art img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: var(--s-3);
+    border-radius: calc(var(--radius-sm) + var(--s-3));
+  }
+  .art.crop img {
+    object-fit: cover;
+    padding: 0;
+    border-radius: 0;
+  }
+
+  /* Diagrams sit back a little so the card reads as a preview, not a crop. */
+  .svgwrap {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: var(--s-3);
+  }
+  .art.crop .svgwrap { padding: 0; }
+  .svgwrap :global(svg) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .type-inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 100%;
+    padding: var(--s-4);
+    overflow: hidden;
+  }
+  .lead {
+    font-size: clamp(38px, 13cqw, 76px);
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    line-height: 0.92;
+    color: var(--fg);
+  }
+  .rest {
+    margin-top: var(--s-2);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--fg);
+    opacity: 0.75;
+  }
+</style>

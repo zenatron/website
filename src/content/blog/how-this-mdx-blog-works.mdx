@@ -6,12 +6,13 @@ excerpt: "A behind-the-scenes look at how my Astro + MDX pipeline works, how I r
 tags: ["mdx", "astro", "performance", "web-dev"]
 ---
 
+import Diagram from '@/components/mdx/Diagram.astro';
 import Callout from '@/components/mdx/Callout.astro';
 
 I wanted a blog that felt like **[Markdown](https://en.wikipedia.org/wiki/Markdown)**, but could still render React components, callouts, and embeds without turning into a templating mess. **[MDX](https://mdxjs.com/)** hit the sweet spot — and **[Astro](https://astro.build/)** makes it fly.
 
-![MDX pipeline diagram](/images/blog/how-this-mdx-blog-works/mdx-pipeline.svg)
-![MDX compilation flow diagram](/images/blog/how-this-mdx-blog-works/compile-flow.svg)
+<Diagram src="/images/blog/how-this-mdx-blog-works/mdx-pipeline.svg" alt="MDX pipeline diagram" />
+<Diagram src="/images/blog/how-this-mdx-blog-works/compile-flow.svg" alt="MDX compilation flow diagram" />
 
 ## Why MDX (not just Markdown)
 

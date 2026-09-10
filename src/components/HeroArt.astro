@@ -1,0 +1,82 @@
+---
+/**
+ * The hero art is the actual stack — his own logos, tinted, in a loose
+ * grid. Content-derived and personal, where the previous generative dot
+ * field was both decorative and the reference site's signature motif.
+ */
+import { FAVORITES } from "@/data/favorites";
+
+const HUES = ["violet", "orange", "blue", "green", "accent", "link"] as const;
+function hueFor(s: string) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return HUES[(h >>> 0) % HUES.length];
+}
+
+// Masked logos only: the flat ones can't be tinted into a silhouette.
+const picks = FAVORITES.filter((f) => f.logo && !f.flat).slice(0, 12);
+---
+
+<a class="heroart" href="/stack" aria-label={`the stack — ${picks.length}+ tools and apps I use`}>
+  <span class="grid" aria-hidden="true">
+    {picks.map((item) => {
+      const hue = hueFor(item.name);
+      return (
+        <span
+          class="cell"
+          style={`--fg: var(--c-hue-${hue}, var(--c-${hue})); --src: url(/logos/${item.logo})`}
+          title={item.name}
+        ></span>
+      );
+    })}
+  </span>
+  <span class="caption">the stack <span aria-hidden="true">&rarr;</span></span>
+</a>
+
+<style>
+  .heroart {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-3);
+    color: inherit;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--s-2);
+    padding: var(--s-4);
+    background: var(--c-chrome);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
+    transition: border-color var(--dur-state) var(--ease);
+  }
+  .heroart:hover .grid { border-color: var(--c-hairline-strong); }
+
+  .cell {
+    aspect-ratio: 1;
+    background: var(--fg);
+    -webkit-mask-image: var(--src);
+    mask-image: var(--src);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: 62%;
+    mask-size: 62%;
+    opacity: 0.9;
+    transition: opacity var(--dur-state) var(--ease), transform var(--dur-state) var(--ease);
+  }
+  .heroart:hover .cell { opacity: 1; }
+
+  .caption {
+    align-self: flex-start;
+    font-size: var(--t-sans-sm);
+    color: var(--c-link);
+  }
+  .heroart:hover .caption { text-decoration: underline; text-underline-offset: 3px; }
+
+  @media (max-width: 860px) {
+    .grid { grid-template-columns: repeat(6, 1fr); }
+  }
+</style>

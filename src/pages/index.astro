@@ -1,9 +1,10 @@
 ---
 import Shell from "@/layouts/Shell.astro";
+import { cardArt } from "@/lib/cardart";
 import Cells from "@/components/Cells.astro";
 import Contact from "@/components/Contact.astro";
 import Mark from "@/components/Mark.astro";
-import Cover from "@/components/Cover.astro";
+import HeroArt from "@/components/HeroArt.astro";
 import { SITE } from "@/data/site";
 import { getAllBlogPosts } from "@/lib/blog";
 import { getAllProjects, projectSlug } from "@/lib/projects";
@@ -25,6 +26,12 @@ const latestProjects = projects.slice(0, 3).map((p) => ({
   description: p.data.description || undefined,
   tags: p.data.tags ?? [],
   meta: monthYear(p.data.date),
+  art: cardArt({
+    slug: projectSlug(p),
+    title: p.data.title,
+    thumbnail: p.data.thumbnail,
+    collection: "projects",
+  }),
 }));
 
 const latestPosts = posts.slice(0, 3).map((p) => ({
@@ -34,6 +41,7 @@ const latestPosts = posts.slice(0, 3).map((p) => ({
   description: p.data.excerpt || undefined,
   tags: p.data.tags ?? [],
   meta: monthYear(p.data.date),
+  art: cardArt({ slug: p.slug, title: p.data.title, collection: "blog" }),
 }));
 ---
 
@@ -58,7 +66,7 @@ const latestPosts = posts.slice(0, 3).map((p) => ({
       </div>
     </div>
 
-    <div class="art" aria-hidden="true"><Cover slug="phil-vishnevsky-home" cols={16} rows={12} /></div>
+    <div class="art"><HeroArt /></div>
   </section>
 
   <section class="group">
@@ -132,13 +140,7 @@ const latestPosts = posts.slice(0, 3).map((p) => ({
     text-indent: 0;
   }
 
-  .art {
-    aspect-ratio: 4 / 3;
-    max-width: 100%;
-    overflow: hidden;
-    border-radius: var(--radius-card);
-    border: 1px solid var(--c-hairline);
-  }
+  .art { max-width: 100%; }
 
   .group { padding-block: var(--s-6); }
   .group + .group { border-top: 1px solid var(--c-hairline); }
@@ -166,7 +168,7 @@ const latestPosts = posts.slice(0, 3).map((p) => ({
       gap: var(--s-5);
       padding-block: var(--s-5) var(--s-6);
     }
-    .art { order: -1; aspect-ratio: 16 / 9; }
+    .art { order: -1; }
     .statement { max-width: none; font-size: var(--t-sans-lg); }
     h1 { font-size: var(--t-sans-2xl); }
   }

@@ -8,14 +8,15 @@ series: "homelab-networking"
 seriesOrder: 3
 ---
 
+import Diagram from '@/components/mdx/Diagram.astro';
 import Callout from '@/components/mdx/Callout.astro';
 
 Self‑hosting is empowering — but opening ports on your router can feel like hanging a neon sign that says "Please scan me." There's a better way: **private access via Tailscale**. If you're new here, [self‑hosting](https://en.wikipedia.org/wiki/Self-hosting_(web_services)) just means running services on hardware you control.
 
-![Remote access diagram showing encrypted tailnet links](/images/blog/self-hosting-with-tailscale/remote-access.svg)
+<Diagram src="/images/blog/self-hosting-with-tailscale/remote-access.svg" alt="Remote access diagram showing encrypted tailnet links" />
 *All traffic flows through an encrypted mesh overlay — no port forwarding, no public exposure. Your services are invisible to automated internet scans.*
 
-![Layered security stack for self-hosting](/images/blog/self-hosting-with-tailscale/security-layers.svg)
+<Diagram src="/images/blog/self-hosting-with-tailscale/security-layers.svg" alt="Layered security stack for self-hosting" />
 *Defense in depth: identity, network, transport, and application layers each provide independent protection. If one layer fails, the others still hold.*
 
 ## Why self‑host in the first place?

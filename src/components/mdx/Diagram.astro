@@ -1,0 +1,72 @@
+---
+/**
+ * Inlines a post diagram so the site's custom properties reach it.
+ *
+ * An SVG loaded through <img> is an isolated document and cannot inherit
+ * page CSS, so a referenced diagram is frozen to whatever palette it was
+ * drawn in. Inlining makes them theme-aware, and saves a request each.
+ */
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
+interface Props {
+  src: string;
+  alt: string;
+}
+const { src, alt } = Astro.props;
+
+/** The caption keeps its own inline markup, so it arrives as the slot. */
+const hasCaption = Astro.slots.has("default");
+
+let svg = readFileSync(join(process.cwd(), "public", src.replace(/^\//, "")), "utf8");
+
+// Drop the XML prolog and any hardcoded pixel dimensions; the viewBox and
+// the container decide the size.
+svg = svg.replace(/<\?xml[\s\S]*?\?>/, "").replace(/<!--[\s\S]*?-->/g, "");
+svg = svg.replace(/<svg([^>]*)>/, (m, attrs) => {
+  const cleaned = attrs
+    .replace(/\s(width|height)="[^"]*"/g, "")
+    .replace(/\srole="[^"]*"/g, "")
+    .replace(/\saria-labelledby="[^"]*"/g, "");
+  return `<svg${cleaned} role="img" aria-label="${alt.replace(/"/g, "&quot;")}">`;
+});
+---
+
+<figure class="diagram">
+  <div class="frame" set:html={svg} />
+  {hasCaption && (
+    <figcaption><slot /></figcaption>
+  )}
+</figure>
+
+<style>
+  .diagram {
+    margin-block: var(--s-6);
+  }
+  .frame {
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: var(--c-sunken);
+  }
+  .frame :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  figcaption {
+    margin-top: var(--s-3);
+    font-size: var(--t-sans-sm);
+    color: var(--c-muted);
+    line-height: 1.5;
+  }
+  figcaption :global(a) {
+    color: var(--c-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  figcaption :global(code) {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+  }
+</style>

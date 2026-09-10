@@ -1,27 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="640" viewBox="0 0 1000 640" font-family="Segoe UI, Helvetica, Arial, sans-serif">
-<rect width="1000" height="640" fill="#ffffff"/>
+<rect width="1000" height="640" fill="var(--c-sunken, #100f0c)"/>
 <defs>
-<marker id="ah_2f9e44" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#2f9e44"/></marker>
-<marker id="ah_1971c2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#1971c2"/></marker>
+<marker id="ah_2f9e44" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="var(--c-hue-green, #9bd68a)"/></marker>
+<marker id="ah_1971c2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="var(--c-hue-blue, #7fbde8)"/></marker>
 </defs>
-<rect x="360" y="80" width="280" height="80" rx="10" fill="#b2f2bb" fill-opacity="1.0" stroke="#2f9e44" stroke-width="2"/>
-<rect x="90" y="420" width="180" height="75" rx="10" fill="#a5d8ff" fill-opacity="1.0" stroke="#1971c2" stroke-width="2"/>
-<rect x="410" y="420" width="180" height="75" rx="10" fill="#a5d8ff" fill-opacity="1.0" stroke="#1971c2" stroke-width="2"/>
-<rect x="730" y="420" width="180" height="75" rx="10" fill="#a5d8ff" fill-opacity="1.0" stroke="#1971c2" stroke-width="2"/>
-<line x1="500" y1="160" x2="180" y2="420" stroke="#2f9e44" stroke-width="2" stroke-dasharray="8 6" marker-start="url(#ah_2f9e44)" marker-end="url(#ah_2f9e44)"/>
-<line x1="500" y1="160" x2="500" y2="420" stroke="#2f9e44" stroke-width="2" stroke-dasharray="8 6" marker-start="url(#ah_2f9e44)" marker-end="url(#ah_2f9e44)"/>
-<line x1="500" y1="160" x2="820" y2="420" stroke="#2f9e44" stroke-width="2" stroke-dasharray="8 6" marker-start="url(#ah_2f9e44)" marker-end="url(#ah_2f9e44)"/>
-<line x1="270" y1="480" x2="410" y2="480" stroke="#1971c2" stroke-width="5" marker-start="url(#ah_1971c2)" marker-end="url(#ah_1971c2)"/>
-<line x1="590" y1="480" x2="730" y2="480" stroke="#1971c2" stroke-width="5" marker-start="url(#ah_1971c2)" marker-end="url(#ah_1971c2)"/>
-<line x1="130" y1="495" x2="770" y2="495" stroke="#1971c2" stroke-width="5" marker-start="url(#ah_1971c2)" marker-end="url(#ah_1971c2)"/>
-<text x="40" y="44.0" font-size="24" fill="#1e1e1e" text-anchor="start">Control Plane  vs  Data Plane</text>
-<text x="500.0" y="115.75" font-size="17" fill="#1e1e1e" text-anchor="middle">Coordination server</text>
-<text x="500.0" y="137.0" font-size="17" fill="#1e1e1e" text-anchor="middle">(CONTROL PLANE)</text>
-<text x="360" y="184.0" font-size="14" fill="#2f9e44" text-anchor="start">keys - ACLs - peer discovery  (metadata only, no traffic)</text>
-<text x="180.0" y="464.25" font-size="18" fill="#1e1e1e" text-anchor="middle">Device A</text>
-<text x="500.0" y="464.25" font-size="18" fill="#1e1e1e" text-anchor="middle">Device B</text>
-<text x="820.0" y="464.25" font-size="18" fill="#1e1e1e" text-anchor="middle">Device C</text>
-<text x="300" y="395.0" font-size="15" fill="#1971c2" text-anchor="start">DATA PLANE:  direct encrypted P2P (WireGuard, end-to-end)</text>
-<text x="660" y="224.0" font-size="14" fill="#2f9e44" text-anchor="start">-- - -  control plane (metadata)</text>
-<text x="660" y="249.0" font-size="14" fill="#1971c2" text-anchor="start">-----  data plane (your traffic)</text>
+<rect x="360" y="80" width="280" height="80" rx="10" fill="var(--c-tint-green, #1e2e18)" fill-opacity="1.0" stroke="var(--c-hue-green, #9bd68a)" stroke-width="2"/>
+<rect x="90" y="420" width="180" height="75" rx="10" fill="var(--c-tint-blue, #162a38)" fill-opacity="1.0" stroke="var(--c-hue-blue, #7fbde8)" stroke-width="2"/>
+<rect x="410" y="420" width="180" height="75" rx="10" fill="var(--c-tint-blue, #162a38)" fill-opacity="1.0" stroke="var(--c-hue-blue, #7fbde8)" stroke-width="2"/>
+<rect x="730" y="420" width="180" height="75" rx="10" fill="var(--c-tint-blue, #162a38)" fill-opacity="1.0" stroke="var(--c-hue-blue, #7fbde8)" stroke-width="2"/>
+<line x1="500" y1="160" x2="180" y2="420" stroke="var(--c-hue-green, #9bd68a)" stroke-width="2" stroke-dasharray="8 6" marker-start="url(#ah_2f9e44)" marker-end="url(#ah_2f9e44)"/>
+<line x1="500" y1="160" x2="500" y2="420" stroke="var(--c-hue-green, #9bd68a)" stroke-width="2" stroke-dasharray="8 6" marker-start="url(#ah_2f9e44)" marker-end="url(#ah_2f9e44)"/>
+<line x1="500" y1="160" x2="820" y2="420" stroke="var(--c-hue-green, #9bd68a)" stroke-width="2" stroke-dasharray="8 6" marker-start="url(#ah_2f9e44)" marker-end="url(#ah_2f9e44)"/>
+<line x1="270" y1="480" x2="410" y2="480" stroke="var(--c-hue-blue, #7fbde8)" stroke-width="5" marker-start="url(#ah_1971c2)" marker-end="url(#ah_1971c2)"/>
+<line x1="590" y1="480" x2="730" y2="480" stroke="var(--c-hue-blue, #7fbde8)" stroke-width="5" marker-start="url(#ah_1971c2)" marker-end="url(#ah_1971c2)"/>
+<line x1="130" y1="495" x2="770" y2="495" stroke="var(--c-hue-blue, #7fbde8)" stroke-width="5" marker-start="url(#ah_1971c2)" marker-end="url(#ah_1971c2)"/>
+<text x="40" y="44.0" font-size="24" fill="var(--c-text, #35312a)" text-anchor="start">Control Plane  vs  Data Plane</text>
+<text x="500.0" y="115.75" font-size="17" fill="var(--c-text, #35312a)" text-anchor="middle">Coordination server</text>
+<text x="500.0" y="137.0" font-size="17" fill="var(--c-text, #35312a)" text-anchor="middle">(CONTROL PLANE)</text>
+<text x="360" y="184.0" font-size="14" fill="var(--c-hue-green, #9bd68a)" text-anchor="start">keys - ACLs - peer discovery  (metadata only, no traffic)</text>
+<text x="180.0" y="464.25" font-size="18" fill="var(--c-text, #35312a)" text-anchor="middle">Device A</text>
+<text x="500.0" y="464.25" font-size="18" fill="var(--c-text, #35312a)" text-anchor="middle">Device B</text>
+<text x="820.0" y="464.25" font-size="18" fill="var(--c-text, #35312a)" text-anchor="middle">Device C</text>
+<text x="300" y="395.0" font-size="15" fill="var(--c-hue-blue, #7fbde8)" text-anchor="start">DATA PLANE:  direct encrypted P2P (WireGuard, end-to-end)</text>
+<text x="660" y="224.0" font-size="14" fill="var(--c-hue-green, #9bd68a)" text-anchor="start">-- - -  control plane (metadata)</text>
+<text x="660" y="249.0" font-size="14" fill="var(--c-hue-blue, #7fbde8)" text-anchor="start">-----  data plane (your traffic)</text>
 </svg>

@@ -1,0 +1,148 @@
+---
+/**
+ * The homelab series is five posts that read in order and build on each
+ * other. Showing them as five unrelated cards among twenty throws away
+ * the one piece of narrative structure the blog has.
+ */
+import CardArt from "@/components/CardArt.astro";
+import { cardArt } from "@/lib/cardart";
+
+interface Entry { slug: string; title: string; excerpt?: string; order: number; readingTime?: string; }
+interface Props { title: string; blurb: string; entries: Entry[]; }
+const { title, blurb, entries } = Astro.props;
+const [lead, ...rest] = entries;
+---
+
+<section class="series">
+  <div class="head">
+    <p class="eyebrow">Series</p>
+    <h2>{title}</h2>
+    <p class="blurb">{blurb}</p>
+  </div>
+
+  <ol class="parts">
+    {entries.map((e, i) => (
+      <li class:list={["part", i === 0 && "first"]}>
+        <a href={`/blog/${e.slug}`}>
+          <span class="n">{String(e.order).padStart(2, "0")}</span>
+          <span class="art">
+            <CardArt art={cardArt({ slug: e.slug, title: e.title, collection: "blog" })} slug={e.slug} crop />
+          </span>
+          <span class="text">
+            <span class="t">{e.title}</span>
+            {e.excerpt && <span class="x">{e.excerpt}</span>}
+            {e.readingTime && <span class="rt">{e.readingTime.replace(/(\d+)\s*min.*/i, "$1 min read")}</span>}
+          </span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+  .series {
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
+    background: var(--c-chrome);
+    padding: var(--s-5);
+    margin-bottom: var(--s-7);
+  }
+
+  .head { max-width: 60ch; margin-bottom: var(--s-5); }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: 0.08em;
+    color: var(--c-accent);
+    margin-bottom: var(--s-2);
+  }
+  h2 {
+    font-size: var(--t-sans-xl);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .blurb {
+    margin-top: var(--s-2);
+    font-size: var(--t-sans-sm);
+    color: var(--c-muted);
+  }
+
+  .parts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-2);
+  }
+
+  .part a {
+    position: relative;
+    display: grid;
+    grid-template-columns: 3.2ch 150px minmax(0, 1fr);
+    align-items: center;
+    gap: var(--s-4);
+    padding: var(--s-3);
+    border-radius: var(--radius-sm);
+    color: inherit;
+    transition: background var(--dur-state) var(--ease);
+  }
+  .part a:hover { background: var(--c-raised); }
+
+  /* The running number is what makes it read as one sequence. */
+  .n {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-dim);
+    text-align: right;
+  }
+  .part a:hover .n { color: var(--c-accent); }
+
+  .art {
+    display: block;
+    container-type: inline-size;
+    aspect-ratio: 16 / 10;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--c-hairline);
+  }
+
+  .text { min-width: 0; }
+  .t {
+    display: block;
+    font-size: var(--t-sans-md);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .part a:hover .t { color: var(--c-link); }
+  .x {
+    display: block;
+    margin-top: 2px;
+    font-size: var(--t-sans-sm);
+    color: var(--c-muted);
+    line-height: 1.45;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .rt {
+    display: block;
+    margin-top: var(--s-1);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+  }
+
+  /* The first part gets a bigger preview — it's where you start. */
+  .part.first a { grid-template-columns: 3.2ch 210px minmax(0, 1fr); }
+
+  @media (max-width: 640px) {
+    .series { padding: var(--s-4); }
+    .part a,
+    .part.first a {
+      grid-template-columns: 3.2ch minmax(0, 1fr);
+      gap: var(--s-3);
+    }
+    .art { display: none; }
+  }
+</style>

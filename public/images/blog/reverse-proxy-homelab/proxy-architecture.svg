@@ -1,43 +1,43 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="720" viewBox="0 0 1000 720" font-family="Segoe UI, Helvetica, Arial, sans-serif">
-<rect width="1000" height="720" fill="#ffffff"/>
+<rect width="1000" height="720" fill="var(--c-sunken, #100f0c)"/>
 <defs>
-<marker id="ah_e8590c" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#e8590c"/></marker>
-<marker id="ah_1e1e1e" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#1e1e1e"/></marker>
-<marker id="ah_1971c2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="#1971c2"/></marker>
+<marker id="ah_e8590c" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="var(--c-hue-orange, #ffa06b)"/></marker>
+<marker id="ah_1e1e1e" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="var(--c-text, #35312a)"/></marker>
+<marker id="ah_1971c2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,3 L0,6 Z" fill="var(--c-hue-blue, #7fbde8)"/></marker>
 </defs>
-<rect x="390" y="70" width="220" height="70" rx="10" fill="#ffd8a8" fill-opacity="1.0" stroke="#e8590c" stroke-width="2"/>
-<rect x="340" y="240" width="320" height="120" rx="10" fill="#b2f2bb" fill-opacity="1.0" stroke="#2f9e44" stroke-width="2"/>
-<rect x="730" y="250" width="200" height="90" rx="10" fill="#ffd8a8" fill-opacity="1.0" stroke="#e8590c" stroke-width="2"/>
-<rect x="40" y="560" width="200" height="80" rx="10" fill="#a5d8ff" fill-opacity="1.0" stroke="#1971c2" stroke-width="2"/>
-<rect x="280" y="560" width="200" height="80" rx="10" fill="#a5d8ff" fill-opacity="1.0" stroke="#1971c2" stroke-width="2"/>
-<rect x="520" y="560" width="200" height="80" rx="10" fill="#a5d8ff" fill-opacity="1.0" stroke="#1971c2" stroke-width="2"/>
-<rect x="760" y="560" width="200" height="80" rx="10" fill="#a5d8ff" fill-opacity="1.0" stroke="#1971c2" stroke-width="2"/>
-<line x1="660" y1="300" x2="730" y2="300" stroke="#e8590c" stroke-width="2" stroke-dasharray="8 6" marker-start="url(#ah_e8590c)" marker-end="url(#ah_e8590c)"/>
-<line x1="500" y1="140" x2="500" y2="240" stroke="#1e1e1e" stroke-width="3" marker-end="url(#ah_1e1e1e)"/>
-<line x1="500" y1="360" x2="140" y2="560" stroke="#1971c2" stroke-width="2" marker-end="url(#ah_1971c2)"/>
-<line x1="500" y1="360" x2="380" y2="560" stroke="#1971c2" stroke-width="2" marker-end="url(#ah_1971c2)"/>
-<line x1="500" y1="360" x2="620" y2="560" stroke="#1971c2" stroke-width="2" marker-end="url(#ah_1971c2)"/>
-<line x1="500" y1="360" x2="860" y2="560" stroke="#1971c2" stroke-width="2" marker-end="url(#ah_1971c2)"/>
-<text x="40" y="44.0" font-size="24" fill="#1e1e1e" text-anchor="start">Reverse Proxy Architecture  -  Caddy</text>
-<text x="500.0" y="111.75" font-size="18" fill="#1e1e1e" text-anchor="middle">Internet / Users</text>
-<text x="500.0" y="285.125" font-size="17" fill="#1e1e1e" text-anchor="middle">Caddy Reverse Proxy</text>
-<text x="500.0" y="306.375" font-size="17" fill="#1e1e1e" text-anchor="middle">:443  TLS termination</text>
-<text x="500.0" y="327.625" font-size="17" fill="#1e1e1e" text-anchor="middle">Automatic HTTPS  -  clean URLs</text>
-<text x="830.0" y="281.875" font-size="15" fill="#1e1e1e" text-anchor="middle">Let&#x27;s Encrypt</text>
-<text x="830.0" y="300.625" font-size="15" fill="#1e1e1e" text-anchor="middle">(ACME)</text>
-<text x="830.0" y="319.375" font-size="15" fill="#1e1e1e" text-anchor="middle">auto-issue + renew</text>
-<text x="515" y="190.0" font-size="15" fill="#1e1e1e" text-anchor="start">HTTPS :443</text>
-<text x="140.0" y="595.75" font-size="17" fill="#1e1e1e" text-anchor="middle">Jellyfin</text>
-<text x="140.0" y="617.0" font-size="17" fill="#1e1e1e" text-anchor="middle">:8096</text>
-<text x="45" y="547.0" font-size="13" fill="#1971c2" text-anchor="start">jellyfin.domain</text>
-<text x="380.0" y="595.75" font-size="17" fill="#1e1e1e" text-anchor="middle">Grafana</text>
-<text x="380.0" y="617.0" font-size="17" fill="#1e1e1e" text-anchor="middle">:3000</text>
-<text x="285" y="547.0" font-size="13" fill="#1971c2" text-anchor="start">grafana.domain</text>
-<text x="620.0" y="595.75" font-size="17" fill="#1e1e1e" text-anchor="middle">Nextcloud</text>
-<text x="620.0" y="617.0" font-size="17" fill="#1e1e1e" text-anchor="middle">:80</text>
-<text x="525" y="547.0" font-size="13" fill="#1971c2" text-anchor="start">nextcloud.domain</text>
-<text x="860.0" y="595.75" font-size="17" fill="#1e1e1e" text-anchor="middle">NAS</text>
-<text x="860.0" y="617.0" font-size="17" fill="#1e1e1e" text-anchor="middle">:5000</text>
-<text x="765" y="547.0" font-size="13" fill="#1971c2" text-anchor="start">nas.domain</text>
-<text x="120" y="485.0" font-size="15" fill="#1e1e1e" text-anchor="start">one entry point  -&gt;  internal services never expose their ports</text>
+<rect x="390" y="70" width="220" height="70" rx="10" fill="var(--c-tint-orange, #3a2418)" fill-opacity="1.0" stroke="var(--c-hue-orange, #ffa06b)" stroke-width="2"/>
+<rect x="340" y="240" width="320" height="120" rx="10" fill="var(--c-tint-green, #1e2e18)" fill-opacity="1.0" stroke="var(--c-hue-green, #9bd68a)" stroke-width="2"/>
+<rect x="730" y="250" width="200" height="90" rx="10" fill="var(--c-tint-orange, #3a2418)" fill-opacity="1.0" stroke="var(--c-hue-orange, #ffa06b)" stroke-width="2"/>
+<rect x="40" y="560" width="200" height="80" rx="10" fill="var(--c-tint-blue, #162a38)" fill-opacity="1.0" stroke="var(--c-hue-blue, #7fbde8)" stroke-width="2"/>
+<rect x="280" y="560" width="200" height="80" rx="10" fill="var(--c-tint-blue, #162a38)" fill-opacity="1.0" stroke="var(--c-hue-blue, #7fbde8)" stroke-width="2"/>
+<rect x="520" y="560" width="200" height="80" rx="10" fill="var(--c-tint-blue, #162a38)" fill-opacity="1.0" stroke="var(--c-hue-blue, #7fbde8)" stroke-width="2"/>
+<rect x="760" y="560" width="200" height="80" rx="10" fill="var(--c-tint-blue, #162a38)" fill-opacity="1.0" stroke="var(--c-hue-blue, #7fbde8)" stroke-width="2"/>
+<line x1="660" y1="300" x2="730" y2="300" stroke="var(--c-hue-orange, #ffa06b)" stroke-width="2" stroke-dasharray="8 6" marker-start="url(#ah_e8590c)" marker-end="url(#ah_e8590c)"/>
+<line x1="500" y1="140" x2="500" y2="240" stroke="var(--c-text, #35312a)" stroke-width="3" marker-end="url(#ah_1e1e1e)"/>
+<line x1="500" y1="360" x2="140" y2="560" stroke="var(--c-hue-blue, #7fbde8)" stroke-width="2" marker-end="url(#ah_1971c2)"/>
+<line x1="500" y1="360" x2="380" y2="560" stroke="var(--c-hue-blue, #7fbde8)" stroke-width="2" marker-end="url(#ah_1971c2)"/>
+<line x1="500" y1="360" x2="620" y2="560" stroke="var(--c-hue-blue, #7fbde8)" stroke-width="2" marker-end="url(#ah_1971c2)"/>
+<line x1="500" y1="360" x2="860" y2="560" stroke="var(--c-hue-blue, #7fbde8)" stroke-width="2" marker-end="url(#ah_1971c2)"/>
+<text x="40" y="44.0" font-size="24" fill="var(--c-text, #35312a)" text-anchor="start">Reverse Proxy Architecture  -  Caddy</text>
+<text x="500.0" y="111.75" font-size="18" fill="var(--c-text, #35312a)" text-anchor="middle">Internet / Users</text>
+<text x="500.0" y="285.125" font-size="17" fill="var(--c-text, #35312a)" text-anchor="middle">Caddy Reverse Proxy</text>
+<text x="500.0" y="306.375" font-size="17" fill="var(--c-text, #35312a)" text-anchor="middle">:443  TLS termination</text>
+<text x="500.0" y="327.625" font-size="17" fill="var(--c-text, #35312a)" text-anchor="middle">Automatic HTTPS  -  clean URLs</text>
+<text x="830.0" y="281.875" font-size="15" fill="var(--c-text, #35312a)" text-anchor="middle">Let&#x27;s Encrypt</text>
+<text x="830.0" y="300.625" font-size="15" fill="var(--c-text, #35312a)" text-anchor="middle">(ACME)</text>
+<text x="830.0" y="319.375" font-size="15" fill="var(--c-text, #35312a)" text-anchor="middle">auto-issue + renew</text>
+<text x="515" y="190.0" font-size="15" fill="var(--c-text, #35312a)" text-anchor="start">HTTPS :443</text>
+<text x="140.0" y="595.75" font-size="17" fill="var(--c-text, #35312a)" text-anchor="middle">Jellyfin</text>
+<text x="140.0" y="617.0" font-size="17" fill="var(--c-text, #35312a)" text-anchor="middle">:8096</text>
+<text x="45" y="547.0" font-size="13" fill="var(--c-hue-blue, #7fbde8)" text-anchor="start">jellyfin.domain</text>
+<text x="380.0" y="595.75" font-size="17" fill="var(--c-text, #35312a)" text-anchor="middle">Grafana</text>
+<text x="380.0" y="617.0" font-size="17" fill="var(--c-text, #35312a)" text-anchor="middle">:3000</text>
+<text x="285" y="547.0" font-size="13" fill="var(--c-hue-blue, #7fbde8)" text-anchor="start">grafana.domain</text>
+<text x="620.0" y="595.75" font-size="17" fill="var(--c-text, #35312a)" text-anchor="middle">Nextcloud</text>
+<text x="620.0" y="617.0" font-size="17" fill="var(--c-text, #35312a)" text-anchor="middle">:80</text>
+<text x="525" y="547.0" font-size="13" fill="var(--c-hue-blue, #7fbde8)" text-anchor="start">nextcloud.domain</text>
+<text x="860.0" y="595.75" font-size="17" fill="var(--c-text, #35312a)" text-anchor="middle">NAS</text>
+<text x="860.0" y="617.0" font-size="17" fill="var(--c-text, #35312a)" text-anchor="middle">:5000</text>
+<text x="765" y="547.0" font-size="13" fill="var(--c-hue-blue, #7fbde8)" text-anchor="start">nas.domain</text>
+<text x="120" y="485.0" font-size="15" fill="var(--c-text, #35312a)" text-anchor="start">one entry point  -&gt;  internal services never expose their ports</text>
 </svg>

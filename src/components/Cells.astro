@@ -1,7 +1,8 @@
 ---
 /** Cards lead with artwork. Without it they read as a list of filenames. */
 import Tags from "@/components/Tags.astro";
-import Cover from "@/components/Cover.astro";
+import CardArt from "@/components/CardArt.astro";
+import type { CardArt as Art } from "@/lib/cardart";
 
 interface Cell {
   title: string;
@@ -10,6 +11,7 @@ interface Cell {
   tags?: string[];
   meta?: string;
   slug?: string;
+  art?: Art;
 }
 interface Props { cells: Cell[]; columns?: number; }
 const { cells } = Astro.props;
@@ -19,7 +21,7 @@ const { cells } = Astro.props;
   {cells.map((cell) => (
     <li class="cell">
       <a href={cell.href}>
-        <span class="art"><Cover slug={cell.slug ?? cell.href} /></span>
+        {cell.art && <span class="art"><CardArt art={cell.art} slug={cell.slug ?? cell.href} /></span>}
         <span class="body">
           <span class="head">
             <span class="title">{cell.title}</span>
@@ -64,6 +66,7 @@ const { cells } = Astro.props;
 
   .art {
     display: block;
+    container-type: inline-size;
     aspect-ratio: 16 / 9;
     max-width: 100%;
     overflow: hidden;

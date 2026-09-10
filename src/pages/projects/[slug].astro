@@ -1,8 +1,9 @@
 ---
 import Shell from "@/layouts/Shell.astro";
+import { cardArt } from "@/lib/cardart";
 import PostMeta from "@/components/PostMeta.astro";
 import Tags from "@/components/Tags.astro";
-import Cover from "@/components/Cover.astro";
+import CardArt from "@/components/CardArt.astro";
 import Cells from "@/components/Cells.astro";
 import { getAllProjects, getSuggestedProjects, projectSlug } from "@/lib/projects";
 
@@ -17,6 +18,13 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const slug = projectSlug(entry);
 const { Content } = await entry.render();
+const heroArt = cardArt({
+  slug,
+  title: entry.data.title,
+  thumbnail: entry.data.thumbnail,
+  collection: "projects",
+});
+
 const hasMath = /\$\$|\\\(|\\\[|\$[^$\n]+\$/.test(entry.body ?? "");
 
 const external = [
@@ -35,6 +43,12 @@ const suggested = (await getSuggestedProjects(slug, 3)).map((p) => ({
   slug: projectSlug(p),
   description: p.data.description || undefined,
   tags: p.data.tags ?? [],
+  art: cardArt({
+    slug: projectSlug(p),
+    title: p.data.title,
+    thumbnail: p.data.thumbnail,
+    collection: "projects",
+  }),
 }));
 ---
 
@@ -45,7 +59,7 @@ const suggested = (await getSuggestedProjects(slug, 3)).map((p) => ({
   math={hasMath}
 >
   <article>
-    <div class="hero" aria-hidden="true"><Cover slug={slug} cols={24} rows={8} /></div>
+    <div class="hero"><CardArt art={heroArt} slug={slug} crop /></div>
     <header>
       <h1>{entry.data.title}</h1>
       <PostMeta date={entry.data.date} />
@@ -79,6 +93,7 @@ const suggested = (await getSuggestedProjects(slug, 3)).map((p) => ({
 
 <style>
   .hero {
+    container-type: inline-size;
     aspect-ratio: 21 / 7;
     overflow: hidden;
     border: 1px solid var(--c-hairline);
