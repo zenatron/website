@@ -91,6 +91,9 @@ const files = [
             </div>
 
             <ul class="group" id={`group-${folder.name}`} data-group={folder.name}>
+              <li class="row index-row">
+                <a href={folder.href} data-nav>All {folder.name}</a>
+              </li>
               {folder.children.map((child, i) => (
                 <li class="row" data-overflow={i >= CAP ? "" : undefined}>
                   <a href={child.href} data-nav>{child.name}</a>
@@ -286,6 +289,9 @@ const files = [
     color: var(--c-dim);
   }
 
+  /* The index row is a touch affordance; a pointer has the folder row. */
+  .index-row { display: none; }
+
   @media (max-width: 900px) {
     .sidebar {
       position: absolute;
@@ -300,6 +306,43 @@ const files = [
     }
     .sidebar[data-open="true"] { transform: translateX(0); }
     .close { display: grid; }
-    .row { line-height: 2.4; }
+
+    /* 16px or iOS zooms the page when the field takes focus. */
+    .filterbar input {
+      font-size: 16px;
+      padding: 10px 12px;
+    }
+
+    /* Every row is a real touch target. */
+    .row { line-height: 1.4; min-height: 46px; }
+    .row a,
+    .more button {
+      display: flex;
+      align-items: center;
+      min-height: 46px;
+    }
+
+    /*
+     * A 16x29 disclosure triangle is not a tap target. On touch the whole
+     * folder row toggles, and the folder's index moves into the group as
+     * an explicit "All blog" row — two targets stacked in one row is a
+     * mouse idiom that a thumb can't resolve.
+     */
+    .twisty {
+      inset: 0;
+      width: 100%;
+      z-index: 2;
+      place-items: center start;
+      padding-left: var(--s-2);
+    }
+    [data-row] a { pointer-events: none; }
+    .tri {
+      border-top-width: 4.5px;
+      border-bottom-width: 4.5px;
+      border-left-width: 6.5px;
+    }
+
+    .index-row { display: flex; }
+    .index-row a { color: var(--c-link); }
   }
 </style>

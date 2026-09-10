@@ -41,8 +41,14 @@ function setDrawer(open: boolean) {
   sidebar.dataset.open = String(open);
   toggle.setAttribute("aria-expanded", String(open));
   scrim.hidden = !open;
-  // Focus moves into the drawer so the keyboard lands where the eye does.
-  if (open) sidebar.querySelector<HTMLElement>("[data-filter]")?.focus();
+  // Focus moves into the drawer so the keyboard lands where the eye does —
+  // but never on touch, where focusing a field summons the on-screen
+  // keyboard over the very list you just asked to see.
+  if (open && window.matchMedia("(hover: hover)").matches) {
+    sidebar.querySelector<HTMLElement>("[data-filter]")?.focus();
+  } else if (open) {
+    sidebar.querySelector<HTMLElement>("[data-drawer-close]")?.focus();
+  }
 }
 
 function wireDrawer() {
