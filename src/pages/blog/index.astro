@@ -3,6 +3,7 @@ import Shell from "@/layouts/Shell.astro";
 import Cells from "@/components/Cells.astro";
 import Series from "@/components/Series.astro";
 import Archive from "@/components/Archive.astro";
+import SectionHead from "@/components/SectionHead.astro";
 import { cardArt } from "@/lib/cardart";
 import { getAllBlogPosts } from "@/lib/blog";
 
@@ -83,7 +84,7 @@ const cells = await Promise.all(
 
   {cells.length > 0 && (
     <section class="loose">
-      <h2>Posts</h2>
+      <SectionHead title="Posts" meta={`${cells.length}`} />
       <Cells cells={cells} />
     </section>
   )}
@@ -109,9 +110,5 @@ const cells = await Promise.all(
     max-width: 56ch;
     color: var(--c-muted);
   }
-  .loose h2 {
-    font-size: var(--t-sans-lg);
-    font-weight: 600;
-    margin-bottom: var(--s-5);
-  }
+  .loose { margin-top: var(--s-7); }
 </style>

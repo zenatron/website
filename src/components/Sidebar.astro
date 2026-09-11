@@ -1,16 +1,18 @@
 ---
 /**
- * The nav is an actual file listing — rows are real content-collection
- * slugs — and it mirrors how the content is actually organised, so the
- * blog's two series are folders rather than twenty loose files.
+ * The explorer.
  *
- * Persisted across navigation; active state, expansion and search are
- * re-synced by scripts/sidebar.ts rather than re-rendered here.
+ * Two levels, never three: sections, then files. A series is a labelled
+ * run inside its section rather than another folder to open — the extra
+ * depth cost a click and a chunk of width and bought nothing.
+ *
+ * Rhythm comes from three things the old flat list had none of: tracked
+ * section labels, a right-hand metadata column the way a file browser
+ * shows size and date, and a hue dot per file from the same hash the tags
+ * and covers use.
  */
 import { getAllBlogPosts } from "@/lib/blog";
 import { getAllProjects, projectSlug } from "@/lib/projects";
-
-const CAP = 8;
 
 const posts = await getAllBlogPosts();
 const projects = await getAllProjects();
@@ -21,31 +23,54 @@ function hue(s: string) {
   for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
   return HUES[(h >>> 0) % HUES.length];
 }
+const minutes = (v?: string) => (v ? `${v.match(/\d+/)?.[0] ?? ""}m` : "");
+const year = (v?: string | Date) => {
+  if (!v) return "";
+  const d = new Date(v);
+  return Number.isNaN(d.getTime()) ? "" : `'${String(d.getFullYear()).slice(2)}`;
+};
 
-interface Leaf { name: string; href: string; title: string }
-interface Folder { name: string; href?: string; children: Leaf[] }
+interface Row { name: string; href: string; title: string; meta: string; run?: string }
 
-const bySeries = (key: string): Leaf[] =>
-  posts
-    .filter((p) => p.data.series === key)
-    .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0))
-    .map((p) => ({ name: `${p.slug}.mdx`, href: `/blog/${p.slug}`, title: p.data.title }));
-
-const projectLeaves: Leaf[] = projects.map((p) => ({
+const projectRows: Row[] = projects.map((p) => ({
   name: `${projectSlug(p)}.mdx`,
   href: `/projects/${projectSlug(p)}`,
   title: p.data.title,
+  meta: year(p.data.date),
 }));
 
-const blogSubfolders: Folder[] = [
-  { name: "homelab", children: bySeries("homelab-networking") },
-  { name: "coursework", children: bySeries("data-mining") },
-];
-const blogLoose: Leaf[] = posts
-  .filter((p) => !p.data.series)
-  .map((p) => ({ name: `${p.slug}.mdx`, href: `/blog/${p.slug}`, title: p.data.title }));
+const bySeries = (key: string, run: string): Row[] =>
+  posts
+    .filter((p) => p.data.series === key)
+    .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0))
+    .map((p) => ({
+      name: `${p.slug}.mdx`,
+      href: `/blog/${p.slug}`,
+      title: p.data.title,
+      meta: minutes(p.data.readingTime),
+      run,
+    }));
 
-const files = [
+const blogRows: Row[] = [
+  ...posts
+    .filter((p) => !p.data.series)
+    .map((p) => ({
+      name: `${p.slug}.mdx`,
+      href: `/blog/${p.slug}`,
+      title: p.data.title,
+      meta: minutes(p.data.readingTime),
+    })),
+  ...bySeries("homelab-networking", "homelab & networking"),
+  ...bySeries("data-mining", "data mining coursework"),
+];
+
+const sections = [
+  { key: "projects", label: "projects", href: "/projects", rows: projectRows },
+  { key: "blog", label: "writing", href: "/blog", rows: blogRows },
+];
+
+const pages = [
+  { name: "home", href: "/" },
   { name: "about", href: "/about" },
   { name: "desk", href: "/desk" },
   { name: "elsewhere", href: "/links" },
@@ -54,10 +79,9 @@ const files = [
 
 <nav id="sidebar" class="sidebar" aria-label="Site" transition:persist="sidebar">
   <div class="head">
-    <p class="explorer" id="explorer-label">explorer</p>
+    <p class="explorer">explorer</p>
     <button class="close" type="button" data-drawer-close>
-      <span class="sr-only">Close menu</span>
-      <span aria-hidden="true">&times;</span>
+      <span class="sr-only">Close menu</span><span aria-hidden="true">&times;</span>
     </button>
   </div>
 
@@ -66,94 +90,41 @@ const files = [
     <input id="tree-search" type="search" placeholder="search" autocomplete="off" spellcheck="false" data-search />
   </div>
 
-  <ul class="tree" data-tree>
-    <li class="row"><a href="/" data-nav>home</a></li>
+  <div class="tree" data-tree>
+    <ul class="pages">
+      {pages.map((f) => (
+        <li class="row page"><a href={f.href} data-nav>{f.name}</a></li>
+      ))}
+    </ul>
 
-    <!-- projects -->
-    <li>
-      <div class="row folder" data-row>
-        <button class="twisty" type="button" aria-expanded="false" aria-controls="group-projects" data-twisty="projects">
-          <span class="sr-only">Toggle projects</span><span class="tri" aria-hidden="true" />
-        </button>
-        <a href="/projects" data-nav>projects</a>
-        <span class="count" aria-hidden="true">{projectLeaves.length}</span>
-      </div>
-      <ul class="children" id="group-projects" data-group="projects">
-        <li class="row index-row"><a href="/projects" data-nav>All projects</a></li>
-        {projectLeaves.map((c, i) => (
-          <li class="row leaf" data-title={c.title} data-overflow={i >= CAP ? "" : undefined}>
-            <span class="dot" aria-hidden="true" style={`--d: var(--c-hue-${hue(c.name)}, var(--c-${hue(c.name)}))`} />
-            <a href={c.href} data-nav>{c.name}</a>
-          </li>
-        ))}
-        {projectLeaves.length > CAP && (
-          <li class="row more">
-            <button type="button" data-more="projects" aria-expanded="false">
-              <span data-more-label>{projectLeaves.length - CAP} more…</span>
-            </button>
-          </li>
-        )}
-      </ul>
-    </li>
-
-    <!-- blog, with its series as folders -->
-    <li>
-      <div class="row folder" data-row>
-        <button class="twisty" type="button" aria-expanded="false" aria-controls="group-blog" data-twisty="blog">
-          <span class="sr-only">Toggle blog</span><span class="tri" aria-hidden="true" />
-        </button>
-        <a href="/blog" data-nav>blog</a>
-        <span class="count" aria-hidden="true">{posts.length}</span>
-      </div>
-
-      <ul class="children" id="group-blog" data-group="blog">
-        <li class="row index-row"><a href="/blog" data-nav>All posts</a></li>
-        {blogSubfolders.map((sub) => (
-          <li>
-            <div class="row folder sub" data-row>
-              <button
-                class="twisty"
-                type="button"
-                aria-expanded="false"
-                aria-controls={`group-${sub.name}`}
-                data-twisty={sub.name}
-              >
-                <span class="sr-only">Toggle {sub.name}</span><span class="tri" aria-hidden="true" />
-              </button>
-              <span class="foldername">{sub.name}/</span>
-              <span class="count" aria-hidden="true">{sub.children.length}</span>
-            </div>
-            <ul class="children deep" id={`group-${sub.name}`} data-group={sub.name}>
-              {sub.children.map((c, i) => (
-                <li class="row leaf" data-title={c.title} data-overflow={i >= CAP ? "" : undefined}>
-                  <span class="dot" aria-hidden="true" style={`--d: var(--c-hue-${hue(c.name)}, var(--c-${hue(c.name)}))`} />
-                  <a href={c.href} data-nav>{c.name}</a>
-                </li>
-              ))}
-              {sub.children.length > CAP && (
-                <li class="row more">
-                  <button type="button" data-more={sub.name} aria-expanded="false">
-                    <span data-more-label>{sub.children.length - CAP} more…</span>
-                  </button>
-                </li>
-              )}
-            </ul>
-          </li>
-        ))}
-
-        {blogLoose.map((c) => (
-          <li class="row leaf" data-title={c.title}>
-            <span class="dot" aria-hidden="true" style={`--d: var(--c-hue-${hue(c.name)}, var(--c-${hue(c.name)}))`} />
-            <a href={c.href} data-nav>{c.name}</a>
-          </li>
-        ))}
-      </ul>
-    </li>
-
-    {files.map((f) => (
-      <li class="row"><a href={f.href} data-nav>{f.name}</a></li>
-    ))}
-  </ul>
+    {sections.map((section) => {
+      let lastRun: string | undefined;
+      return (
+        <section class="sect">
+          <div class="sectlabel">
+            <a href={section.href} data-nav>{section.label}</a>
+            <span class="count" aria-hidden="true">{section.rows.length}</span>
+          </div>
+          <ul data-group={section.key}>
+            {section.rows.map((r, i) => {
+              const startsRun = r.run && r.run !== lastRun;
+              lastRun = r.run;
+              return (
+                <>
+                  {startsRun && <li class="runlabel" aria-hidden="true">{r.run}</li>}
+                  <li class="row file" data-title={r.title} data-run={r.run}>
+                    <span class="dot" aria-hidden="true" style={`--d: var(--c-hue-${hue(r.name)}, var(--c-${hue(r.name)}))`} />
+                    <a href={r.href} data-nav>{r.name}</a>
+                    <span class="rowmeta" aria-hidden="true">{r.meta}</span>
+                  </li>
+                </>
+              );
+            })}
+          </ul>
+        </section>
+      );
+    })}
+  </div>
 
   <p class="empty" data-empty hidden>No match.</p>
 </nav>
@@ -166,7 +137,7 @@ const files = [
     width: var(--w-sidebar);
     background: var(--c-chrome);
     border-right: 1px solid var(--c-hairline);
-    padding-block: var(--s-3) var(--s-4);
+    padding-block: var(--s-3) var(--s-6);
     overflow-y: auto;
   }
 
@@ -185,8 +156,7 @@ const files = [
   }
   .close {
     display: none;
-    width: 30px;
-    height: 30px;
+    width: 30px; height: 30px;
     place-items: center;
     border-radius: var(--radius-sm);
     color: var(--c-muted);
@@ -194,11 +164,8 @@ const files = [
     line-height: 1;
     cursor: pointer;
   }
-  @media (hover: hover) {
-    .close:hover { background: var(--c-raised); color: var(--c-text); }
-  }
 
-  .searchbar { padding-inline: var(--s-3); margin-bottom: var(--s-3); }
+  .searchbar { padding-inline: var(--s-3); margin-bottom: var(--s-4); }
   .searchbar input {
     width: 100%;
     font-family: var(--font-mono);
@@ -211,122 +178,107 @@ const files = [
   }
   .searchbar input::-webkit-search-cancel-button { -webkit-appearance: none; }
 
-  .tree,
-  .children {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  ul { list-style: none; margin: 0; padding: 0; }
+
+  /* Section label: the loudest small thing in the rail. */
+  .sect { margin-top: var(--s-5); }
+  .sectlabel {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-2);
+    padding-inline: var(--s-4) var(--s-3);
+    margin-bottom: var(--s-2);
+  }
+  .sectlabel a {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-text);
+    font-weight: 500;
+  }
+  .sectlabel .count {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
   }
 
-  :global(.js) .children:not([data-open="true"]) { display: none; }
-  .twisty { display: none; }
-  :global(.js) .twisty { display: grid; }
-  :global(.js) .children:not([data-all="true"]) .row[data-overflow] { display: none; }
-  :global(.js) .children[data-searching="true"] .row[data-overflow] { display: flex; }
+  /* A series is a labelled run, not another folder. */
+  .runlabel {
+    padding: var(--s-3) var(--s-4) var(--s-1);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+  }
+  .runlabel::before {
+    content: "";
+    display: block;
+    width: 18px;
+    border-top: 1px solid var(--c-hairline-strong);
+    margin-bottom: var(--s-2);
+  }
 
   .row {
     position: relative;
     display: flex;
     align-items: center;
-    margin-inline: var(--s-2);
-    padding-left: var(--s-2);
+    gap: var(--s-1);
+    margin-inline: var(--s-1);
+    padding-inline: var(--s-2);
     border-radius: var(--radius-sm);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    line-height: 2.1;
+    line-height: 2;
     transition: background var(--dur-state) var(--ease);
   }
   .row[hidden] { display: none; }
 
-  /* Folders carry weight; files don't. That's the rhythm the flat list
-     was missing. */
-  .folder a,
-  .foldername {
-    font-weight: 500;
-    color: var(--c-text);
-  }
-  .folder + .children { margin-bottom: var(--s-1); }
-
-  .row a,
-  .foldername {
+  .row a {
     flex: 1 1 auto;
     min-width: 0;
-    padding-left: var(--s-4);
-    padding-right: var(--s-2);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
     color: var(--c-muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     transition: color var(--dur-state) var(--ease);
   }
-  .children > .row a,
-  .children > li > .row .foldername { padding-left: calc(var(--s-4) + var(--s-3)); }
-  .children.deep > .row a { padding-left: calc(var(--s-4) + var(--s-5) + var(--s-2)); }
 
-  /* A hue dot per file, from the same hash the tags and covers use. */
+  /* Pages read as the top level: sans, a size up, no dot. */
+  .page a {
+    font-family: var(--font-sans);
+    font-size: var(--t-sans-sm);
+    color: var(--c-text);
+  }
+
   .dot {
-    position: absolute;
-    left: calc(var(--s-4) + var(--s-2));
-    width: 5px;
-    height: 5px;
+    flex: 0 0 auto;
+    width: 5px; height: 5px;
     border-radius: 50%;
     background: var(--d);
-    opacity: 0.85;
+    opacity: 0.9;
   }
-  .children.deep .dot { left: calc(var(--s-4) + var(--s-3)); }
-  .leaf a { padding-left: calc(var(--s-4) + var(--s-5)); }
-  .children.deep > .leaf a { padding-left: calc(var(--s-4) + var(--s-5)); }
 
-  .count {
+  /* The metadata column is what breaks the monotony — a file browser
+     shows size and date, so this shows reading time and year. */
+  .rowmeta {
     flex: 0 0 auto;
-    padding-right: var(--s-3);
+    font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
     color: var(--c-dim);
+    font-variant-numeric: tabular-nums;
   }
 
   @media (hover: hover) {
     .row:hover { background: var(--c-raised); }
     .row:hover a { color: var(--c-text); }
-    .row:hover .tri { border-left-color: var(--c-text); }
-    .more button:hover { color: var(--c-text); }
+    .sectlabel a:hover { color: var(--c-link); }
   }
 
   .row[data-active] { background: var(--c-tint-accent); }
   .row[data-active] a { color: var(--c-accent); font-weight: 500; }
   .row[data-active] .dot { opacity: 1; }
-
-  .twisty {
-    position: absolute;
-    z-index: 1;
-    left: var(--s-2);
-    top: 0;
-    bottom: 0;
-    width: var(--s-4);
-    place-items: center;
-    padding: 0;
-    cursor: pointer;
-  }
-  .sub .twisty { left: calc(var(--s-2) + var(--s-3)); }
-  .tri {
-    width: 0;
-    height: 0;
-    border-top: 3.5px solid transparent;
-    border-bottom: 3.5px solid transparent;
-    border-left: 5px solid var(--c-dim);
-    transition: transform var(--dur-state) var(--ease);
-  }
-  .twisty[aria-expanded="true"] .tri { transform: rotate(90deg); }
-
-  .more button {
-    flex: 1 1 auto;
-    text-align: left;
-    padding-left: calc(var(--s-4) + var(--s-5));
-    padding-right: var(--s-2);
-    color: var(--c-dim);
-    cursor: pointer;
-    transition: color var(--dur-state) var(--ease);
-  }
-  .children.deep .more button { padding-left: calc(var(--s-4) + var(--s-5)); }
+  .row[data-active] .rowmeta { color: var(--c-accent); }
 
   .empty {
     padding-inline: var(--s-4);
@@ -334,10 +286,6 @@ const files = [
     font-size: var(--t-mono-sm);
     color: var(--c-dim);
   }
-
-  /* A touch affordance: a pointer still has the folder row itself. */
-  .index-row { display: none; }
-  .index-row a { color: var(--c-link); padding-left: calc(var(--s-4) + var(--s-5)); }
 
   @media (max-width: 900px) {
     .sidebar {
@@ -354,13 +302,6 @@ const files = [
     .close { display: grid; }
     .searchbar input { font-size: 16px; padding: 10px 12px; }
     .row { line-height: 1.4; min-height: 46px; }
-    .row a,
-    .foldername,
-    .more button { display: flex; align-items: center; min-height: 46px; }
-    .twisty { inset: 0; width: 100%; z-index: 2; place-items: center start; padding-left: var(--s-2); }
-    .sub .twisty { padding-left: calc(var(--s-2) + var(--s-3)); }
-    [data-row] a { pointer-events: none; }
-    .index-row { display: flex; }
-    .tri { border-top-width: 4.5px; border-bottom-width: 4.5px; border-left-width: 6.5px; }
+    .row a { display: flex; align-items: center; min-height: 46px; }
   }
 </style>

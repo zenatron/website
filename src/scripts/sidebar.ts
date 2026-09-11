@@ -1,90 +1,10 @@
 /**
- * The sidebar persists across navigation, so active state, expansion and
- * the filter are synced here rather than re-rendered.
+ * The explorer persists across navigation, so active state and search are
+ * synced here rather than re-rendered.
  *
- * Expansion is remembered for the session: someone reading a post should
- * find `blog` still open on the next one.
+ * There is no expansion state any more — the tree is two levels and
+ * always open, which is what "too much nesting" was really about.
  */
-
-const KEY = "sidebar-expanded";
-
-function readExpanded(): Set<string> {
-  try {
-    return new Set(JSON.parse(sessionStorage.getItem(KEY) ?? "[]"));
-  } catch {
-    return new Set();
-  }
-}
-
-function writeExpanded(set: Set<string>) {
-  try {
-    sessionStorage.setItem(KEY, JSON.stringify([...set]));
-  } catch {
-    /* private browsing — expansion just won't persist */
-  }
-}
-
-function applyExpanded(set: Set<string>) {
-  document.querySelectorAll<HTMLElement>("[data-group]").forEach((group) => {
-    const name = group.dataset.group!;
-    const open = set.has(name);
-    group.dataset.open = String(open);
-    document
-      .querySelector(`[data-twisty="${name}"]`)
-      ?.setAttribute("aria-expanded", String(open));
-  });
-}
-
-function syncActive() {
-  const here = location.pathname.replace(/\/+$/, "") || "/";
-  const ancestors: string[] = [];
-
-  document.querySelectorAll<HTMLAnchorElement>("#sidebar a[data-nav]").forEach((a) => {
-    const href = new URL(a.href).pathname.replace(/\/+$/, "") || "/";
-    const row = a.closest<HTMLElement>(".row");
-    if (!row) return;
-    // The "N more" row points at the index too; the folder row owns that state.
-    const isActive = href === here && !row.classList.contains("more");
-    row.toggleAttribute("data-active", isActive);
-    if (isActive) a.setAttribute("aria-current", "page");
-    else a.removeAttribute("aria-current");
-    if (isActive) {
-      // Walk every ancestor group, not just the nearest — blog nests its
-      // series one level deeper than projects does.
-      let node: HTMLElement | null = a.closest<HTMLElement>("[data-group]");
-      while (node) {
-        ancestors.push(node.dataset.group!);
-        node = node.parentElement?.closest<HTMLElement>("[data-group]") ?? null;
-      }
-    }
-  });
-
-  // Opening the folder that contains the current route is not a preference,
-  // so it is applied on top of the stored set rather than written into it.
-  const expanded = readExpanded();
-  const seg = here.split("/")[1];
-  if (ancestors.length) for (const a of ancestors) expanded.add(a);
-  else if (seg && document.querySelector(`[data-group="${seg}"]`)) expanded.add(seg);
-  applyExpanded(expanded);
-}
-
-function wireTwisties() {
-  document.querySelectorAll<HTMLButtonElement>("[data-twisty]").forEach((btn) => {
-    if (btn.dataset.wired) return;
-    btn.dataset.wired = "1";
-    btn.addEventListener("click", () => {
-      const name = btn.dataset.twisty!;
-      const expanded = readExpanded();
-      const open = btn.getAttribute("aria-expanded") !== "true";
-      if (open) expanded.add(name);
-      else expanded.delete(name);
-      writeExpanded(expanded);
-      applyExpanded(expanded);
-    });
-  });
-}
-
-/* ── search ──────────────────────────────────────────────────── */
 
 /** Do the query's characters appear in order? `revprox` matches the post. */
 function subsequence(needle: string, hay: string): boolean {
@@ -93,20 +13,28 @@ function subsequence(needle: string, hay: string): boolean {
   return i === needle.length;
 }
 
-function wireMore() {
-  document.querySelectorAll<HTMLButtonElement>("[data-more]").forEach((btn) => {
-    if (btn.dataset.wired) return;
-    btn.dataset.wired = "1";
-    const group = document.querySelector<HTMLElement>(`[data-group="${btn.dataset.more}"]`);
-    const label = btn.querySelector<HTMLElement>("[data-more-label]");
-    const original = label?.textContent ?? "";
-    btn.addEventListener("click", () => {
-      const showingAll = group?.dataset.all === "true";
-      if (group) group.dataset.all = String(!showingAll);
-      btn.setAttribute("aria-expanded", String(!showingAll));
-      if (label) label.textContent = showingAll ? original : "fewer";
-    });
+function syncActive() {
+  const here = location.pathname.replace(/\/+$/, "") || "/";
+
+  document.querySelectorAll<HTMLAnchorElement>("#sidebar a[data-nav]").forEach((a) => {
+    const href = new URL(a.href).pathname.replace(/\/+$/, "") || "/";
+    const row = a.closest<HTMLElement>(".row");
+    const isActive = href === here;
+    if (row) row.toggleAttribute("data-active", isActive);
+    if (isActive) a.setAttribute("aria-current", "page");
+    else a.removeAttribute("aria-current");
   });
+
+  // Keep the current file in view without yanking the whole page.
+  const active = document.querySelector<HTMLElement>("#sidebar .row[data-active]");
+  const rail = document.getElementById("sidebar");
+  if (active && rail) {
+    const a = active.getBoundingClientRect();
+    const r = rail.getBoundingClientRect();
+    if (a.top < r.top || a.bottom > r.bottom) {
+      active.scrollIntoView({ block: "center" });
+    }
+  }
 }
 
 function wireSearch() {
@@ -118,15 +46,13 @@ function wireSearch() {
   const apply = () => {
     const q = input.value.trim().toLowerCase();
     const rows = [...document.querySelectorAll<HTMLElement>("#sidebar .row")];
+    const runs = [...document.querySelectorAll<HTMLElement>("#sidebar .runlabel")];
+    const sections = [...document.querySelectorAll<HTMLElement>("#sidebar .sect")];
 
     if (!q) {
       for (const r of rows) r.hidden = false;
-      document.querySelectorAll<HTMLElement>("[data-group]").forEach((g) => {
-        delete g.dataset.searching;
-        delete g.dataset.all;
-      });
-      // Restore whatever was expanded before the search forced them open.
-      syncActive();
+      for (const r of runs) r.hidden = false;
+      for (const s of sections) s.hidden = false;
       if (empty) empty.hidden = true;
       return;
     }
@@ -137,20 +63,19 @@ function wireSearch() {
       // Match the post's title too: someone searching "caddy" means the
       // reverse-proxy post, whose filename never says so.
       const title = (row.dataset.title ?? "").toLowerCase();
-      const match =
-        !row.classList.contains("more") &&
-        !row.classList.contains("index-row") &&
-        (label.includes(q) || title.includes(q) || subsequence(q, label));
+      const match = label.includes(q) || title.includes(q) || subsequence(q, label);
       row.hidden = !match;
       if (match) hits += 1;
     }
-    // While searching, every folder is open and unfolded so that matches
-    // past the display cap are reachable.
-    document.querySelectorAll<HTMLElement>("[data-group]").forEach((g) => {
-      g.dataset.open = "true";
-      g.dataset.searching = "true";
-      g.dataset.all = "true";
-    });
+    // Run labels only make sense next to their run.
+    for (const run of runs) {
+      const name = run.textContent?.trim();
+      run.hidden = ![...rows].some((r) => !r.hidden && r.dataset.run === name);
+    }
+    // And a section with nothing left in it is just a stray heading.
+    for (const s of sections) {
+      s.hidden = ![...s.querySelectorAll<HTMLElement>(".row")].some((r) => !r.hidden);
+    }
     if (empty) empty.hidden = hits > 0;
   };
 
@@ -163,12 +88,10 @@ function wireSearch() {
     }
     if (e.key === "Enter") {
       const q = input.value.trim().toLowerCase();
-      const rows = [...document.querySelectorAll<HTMLElement>("#sidebar .row")]
-        .filter((r) => !r.hidden && !r.classList.contains("more"));
+      const rows = [...document.querySelectorAll<HTMLElement>("#sidebar .row")].filter((r) => !r.hidden);
       const label = (r: HTMLElement) => r.querySelector("a")?.textContent?.toLowerCase() ?? "";
-      // A substring hit beats a subsequence hit, or "sso" opens
-      // projects-system-documentation instead of the SSO post.
       const title = (r: HTMLElement) => (r.dataset.title ?? "").toLowerCase();
+      // A filename hit beats a title hit, or "sso" opens the wrong file.
       const best =
         rows.find((r) => label(r).startsWith(q)) ??
         rows.find((r) => label(r).includes(q)) ??
@@ -180,12 +103,11 @@ function wireSearch() {
 }
 
 function sync() {
-  wireTwisties();
-  wireMore();
   wireSearch();
   const input = document.querySelector<HTMLInputElement>("[data-search]");
   if (input) input.value = "";
-  document.querySelectorAll<HTMLElement>("#sidebar .row").forEach((r) => (r.hidden = false));
+  document.querySelectorAll<HTMLElement>("#sidebar .row, #sidebar .runlabel, #sidebar .sect")
+    .forEach((r) => (r.hidden = false));
   const empty = document.querySelector<HTMLElement>("[data-empty]");
   if (empty) empty.hidden = true;
   syncActive();

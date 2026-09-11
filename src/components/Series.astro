@@ -5,6 +5,7 @@
  * the one piece of narrative structure the blog has.
  */
 import CardArt from "@/components/CardArt.astro";
+import SectionHead from "@/components/SectionHead.astro";
 import { cardArt } from "@/lib/cardart";
 
 interface Entry { slug: string; title: string; excerpt?: string; order: number; readingTime?: string; }
@@ -20,11 +21,7 @@ const withArt = await Promise.all(
 ---
 
 <section class="series">
-  <div class="head">
-    <p class="eyebrow">Series</p>
-    <h2>{title}</h2>
-    <p class="blurb">{blurb}</p>
-  </div>
+  <SectionHead title={title} meta={`series · ${entries.length}`} blurb={blurb} />
 
   <ol class="parts">
     {withArt.map((e, i) => (
@@ -46,32 +43,7 @@ const withArt = await Promise.all(
 </section>
 
 <style>
-  .series {
-    border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-card);
-    background: var(--c-chrome);
-    padding: var(--s-5);
-    margin-bottom: var(--s-7);
-  }
-
-  .head { max-width: 60ch; margin-bottom: var(--s-5); }
-  .eyebrow {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    letter-spacing: 0.08em;
-    color: var(--c-accent);
-    margin-bottom: var(--s-2);
-  }
-  h2 {
-    font-size: var(--t-sans-xl);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-  }
-  .blurb {
-    margin-top: var(--s-2);
-    font-size: var(--t-sans-sm);
-    color: var(--c-muted);
-  }
+  .series { margin-bottom: var(--s-7); }
 
   .parts {
     list-style: none;
