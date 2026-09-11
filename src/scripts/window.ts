@@ -2,12 +2,12 @@
  * The traffic lights, working.
  *
  *   close    closes the tab you're on, like ⌘W in an editor
- *   minimise puts the explorer away (or opens the drawer, when the
+ *   minimize puts the explorer away (or opens the drawer, when the
  *            explorer is a drawer)
  *   zoom     lets the window fill the screen instead of stopping at
  *            --w-content
  *
- * Minimise and zoom are preferences, so they persist, and the inline
+ * Minimize and zoom are preferences, so they persist, and the inline
  * script in Shell restores them before first paint and after every swap —
  * the same way the theme is restored, and for the same reason.
  */
@@ -69,7 +69,7 @@ function wire() {
       if (kind === "close") {
         document.dispatchEvent(new CustomEvent("tabs:close-current"));
       } else if (kind === "rail") {
-        // When the explorer is a drawer, minimise is the drawer's toggle.
+        // When the explorer is a drawer, minimize is the drawer's toggle.
         if (drawerMode()) document.querySelector<HTMLButtonElement>(".drawer-toggle")?.click();
         else toggle("rail", "hidden");
       } else if (kind === "zoom") {

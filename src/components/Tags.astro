@@ -1,6 +1,6 @@
 ---
 /** Soft tinted pills. The tint is derived from the tag, so a given tag
-    keeps its colour everywhere it appears on the site. */
+    keeps its color everywhere it appears on the site. */
 interface Props { tags: string[]; max?: number; }
 const { tags, max } = Astro.props;
 const shown = max ? tags.slice(0, max) : tags;

@@ -43,6 +43,39 @@ function currentHref(): string {
   return location.pathname.replace(/\/+$/, "") || "/";
 }
 
+/**
+ * A tab's icon, as the titlebar's: a page's tile, a file's dot, or the
+ * site's mark for home. Read from the explorer rather than stored, so a
+ * tab can't disagree with its row.
+ */
+function iconFor(href: string): HTMLElement {
+  const row = document.querySelector<HTMLElement>(`#sidebar a[data-nav][href="${CSS.escape(href)}"]`)?.closest<HTMLElement>(".row");
+  const tile = row?.querySelector<HTMLElement>(".tile");
+  let icon: HTMLElement;
+  if (tile) {
+    icon = document.createElement("span");
+    icon.className = "ticon";
+    icon.append(...[...tile.childNodes].map((n) => n.cloneNode(true)));
+  } else if (row) {
+    icon = document.createElement("span");
+    icon.className = "dot";
+    if (!row.style.getPropertyValue("--h")) icon.dataset.plain = "";
+  } else {
+    const img = document.createElement("img");
+    img.src = "/favicon.svg";
+    img.alt = "";
+    img.width = img.height = 14;
+    img.className = "mark";
+    icon = img;
+  }
+  for (const v of ["--h", "--t"]) {
+    const val = row?.style.getPropertyValue(v);
+    if (val) icon.style.setProperty(v, val);
+  }
+  icon.setAttribute("aria-hidden", "true");
+  return icon;
+}
+
 function render() {
   const strip = document.querySelector<HTMLElement>("[data-tabs]");
   const list = document.querySelector<HTMLUListElement>("[data-tablist]");
@@ -60,18 +93,8 @@ function render() {
 
     const a = document.createElement("a");
     a.href = tab.href;
-    // The file's dot, in the colour the explorer gives it — read from the
-    // explorer rather than stored, so a tab can't disagree with its row.
-    const row = document.querySelector<HTMLElement>(`#sidebar a[data-nav][href="${CSS.escape(tab.href)}"]`)?.closest<HTMLElement>(".row");
-    if (row) {
-      const dot = document.createElement("span");
-      dot.className = "dot";
-      dot.setAttribute("aria-hidden", "true");
-      const hue = row.style.getPropertyValue("--h");
-      if (hue) dot.style.setProperty("--h", hue);
-      else dot.dataset.plain = "";
-      a.append(dot);
-    }
+    a.title = tab.label;
+    a.append(iconFor(tab.href));
     const label = document.createElement("span");
     label.className = "label";
     label.textContent = tab.label;
@@ -80,7 +103,7 @@ function render() {
 
     const close = document.createElement("button");
     close.type = "button";
-    close.innerHTML = "&times;";
+    close.innerHTML = '<svg aria-hidden="true" viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>';
     close.setAttribute("aria-label", `Close ${tab.label}`);
     close.addEventListener("click", (e) => {
       e.preventDefault();
@@ -108,7 +131,7 @@ function closeTab(href: string) {
     render();
     return;
   }
-  // Closing the file you're in moves you to its neighbour, like an editor.
+  // Closing the file you're in moves you to its neighbor, like an editor.
   const next = remaining[index] ?? remaining[index - 1];
   render();
   navigate(next ? next.href : "/");

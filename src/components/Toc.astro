@@ -39,11 +39,16 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     padding-left: var(--s-4);
     border-left: 1px solid var(--c-hairline);
   }
+  /* The pane's own padding already holds it off the edge where the pane
+     scrolls, so it needs no more there. */
   .inner {
     position: sticky;
     top: var(--s-5);
-    max-height: calc(100vh - var(--s-7));
+    max-height: calc(var(--pane-h, 100vh) - var(--s-7));
     overflow-y: auto;
+  }
+  @media screen and (min-width: 641px) {
+    .inner { top: 0; max-height: calc(var(--pane-h, 100vh) - var(--s-5) * 2); }
   }
   .toc-head {
     font-family: var(--font-mono);

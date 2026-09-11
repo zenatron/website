@@ -6,8 +6,8 @@
  * The title is what a macOS document window shows: a proxy icon and the
  * document's name. The path it used to show is still there, as a tooltip.
  *
- * The traffic lights are the focused window's, so they're in colour, and
- * they work: close closes the tab you're on, minimise puts the explorer
+ * The traffic lights are the focused window's, so they're in color, and
+ * they work: close closes the tab you're on, minimize puts the explorer
  * away, zoom lets the window fill the screen. scripts/window.ts wires them;
  * the choices persist, and are restored before first paint in Shell.
  */
@@ -105,7 +105,7 @@ import ThemeToggle from "@/components/ThemeToggle.astro";
   .light:focus-visible { outline: none; }
   .light:focus-visible::before { outline: 1px solid var(--c-accent); outline-offset: 2px; }
 
-  /* The window's title: proxy icon, then the name, centred. */
+  /* The window's title: proxy icon, then the name, centered. */
   .title {
     flex: 1 1 auto;
     min-width: 0;

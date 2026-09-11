@@ -356,6 +356,10 @@ const suggested = await Promise.all((await getSuggestedProjects(slug, 3)).map(as
     /* Sticky on an inner box, as the post outline does: sticky on the grid
        item itself would leave it nothing to travel inside. */
     .info .inner { position: sticky; top: var(--s-5); }
+    @media screen and (min-width: 641px) {
+      /* the pane's padding already holds it off the edge */
+      .info .inner { top: 0; }
+    }
   }
 
   @container (max-width: 560px) {

@@ -169,7 +169,7 @@ const picks = FAVORITES.filter((f) => f.logo).slice(0, 16);
     let raf = 0;
     let then = 0;
 
-    /** Cell centres relative to the grid, read once per visit rather than
+    /** Cell centers relative to the grid, read once per visit rather than
         on every move. Scrolling or resizing mid-hover marks them stale. */
     const measure = () => {
       const g = grid.getBoundingClientRect();
@@ -183,8 +183,11 @@ const picks = FAVORITES.filter((f) => f.logo).slice(0, 16);
       measured = true;
     };
     const stale = () => { measured = false; };
-    window.addEventListener("scroll", stale, { passive: true });
-    window.addEventListener("resize", stale);
+    // Scroll doesn't bubble; caught on the way down, from the pane or the page.
+    const off = new AbortController();
+    document.addEventListener("scroll", stale, { capture: true, passive: true, signal: off.signal });
+    window.addEventListener("resize", stale, { signal: off.signal });
+    document.addEventListener("astro:before-swap", () => off.abort(), { once: true });
 
     const paint = () => {
       for (const it of items) {
@@ -229,7 +232,7 @@ const picks = FAVORITES.filter((f) => f.logo).slice(0, 16);
       const px = e.clientX - origin.left;
       const py = e.clientY - origin.top;
 
-      // Nearest by centre, so the gaps belong to whichever icon is closer.
+      // Nearest by center, so the gaps belong to whichever icon is closer.
       let best = items[0], bestD = Infinity;
       for (const it of items) {
         const d = (it.cx - px) ** 2 + (it.cy - py) ** 2;

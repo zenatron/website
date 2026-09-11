@@ -8,7 +8,7 @@ interface Props {
   slug: string;
   /** Crop into the artwork instead of shrinking all of it to fit. */
   crop?: boolean;
-  /** The tint behind the art, when the caller knows what colour the thing is. */
+  /** The tint behind the art, when the caller knows what color the thing is. */
   hue?: "violet" | "orange" | "blue" | "green" | "accent" | "link";
 }
 const { art, slug, crop = false, hue: fixedHue } = Astro.props;

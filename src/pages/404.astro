@@ -1,42 +1,349 @@
 ---
+/**
+ * Not found — as the alert macOS shows when a file has gone missing, and
+ * then actually useful: the pages whose names are closest to what was
+ * typed, matched in the browser against every page, project and post,
+ * because this page is static and only the browser knows the path.
+ *
+ * Without JavaScript it still says what happened and offers three places
+ * to start. The zsh line survives underneath, smaller: a 404 genuinely is
+ * an error, so it's the one place the terminal gets to say so.
+ */
 import Shell from "@/layouts/Shell.astro";
+import FileIcon from "@/components/FileIcon.astro";
+import { PAGES } from "@/data/site";
+import { getAllBlogPosts, POST_SERIES } from "@/lib/blog";
+import { getAllProjects, projectSlug, PROJECT_KIND } from "@/lib/projects";
+
+interface Candidate {
+  href: string;
+  /** What the explorer calls it. */
+  name: string;
+  title: string;
+  section: "page" | "projects" | "blog";
+  /** A color var, or empty for a hollow dot. */
+  hue: string;
+  aliases?: string[];
+}
+
+const [posts, projects] = await Promise.all([getAllBlogPosts(), getAllProjects()]);
+const hueVar = (h?: string) => (h ? `var(--c-hue-${h})` : "");
+
+const candidates: Candidate[] = [
+  ...PAGES.map((p) => ({ href: p.href, name: p.name, title: p.blurb, section: "page" as const, hue: hueVar(p.hue), aliases: p.aliases })),
+  { href: "/projects", name: "projects", title: "My experiments, projects, and failures", section: "page", hue: "", aliases: ["project", "work", "portfolio"] },
+  { href: "/blog", name: "writing", title: "Thoughts on code, tools, and building things", section: "page", hue: "", aliases: ["blog", "posts", "articles"] },
+  ...projects.map((p) => ({
+    href: `/projects/${projectSlug(p)}`,
+    name: `${projectSlug(p)}.mdx`,
+    title: p.data.title,
+    section: "projects" as const,
+    hue: hueVar(PROJECT_KIND[p.data.type]?.hue),
+  })),
+  ...posts.map((p) => ({
+    href: `/blog/${p.slug}`,
+    name: `${p.slug}.mdx`,
+    title: p.data.title,
+    section: "blog" as const,
+    hue: hueVar(POST_SERIES.find((s) => s.key === p.data.series)?.hue),
+  })),
+];
+
+/** Where to start when nothing is close: shown without JS, and as the fallback. */
+const starters = candidates.filter((c) => ["/about", "/projects", "/blog"].includes(c.href));
+const split = (name: string) => {
+  const dot = name.lastIndexOf(".");
+  return dot > 0 ? [name.slice(0, dot), name.slice(dot)] : [name, ""];
+};
 ---
-<Shell title="404 | Phil Vishnevsky">
-  <h1 class="sr-only">Page not found</h1>
-  {/* The one place the terminal metaphor can be loud, because a 404
-      genuinely is an error. */}
-  <p class="err" data-404>zsh: no such file or directory:</p>
-  <p class="hint">Try the explorer on the left, or press <kbd data-keycap-hint>⌘K</kbd> to search.</p>
+
+<Shell title="Not found | Phil Vishnevsky" explore={false}>
+  <section class="alert" data-404>
+    <div class="icon"><FileIcon form="missing" /></div>
+
+    <h1 data-nf-title>This page couldn’t be found.</h1>
+    <p class="why" data-nf-why>It may have moved, or the link has a typo.</p>
+
+    <p class="label" data-nf-label>start somewhere</p>
+    <ul class="suggest" data-nf-list>
+      {starters.map((c) => {
+        const [stem, ext] = split(c.name);
+        return (
+          <li>
+            <a href={c.href}>
+              <span class:list={["dot", { plain: !c.hue }]} style={c.hue ? `--h: ${c.hue}` : undefined} aria-hidden="true"></span>
+              <span class="fname">{stem}<span class="ext">{ext}</span></span>
+              <span class="ftitle">{c.title}</span>
+              <svg class="go" aria-hidden="true" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+
+    <p class="actions">
+      <a class="btn primary" href="/">Go home</a>
+      <button class="btn" type="button" data-open-terminal>
+        Search <kbd data-nf-keycap aria-hidden="true">⌘K</kbd>
+      </button>
+    </p>
+
+    <p class="zsh" aria-hidden="true"><span class="zshname">zsh:</span> no such file or directory: <span data-nf-path></span></p>
+  </section>
+
+  <script type="application/json" data-nf-candidates set:html={JSON.stringify(candidates)} />
 </Shell>
 
 <style>
-  .err {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-md);
-    color: var(--c-danger);
-    word-break: break-all;
+  .alert {
+    max-width: 560px;
+    margin: var(--s-7) auto var(--s-6);
+    text-align: center;
   }
-  .hint {
-    margin-top: var(--s-4);
-    font-size: var(--t-sans-md);
+  .icon {
+    width: 88px;
+    height: 88px;
+    margin: 0 auto var(--s-4);
+  }
+  h1 {
+    font-size: var(--t-sans-xl);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+  .why {
+    margin-top: var(--s-2);
     color: var(--c-muted);
   }
-  kbd {
+
+  .label {
+    margin-top: var(--s-6);
+    margin-bottom: var(--s-2);
+    text-align: left;
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
+    letter-spacing: 0.08em;
+    color: var(--c-dim);
+  }
+
+  /* Suggestions, set as the explorer sets files, in one grouped list. */
+  .suggest {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    background: var(--c-chrome);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .suggest :global(li + li) { border-top: 1px solid var(--c-hairline); }
+  .suggest :global(a) {
+    display: grid;
+    grid-template-columns: 8px auto minmax(0, 1fr) 14px;
+    align-items: center;
+    column-gap: var(--s-3);
+    padding: var(--s-3) var(--s-4);
+    color: inherit;
+    transition: background var(--dur-state) var(--ease);
+  }
+  .suggest :global(.dot) {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--h);
+  }
+  .suggest :global(.dot.plain) { background: transparent; border: 1px solid var(--c-hairline-strong); }
+  .suggest :global(.fname) {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-text);
+    white-space: nowrap;
+  }
+  .suggest :global(.ext) { color: var(--c-dim); }
+  .suggest :global(.ftitle) {
+    min-width: 0;
+    font-size: var(--t-sans-xs);
+    color: var(--c-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .suggest :global(.go) { color: var(--c-dim); transition: transform var(--dur-state) var(--ease), color var(--dur-state) var(--ease); }
+  @media (hover: hover) {
+    .suggest :global(a:hover) { background: var(--c-raised); }
+    .suggest :global(a:hover .go) { color: var(--c-text); transform: translateX(2px); }
+  }
+  .suggest :global(a:focus-visible) { outline-offset: -2px; }
+
+  .actions {
+    margin-top: var(--s-5);
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: 9px 18px;
+    font-size: var(--t-sans-sm);
+    font-weight: 600;
+    color: var(--c-text);
+    background: var(--c-chrome);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: background var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease), filter var(--dur-state) var(--ease);
+  }
+  .btn.primary { color: var(--c-bg); background: var(--c-link); border-color: transparent; }
+  .btn kbd {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    font-weight: 400;
     color: var(--c-muted);
     border: 1px solid var(--c-hairline);
-    padding: 2px 6px;
+    border-radius: 5px;
+    padding: 1px 5px;
+  }
+  @media (hover: hover) {
+    .btn:hover { background: var(--c-raised); border-color: var(--c-hairline-strong); }
+    .btn.primary:hover { background: var(--c-link); filter: brightness(1.08); }
+  }
+
+  .zsh {
+    margin-top: var(--s-6);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+    overflow-wrap: anywhere;
+  }
+  .zshname { color: var(--c-danger); }
+
+  @media (max-width: 480px) {
+    .alert { margin-top: var(--s-5); }
+    h1 { font-size: var(--t-sans-lg); }
+    .suggest :global(a) { grid-template-columns: 8px minmax(0, 1fr) 14px; row-gap: 2px; }
+    .suggest :global(.fname) { overflow: hidden; text-overflow: ellipsis; }
+    .suggest :global(.ftitle) { grid-column: 2; }
+    .suggest :global(.go) { grid-column: 3; grid-row: 1 / span 2; }
   }
 </style>
 
 <script>
-  // The path is only known in the browser, since this page is static.
-  document.addEventListener("astro:page-load", () => {
-    const el = document.querySelector("[data-404]");
-    if (el) el.textContent = `zsh: no such file or directory: ${location.pathname}`;
-    const kbd = document.querySelector("[data-keycap-hint]");
+  interface Candidate {
+    href: string; name: string; title: string;
+    section: "page" | "projects" | "blog"; hue: string; aliases?: string[];
+  }
+
+  /** Edit distance, for "tailscal" against "tailscale-explained". */
+  function lev(a: string, b: string): number {
+    if (!a.length) return b.length;
+    if (!b.length) return a.length;
+    let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+    for (let i = 1; i <= a.length; i++) {
+      const cur = [i];
+      for (let j = 1; j <= b.length; j++) {
+        cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      }
+      prev = cur;
+    }
+    return prev[b.length];
+  }
+
+  /** "Reverse-Proxy_Homelab.html" → "reverse proxy homelab" */
+  const norm = (s: string) =>
+    decodeURIComponent(s).toLowerCase().replace(/\.(mdx?|html?|php|aspx?)$/, "").replace(/[^a-z0-9]+/g, " ").trim();
+
+  /**
+   * How close a page is to what was typed: the best of spelling (edit
+   * distance against its slug), shared words (against its slug and title),
+   * and plain containment — plus a little for being in the folder that
+   * was asked for. Aliases match the way a slug does.
+   */
+  function score(c: Candidate, q: string, section: string | null): number {
+    const slug = norm(c.href.split("/").pop() || c.name);
+    const names = [slug, ...(c.aliases ?? []).map(norm)];
+    const words = new Set(`${names.join(" ")} ${norm(c.title)}`.split(" ").filter(Boolean));
+    const qWords = q.split(" ").filter((w) => w.length > 1);
+
+    const spelling = Math.max(...names.map((n) => 1 - lev(q, n) / Math.max(q.length, n.length)));
+    // A typed word counts when it's the start of a real one: "tailsc" is
+    // "tailscale", but "re" isn't "reduction".
+    const shared = qWords.length
+      ? qWords.filter((w) => w.length >= 3 && [...words].some((v) => v.startsWith(w))).length / qWords.length
+      : 0;
+    const contains = names.some((n) => n.includes(q) || (q.includes(n) && n.length > 3)) ? 0.9 : 0;
+    // A name that starts with what was typed beats one that merely has it.
+    const prefix = names.some((n) => n.startsWith(q)) ? 0.06 : 0;
+
+    let s = Math.max(spelling, shared * 0.85, contains) + prefix;
+    if (section && c.section === section) s += 0.08;
+    return s;
+  }
+
+  function run() {
+    const root = document.querySelector<HTMLElement>("[data-404]");
+    if (!root) return;
+    const raw = document.querySelector<HTMLScriptElement>("[data-nf-candidates]")?.textContent;
+    const candidates: Candidate[] = raw ? JSON.parse(raw) : [];
+
+    const path = location.pathname;
+    const parts = path.split("/").filter(Boolean);
+    const leaf = parts[parts.length - 1] ?? "";
+    const folder = parts.length > 1 ? parts[0].toLowerCase() : null;
+    const section = folder && /^(blog|posts?|writing)$/.test(folder) ? "blog" : folder && /^projects?$/.test(folder) ? "projects" : null;
+
+    root.querySelector("[data-nf-path]")!.textContent = path;
+    const kbd = root.querySelector("[data-nf-keycap]");
     const platform = (navigator as any).userAgentData?.platform ?? navigator.platform ?? "";
     if (kbd) kbd.textContent = /mac/i.test(platform) ? "⌘K" : "Ctrl K";
-  });
+
+    if (leaf) {
+      const shown = decodeURIComponent(leaf).replace(/\.(mdx?|html?)$/i, "");
+      root.querySelector("[data-nf-title]")!.textContent = `The page “${shown}” couldn’t be found.`;
+      if (parts.length > 1) {
+        root.querySelector("[data-nf-why]")!.textContent = `There’s nothing by that name in ~/${parts.slice(0, -1).join("/")}. It may have moved, or the link has a typo.`;
+      }
+    }
+
+    const q = norm(leaf);
+    if (!q) return;
+    // Close enough to be worth suggesting, and not far behind the best —
+    // a strong match shouldn't drag in the merely similar.
+    const scored = candidates
+      .map((c) => ({ c, s: score(c, q, section) }))
+      .filter((r) => r.s >= 0.5)
+      .sort((a, b) => b.s - a.s);
+    const top = scored[0]?.s ?? 0;
+    const best = scored.filter((r) => r.s >= top - 0.2).slice(0, 3);
+    if (!best.length) return;
+
+    // Built from nodes, not markup: the path is the visitor's, not ours.
+    const list = root.querySelector<HTMLElement>("[data-nf-list]")!;
+    const template = list.querySelector("li");
+    if (!template) return;
+    const rows = best.map(({ c }) => {
+      const li = template.cloneNode(true) as HTMLElement;
+      const a = li.querySelector("a")!;
+      a.href = c.href;
+      const dot = li.querySelector<HTMLElement>(".dot")!;
+      dot.classList.toggle("plain", !c.hue);
+      if (c.hue) dot.style.setProperty("--h", c.hue); else dot.style.removeProperty("--h");
+      const dotAt = c.name.lastIndexOf(".");
+      const fname = li.querySelector(".fname")!;
+      const ext = document.createElement("span");
+      ext.className = "ext";
+      ext.textContent = dotAt > 0 ? c.name.slice(dotAt) : "";
+      fname.replaceChildren(dotAt > 0 ? c.name.slice(0, dotAt) : c.name, ext);
+      li.querySelector(".ftitle")!.textContent = c.title;
+      return li;
+    });
+    list.replaceChildren(...rows);
+    root.querySelector("[data-nf-label]")!.textContent = "did you mean";
+  }
+
+  document.addEventListener("astro:page-load", run);
 </script>

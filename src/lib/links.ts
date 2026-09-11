@@ -73,4 +73,12 @@ export const links: LinkItem[] = [
     description: "Games and tools for game developers",
     logo: "underscore-games.svg",
   },
+  {
+    title: "Ko-fi",
+    url: "https://ko-fi.com/zenatron",
+    handle: "ko-fi.com/zenatron",
+    description: "If something here saved you an afternoon",
+    logo: "ko-fi.svg",
+    appIcon: true,
+  },
 ];

@@ -10,6 +10,7 @@ export const SITE = {
   resume: "/downloads/Resume_Phil_Vishnevsky.pdf",
   email: "phil@pvi.sh",
   github: "https://github.com/zenatron",
+  kofi: "https://ko-fi.com/zenatron",
 } as const;
 
 /** The homepage headline paragraph. Author's voice, so: sans. */
@@ -17,16 +18,16 @@ export const INTRO =
   "Full-stack engineer focused on developer experience. I build servers, performant web apps, explore creative projects, and occasionally ship things that don't break in production.";
 
 /** The one line of availability the explorer carries onto every page. */
-export const STATUS = "open to opportunities";
+export const STATUS = "open to interesting projects";
 
 /** One fact about the author, not a data table. Rendered as a single line. */
-export const FACTS = ["Hartford, CT", "SWE, AI, games", "open to opportunities"];
+export const FACTS = ["Hartford, CT", "SWE, AI, games", "open to interesting projects"];
 
 /** Answers `whoami` in the terminal. This is where the old homepage identity block went. */
 export const WHOAMI = [
   "Phil Vishnevsky — full-stack engineer in Hartford, CT.",
   "Servers, developer tooling, web apps, and indie games.",
-  "Currently open to opportunities.",
+  "Currently open to interesting projects.",
 ];
 
 /** Answers `fortune`. This is where the deleted ~/fortune block went. */
@@ -52,4 +53,23 @@ export const CONTACT_LABELS = [
   "Let's talk",
   "Slide into my DMs",
   "Make my day",
+];
+
+/**
+ * The site's top-level pages, as the explorer lists them. `aliases` are
+ * the names someone might type instead — old URLs and the obvious guesses
+ * — which the 404 matches against so they still find their way.
+ */
+export const PAGES: {
+  name: string;
+  href: string;
+  hue: "violet" | "orange" | "blue" | "green";
+  glyph: "person" | "dock" | "bubble";
+  aliases?: string[];
+  /** One line on what's there, from the page's own description. */
+  blurb: string;
+}[] = [
+  { name: "about", href: "/about", hue: "violet", glyph: "person", aliases: ["me", "bio", "resume", "cv"], blurb: "The story so far" },
+  { name: "dock", href: "/dock", hue: "orange", glyph: "dock", aliases: ["desk", "stack", "uses", "apps", "tools", "setup"], blurb: "The apps I actually use" },
+  { name: "say hi", href: "/say-hi", hue: "blue", glyph: "bubble", aliases: ["elsewhere", "links", "contact", "email", "socials"], blurb: "Email, book a call, or find me elsewhere" },
 ];

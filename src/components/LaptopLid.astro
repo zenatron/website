@@ -9,10 +9,31 @@
  * a hash of its name, so the arrangement looks hand-placed but never
  * changes between visits. Hover or focus one and it straightens up and
  * shows what it means; on a phone, a tap does the same.
+ *
+ * With `photo`, the lid is Phil's actual MacBook, photographed and cut
+ * out, and the Apple logo in the photo takes the mark's place. `compact`
+ * is the same laptop at the size it sits on the desk scene: the stickers
+ * shrink to their glyphs and stop being interactive, because the laptop
+ * around them is the thing to click there.
+ *
+ * `badge` adds the one sticker that goes somewhere: an "Available on the
+ * Dock" badge in the shape of the App Store button — an homage, with the
+ * site's own dock glyph where Apple's mark would be — linking to /dock.
+ * It takes the ring's last corner, so it never displaces a hobby.
+ * `logo` is a round sticker of someone's mark — Underscore Games' flame —
+ * in the other free corner, linking where the mark belongs.
  */
 interface Item { name: string; description?: string }
-interface Props { items: Item[] }
-const { items } = Astro.props;
+interface Props {
+  items: Item[];
+  photo?: string;
+  /** The photo's width ÷ height. */
+  photoAspect?: number;
+  compact?: boolean;
+  badge?: { href: string; label: string; note: string };
+  logo?: { img: string; href: string; label: string; note: string };
+}
+const { items, photo, photoAspect = 1.43, compact = false, badge, logo } = Astro.props;
 
 type Ink = "violet" | "blue" | "teal" | "green" | "orange" | "amber" | "red";
 type Glyph = "server" | "gamepad" | "nodes" | "book" | "mountain" | "cup" | "dumbbell" | "globe" | "spark";
@@ -45,6 +66,11 @@ const RING: [number, number][] = [[1, 1], [1, 2], [1, 3], [1, 4], [2, 1], [2, 4]
 const cell = (i: number): [number, number] =>
   RING[i] ?? [4 + Math.floor((i - RING.length) / 4), 1 + ((i - RING.length) % 4)];
 
+/** The badge's cell: the ring's last corner while there's room in it;
+    the logo sticker takes the corner before it. */
+const [badgeRow, badgeCol] = items.length < RING.length ? RING[RING.length - 1] : cell(items.length);
+const [logoRow, logoCol] = items.length < RING.length - 1 ? RING[RING.length - 2] : cell(items.length + 1);
+
 const stickers = items.map((item, i) => {
   const look = LOOK[item.name] ?? { glyph: "spark" as Glyph, ink: INKS[i % INKS.length] };
   const [row, col] = cell(i);
@@ -52,6 +78,7 @@ const stickers = items.map((item, i) => {
   return {
     ...item,
     ...look,
+    col,
     style: [
       `--ink: var(--sticker-${look.ink})`,
       `--row: ${row}`,
@@ -65,15 +92,18 @@ const stickers = items.map((item, i) => {
 });
 ---
 
-<div class="lidwrap">
-  <div class="lid">
-    <svg class="mark" aria-hidden="true" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M9 11 15 16 9 21" /><path d="M18 21h7" />
-    </svg>
+<div class:list={["lidwrap", { compact }]}>
+  <div class:list={["lid", { photo: !!photo }]} style={photo ? `--aspect: ${photoAspect}` : undefined}>
+    {photo && <img class="surface" src={photo} alt="" width="1000" height={Math.round(1000 / photoAspect)} loading="lazy" decoding="async" />}
+    {!photo && (
+      <svg class="mark" aria-hidden="true" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 11 15 16 9 21" /><path d="M18 21h7" />
+      </svg>
+    )}
 
-    <ul class="stickers">
+    <ul class="stickers" aria-hidden={compact ? "true" : undefined}>
       {stickers.map((s) => (
-        <li class:list={["sticker", { paper: s.paper, tile: s.tile }]} style={s.style} tabindex="0">
+        <li class:list={["sticker", { paper: s.paper, tile: s.tile }]} style={s.style} data-col={s.col} tabindex={compact ? undefined : "0"}>
           <span class="face">
             <svg aria-hidden="true" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
               {s.glyph === "server" && (<><rect x="2.5" y="2.5" width="11" height="4.5" rx="1.2" /><rect x="2.5" y="9" width="11" height="4.5" rx="1.2" /><circle cx="5" cy="4.75" r=".9" fill="currentColor" stroke="none" /><circle cx="5" cy="11.25" r=".9" fill="currentColor" stroke="none" /></>)}
@@ -88,9 +118,39 @@ const stickers = items.map((item, i) => {
             </svg>
             <span class="name">{s.name}</span>
           </span>
-          {s.description && <span class="note">{s.description}</span>}
+          {s.description && !compact && <span class="note"><strong class="notename">{s.name}. </strong>{s.description}</span>}
         </li>
       ))}
+      {logo && (
+        <li class="sticker logo" style={`--row: ${logoRow}; --col: ${logoCol}; --rot: 8deg; --jx: 10px; --jy: -2px; --size: 1`} data-col={logoCol}>
+          {compact ? (
+            <span class="face"><img src={logo.img} alt="" /></span>
+          ) : (
+            <a class="face" href={logo.href} rel={logo.href.startsWith("http") ? "noopener noreferrer" : undefined} aria-label={`${logo.label}: ${logo.note}`}>
+              <img src={logo.img} alt="" />
+            </a>
+          )}
+          {!compact && <span class="note" aria-hidden="true"><strong class="notename">{logo.label}. </strong>{logo.note}</span>}
+        </li>
+      )}
+      {badge && (
+        <li class="sticker badge" style={`--row: ${badgeRow}; --col: ${badgeCol}; --rot: -5deg; --jx: -8px; --jy: 2px; --size: 1.02`} data-col={badgeCol}>
+          {compact ? (
+            <span class="face">
+              <svg aria-hidden="true" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1.8" y="10" width="12.4" height="3.6" rx="1.4" /><rect x="3.4" y="5.4" width="2.8" height="2.8" rx=".8" /><rect x="6.6" y="5.4" width="2.8" height="2.8" rx=".8" /><rect x="9.8" y="5.4" width="2.8" height="2.8" rx=".8" /></svg>
+            </span>
+          ) : (
+            <a class="face" href={badge.href} aria-label={`Available on the ${badge.label}: ${badge.note}`}>
+              <svg aria-hidden="true" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1.8" y="10" width="12.4" height="3.6" rx="1.4" /><rect x="3.4" y="5.4" width="2.8" height="2.8" rx=".8" /><rect x="6.6" y="5.4" width="2.8" height="2.8" rx=".8" /><rect x="9.8" y="5.4" width="2.8" height="2.8" rx=".8" /></svg>
+              <span class="lines" aria-hidden="true">
+                <span class="small">Available on the</span>
+                <span class="big">{badge.label}</span>
+              </span>
+            </a>
+          )}
+          {!compact && <span class="note" aria-hidden="true"><strong class="notename">{badge.label}. </strong>{badge.note}</span>}
+        </li>
+      )}
     </ul>
   </div>
 </div>
@@ -98,7 +158,7 @@ const stickers = items.map((item, i) => {
 <style>
   .lidwrap { container-type: inline-size; }
 
-  /* Space grey, lit from the top-left, with the same rim as the icons. */
+  /* Space gray, lit from the top-left, with the same rim as the icons. */
   .lid {
     position: relative;
     isolation: isolate;
@@ -123,6 +183,27 @@ const stickers = items.map((item, i) => {
     -webkit-mask-composite: xor;
     mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
     mask-composite: exclude;
+  }
+
+  /*
+   * The real lid: the photo is the surface, and its own edge is the rim.
+   * The photo is an image in flow, so it's the photo that decides how tall
+   * the lid is. Drawn as a stretched background on an aspect-ratio box,
+   * any engine that sized the box a little differently squashed the lid.
+   */
+  .lid.photo {
+    aspect-ratio: auto;
+    padding: 0;
+    background: none;
+    border-radius: 0;
+  }
+  .lid.photo::after { display: none; }
+  .surface { display: block; width: 100%; height: auto; }
+  /* 7% of the width at the top and bottom, as the drawn lid's padding. */
+  .lid.photo .stickers {
+    position: absolute;
+    inset: calc(7% * var(--aspect)) 6%;
+    height: auto;
   }
 
   .mark {
@@ -201,6 +282,51 @@ const stickers = items.map((item, i) => {
   }
   .tile .face svg { width: 1.7em; height: 1.7em; }
 
+  /*
+   * The badge: the App Store button's shape and type — black, a hairline
+   * inside, a small line over a large one — cut as a sticker like the
+   * rest. The one sticker that's a link, so it's the one with a pointer.
+   */
+  .badge .face {
+    gap: 0.5em;
+    padding: 0.42em 0.95em 0.42em 0.7em;
+    color: var(--sticker-paper);
+    background: var(--sticker-ink);
+    border-radius: 0.62em;
+    cursor: pointer;
+    outline: 1px solid color-mix(in srgb, var(--sticker-paper) 35%, transparent);
+    outline-offset: -0.34em;
+  }
+  .badge .face svg { width: 1.55em; height: 1.55em; }
+  .badge .lines { display: flex; flex-direction: column; line-height: 1; text-align: left; }
+  .badge .small { font-size: 0.5em; font-weight: 500; letter-spacing: 0.01em; opacity: 0.9; }
+  .badge .big { margin-top: 0.08em; font-size: 1.05em; font-weight: 600; letter-spacing: -0.02em; }
+  .badge .face:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 3px; }
+  .sticker.badge:focus-within {
+    z-index: 3;
+    transform: translate(var(--dx), calc(var(--dy) - 3px)) rotate(0deg) scale(1.06);
+  }
+  .sticker.badge:focus-within .note { opacity: 1; translate: -50% 0; }
+
+  /* A round sticker of a mark: the mark's own black ground, die-cut. */
+  .logo .face {
+    width: 4em;
+    height: 4em;
+    padding: 0;
+    background: var(--sticker-ink);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  .logo .face img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.12); }
+  .logo .face:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 3px; }
+  .sticker.logo:focus-within {
+    z-index: 3;
+    transform: translate(var(--dx), calc(var(--dy) - 3px)) rotate(0deg) scale(1.06);
+  }
+  .sticker.logo:focus-within .note { opacity: 1; translate: -50% 0; }
+  /* "co-founded" would otherwise break at its own hyphen. */
+  .logo .note { white-space: nowrap; }
+
   /* What it means, hanging under it. */
   .note {
     position: absolute;
@@ -242,26 +368,78 @@ const stickers = items.map((item, i) => {
     to   { background-position: 0% 0, 0 0; }
   }
 
-  /* A narrow lid: two columns, the mark on its own row at the top. */
+  /*
+   * Compact: the laptop as it sits on the desk. Glyph-only stickers sized
+   * to the lid rather than the page, nudges scaled down with them, and
+   * nothing to hover — the laptop is the button.
+   */
+  .compact .stickers { pointer-events: none; }
+  .compact .sticker { --dx: calc(var(--jx) * 0.22); --dy: calc(var(--jy) * 0.22); }
+  .compact .face,
+  .compact .tile .face {
+    gap: 0;
+    padding: 0.32em;
+    font-size: calc(var(--size) * 5.2cqw);
+    border-width: 2px;
+    border-radius: 50%;
+  }
+  .compact .tile .face { border-radius: 30%; }
+  .compact .badge .face { padding: 0.32em 0.5em; border-radius: 0.4em; outline: none; }
+  .compact .logo .face { width: 1.7em; height: 1.7em; padding: 0; }
+  .compact .badge .face svg { width: 1em; height: 1em; }
+  .compact .tile .face svg { width: 1em; height: 1em; }
+  .compact .name { display: none; }
+
+  /* A narrow lid: two columns, the mark on its own row at the top. Not
+     for the compact one, which is narrow because it's small, not because
+     the screen is. */
+  /* The note names the sticker only where the sticker can't. */
+  .notename { display: none; font-weight: 700; }
+
   @container (max-width: 560px) {
-    .lid {
+    /* The drawn lid can grow, so it goes to two columns with the mark on
+       its own row at the top. */
+    .lidwrap:not(.compact) .lid:not(.photo) {
       aspect-ratio: auto;
       padding: 104px var(--s-4) var(--s-5);
     }
-    .mark { top: 52px; width: 56px; height: 56px; }
-    /* Rows fit their stickers, and the nudges shrink, so a tile can't
-       land on the one beneath it. */
-    .stickers {
+    .lidwrap:not(.compact) .mark { top: 52px; width: 56px; height: 56px; }
+    .lidwrap:not(.compact) .lid:not(.photo) .stickers {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       grid-auto-rows: auto;
       row-gap: var(--s-5);
     }
-    .sticker {
+    .lidwrap:not(.compact) .lid:not(.photo) .sticker {
       --dx: calc(var(--jx) * 0.35);
       --dy: calc(var(--jy) * 0.35);
       grid-row: auto;
       grid-column: auto;
     }
-    .face { font-size: calc(var(--t-sans-sm) * var(--size)); }
+    .lidwrap:not(.compact) .lid:not(.photo) .face { font-size: calc(var(--t-sans-sm) * var(--size)); }
+
+    /* The photo is the shape it is, so the ring stays and the stickers go
+       down to their glyphs; a tap brings up the name with the note. */
+    .lidwrap:not(.compact) .lid.photo .sticker { --dx: calc(var(--jx) * 0.3); --dy: calc(var(--jy) * 0.3); }
+    .lidwrap:not(.compact) .lid.photo .face,
+    .lidwrap:not(.compact) .lid.photo .tile .face {
+      gap: 0;
+      padding: 0.36em;
+      font-size: calc(var(--size) * 5.4cqw);
+      border-radius: 50%;
+    }
+    .lidwrap:not(.compact) .lid.photo .tile .face { border-radius: 30%; }
+    .lidwrap:not(.compact) .lid.photo .tile .face svg { width: 1em; height: 1em; }
+    .lidwrap:not(.compact) .lid.photo .name,
+    .lidwrap:not(.compact) .lid.photo .badge .lines { display: none; }
+    .lidwrap:not(.compact) .lid.photo .badge .face { border-radius: 0.5em; padding: 0.36em 0.5em; outline: none; }
+    .lidwrap:not(.compact) .lid.photo .badge .face svg { width: 1em; height: 1em; }
+    .lidwrap:not(.compact) .lid.photo .logo .face { width: 1.75em; height: 1.75em; padding: 0; }
+    .lidwrap:not(.compact) .lid.photo .notename { display: inline; }
+    /* Notes from the outer columns open inward, so they stay on the lid. */
+    .lidwrap:not(.compact) .lid.photo .note { max-width: 46cqw; }
+    .lidwrap:not(.compact) .lid.photo .sticker[data-col="1"] .note { left: -20%; translate: 0 -4px; }
+    .lidwrap:not(.compact) .lid.photo .sticker[data-col="4"] .note { left: auto; right: -20%; translate: 0 -4px; }
+    .lidwrap:not(.compact) .lid.photo .sticker[data-col="1"]:is(:hover, :focus) .note,
+    .lidwrap:not(.compact) .lid.photo .sticker[data-col="4"]:is(:hover, :focus) .note { translate: 0 0; }
   }
 </style>

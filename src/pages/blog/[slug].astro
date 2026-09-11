@@ -7,6 +7,8 @@ import Cells from "@/components/Cells.astro";
 import CardArt from "@/components/CardArt.astro";
 import Toc from "@/components/Toc.astro";
 import PostNav from "@/components/PostNav.astro";
+import AppIcon from "@/components/AppIcon.astro";
+import { SITE } from "@/data/site";
 import { cardArt } from "@/lib/cardart";
 import { getAllBlogPosts, getSuggestedPosts } from "@/lib/blog";
 
@@ -91,6 +93,15 @@ const suggested = seriesKey
 
       <div class="prose"><Content /></div>
 
+      {/* A tip jar, after the guides — not after coursework notes. */}
+      {seriesKey !== "data-mining" && (
+        <a class="tipjar glint-host" href={SITE.kofi} rel="noopener noreferrer">
+          <span class="jaricon"><AppIcon item={{ logo: "ko-fi.svg", appIcon: true }} /></span>
+          <span class="jartext"><strong>Saved you an afternoon?</strong> You can buy me a coffee.</span>
+          <span class="jargo">ko-fi.com/zenatron&nbsp;↗</span>
+        </a>
+      )}
+
       <PostNav prev={prev} next={next} seriesTitle={seriesTitle} />
 
       {suggested.length > 0 && (
@@ -155,6 +166,36 @@ const suggested = seriesKey
   }
   .tagrow { margin-top: var(--s-4); }
 
+  /* The tip jar: one line, set like a file row, easy to pass over. */
+  .tipjar {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    margin-top: var(--s-6);
+    padding: var(--s-3) var(--s-4);
+    color: inherit;
+    text-decoration: none;
+    background: var(--c-chrome);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
+    transition: background var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease);
+  }
+  .jaricon { flex: 0 0 auto; width: 32px; height: 32px; }
+  .jartext { flex: 1 1 auto; min-width: 0; font-size: var(--t-sans-sm); color: var(--c-muted); }
+  .jartext strong { font-weight: 600; color: var(--c-text); }
+  .jargo {
+    flex: 0 0 auto;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-link);
+  }
+  @media (hover: hover) {
+    .tipjar:hover { background: var(--c-raised); border-color: var(--c-hairline-strong); }
+  }
+  @media (max-width: 560px) {
+    .jargo { display: none; }
+  }
+
   .more {
     margin-top: var(--s-7);
     padding-top: var(--s-5);
@@ -168,6 +209,11 @@ const suggested = seriesKey
 
   @media (max-width: 640px) {
     .progress { margin-inline: calc(var(--s-4) * -1); }
+  }
+  /* Where the pane is the scroller, sticky offsets start inside its
+     padding; this puts the rule back on the window's edge, under the tabs. */
+  @media screen and (min-width: 641px) {
+    .progress { top: calc(var(--s-5) * -1); }
   }
 </style>
 

@@ -1,0 +1,839 @@
+---
+/**
+ * The desk: the physical setup, drawn as the desk it is.
+ *
+ * Two planes, the way desk illustrations cheat perspective: the things
+ * that stand — monitor, case, printer — along the back edge, seen from
+ * the front; the things that lie flat on the mat, seen from above. Each
+ * is a real cut-out, never boxed in a card, so they read as objects next
+ * to the squircles and stickers everywhere else.
+ *
+ * Every object is a button that opens its Get Info window. The three
+ * machines carry their neofetch there; that's where the old Setup section
+ * went. A few objects do what they do when you hover them: the printer's
+ * head travels its arm, the AirPods come out of their case, the
+ * screwdriver spins, the Pencil clicks back onto the iPad, and the
+ * keyboard types hello world. Hover and keyboard focus only, never with reduced
+ * motion. The light bar is drawn rather than photographed so it can switch
+ * on: in dark mode it lights, and its light falls down the monitor onto
+ * the mat. The monitor shows this site, in the visitor's theme.
+ *
+ * On a narrow screen the desk keeps its composition and pans sideways.
+ */
+import LaptopLid from "@/components/LaptopLid.astro";
+import { CUBICLE_CARDS, GEAR, KEYBOARD_KEYS, PRINTER_RIG, tubePath } from "@/data/gear";
+import { MACHINES } from "@/data/about";
+import { FAVORITES } from "@/data/favorites";
+
+const hobbies = FAVORITES.filter((f) => f.category === "hobbies").map((h) => ({ name: h.name, description: h.description }));
+const toolCount = FAVORITES.filter((f) => f.logo).length;
+
+const pct = (v: number, of: number) => `${((v / of) * 100).toFixed(3)}%`;
+const RIG = PRINTER_RIG;
+
+/** Each key that types, as a cell over the photo showing its own cap. */
+const keyboardImg = GEAR.find((g) => g.id === "keyboard")?.img ?? "";
+const keyCells = Object.entries(KEYBOARD_KEYS.keys).map(([ch, [cx, cy, w = KEYBOARD_KEYS.cap]]) => {
+  const [W, H] = KEYBOARD_KEYS.box, h = KEYBOARD_KEYS.cap;
+  const x = (cx - w / 2) / W, y = (cy - h / 2) / H, fw = w / W, fh = h / H;
+  const p = (n: number) => `${(n * 100).toFixed(3)}%`;
+  return {
+    id: ch === " " ? "space" : ch,
+    // A wide key goes down by as much as a narrow one, not by as big a share.
+    cell: `left: ${p(x)}; top: ${p(y)}; width: ${p(fw)}; height: ${p(fh)}; --sx: ${(1 - (0.1 * h) / w).toFixed(4)}`,
+    cap: `background-image: url(${keyboardImg}); background-size: ${p(1 / fw)} ${p(1 / fh)}; background-position: ${p(x / (1 - fw))} ${p(y / (1 - fh))}`,
+  };
+});
+
+/** Where the panel is in monitor.webp, in percent of its box. */
+const SCREEN = { x: 1.1, y: 1.0, w: 97.8, h: 62.4 };
+
+const info = GEAR.map((g) => ({
+  id: g.id,
+  name: g.name,
+  maker: g.maker,
+  kind: g.kind,
+  img: g.img,
+  facts: g.facts,
+  href: g.href ?? null,
+  source: g.source,
+  machine: g.machine ? MACHINES.find((m) => m.name === g.machine) ?? null : null,
+  cards: g.id === "cubicle" ? CUBICLE_CARDS : null,
+}));
+---
+
+<div class="deskwrap" data-desk>
+  <div class="scene">
+    <div class="wall" aria-hidden="true"></div>
+    <div class="top" aria-hidden="true"></div>
+    <div class="mat" aria-hidden="true"></div>
+    <div class="glow" aria-hidden="true"></div>
+
+    {GEAR.map((g) => (
+      <button
+        type="button"
+        class:list={["item", `row-${g.row}`, g.id]}
+        style={`--x: ${g.x}; --y: ${g.y}; --w: ${g.w}; --aspect: ${g.aspect.toFixed(4)}; --rot: ${g.rot ?? 0}deg`}
+        data-gear={g.id}
+        aria-label={`${g.maker} ${g.name}, ${g.kind.toLowerCase()}. Get Info`}
+        aria-haspopup="dialog"
+      >
+        <span class="shadow" aria-hidden="true"></span>
+        {g.layers?.map((l) => (
+          <img class="layer" src={l.img} alt="" loading="lazy" decoding="async" style={`--lx: ${l.x}%; --ly: ${l.y}%; --lw: ${l.w}%; --lr: ${l.rot ?? 0}deg`} />
+        ))}
+        {g.id === "macbook" ? (
+          <span class="lidhost"><LaptopLid items={hobbies} photo={g.img} photoAspect={g.aspect} compact badge={{ href: "/dock", label: "Dock", note: `the ${toolCount} apps I use →` }} logo={{ img: "/logos/underscore-games-fire.svg", href: "https://underscore.games", label: "Underscore Games", note: "the game studio I co-founded →" }} /></span>
+        ) : g.id === "a1mini" ? (
+          <>
+            <img class="photo" src={RIG.base} alt="" loading="lazy" decoding="async" />
+            <svg class="tube" viewBox={`0 0 ${RIG.box[0]} ${RIG.box[1]}`} aria-hidden="true"><path d={tubePath(0)} data-tube /></svg>
+            <img class="head" src={RIG.head.img} alt="" loading="lazy" decoding="async" data-head style={`left: ${pct(RIG.head.x, RIG.box[0])}; top: ${pct(RIG.head.y, RIG.box[1])}; width: ${pct(RIG.head.w, RIG.box[0])}`} />
+          </>
+        ) : g.id === "airpods" ? (
+          <>
+            <img class="photo" src="/images/desk/airpods-case.webp" alt="" loading="lazy" decoding="async" />
+            <img class="bud bud-l" src="/images/desk/airpods-bud-l.webp" alt="" loading="lazy" decoding="async" />
+            <img class="bud bud-r" src="/images/desk/airpods-bud-r.webp" alt="" loading="lazy" decoding="async" />
+            <img class="lip" src="/images/desk/airpods-lip.webp" alt="" loading="lazy" decoding="async" />
+          </>
+        ) : g.id === "ipad" ? (
+          <>
+            <img class="photo" src="/images/desk/ipad-body.webp" alt="" loading="lazy" decoding="async" />
+            <img class="pencil" src="/images/desk/ipad-pencil.webp" alt="" loading="lazy" decoding="async" />
+          </>
+        ) : g.id === "keyboard" ? (
+          <>
+            <img class="photo" src={g.img} alt="" loading="lazy" decoding="async" />
+            <span class="keys" aria-hidden="true">
+              {keyCells.map((k) => <span class="key" data-key={k.id} style={k.cell}><span class="cap" style={k.cap}></span></span>)}
+            </span>
+          </>
+        ) : g.id === "screwdriver" ? (
+          <span class="spin"><img class="photo" src={g.img} alt="" loading="lazy" decoding="async" /></span>
+        ) : (
+          <img class="photo" src={g.img} alt="" loading="lazy" decoding="async" />
+        )}
+        {g.id === "monitor" && (
+          <>
+            <span class="screen" aria-hidden="true" style={`--sx: ${SCREEN.x}%; --sy: ${SCREEN.y}%; --sw: ${SCREEN.w}%; --sh: ${SCREEN.h}%`}>
+              <img class="on-light" src="/images/desk/screen-light.webp" alt="" loading="lazy" decoding="async" />
+              <img class="on-dark" src="/images/desk/screen-dark.webp" alt="" loading="lazy" decoding="async" />
+            </span>
+            <span class="lamp" aria-hidden="true"><span class="led"></span></span>
+          </>
+        )}
+        {g.id === "mug" && <span class="steam" aria-hidden="true"><i></i><i></i><i></i></span>}
+        <span class="tag" aria-hidden="true">{g.name}</span>
+      </button>
+    ))}
+  </div>
+</div>
+
+<dialog class="info" data-gear-info aria-labelledby="gear-info-title">
+  <div class="bar">
+    <span class="lights">
+      <button type="button" class="light shut" data-gear-close aria-label="Close"><svg aria-hidden="true" viewBox="0 0 12 12"><path d="M4 4l4 4M8 4l-4 4" /></svg></button>
+      <i></i><i></i>
+    </span>
+    <span class="title" id="gear-info-title" data-gear-title>Info</span>
+  </div>
+  <div class="body" data-gear-body></div>
+</dialog>
+
+<script type="application/json" data-gear-data set:html={JSON.stringify(info)} />
+
+<style>
+  /* On a phone the desk keeps its composition and pans; the scrollbar is
+     the only chrome, and it's hidden. */
+  .deskwrap {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--c-hairline);
+  }
+  .deskwrap::-webkit-scrollbar { display: none; }
+
+  .scene {
+    position: relative;
+    container-type: inline-size;
+    aspect-ratio: 100 / 72;
+    min-width: 720px;
+    overflow: hidden;
+  }
+
+  /* The room: wall, the desk's top, its front edge, and the felt mat. */
+  .wall {
+    position: absolute;
+    inset: 0 0 auto;
+    height: calc(29 * 1cqw);
+    background: linear-gradient(var(--desk-wall), color-mix(in srgb, var(--desk-wall) 88%, var(--desk-top)));
+  }
+  .top {
+    position: absolute;
+    inset: calc(29 * 1cqw) 0 0;
+    background: linear-gradient(color-mix(in srgb, var(--desk-top) 86%, var(--desk-edge)), var(--desk-top) 18%);
+    border-top: 1px solid var(--desk-edge);
+  }
+  .mat {
+    position: absolute;
+    left: calc(9 * 1cqw);
+    right: calc(9 * 1cqw);
+    top: calc(36 * 1cqw);
+    height: calc(32.5 * 1cqw);
+    background: var(--desk-mat);
+    border-radius: calc(1.6 * 1cqw);
+  }
+  /* The stitched edge a felt mat has. */
+  .mat::after {
+    content: "";
+    position: absolute;
+    inset: calc(0.7 * 1cqw);
+    border: 1px dashed var(--desk-stitch);
+    border-radius: calc(1.1 * 1cqw);
+  }
+
+  /* The lamp's light: a pool from the bar, down the screen and onto the
+     desk. Only there when the lamp is on. */
+  .glow {
+    position: absolute;
+    z-index: 3;
+    left: calc(22 * 1cqw);
+    width: calc(56 * 1cqw);
+    top: calc(3.4 * 1cqw);
+    height: calc(52 * 1cqw);
+    background:
+      radial-gradient(46% 60% at 50% 0%, var(--lamp-glow), transparent 72%),
+      radial-gradient(40% 18% at 50% 72%, var(--lamp-glow), transparent 75%);
+    /* A cone from the bar: as wide as the bar where the light leaves it,
+       spreading as it falls, edges softened. */
+    clip-path: polygon(34% 0, 66% 0, 100% 100%, 0 100%);
+    filter: blur(calc(0.8 * 1cqw));
+    mix-blend-mode: screen;
+    opacity: var(--lamp);
+    pointer-events: none;
+    transition: opacity var(--dur-pane) var(--ease);
+  }
+
+  .item {
+    position: absolute;
+    z-index: 1;
+    left: calc(var(--x) * 1cqw);
+    top: calc(var(--y) * 1cqw);
+    width: calc(var(--w) * 1cqw);
+    aspect-ratio: var(--aspect);
+    padding: 0;
+    cursor: pointer;
+    transform: rotate(var(--rot));
+    transition: transform var(--dur-state) var(--ease);
+  }
+  .item.row-mat { z-index: 2; }
+  .photo,
+  .lidhost {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* Contact shadows, drawn rather than cast: an ellipse under what stands,
+     a soft blurred footprint under what lies flat. */
+  .shadow {
+    position: absolute;
+    pointer-events: none;
+  }
+  .row-back .shadow {
+    left: 6%;
+    right: 6%;
+    bottom: calc(-0.9 * 1cqw);
+    height: calc(2 * 1cqw);
+    background: radial-gradient(closest-side, var(--desk-shadow), transparent);
+  }
+  .monitor .shadow { left: 27%; right: 27%; }
+  .row-mat .shadow {
+    inset: 3%;
+    background: var(--desk-shadow);
+    border-radius: 7%;
+    filter: blur(calc(0.7 * 1cqw));
+    transform: translate(calc(0.25 * 1cqw), calc(0.55 * 1cqw));
+  }
+  .mouse .shadow { border-radius: 45%; inset: 6% 10%; }
+  .airpods .shadow { border-radius: 30%; inset: 14% 8% 4%; }
+  .mug .shadow { border-radius: 50%; inset: 2% 26% 2% 2%; }
+  .keyboard .shadow { border-radius: 4%; }
+
+  /* Steam off the tea: faint, and only where the lamp would show it. It
+     rises when you hover the mug, and otherwise holds still. */
+  .steam {
+    position: absolute;
+    z-index: 3;
+    left: 6%;
+    top: -36%;
+    width: 58%;
+    height: 100%;
+    pointer-events: none;
+    opacity: calc(0.2 + var(--lamp) * 0.8);
+  }
+  .steam i {
+    position: absolute;
+    bottom: 26%;
+    width: 24%;
+    height: 62%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, var(--steam), transparent);
+    filter: blur(calc(0.22 * 1cqw));
+  }
+  .steam i:nth-child(1) { left: 14%; transform: rotate(-14deg); }
+  .steam i:nth-child(2) { left: 40%; height: 78%; }
+  .steam i:nth-child(3) { left: 64%; transform: rotate(12deg); }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .mug:hover .steam i { animation: steam calc(var(--dur-pane) * 4) var(--ease) infinite; }
+    .mug:hover .steam i:nth-child(2) { animation-delay: calc(var(--dur-pane) * 1.3); }
+    .mug:hover .steam i:nth-child(3) { animation-delay: calc(var(--dur-pane) * 2.6); }
+  }
+  @keyframes steam {
+    0% { translate: 0 0; opacity: 1; }
+    100% { translate: 0 -34%; opacity: 0; }
+  }
+  /* Too thin and too see-through for a footprint: its shadow follows its
+     shape instead, and the handle stays translucent over the mat. The
+     shadow is cast by the wrapper, so it keeps falling the same way while
+     the screwdriver spins. */
+  .screwdriver .shadow { display: none; }
+  .spin {
+    display: block;
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(calc(0.2 * 1cqw) calc(0.35 * 1cqw) calc(0.35 * 1cqw) var(--desk-shadow));
+  }
+  /* Flicked: spun about its heavy end, two turns, slowing to a stop. */
+  .screwdriver .photo { transform-origin: 50% 64%; }
+  @media (prefers-reduced-motion: no-preference) {
+    .screwdriver[data-spinning] .photo { animation: flick calc(var(--dur-pane) * 4) cubic-bezier(.15, .7, .3, 1); }
+  }
+  @keyframes flick { to { rotate: 720deg; } }
+
+  /* The printer: the head travels its arm while you hover, and the tube
+     follows it. Driven from the script, which moves both together. */
+  .tube,
+  .head {
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .tube { inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .tube path { fill: none; stroke: var(--printer-tube); stroke-width: 9; stroke-linecap: round; }
+  .head { height: auto; }
+
+  /* The Pencil: pulled off the iPad's edge and let go, it snaps back on,
+     a hair past and settling, the way the magnets take it. */
+  .pencil {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    transform-origin: 2.4% 51%;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .ipad[data-clicking] .pencil { animation: pencil-click calc(var(--dur-pane) * 3) linear; }
+  }
+  @keyframes pencil-click {
+    0%   { translate: 0 0; rotate: 0deg; animation-timing-function: cubic-bezier(.2, .7, .3, 1); }
+    30%  { translate: -5.5% 0; rotate: -1.2deg; }
+    58%  { translate: -5.5% 0; rotate: -1.2deg; animation-timing-function: cubic-bezier(.7, 0, 1, .5); }
+    72%  { translate: 0.4% 0; rotate: 0deg; animation-timing-function: ease-out; }
+    84%  { translate: -0.2% 0; }
+    100% { translate: 0 0; rotate: 0deg; }
+  }
+
+  /* The keyboard: a pressed key is its own cap drawn over itself, a little
+     smaller and darker, down in the well it sits in. */
+  .keys { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+  .key { position: absolute; visibility: hidden; }
+  .key::before {
+    content: "";
+    position: absolute;
+    inset: 3%;
+    border-radius: calc(0.5 * 1cqw);
+    background: var(--key-well);
+  }
+  .cap {
+    position: absolute;
+    inset: 0;
+    background-repeat: no-repeat;
+    border-radius: calc(0.45 * 1cqw);
+    transform: translateY(3%) scale(var(--sx), 0.9);
+    filter: brightness(0.8);
+  }
+  .key[data-down] { visibility: visible; }
+
+  /* AirPods: seated in the case, and out as in the photo while you hover.
+     The lip in front of the wells is its own layer, so they sink behind
+     it. Offsets are in the photo's pixels: 55 and 193 of 743. */
+  .bud,
+  .lip {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .bud-l { translate: 0 7.4%; }
+  .bud-r { translate: 0 26%; }
+  @media (prefers-reduced-motion: no-preference) {
+    .bud { transition: translate calc(var(--dur-pane) * 1.2) var(--ease); }
+    .bud-r { transition-delay: 40ms; }
+    .airpods:focus-visible .bud { translate: 0 0; }
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .airpods:hover .bud { translate: 0 0; }
+  }
+
+  /* Cubicle's cards, fanned out from under the box. */
+  .layer {
+    position: absolute;
+    z-index: 0;
+    left: var(--lx);
+    top: var(--ly);
+    width: var(--lw);
+    transform: rotate(var(--lr));
+    filter: drop-shadow(0 calc(0.2 * 1cqw) calc(0.3 * 1cqw) var(--desk-shadow));
+  }
+
+  /* The monitor's panel shows this site, in the visitor's theme. */
+  .screen {
+    position: absolute;
+    z-index: 2;
+    left: var(--sx);
+    top: var(--sy);
+    width: var(--sw);
+    height: var(--sh);
+    overflow: hidden;
+    background: var(--sticker-ink);
+  }
+  .screen img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+  }
+  .screen .on-dark { opacity: var(--lamp); }
+
+  /* The light bar: clipped to the top of the monitor, its LED strip on the
+     underside, lit when the lamp is. */
+  .lamp {
+    position: absolute;
+    z-index: 3;
+    left: 25%;
+    width: 50%;
+    top: calc(-0.8 * 1cqw);
+    height: calc(0.95 * 1cqw);
+    background: linear-gradient(var(--lamp-body), color-mix(in srgb, var(--lamp-body) 70%, var(--sticker-paper)) 55%, var(--lamp-body));
+    border-radius: calc(0.6 * 1cqw);
+  }
+  .lamp::after {
+    /* the clip over the monitor's top edge */
+    content: "";
+    position: absolute;
+    left: 46%;
+    width: 8%;
+    top: 80%;
+    height: calc(0.55 * 1cqw);
+    background: var(--lamp-body);
+    border-radius: 0 0 calc(0.2 * 1cqw) calc(0.2 * 1cqw);
+  }
+  .led {
+    position: absolute;
+    left: 4%;
+    right: 4%;
+    bottom: 0;
+    height: 28%;
+    border-radius: 99px;
+    background: var(--lamp-led);
+    opacity: calc(0.18 + var(--lamp) * 0.82);
+  }
+
+  /* The name, on the desk below what stands and above what lies down. */
+  .tag {
+    position: absolute;
+    z-index: 5;
+    left: 50%;
+    width: max-content;
+    padding: 2px 9px;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    line-height: 1.5;
+    color: var(--c-bg);
+    background: var(--c-text);
+    border-radius: var(--radius-pill);
+    opacity: 0;
+    translate: -50% 0;
+    transform: rotate(calc(var(--rot) * -1));
+    pointer-events: none;
+    transition: opacity var(--dur-state) var(--ease);
+  }
+  .row-back .tag { top: calc(100% + 1.2 * 1cqw); }
+  .row-mat .tag { bottom: calc(100% + 0.8 * 1cqw); }
+
+  @media (hover: hover) {
+    .item:hover { z-index: 4; transform: rotate(var(--rot)) translateY(calc(-0.5 * 1cqw)) scale(1.025); }
+    .item:hover .tag { opacity: 1; }
+  }
+  .item:focus-visible { z-index: 4; outline: none; }
+  .item:focus-visible .tag { opacity: 1; }
+  .item:focus-visible .photo,
+  .item:focus-visible .lidhost { outline: 2px solid var(--c-accent); outline-offset: 4px; border-radius: 4px; }
+
+  /* Get Info: a macOS info window, in the site's window chrome. */
+  .info {
+    width: min(460px, calc(100vw - 32px));
+    max-height: min(86vh, 760px);
+    padding: 0;
+    color: var(--c-text);
+    background: var(--c-bg);
+    border: 1px solid var(--c-hairline-strong);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  .info[open] { display: flex; flex-direction: column; }
+  .info::backdrop { background: var(--c-scrim); }
+  .bar {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    height: 36px;
+    padding-inline: var(--s-3);
+    background: var(--c-chrome);
+    border-bottom: 1px solid var(--c-hairline);
+  }
+  .lights { display: flex; gap: 8px; align-items: center; }
+  .lights i,
+  .light {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--c-trafficlight);
+  }
+  .light {
+    display: grid;
+    place-items: center;
+    padding: 0;
+    background: var(--light-close);
+    cursor: pointer;
+  }
+  .light svg { width: 12px; height: 12px; fill: none; stroke: var(--light-glyph); stroke-width: 1.3; stroke-linecap: round; opacity: 0; }
+  .light:hover svg,
+  .light:focus-visible svg { opacity: 1; }
+  .title {
+    flex: 1 1 auto;
+    margin-right: 52px;
+    text-align: center;
+    font-size: var(--t-sans-xs);
+    font-weight: 600;
+  }
+  .body {
+    overflow-y: auto;
+    padding: var(--s-5);
+  }
+  .body :global(.ihead) {
+    display: grid;
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: var(--s-4);
+    align-items: center;
+    padding-bottom: var(--s-4);
+    border-bottom: 1px solid var(--c-hairline);
+  }
+  .body :global(.ihead img) { width: 84px; height: 84px; object-fit: contain; }
+  .body :global(.iname) { font-size: var(--t-sans-lg); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+  .body :global(.ikind) { margin-top: 2px; font-size: var(--t-sans-xs); color: var(--c-muted); }
+  .body :global(.isec) {
+    margin-top: var(--s-4);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: 0.08em;
+    color: var(--c-dim);
+  }
+  .body :global(dl.facts) {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 6px var(--s-4);
+    margin: var(--s-2) 0 0;
+    font-size: var(--t-sans-xs);
+  }
+  .body :global(dl.facts dt) { color: var(--c-muted); text-align: right; }
+  .body :global(dl.facts dd) { margin: 0; }
+
+  /* neofetch, as it prints */
+  .body :global(.tty) {
+    margin-top: var(--s-2);
+    padding: var(--s-3) var(--s-4);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    line-height: 1.75;
+    background: var(--c-chrome);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-sm);
+  }
+  .body :global(.tty .host) { font-weight: 600; }
+  .body :global(.tty .host b) { color: var(--h); }
+  .body :global(.tty .rule) { color: var(--c-dim); line-height: 1; margin-bottom: 4px; }
+  .body :global(.tty dl) { display: grid; grid-template-columns: 9ch minmax(0, 1fr); gap: 0 var(--s-3); margin: 0; }
+  .body :global(.tty dt) { color: var(--h); font-weight: 600; }
+  .body :global(.tty dd) { margin: 0; color: var(--c-muted); min-width: 0; }
+  .body :global(.tty .swatches) { display: flex; margin-top: var(--s-2); }
+  .body :global(.tty .swatches i) { width: 20px; height: 10px; }
+
+  /* Cubicle's hand */
+  .body :global(.hand) {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--s-3);
+    padding-block: var(--s-2) var(--s-3);
+  }
+  .body :global(.hand figure) { margin: 0 -10px; text-align: center; }
+  .body :global(.hand img) { width: 96px; transform: rotate(var(--r)); filter: drop-shadow(0 2px 3px var(--desk-shadow)); }
+  .body :global(.hand figcaption) { margin-top: 6px; font-family: var(--font-mono); font-size: 10px; color: var(--c-dim); }
+
+  .body :global(.ilink) {
+    display: inline-flex;
+    margin-top: var(--s-4);
+    font-size: var(--t-sans-sm);
+    color: var(--c-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .body :global(.isource) {
+    margin-top: var(--s-4);
+    font-size: var(--t-sans-xs);
+    color: var(--c-dim);
+  }
+  .body :global(.isource a) { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+</style>
+
+<script>
+  import { KEYBOARD_KEYS, PRINTER_RIG, tubePath } from "@/data/gear";
+
+  interface Info {
+    id: string; name: string; maker: string; kind: string; img: string;
+    facts: [string, string][]; href: string | null;
+    source: "photo" | "drawn" | { by: string; url: string };
+    machine: { name: string; fields: [string, string][] } | null;
+    cards: { img: string; name: string; deck: string }[] | null;
+  }
+
+  /** neofetch colors its keys by OS; the homelab wears the site's homelab blue. */
+  const MACHINE_HUE: Record<string, string> = { macbook: "var(--c-hue-green)", desktop: "var(--c-hue-blue)", homelab: "var(--c-hue-blue)" };
+  const SWATCHES = ["--c-text", "--c-danger", "--c-hue-orange", "--c-accent", "--c-hue-green", "--c-link", "--c-hue-blue", "--c-hue-violet"];
+
+  function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string) {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
+  }
+
+  function render(it: Info): HTMLElement[] {
+    const out: HTMLElement[] = [];
+
+    const head = el("div", "ihead");
+    const img = el("img");
+    img.src = it.img;
+    img.alt = "";
+    const names = el("div");
+    names.append(el("p", "iname", `${it.maker} ${it.name}`), el("p", "ikind", it.kind));
+    head.append(img, names);
+    out.push(head);
+
+    out.push(el("p", "isec", "general"));
+    const dl = el("dl", "facts");
+    for (const [k, v] of [["Kind", it.kind], ...it.facts] as [string, string][]) dl.append(el("dt", undefined, k), el("dd", undefined, v));
+    out.push(dl);
+
+    if (it.cards) {
+      out.push(el("p", "isec", "in the box"));
+      const hand = el("div", "hand");
+      it.cards.forEach((c, i) => {
+        const fig = el("figure");
+        const ci = el("img");
+        ci.src = c.img;
+        ci.alt = `${c.name} card, from the ${c.deck} deck`;
+        ci.style.setProperty("--r", `${(i - 1.5) * 7}deg`);
+        fig.append(ci, el("figcaption", undefined, c.name.toLowerCase()));
+        hand.append(fig);
+      });
+      out.push(hand);
+    }
+
+    if (it.machine) {
+      out.push(el("p", "isec", "neofetch"));
+      const tty = el("div", "tty");
+      tty.style.setProperty("--h", MACHINE_HUE[it.machine.name] ?? "var(--c-accent)");
+      const host = el("p", "host");
+      host.append(el("b", undefined, "phil"), "@", el("b", undefined, it.machine.name));
+      const rule = el("p", "rule", "-".repeat(`phil@${it.machine.name}`.length));
+      rule.setAttribute("aria-hidden", "true");
+      const spec = el("dl");
+      for (const [k, v] of it.machine.fields) spec.append(el("dt", undefined, k), el("dd", undefined, v));
+      const sw = el("p", "swatches");
+      sw.setAttribute("aria-hidden", "true");
+      for (const c of SWATCHES) { const i = el("i"); i.style.background = `var(${c})`; sw.append(i); }
+      tty.append(host, rule, spec, sw);
+      out.push(tty);
+    }
+
+    if (it.href) {
+      const a = el("a", "ilink", `${new URL(it.href).host} ↗`);
+      a.href = it.href;
+      a.rel = "noopener noreferrer";
+      out.push(a);
+    }
+
+    const src = el("p", "isource");
+    if (it.source === "photo") src.textContent = "Photographed by Phil.";
+    else if (it.source === "drawn") src.textContent = "Drawn for this page.";
+    else {
+      src.append("Product image: ");
+      const a = el("a", undefined, it.source.by);
+      a.href = it.source.url;
+      a.rel = "noopener noreferrer";
+      src.append(a, ".");
+    }
+    out.push(src);
+    return out;
+  }
+
+  function wire() {
+    const root = document.querySelector<HTMLElement>("[data-desk]");
+    const dialog = document.querySelector<HTMLDialogElement>("[data-gear-info]");
+    const raw = document.querySelector<HTMLScriptElement>("[data-gear-data]")?.textContent;
+    if (!root || !dialog || !raw || root.dataset.wired) return;
+    root.dataset.wired = "1";
+    const items: Info[] = JSON.parse(raw);
+    const title = dialog.querySelector<HTMLElement>("[data-gear-title]")!;
+    const body = dialog.querySelector<HTMLElement>("[data-gear-body]")!;
+
+    root.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("[data-gear]");
+      const it = btn && items.find((i) => i.id === btn.dataset.gear);
+      if (!it) return;
+      title.textContent = `${it.name} Info`;
+      body.replaceChildren(...render(it));
+      body.scrollTop = 0;
+      dialog.showModal();
+    });
+    dialog.querySelector("[data-gear-close]")?.addEventListener("click", () => dialog.close());
+    // The backdrop is the dialog's own box outside the window.
+    dialog.addEventListener("click", (e) => { if (e.target === dialog) dialog.close(); });
+
+    wireMotion(root);
+
+    // On a narrow screen the desk pans; start it where the laptop is.
+    if (root.scrollWidth > root.clientWidth) {
+      root.scrollLeft = (root.scrollWidth - root.clientWidth) * 0.42;
+    }
+  }
+
+  const still = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  /** Hover with a mouse, or focus from the keyboard. A tap opens Get Info. */
+  function onPlay(item: HTMLElement, start: () => void, stop: () => void = () => {}) {
+    item.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") start(); });
+    item.addEventListener("pointerleave", (e) => { if (e.pointerType === "mouse") stop(); });
+    item.addEventListener("focus", () => { if (item.matches(":focus-visible")) start(); });
+    item.addEventListener("blur", stop);
+  }
+
+  function wireMotion(root: HTMLElement) {
+    // The screwdriver: once per hover, all the way round, however short the hover.
+    const driver = root.querySelector<HTMLElement>(".item.screwdriver");
+    if (driver) {
+      onPlay(driver, () => { if (!still.matches) driver.toggleAttribute("data-spinning", true); });
+      driver.addEventListener("animationend", () => driver.removeAttribute("data-spinning"));
+    }
+
+    // The Pencil: once per hover, like the screwdriver.
+    const ipad = root.querySelector<HTMLElement>(".item.ipad");
+    if (ipad) {
+      onPlay(ipad, () => { if (!still.matches) ipad.toggleAttribute("data-clicking", true); });
+      ipad.addEventListener("animationend", () => ipad.removeAttribute("data-clicking"));
+    }
+
+    // The keyboard types hello world, and its label shows what it typed.
+    const board = root.querySelector<HTMLElement>(".item.keyboard");
+    const label = board?.querySelector<HTMLElement>(".tag");
+    if (board && label) {
+      const name = label.textContent ?? "";
+      let typing = false;
+      const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+      onPlay(board, async () => {
+        if (typing || still.matches) return;
+        typing = true;
+        let typed = "";
+        for (const ch of KEYBOARD_KEYS.text) {
+          const key = board.querySelector<HTMLElement>(`[data-key="${ch === " " ? "space" : ch}"]`);
+          key?.toggleAttribute("data-down", true);
+          typed += ch;
+          label.textContent = `${typed}▍`;
+          await wait(70);
+          key?.removeAttribute("data-down");
+          await wait(60 + Math.random() * 90 + (ch === " " ? 90 : 0));
+        }
+        label.textContent = typed;
+        await wait(1400);
+        label.textContent = name;
+        typing = false;
+      });
+    }
+
+    // The printer: the head moves from point to point along the arm, as it
+    // does laying down a layer, and parks where it started when you leave.
+    const printer = root.querySelector<HTMLElement>(".item.a1mini");
+    const head = printer?.querySelector<HTMLElement>("[data-head]");
+    const tube = printer?.querySelector<SVGPathElement>("[data-tube]");
+    if (!printer || !head || !tube) return;
+    const [lo, hi] = PRINTER_RIG.travel;
+    let x = 0, from = 0, to = 0, t0 = 0, dur = 0, printing = false, raf = 0;
+    const ease = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
+    const plan = (now: number) => {
+      from = x;
+      if (printing) {
+        let n = x;
+        while (Math.abs(n - x) < 40) n = lo + Math.random() * (hi - lo);
+        to = n;
+      } else to = 0;
+      dur = 160 + Math.abs(to - from) * 2.4;
+      t0 = now;
+    };
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - t0) / dur);
+      x = from + (to - from) * ease(t);
+      head.style.translate = `${((x / PRINTER_RIG.head.w) * 100).toFixed(2)}% 0`;
+      tube.setAttribute("d", tubePath(x));
+      if (t < 1 || printing || to !== 0) {
+        if (t >= 1) plan(now);
+        raf = requestAnimationFrame(tick);
+      } else raf = 0;
+    };
+    onPlay(
+      printer,
+      () => {
+        if (still.matches) return;
+        printing = true;
+        if (!raf) { plan(performance.now()); raf = requestAnimationFrame(tick); }
+      },
+      () => { printing = false; },
+    );
+    document.addEventListener("astro:before-swap", () => cancelAnimationFrame(raf), { once: true });
+  }
+
+  document.addEventListener("astro:page-load", wire);
+</script>

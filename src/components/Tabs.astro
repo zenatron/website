@@ -13,11 +13,20 @@
 </nav>
 
 <style>
+  /*
+   * Tabs as Safari and editors draw them: the strip is the window's chrome,
+   * the open tab is cut from the page below it and joins it without a
+   * seam, and the rest sit back on the strip with short dividers between.
+   * The strip's bottom line is painted as its background, so the open tab
+   * can cover it.
+   */
   .tabs {
     flex: 0 0 auto;
     display: flex;
-    background: var(--c-chrome);
-    border-bottom: 1px solid var(--c-hairline);
+    padding: 5px 8px 0;
+    background:
+      linear-gradient(to top, var(--c-hairline) 1px, transparent 1px),
+      var(--c-chrome);
     overflow-x: auto;
     scrollbar-width: none;
   }
@@ -26,6 +35,7 @@
 
   .tabs :global(ul) {
     display: flex;
+    align-items: flex-end;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -33,46 +43,96 @@
   }
 
   .tabs :global(li) {
+    position: relative;
     display: flex;
     align-items: center;
     flex: 0 0 auto;
-    border-right: 1px solid var(--c-hairline);
-    background: var(--c-chrome);
+    min-width: 108px;
+    height: 34px;
+    border: 1px solid transparent;
+    border-bottom: 0;
+    border-radius: 9px 9px 0 0;
     transition: background var(--dur-state) var(--ease);
   }
+  /* The divider after each tab, gone beside the open or hovered one. */
+  .tabs :global(li::after) {
+    content: "";
+    position: absolute;
+    right: -1px;
+    top: 10px;
+    bottom: 10px;
+    width: 1px;
+    background: var(--c-hairline-strong);
+    transition: opacity var(--dur-state) var(--ease);
+  }
+  .tabs :global(li:last-child::after),
+  .tabs :global(li[data-active]::after),
+  .tabs :global(li:has(+ li[data-active])::after) { opacity: 0; }
   @media (hover: hover) {
-    .tabs :global(li:hover) { background: var(--c-raised); }
+    .tabs :global(li:not([data-active]):hover) { background: color-mix(in srgb, var(--c-raised) 70%, transparent); }
+    .tabs :global(li:hover::after),
+    .tabs :global(li:has(+ li:hover)::after) { opacity: 0; }
   }
 
-  /* The active tab shares the content pane's surface, so it reads as
-     attached to what's below it rather than sitting on the bar. */
+  /* The open tab: the page's own surface, edged like the window, with a
+     short accent along its top. */
   .tabs :global(li[data-active]) {
+    z-index: 1;
     background: var(--c-bg);
-    box-shadow: inset 0 2px 0 var(--c-accent);
+    border-color: var(--c-hairline);
+  }
+  .tabs :global(li[data-active]::before) {
+    content: "";
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: -1px;
+    height: 2px;
+    border-radius: 0 0 2px 2px;
+    background: var(--c-accent);
   }
 
   .tabs :global(li a) {
+    flex: 1 1 auto;
     display: flex;
     align-items: center;
     gap: 7px;
+    min-width: 0;
     max-width: 24ch;
-    padding: 9px var(--s-2) 9px var(--s-3);
+    height: 100%;
+    padding: 0 var(--s-2) 0 var(--s-3);
     font-family: var(--font-mono);
     font-size: var(--t-mono-sm);
-    line-height: 1.4;
+    line-height: 1;
     color: var(--c-muted);
     white-space: nowrap;
+    border-radius: inherit;
   }
+  .tabs :global(li a:focus-visible) { outline-offset: -3px; }
   .tabs :global(li a .label) {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  /* The file's dot, the same one the explorer shows. */
+  .tabs :global(li[data-active] a) { color: var(--c-text); }
+
+  /* Its icon: the explorer's tile, dot, or the site's mark. */
+  .tabs :global(.ticon) {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 4.5px;
+    color: var(--h);
+    background: var(--t);
+  }
+  .tabs :global(.ticon svg) { width: 11px; height: 11px; }
   .tabs :global(.dot) {
     flex: 0 0 auto;
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
+    margin-inline: 4px 1px;
     border-radius: 50%;
     background: var(--h);
   }
@@ -80,23 +140,27 @@
     background: transparent;
     border: 1px solid var(--c-hairline-strong);
   }
-  .tabs :global(li[data-active] a) { color: var(--c-text); }
+  .tabs :global(.mark) { flex: 0 0 auto; border-radius: 4px; }
+  .tabs :global(li:not([data-active]) .mark),
+  .tabs :global(li:not([data-active]) .ticon) { opacity: 0.85; }
 
+  /* Close: on the open tab, and on any tab you point at. */
   .tabs :global(li button) {
     flex: 0 0 auto;
     display: grid;
     place-items: center;
     width: 20px;
     height: 20px;
-    margin-right: var(--s-2);
-    border-radius: var(--radius-sm);
+    margin-right: 7px;
+    border-radius: 5px;
     color: var(--c-dim);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    line-height: 1;
     cursor: pointer;
+    transition: opacity var(--dur-state) var(--ease), background var(--dur-state) var(--ease);
   }
   @media (hover: hover) {
+    .tabs :global(li:not([data-active]) button) { opacity: 0; }
+    .tabs :global(li:hover button),
+    .tabs :global(li:focus-within button) { opacity: 1; }
     .tabs :global(li button:hover) {
       background: var(--c-hairline);
       color: var(--c-text);
@@ -104,7 +168,9 @@
   }
 
   @media (max-width: 900px) {
+    .tabs { padding-inline: 4px; }
+    .tabs :global(li) { min-width: 0; height: 38px; }
     .tabs :global(li a) { max-width: 16ch; }
-    .tabs :global(li button) { width: 30px; height: 30px; }
+    .tabs :global(li button) { width: 30px; height: 30px; margin-right: 3px; }
   }
 </style>

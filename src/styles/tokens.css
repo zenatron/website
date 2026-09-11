@@ -45,6 +45,14 @@
   --c-tile-light:   #FDFCF9;  /* an app icon's plate: the same in both themes */
   --c-trafficlight: #D8D2C6;  /* an unfocused window's lights */
   --c-wallpaper:    #ECE6DA;  /* the desktop behind the window */
+  /* The desk on /about: wall, desktop, felt mat, and whether the lamp is on. */
+  --desk-wall:      #F1ECE3;
+  --desk-top:       #E4DCCD;
+  --desk-edge:      #D5CBB9;
+  --desk-mat:       #CBC3B4;
+  --desk-stitch:    rgba(255, 255, 255, 0.4);
+  --desk-shadow:    rgba(58, 44, 26, 0.3);
+  --lamp:           0;
   --c-scrim:        rgba(53, 49, 42, 0.46);
 
   color-scheme: light;
@@ -83,6 +91,13 @@
   --c-tile-light:   #FDFCF9;
   --c-trafficlight: #454036;
   --c-wallpaper:    #0B0A08;
+  --desk-wall:      #181612;
+  --desk-top:       #23201B;
+  --desk-edge:      #2E2A23;
+  --desk-mat:       #36322B;
+  --desk-stitch:    rgba(255, 255, 255, 0.09);
+  --desk-shadow:    rgba(0, 0, 0, 0.55);
+  --lamp:           1;
   --c-scrim:        rgba(10, 9, 7, 0.62);
 
   color-scheme: dark;
@@ -123,7 +138,14 @@
     --c-tile-light:   #FDFCF9;
     --c-trafficlight: #454036;
     --c-wallpaper:    #0B0A08;
-      --c-scrim:        rgba(10, 9, 7, 0.62);
+    --desk-wall:      #181612;
+    --desk-top:       #23201B;
+    --desk-edge:      #2E2A23;
+    --desk-mat:       #36322B;
+    --desk-stitch:    rgba(255, 255, 255, 0.09);
+    --desk-shadow:    rgba(0, 0, 0, 0.55);
+    --lamp:           1;
+    --c-scrim:        rgba(10, 9, 7, 0.62);
 
     color-scheme: dark;
   }
@@ -162,7 +184,7 @@
 
 /*
    The focused window's traffic lights. Objects, so the same in both
-   themes — macOS doesn't recolour them for dark mode either.
+   themes — macOS doesn't recolor them for dark mode either.
 */
 :root {
   --light-close:  #FF5F57;
@@ -170,6 +192,21 @@
   --light-zoom:   #28C840;
   --light-edge:   rgba(0, 0, 0, 0.14);
   --light-glyph:  rgba(0, 0, 0, 0.55);
+}
+
+/*
+   The desk lamp's light: the LED strip, and the warm pool it throws.
+   The same in both themes; --lamp decides whether it's on.
+*/
+:root {
+  --lamp-led:   #FFE2B0;
+  --lamp-glow:  rgba(255, 210, 150, 0.34);
+  --lamp-body:  #1E1C19;
+  --steam:      rgba(255, 255, 255, 0.4);
+  /* the 3D printer's filament tube, redrawn over its photo */
+  --printer-tube: #2F2F2F;
+  /* the dark under a pressed key */
+  --key-well:     rgba(8, 12, 20, 0.85);
 }
 
 /*
@@ -183,6 +220,12 @@
   --lid-logo:       rgba(255, 255, 255, 0.14);
   --sticker-paper:  #FDFCF9;
   --sticker-ink:    #24211C;
+  /* a Finder folder, on the dock */
+  --folder-back:     #3E9BE0;
+  --folder-front-hi: #7CC6F7;
+  --folder-front-lo: #56AEEE;
+  --folder-lip:      rgba(255, 255, 255, 0.55);
+  --folder-emboss:   #2F86C9;
   --sticker-violet: #6A4BC4;
   --sticker-blue:   #24688F;
   --sticker-teal:   #1E7657;

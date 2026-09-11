@@ -29,7 +29,7 @@ It works. The output is consistently larger than the input.
 5. Emit instructions rather than data — `Pi[index] (N bytes)` for a hit, or
    `Raw[0xHH]` for a byte that couldn't be found.
 
-<Callout type="note" title="The flaw at the centre of it">
+<Callout type="note" title="The flaw at the center of it">
 π contains only the digits 0–9, so the search can only ever match hex strings
 that happen to contain no letters. `1234` might be found. `4a8b` never will.
 Roughly a third of all byte pairs are unreachable by construction, and each one

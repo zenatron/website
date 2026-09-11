@@ -25,6 +25,7 @@ interface Payload {
   resume: string;
   github: string;
   email: string;
+  kofi: string;
 }
 
 const HISTORY_KEY = "term-history";
@@ -256,6 +257,14 @@ const COMMANDS: Record<string, { help: string; run: (arg: string) => void }> = {
     run() {
       location.href = `mailto:${data.email}`;
       print(`opening mailto:${data.email}`, "line-dim");
+    },
+  },
+
+  coffee: {
+    help: "buy me a coffee on Ko-fi",
+    run() {
+      window.open(data.kofi, "_blank", "noopener");
+      print(`opening ${data.kofi}`, "line-dim");
     },
   },
 
@@ -497,14 +506,20 @@ function init() {
   });
 
   // The titlebar keycap and anything else that wants to teach the terminal.
-  for (const trigger of document.querySelectorAll<HTMLElement>("[data-open-terminal]")) {
-    if (trigger.dataset.wired) continue;
-    trigger.dataset.wired = "1";
-    trigger.addEventListener("click", () => (dlg.open ? close() : open()));
-  }
+  // Re-scanned on every page load, since a page's own trigger (the 404's
+  // Search button) arrives with the page, after this ran the first time.
+  const wireTriggers = () => {
+    for (const trigger of document.querySelectorAll<HTMLElement>("[data-open-terminal]")) {
+      if (trigger.dataset.wired) continue;
+      trigger.dataset.wired = "1";
+      trigger.addEventListener("click", () => (dlg.open ? close() : open()));
+    }
+  };
+  wireTriggers();
 
   window.addEventListener("resize", () => dlg.open && position());
   document.addEventListener("astro:page-load", () => {
+    wireTriggers();
     syncPrompt();
     if (dlg.open) position();
   });

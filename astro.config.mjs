@@ -7,6 +7,10 @@ import remarkGfm from "remark-gfm";
 import rehypeKatex from "rehype-katex";
 import rehypeSlug from "rehype-slug";
 import { execSync } from "node:child_process";
+import { readFileSync } from "node:fs";
+
+/** The status bar shows the site's version, from package.json. */
+const { version } = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf8"));
 
 /** The status bar shows the real branch. Read once, at build time. */
 function gitBranch() {
@@ -60,7 +64,7 @@ export default defineConfig({
         dark: (await import("./src/lib/shiki-theme.js")).pvishDark,
       },
       // Shiki has no Caddyfile grammar and 15 blocks were falling back to
-      // plaintext. nginx is close enough to colour directives and braces.
+      // plaintext. nginx is close enough to color directives and braces.
       langAlias: { caddyfile: "nginx", Caddyfile: "nginx" },
     },
   },
@@ -78,6 +82,7 @@ export default defineConfig({
     define: {
       __GIT_BRANCH__: JSON.stringify(gitBranch()),
       __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+      __APP_VERSION__: JSON.stringify(version),
     },
   },
 });

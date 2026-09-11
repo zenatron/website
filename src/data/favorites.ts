@@ -59,6 +59,13 @@ export const FAVORITES: Favorite[] = [
 
   // Productivity & Organization
   {
+    name: "Claude",
+    logo: "claude.svg",
+    description: "my daily ai",
+    url: "https://claude.ai",
+    category: "apps",
+  },
+  {
     name: "Tinycast",
     logo: "tinycast.svg",
     description: "better spotlight for macOS",
@@ -268,6 +275,13 @@ export const FAVORITES: Favorite[] = [
     category: "tools",
   },
   {
+    name: "AdGuard Home",
+    logo: "adguard-home.svg",
+    description: "no ads, on anything on the network",
+    url: "https://adguard.com/en/adguard-home/overview.html",
+    category: "tools",
+  },
+  {
     name: "Proton Mail",
     logo: "proton-mail.svg",
     description: "where phil@pvi.sh lands",
@@ -297,6 +311,13 @@ export const FAVORITES: Favorite[] = [
     logo: "cachyos.svg",
     description: "arch, btw",
     url: "https://cachyos.org",
+    category: "tools",
+  },
+  {
+    name: "Unraid",
+    logo: "unraid.svg",
+    description: "what the homelab runs",
+    url: "https://unraid.net",
     category: "tools",
   },
   {
@@ -353,6 +374,22 @@ export const FAVORITES: Favorite[] = [
     logo: "jupyter.svg",
     description: "where that coursework lives",
     url: "https://jupyter.org",
+    category: "tools",
+  },
+  {
+    name: "FluidVoice",
+    logo: "fluidvoice.png",
+    appIcon: true,
+    description: "dictation, all on-device",
+    url: "https://github.com/altic-dev/FluidVoice",
+    category: "apps",
+  },
+  {
+    name: "LM Studio",
+    logo: "lmstudio.webp",
+    appIcon: true,
+    description: "local models",
+    url: "https://lmstudio.ai",
     category: "tools",
   },
 

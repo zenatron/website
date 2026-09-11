@@ -107,12 +107,86 @@ function wireDrawer() {
   });
 }
 
+/*  The pane
+ *
+ * On anything wider than a phone the window doesn't scroll; the pane
+ * does. So the things a browser does for a scrolling page are done here
+ * for the pane: back and forward return to where you were, a reload
+ * keeps your place, and the keyboard scrolls it without a click first.
+ */
+const pane = () => document.querySelector<HTMLElement>(".pane");
+const paneScrolls = () => {
+  const p = pane();
+  return Boolean(p) && getComputedStyle(p!).overflowY === "auto";
+};
+
+/** Scroll offsets by history entry — the router numbers them. */
+const KEY = "pane-scroll";
+const offsets = new Map<number, number>(
+  (() => {
+    try {
+      return JSON.parse(sessionStorage.getItem(KEY) ?? "[]");
+    } catch {
+      return [];
+    }
+  })(),
+);
+const entry = (): number | undefined => history.state?.index;
+
+document.addEventListener(
+  "scroll",
+  (e) => {
+    const i = entry();
+    if (e.target === pane() && i !== undefined) offsets.set(i, pane()!.scrollTop);
+  },
+  { capture: true, passive: true },
+);
+addEventListener("pagehide", () => {
+  try {
+    sessionStorage.setItem(KEY, JSON.stringify([...offsets]));
+  } catch {
+    /* private browsing — a reload starts at the top */
+  }
+});
+
+function restore() {
+  const p = pane();
+  const top = offsets.get(entry() ?? -1);
+  if (p && top && !location.hash && paneScrolls()) p.scrollTop = top;
+}
+
+// Back and forward: restored in the swap, before the new page is shown.
+let traversing = false;
+document.addEventListener("astro:before-preparation", (e) => {
+  traversing = (e as Event & { navigationType?: string }).navigationType === "traverse";
+});
+document.addEventListener("astro:after-swap", () => {
+  if (traversing) restore();
+});
+
+function syncPane() {
+  const p = pane();
+  if (!p || !paneScrolls()) return;
+  // The sticky outline is as tall as the pane's view, not the viewport's.
+  document.documentElement.style.setProperty("--pane-h", `${p.clientHeight}px`);
+  if (document.activeElement === document.body || !document.activeElement) p.focus({ preventScroll: true });
+}
+addEventListener("resize", () => {
+  const p = pane();
+  if (p && paneScrolls()) document.documentElement.style.setProperty("--pane-h", `${p.clientHeight}px`);
+});
+
 function sync() {
   syncTitlebar();
   syncKeycap();
   wireDrawer();
   setDrawer(false); // a navigation always closes the drawer
+  syncPane();
 }
 
 document.addEventListener("astro:page-load", sync);
 sync();
+
+// A reload, or a return to a page the browser didn't keep.
+const nav = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
+if (nav && nav.type !== "navigate") restore();

@@ -3,7 +3,7 @@
  * About.
  *
  * One page rhythm, the same as /blog: every band opens with a rule, a
- * heading and a quiet note on the right. Colour keeps the job it has in
+ * heading and a quiet note on the right. Color keeps the job it has in
  * the explorer — it says what kind of thing something is — so a status
  * dot here means the same as a dot anywhere else: filled for underway,
  * hollow for not yet.
@@ -17,8 +17,9 @@ import Mark from "@/components/Mark.astro";
 import SectionHead from "@/components/SectionHead.astro";
 import ReachCards from "@/components/ReachCards.astro";
 import LaptopLid from "@/components/LaptopLid.astro";
-import { FACTS, SITE, STATUS } from "@/data/site";
-import { MACHINES, NOW, PRINCIPLES, TIMELINE } from "@/data/about";
+import DeskScene from "@/components/DeskScene.astro";
+import { SITE, STATUS } from "@/data/site";
+import { NOW, PRINCIPLES, TIMELINE } from "@/data/about";
 import { FAVORITES } from "@/data/favorites";
 
 type Hue = "violet" | "orange" | "blue" | "green" | "accent" | "link";
@@ -33,12 +34,18 @@ const essayMinutes = essay?.data.readingTime?.match(/\d+/)?.[0];
 const education = TIMELINE.find((t) => t.kind === "education");
 const start = TIMELINE.find((t) => t.kind === "milestone");
 
-/** Who, where, what, since when — the four things a reader checks first. */
+const founded = TIMELINE.find((t) => t.kind === "founder");
+
+/**
+ * What the sentence above them doesn't say: the studio's name, the
+ * degree, and since when. Dotted in the timeline's colors, so they read
+ * as a preview of it.
+ */
 const facts = [
-  FACTS[0],
-  education && `${education.description} · ${education.title}`,
-  start && `coding since ${start.year}`,
-].filter(Boolean) as string[];
+  founded && { text: `co-founder, ${founded.title}`, hue: "orange" as Hue },
+  education && { text: `${education.description} · ${education.title}`, hue: "violet" as Hue },
+  start && { text: `coding since ${start.year}` },
+].filter(Boolean) as { text: string; hue?: Hue }[];
 
 const PRINCIPLE_HUES: Hue[] = ["violet", "blue", "green", "orange"];
 
@@ -54,23 +61,22 @@ const STATUS_HUE: Record<string, Hue | undefined> = {
 
 const KIND: Record<string, { label: string; hue: Hue }> = {
   work: { label: "work", hue: "green" },
+  founder: { label: "co-founder", hue: "orange" },
+  internship: { label: "internship", hue: "blue" },
   education: { label: "study", hue: "violet" },
-  milestone: { label: "milestone", hue: "orange" },
+  milestone: { label: "milestone", hue: "accent" },
 };
 
-/** neofetch colours its keys by OS. */
-const MACHINE_HUE: Record<string, Hue> = { macbook: "green", desktop: "blue" };
-const SWATCHES = ["text", "danger", "hue-orange", "accent", "hue-green", "link", "hue-blue", "hue-violet"];
 ---
 
 <Shell title="About | Phil Vishnevsky" description="The story so far." ogSlug="about">
   <section class="hero">
     <div class="portrait">
       <img
-        src="/images/phil_headshot_scaled.webp"
-        alt="Phil Vishnevsky presenting at a podium"
-        width="518"
-        height="345"
+        src="/images/phil_headshot_bw.webp"
+        alt="Black-and-white portrait of Phil Vishnevsky"
+        width="480"
+        height="600"
         loading="eager"
         decoding="async"
       />
@@ -79,13 +85,19 @@ const SWATCHES = ["text", "danger", "hue-orange", "accent", "hue-green", "link",
       <h1>About</h1>
       <p class="statement">
         I write code, break things, and occasionally ship something useful.
-        Mostly <Mark hue="blue">servers</Mark>, developer tooling, and
-        <Mark hue="orange">games</Mark> — from a desk in Hartford, Connecticut.
+        By day, I'm a <Mark hue="green">full-time SWE</Mark>.
+        By night it’s a <Mark hue="blue">homelab</Mark> at <span class="nines" title="four nines">99.99%</span> uptime
+        and <Mark hue="orange">card&nbsp;games</Mark> with the studio I <span class="whole">co-founded</span>, all
+        from a desk in <Mark hue="violet">Hartford, CT</Mark>.
       </p>
 
       <ul class="facts">
         <li class="status"><i aria-hidden="true"></i>{STATUS}</li>
-        {facts.map((f) => <li>{f}</li>)}
+        {facts.map((f) => (
+          <li class:list={{ dotted: f.hue }} style={f.hue ? vars(f.hue) : undefined}>
+            {f.hue && <i aria-hidden="true"></i>}{f.text}
+          </li>
+        ))}
       </ul>
 
       <p class="actions">
@@ -153,11 +165,21 @@ const SWATCHES = ["text", "danger", "hue-orange", "accent", "hue-green", "link",
             <span class="when">{item.year}</span>
             <span class="stop" aria-hidden="true"></span>
             <span class="entry">
-              <span class="role">
+              <span class="org">
                 {item.title}
                 <span class="kind">{kind.label}</span>
               </span>
+              {item.role && <span class="job">{item.role}</span>}
               <span class="detail">{item.description}</span>
+              {item.links && (
+                <span class="entrylinks">
+                  {item.links.map((l) => (
+                    <a href={l.href} rel={l.href.startsWith("http") ? "noopener noreferrer" : undefined}>
+                      {l.label} <span aria-hidden="true">{l.href.startsWith("http") ? "↗" : "↑"}</span>
+                    </a>
+                  ))}
+                </span>
+              )}
             </span>
           </li>
         );
@@ -173,41 +195,15 @@ const SWATCHES = ["text", "danger", "hue-orange", "accent", "hue-green", "link",
   </section>
 
   <section id="setup" class="band">
-    <SectionHead title="Setup" meta={`${MACHINES.length} machines`} />
-    <div class="machines">
-      {MACHINES.map((machine) => {
-        const host = `phil@${machine.name}`;
-        return (
-          <div class="win" style={vars(MACHINE_HUE[machine.name] ?? "accent")}>
-            <div class="win-bar">
-              <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="win-name">{host} — zsh</span>
-            </div>
-            <div class="term">
-              <p class="prompt" aria-hidden="true"><span class="cwd">~</span> <span class="sigil">%</span> neofetch</p>
-              <p class="host"><span>phil</span>@<span>{machine.name}</span></p>
-              <p class="underline" aria-hidden="true">{"-".repeat(host.length)}</p>
-              <dl class="spec">
-                {machine.fields.map(([label, value]) => (
-                  <>
-                    <dt>{label}</dt>
-                    <dd>{value}</dd>
-                  </>
-                ))}
-              </dl>
-              <p class="swatches" aria-hidden="true">
-                {SWATCHES.map((c) => <i style={`background: var(--c-${c})`}></i>)}
-              </p>
-            </div>
-          </div>
-        );
-      })}
-    </div>
+    <SectionHead title="Setup" meta="open anything" />
+    <DeskScene />
   </section>
 
   <section id="hobbies" class="band">
     <SectionHead title="Outside the terminal" meta={`${HOBBIES.length}`} />
-    <LaptopLid items={HOBBIES.map((h) => ({ name: h.name, description: h.description }))} />
+    <div class="lidstage">
+      <LaptopLid items={HOBBIES.map((h) => ({ name: h.name, description: h.description }))} photo="/images/desk/macbook.webp" photoAspect={1800 / 1273} badge={{ href: "/dock", label: "Dock", note: `the ${toolCount} apps I use →` }} logo={{ img: "/logos/underscore-games-fire.svg", href: "https://underscore.games", label: "Underscore Games", note: "the game studio I co-founded →" }} />
+    </div>
     <a class="file" href="/dock">
       dock
       <span class="aside">the {toolCount} apps I use</span>
@@ -222,8 +218,7 @@ const SWATCHES = ["text", "danger", "hue-orange", "accent", "hue-green", "link",
 </Shell>
 
 <style>
-  /* Hero: a portrait crop of the photo, so he's the subject rather than
-     the step-and-repeat behind him. */
+  /* Hero: a studio portrait, already cut to the frame's 4:5. */
   .hero {
     display: grid;
     grid-template-columns: 220px minmax(0, 1fr);
@@ -231,19 +226,55 @@ const SWATCHES = ["text", "danger", "hue-orange", "accent", "hue-green", "link",
     align-items: center;
     padding-block: var(--s-4) var(--s-2);
   }
+  /* Glass, as the app icons are: a gloss, a rim that catches the light at
+     the top-left, and a glint across it when you hover. */
   .portrait {
+    position: relative;
+    isolation: isolate;
     aspect-ratio: 4 / 5;
     max-width: 100%;
-    border: 1px solid var(--c-hairline);
     border-radius: var(--radius-card);
     overflow: hidden;
     background: var(--c-chrome);
   }
   .portrait img {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 58% 30%;
+  }
+  .portrait::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      linear-gradient(115deg, transparent 40%, var(--glass-glint) 50%, transparent 60%) 100% 0 / 300% 100% no-repeat,
+      linear-gradient(var(--glass-gloss), transparent 35%, transparent 75%, var(--glass-shade));
+  }
+  .portrait::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    padding: 1px;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      linear-gradient(155deg, var(--glass-rim), var(--glass-rim-soft) 28%, transparent 52%, var(--glass-rim-soft)),
+      linear-gradient(var(--glass-line), var(--glass-line));
+    -webkit-mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
+    mask-composite: exclude;
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .portrait:hover::before { animation: portrait-glint calc(var(--dur-pane) * 2.4) var(--ease); }
+  }
+  @keyframes portrait-glint {
+    from { background-position: 100% 0, 0 0; }
+    to   { background-position: 0% 0, 0 0; }
   }
 
   h1 {
@@ -254,8 +285,18 @@ const SWATCHES = ["text", "danger", "hue-orange", "accent", "hue-green", "link",
   .statement {
     margin-top: var(--s-3);
     font-size: var(--t-sans-lg);
-    line-height: 1.55;
-    max-width: 42ch;
+    line-height: 1.6;
+    max-width: 44ch;
+    text-wrap: pretty;
+  }
+  .whole { white-space: nowrap; }
+  /* The home page's four nines, set the same way. */
+  .nines {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    font-variant-numeric: tabular-nums;
+    color: var(--c-text);
+    letter-spacing: -0.01em;
   }
 
   .facts {
@@ -283,12 +324,14 @@ const SWATCHES = ["text", "danger", "hue-orange", "accent", "hue-green", "link",
     background: var(--c-tint-accent);
     border-color: transparent;
   }
-  .facts .status i {
+  .facts i {
+    flex: none;
     width: 6px;
     height: 6px;
     border-radius: 50%;
     background: currentColor;
   }
+  .facts .dotted i { background: var(--h); }
 
   .actions {
     margin-top: var(--s-5);
@@ -413,7 +456,7 @@ const SWATCHES = ["text", "danger", "hue-orange", "accent", "hue-green", "link",
     border: 1px solid var(--c-hairline-strong);
   }
 
-  /* Experience: the explorer's line through its stops, one colour per kind. */
+  /* Experience: the explorer's line through its stops, one color per kind. */
   .timeline {
     max-width: 72ch;
   }
@@ -454,7 +497,7 @@ const SWATCHES = ["text", "danger", "hue-orange", "accent", "hue-green", "link",
     outline: 3px solid var(--c-bg);
   }
   .entry { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .role {
+  .org {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
@@ -472,72 +515,24 @@ const SWATCHES = ["text", "danger", "hue-orange", "accent", "hue-green", "link",
     padding: 1px 8px;
     border-radius: var(--radius-pill);
   }
-  .detail { font-size: var(--t-sans-sm); color: var(--c-muted); }
-
-  /* Setup: neofetch, as it actually prints. */
-  .machines {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--s-4);
-  }
-  .win {
-    border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-card);
-    overflow: hidden;
-    background: var(--c-bg);
-  }
-  .win-bar {
-    display: flex;
-    align-items: center;
-    gap: var(--s-3);
-    height: 36px;
-    padding-inline: var(--s-3);
-    background: var(--c-chrome);
-    border-bottom: 1px solid var(--c-hairline);
-  }
-  .lights { display: flex; gap: var(--s-2); }
-  .lights i {
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    background: var(--c-trafficlight);
-  }
-  .win-name {
-    flex: 1 1 auto;
-    text-align: center;
-    margin-right: 49px; /* the lights' width, so the title centres on the bar */
+  .job {
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
-    color: var(--c-muted);
+    color: var(--c-dim);
+    letter-spacing: 0.02em;
   }
-  .term {
-    padding: var(--s-4);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    line-height: 1.8;
+  .detail { margin-top: 2px; font-size: var(--t-sans-sm); color: var(--c-muted); max-width: 62ch; }
+  .entrylinks { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-4); margin-top: var(--s-1); }
+  .entrylinks a {
+    font-size: var(--t-sans-xs);
+    color: var(--c-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
   }
-  .prompt { color: var(--c-dim); margin-bottom: var(--s-2); }
-  .prompt .cwd { color: var(--c-link); }
-  .prompt .sigil { color: var(--c-accent); }
-  .host { color: var(--c-text); font-weight: 600; }
-  .host span { color: var(--h); }
-  .underline { color: var(--c-dim); line-height: 1; margin-bottom: var(--s-2); }
-  .spec {
-    display: grid;
-    grid-template-columns: 9ch minmax(0, 1fr);
-    gap: 0 var(--s-3);
-    margin: 0;
-  }
-  .spec dt { color: var(--h); font-weight: 600; }
-  .spec dd { margin: 0; color: var(--c-muted); min-width: 0; }
-  .swatches {
-    display: flex;
-    margin-top: var(--s-3);
-  }
-  .swatches i {
-    width: 22px;
-    height: 12px;
-  }
+
+  /* The real lid, at a size where the stickers can be read. */
+  .lidstage { max-width: 760px; margin-inline: auto; }
 
   @media (max-width: 860px) {
     .manifesto { grid-template-columns: minmax(0, 1fr); gap: var(--s-4); }

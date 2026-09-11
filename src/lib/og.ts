@@ -171,7 +171,7 @@ export async function generateOGImage({
                         color: P.link,
                         padding: "6px 14px",
                         border: `1px solid ${P.hairline}`,
-                        // Shared edge: neighbours collapse their borders.
+                        // Shared edge: neighbors collapse their borders.
                         borderLeftWidth: i === 0 ? 1 : 0,
                       },
                       children: tag,

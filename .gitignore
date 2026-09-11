@@ -41,3 +41,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Raw photos for processing. Never deployed: they carry EXIF, including GPS.
+public/image_drop/

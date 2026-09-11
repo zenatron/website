@@ -6,10 +6,10 @@ export type ProjectEntry = CollectionEntry<"projects">;
 export type KindHue = "violet" | "orange" | "blue" | "green";
 
 /**
- * What a project's `type` means on screen: a word and a colour. The
- * colours are the homepage's — web apps are green — and they're the same
+ * What a project's `type` means on screen: a word and a color. The
+ * colors are the homepage's — web apps are green — and they're the same
  * in the explorer, on the project page and anywhere else a project shows
- * its kind. A type with no entry here is shown hollow, without a colour.
+ * its kind. A type with no entry here is shown hollow, without a color.
  */
 export const PROJECT_KIND: Record<string, { label: string; hue: KindHue } | undefined> = {
   app: { label: "app", hue: "green" },

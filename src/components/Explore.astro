@@ -1,0 +1,129 @@
+---
+/**
+ * Where else to go, at the foot of every page — on a screen narrow enough
+ * that the explorer is a drawer. There, nothing on screen says the rest of
+ * the site exists unless you open the menu; this does, so reading to the
+ * end of any page leads on to the next place rather than stopping.
+ *
+ * Wide screens don't get it: the explorer is always there, listing the
+ * same places.
+ */
+import { PAGES } from "@/data/site";
+import { FAVORITES } from "@/data/favorites";
+import { getAllProjects } from "@/lib/projects";
+import { getAllBlogPosts } from "@/lib/blog";
+
+type Glyph = "home" | "person" | "dock" | "bubble" | "folder" | "pen";
+
+const [projects, posts] = await Promise.all([getAllProjects(), getAllBlogPosts()]);
+const apps = FAVORITES.filter((f) => f.logo).length;
+const page = (href: string) => PAGES.find((p) => p.href === href);
+
+const places: { href: string; name: string; blurb: string; glyph: Glyph; hue?: string }[] = [
+  { href: "/", name: "home", blurb: "Back to the start", glyph: "home" },
+  { href: "/about", name: "about", blurb: "The story, the desk, and the lid", glyph: "person", hue: page("/about")?.hue },
+  { href: "/dock", name: "dock", blurb: `${apps} apps I use, and a few files`, glyph: "dock", hue: page("/dock")?.hue },
+  { href: "/projects", name: "projects", blurb: `${projects.length} things I've built`, glyph: "folder" },
+  { href: "/blog", name: "writing", blurb: `${posts.length} posts on homelabs and more`, glyph: "pen" },
+  { href: "/say-hi", name: "say hi", blurb: page("/say-hi")?.blurb ?? "", glyph: "bubble", hue: page("/say-hi")?.hue },
+];
+
+const here = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const shown = places.filter((p) => p.href !== here);
+const vars = (hue?: string) =>
+  hue ? `--h: var(--c-hue-${hue}); --t: var(--c-tint-${hue})` : "--h: var(--c-muted); --t: var(--c-raised)";
+---
+
+<nav class="explore" aria-label="Keep exploring">
+  <p class="label">keep exploring</p>
+  <ul>
+    {shown.map((p) => (
+      <li>
+        <a href={p.href} style={vars(p.hue)}>
+          <span class="tile" aria-hidden="true">
+            <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              {p.glyph === "home" && <path d="M2.5 7.4 8 2.8l5.5 4.6M4 6.3v6.9h3v-3.6h2v3.6h3V6.3" />}
+              {p.glyph === "person" && (<><circle cx="8" cy="5.4" r="2.6" /><path d="M3 13.6c.8-2.6 2.8-4 5-4s4.2 1.4 5 4" /></>)}
+              {p.glyph === "dock" && (<><rect x="1.8" y="10" width="12.4" height="3.6" rx="1.4" /><rect x="3.4" y="5.4" width="2.8" height="2.8" rx=".8" /><rect x="6.6" y="5.4" width="2.8" height="2.8" rx=".8" /><rect x="9.8" y="5.4" width="2.8" height="2.8" rx=".8" /></>)}
+              {p.glyph === "bubble" && <path d="M3.2 3h9.6A1.7 1.7 0 0 1 14.5 4.7v5a1.7 1.7 0 0 1-1.7 1.7H7.4L4.3 13.8v-2.4H3.2A1.7 1.7 0 0 1 1.5 9.7v-5A1.7 1.7 0 0 1 3.2 3z" />}
+              {p.glyph === "folder" && <path d="M1.8 4.6A1.3 1.3 0 0 1 3.1 3.3h3.1l1.4 1.5h5.3a1.3 1.3 0 0 1 1.3 1.3v5.8a1.3 1.3 0 0 1-1.3 1.3H3.1a1.3 1.3 0 0 1-1.3-1.3z" />}
+              {p.glyph === "pen" && (<><path d="M10.6 2.9a1.5 1.5 0 0 1 2.1 2.1L6 11.7l-2.9.8.8-2.9z" /><path d="M9.4 4.1l2.1 2.1" /></>)}
+            </svg>
+          </span>
+          <span class="name">{p.name}</span>
+          <span class="blurb">{p.blurb}</span>
+          <svg class="go" aria-hidden="true" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .explore { display: none; }
+
+  @media (max-width: 900px) {
+    .explore {
+      display: block;
+      margin-top: var(--s-7);
+    }
+  }
+
+  .label {
+    margin: 0 0 var(--s-2);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: 0.08em;
+    color: var(--c-dim);
+  }
+
+  /* Set as the explorer sets its pages: a tinted tile, the name, and here
+     a line on what's there. */
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: var(--c-chrome);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+  li + li { border-top: 1px solid var(--c-hairline); }
+  a {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr) 14px;
+    grid-template-rows: auto auto;
+    align-items: center;
+    column-gap: var(--s-3);
+    row-gap: 1px;
+    min-height: 60px;
+    padding: var(--s-3) var(--s-4);
+    color: inherit;
+    text-decoration: none;
+    transition: background var(--dur-state) var(--ease);
+  }
+  .tile {
+    grid-row: 1 / span 2;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    color: var(--h);
+    background: var(--t);
+  }
+  .name { font-size: var(--t-sans-md); color: var(--c-text); }
+  .blurb {
+    grid-column: 2;
+    min-width: 0;
+    font-size: var(--t-sans-xs);
+    color: var(--c-muted);
+  }
+  .go {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    color: var(--c-dim);
+  }
+  a:active { background: var(--c-raised); }
+  a:focus-visible { outline-offset: -2px; }
+</style>

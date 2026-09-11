@@ -10,6 +10,7 @@ import Tabs from "@/components/Tabs.astro";
 import Sidebar from "@/components/Sidebar.astro";
 import StatusBar from "@/components/StatusBar.astro";
 import Terminal from "@/components/Terminal.astro";
+import Explore from "@/components/Explore.astro";
 
 interface Props {
   title?: string;
@@ -17,6 +18,8 @@ interface Props {
   ogSlug?: string;
   /** Loads the self-hosted KaTeX stylesheet, only on pages that need it. */
   math?: boolean;
+  /** The "keep exploring" list at the foot of the page, on narrow screens. */
+  explore?: boolean;
 }
 
 const {
@@ -24,6 +27,7 @@ const {
   description = "I'm a software engineer crafting AI projects, tools, homelabs, and games. Explore my portfolio, technical blog posts, and latest development work.",
   ogSlug = "home",
   math = false,
+  explore = true,
 } = Astro.props;
 
 const ogUrl = new URL(`/og/${ogSlug}.png`, Astro.site).href;
@@ -84,8 +88,9 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
       <Tabs />
       <div class="shell-body">
         <Sidebar />
-        <main id="main-content" class="pane" transition:name="pane">
+        <main id="main-content" class="pane" tabindex="-1" transition:name="pane">
           <slot />
+          {explore && <Explore />}
         </main>
         <div class="scrim" hidden data-scrim></div>
       </div>
@@ -141,6 +146,26 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
    * swipe-to-go-back, and that should keep working.
    */
   html, body { overscroll-behavior-y: none; }
+
+  /*
+   * The window stays put and scrolls its own contents, the way an app
+   * window does: titlebar, tabs, explorer and status bar never move, and
+   * the pane is the scroller. Not on a phone, where the window is the
+   * whole screen anyway and the page's own scroll is what collapses the
+   * browser's toolbars and scrolls to the top on a tap of the status bar.
+   * Screen only, so printing still gets every page.
+   */
+  @media screen and (min-width: 641px) {
+    html, body { height: 100%; overflow: hidden; }
+    .window { height: calc(100dvh - var(--s-5) * 2); }
+    .pane {
+      overflow-y: auto;
+      overscroll-behavior-y: none;
+    }
+  }
+  /* The pane takes focus so the keyboard scrolls it; it's a region, not
+     a control, so it has no ring. */
+  .pane:focus { outline: none; }
   body {
     background: var(--wallpaper);
     background-attachment: fixed;
@@ -165,7 +190,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
   /* Zoom: the window fills the screen instead of stopping at --w-content. */
   html[data-zoom="full"] .window { max-width: 100%; }
 
-  /* Minimise: the explorer is put away. Only where it's a column; as a
+  /* Minimize: the explorer is put away. Only where it's a column; as a
      drawer it's already away. */
   @media (min-width: 901px) {
     html[data-rail="hidden"] #sidebar { display: none; }

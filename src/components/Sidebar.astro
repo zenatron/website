@@ -5,7 +5,7 @@
  * Two levels, never three: sections, then files. A series is a labelled
  * run inside its section rather than another folder to open.
  *
- * Colour is category, never decoration. The hues say the same things the
+ * Color is category, never decoration. The hues say the same things the
  * homepage says — servers are blue, web apps are green — so a dot tells
  * you what a file is: an app, a tool, part of the homelab series, or
  * coursework. Files that belong to nothing get a hollow ring. A run is
@@ -15,10 +15,10 @@
  * the bottom, and the files scroll between them, so on a long post the
  * navigation is still where you left it.
  */
-import { getAllBlogPosts } from "@/lib/blog";
+import { getAllBlogPosts, POST_SERIES } from "@/lib/blog";
 import { getAllProjects, projectSlug, PROJECT_KIND } from "@/lib/projects";
 import { links } from "@/lib/links";
-import { SITE, STATUS } from "@/data/site";
+import { PAGES, SITE, STATUS } from "@/data/site";
 
 const posts = await getAllBlogPosts();
 const projects = await getAllProjects();
@@ -26,10 +26,7 @@ const projects = await getAllProjects();
 type Hue = "violet" | "orange" | "blue" | "green";
 const vars = (hue: Hue) => `--h: var(--c-hue-${hue}); --t: var(--c-tint-${hue})`;
 
-const SERIES: { key: string; label: string; hue: Hue }[] = [
-  { key: "homelab-networking", label: "homelab & networking", hue: "blue" },
-  { key: "data-mining", label: "data mining coursework", hue: "violet" },
-];
+const SERIES = POST_SERIES;
 const COURSEWORK = SERIES[1];
 
 const minutes = (v?: string) => (v ? `${v.match(/\d+/)?.[0] ?? ""}m` : "");
@@ -41,7 +38,7 @@ interface Row {
   title: string;
   meta: string;
   hue?: Hue;
-  /** The meta is a category word, set in the category's colour. */
+  /** The meta is a category word, set in the category's color. */
   typed?: boolean;
 }
 interface Group { run?: { label: string; hue: Hue }; rows: Row[] }
@@ -101,11 +98,7 @@ const sections: { key: string; label: string; href: string; groups: Group[] }[] 
   },
 ];
 
-const pages: { name: string; href: string; hue: Hue; glyph: string }[] = [
-  { name: "about", href: "/about", hue: "violet", glyph: "person" },
-  { name: "dock", href: "/dock", hue: "orange", glyph: "dock" },
-  { name: "say hi", href: "/say-hi", hue: "blue", glyph: "bubble" },
-];
+const pages = PAGES;
 
 const find = (title: string) => links.find((l) => l.title === title)?.url;
 const socials = [
@@ -220,10 +213,9 @@ const socials = [
 
 <style>
   /*
-   * The column is as tall as the page and never taller: `contain: size`
-   * stops the rail inside it from propping short pages open. The rail
-   * is sticky and as tall as the part of the column on screen, which
-   * scripts/sidebar.ts measures; without it, 100% capped at 100vh.
+   * The column is as tall as the window's body and never taller:
+   * `contain: size` stops the rail inside it from propping it open. The
+   * window doesn't scroll, so the rail simply fills it.
    */
   .sidebar {
     flex: 0 0 var(--w-sidebar);
@@ -233,12 +225,9 @@ const socials = [
     contain: size;
   }
   .rail {
-    position: sticky;
-    top: 0;
     display: flex;
     flex-direction: column;
-    height: var(--rail-h, 100%);
-    max-height: 100vh;
+    height: 100%;
   }
 
   /* Who this is. The homepage's voice, carried onto every page. */
@@ -285,6 +274,7 @@ const socials = [
     white-space: nowrap;
   }
   .status i {
+    flex: none;
     width: 6px;
     height: 6px;
     border-radius: 50%;
@@ -429,7 +419,7 @@ const socials = [
 
   /*
    * The dot. 7px so it can sit on a line; hollow when the file belongs
-   * to nothing. Its centre is 11.5px into the row, which is where the
+   * to nothing. Its center is 11.5px into the row, which is where the
    * run's line is drawn.
    */
   .dot {
@@ -447,7 +437,7 @@ const socials = [
     border: 1px solid var(--c-hairline-strong);
   }
 
-  /* A run: a chip in its colour, and a line through its files in order. */
+  /* A run: a chip in its color, and a line through its files in order. */
   .runlabel {
     position: relative;
     padding: var(--s-3) var(--s-3) var(--s-1) var(--s-2);
@@ -473,12 +463,12 @@ const socials = [
   .runlabel::after { left: 15px; bottom: 0; height: var(--s-1); }
   .inrun::before { left: 11px; top: 0; bottom: 0; }
   .inrun.last::before { bottom: 50%; }
-  /* With rows filtered out the line would join files that aren't neighbours. */
+  /* With rows filtered out the line would join files that aren't neighbors. */
   .tree[data-searching] .runlabel::after,
   .tree[data-searching] .inrun::before { display: none; }
 
   /* A file browser shows size and date; this shows reading time, or for
-     a project, what kind of thing it is — in that kind's colour. */
+     a project, what kind of thing it is — in that kind's color. */
   .rowmeta {
     flex: 0 0 auto;
     font-family: var(--font-mono);
@@ -570,7 +560,7 @@ const socials = [
       visibility: visible;
       transition: transform var(--dur-state) var(--ease);
     }
-    .rail { position: static; height: 100%; max-height: none; }
+    .rail { height: 100%; }
     .close { display: grid; }
     .searchbar input { font-size: 16px; padding: 10px 12px 10px 32px; }
     .row { line-height: 1.4; min-height: 46px; }

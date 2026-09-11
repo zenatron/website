@@ -2,8 +2,8 @@
  * Where a logo's artwork actually is inside its file, and what shape it is.
  *
  * Logo files don't agree on padding: Discord's glyph sits 11% above the
- * middle of its own canvas and Bluesky's 6%, so centring the file doesn't
- * centre the logo. And the icon treatment needs to know whether the
+ * middle of its own canvas and Bluesky's 6%, so centering the file doesn't
+ * center the logo. And the icon treatment needs to know whether the
  * artwork is a squircle, a circle, or neither, because that decides
  * whether it can wear its own outline or needs a plate behind it.
  *
@@ -16,7 +16,7 @@ import { join } from "node:path";
 export type IconShape = "square" | "circle" | "free";
 
 export interface IconBox {
-  /** Centre of the artwork, as a fraction of the square it's fitted into. */
+  /** Center of the artwork, as a fraction of the square it's fitted into. */
   cx: number;
   cy: number;
   /** Size of the artwork, as a fraction of that square. */
@@ -97,7 +97,7 @@ async function measure(logo: string): Promise<IconBox> {
 
   // The smallest scale at which every row of the clip is inside the
   // artwork's row at the same height. Rows and clip both in units of the
-  // artwork's own box, scaled about its centre.
+  // artwork's own box, scaled about its center.
   const FRINGE = 1.02;
   let cover = shape === "free" ? 1 : FRINGE;
   if (shape === "square") {

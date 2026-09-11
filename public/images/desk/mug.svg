@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 124 100">
+  <!-- A mug of tea, seen from above: glazed ceramic, the tea's surface
+       catching the light, and the handle. Drawn, so it stays crisp. -->
+  <defs>
+    <radialGradient id="ceramic" cx="40%" cy="36%" r="68%">
+      <stop offset="0" stop-color="#FFFDF8"/>
+      <stop offset="0.72" stop-color="#EDE6D9"/>
+      <stop offset="1" stop-color="#D3C8B5"/>
+    </radialGradient>
+    <radialGradient id="inside" cx="58%" cy="62%" r="60%">
+      <stop offset="0" stop-color="#F3EDE2"/>
+      <stop offset="1" stop-color="#D8CDBA"/>
+    </radialGradient>
+    <radialGradient id="tea" cx="44%" cy="40%" r="62%">
+      <stop offset="0" stop-color="#C07A30"/>
+      <stop offset="0.55" stop-color="#8F4C17"/>
+      <stop offset="1" stop-color="#5A2C0B"/>
+    </radialGradient>
+    <linearGradient id="handle" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F7F2E9"/>
+      <stop offset="1" stop-color="#CFC4B0"/>
+    </linearGradient>
+  </defs>
+
+  <path d="M84 35C104 33 113 43 113 50C113 57 104 67 84 65" fill="none" stroke="url(#handle)" stroke-width="10" stroke-linecap="round"/>
+  <path d="M84 35C104 33 113 43 113 50C113 57 104 67 84 65" fill="none" stroke="#BFB39D" stroke-width="10" stroke-linecap="round" opacity="0.18" transform="translate(1.2 1.6)"/>
+
+  <circle cx="50" cy="50" r="42" fill="url(#ceramic)"/>
+  <circle cx="50" cy="50" r="41.5" fill="none" stroke="#C9BDA8" stroke-width="1"/>
+  <circle cx="50" cy="50" r="35.5" fill="url(#inside)"/>
+  <circle cx="50" cy="51.4" r="32.6" fill="url(#tea)"/>
+  <circle cx="50" cy="51.4" r="32.6" fill="none" stroke="#3E1E07" stroke-width="0.8" opacity="0.35"/>
+
+  <ellipse cx="40" cy="40" rx="13" ry="5.5" fill="#FFFFFF" opacity="0.16" transform="rotate(-32 40 40)"/>
+  <path d="M17.5 37A35 35 0 0 1 43 15.8" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" opacity="0.75"/>
+</svg>

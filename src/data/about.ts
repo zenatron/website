@@ -1,25 +1,73 @@
 /** Content for /about, lifted out of the deleted React section components. */
 
-const currentYear = new Date().getFullYear();
+/**
+ * The experience timeline, newest first, as on LinkedIn. `title` is the
+ * place, `role` what Phil did there; `links` sit under the description.
+ */
+export interface TimelineEntry {
+  year: string;
+  title: string;
+  role?: string;
+  description: string;
+  kind: "work" | "founder" | "internship" | "education" | "milestone";
+  links?: { label: string; href: string }[];
+}
 
-export const TIMELINE = [
+export const TIMELINE: TimelineEntry[] = [
   {
-    year: `${currentYear}`,
-    title: "Embedded, AI & game development",
-    description: "Building AI tools and indie games",
+    year: "2026–Present",
+    title: "RTX",
+    role: "Software Engineer",
+    description: "Software for internal and external customers.",
     kind: "work",
   },
   {
-    year: "2023–Present",
-    title: "Full-stack engineering",
-    description: "Web apps, containers, and embedded",
+    year: "2020–Present",
+    title: "Underscore Games",
+    role: "Co-founder & developer",
+    description:
+      "Made Cubicle: The Improv Office Party in a Box. Took second in a startup pitch challenge for $11,000 in grants, and ran design, development and marketing, bringing cost-per-lead down 78%.",
+    kind: "founder",
+    links: [
+      { label: "underscore.games", href: "https://underscore.games" },
+      { label: "Cubicle, on the desk", href: "#setup" },
+    ],
+  },
+  {
+    year: "2025–2026",
+    title: "Shortlist",
+    role: "Software Engineer · remote",
+    description: "SEO for client websites.",
     kind: "work",
+  },
+  {
+    year: "2025",
+    title: "CEM Corporation",
+    role: "Software Engineer Intern",
+    description:
+      "A Rust TCP server that automates device testing across Windows, Linux and ARM, used by 30+ engineers. JSON test sequences that run 10× faster, and C++ Modbus control for stepper motors that cut manual calibration time by 95%.",
+    kind: "internship",
   },
   {
     year: "2022–2025",
     title: "UNC Charlotte",
-    description: "BS, Computer Science",
+    description: "BS, Computer Science, 4.0 GPA",
     kind: "education",
+  },
+  {
+    year: "2020–2022",
+    title: "Izar Wellness Institute",
+    role: "Technical Support Specialist · contract",
+    description: "Hardware and software support for the clinic, and its equipment and security.",
+    kind: "work",
+  },
+  {
+    year: "2019",
+    title: "Enventys Partners",
+    role: "Computer Engineer Intern",
+    description:
+      "Object detection in Python and OpenCV at 99.98% accuracy, and PCB assembly and reflow for contracts over $400,000.",
+    kind: "internship",
   },
   {
     year: "2019",
@@ -27,7 +75,7 @@ export const TIMELINE = [
     description: "Self-taught coding journey begins",
     kind: "milestone",
   },
-] as const;
+];
 
 export const NOW = [
   {
@@ -94,6 +142,21 @@ export const MACHINES = [
       ["PM", "paru"],
       ["Editor", "VS Code, nvim"],
       ["Emulator", "Konsole"],
+    ],
+  },
+  {
+    name: "homelab",
+    fields: [
+      ["OS", "Unraid Pro"],
+      ["Kernel", "x86_64 Linux"],
+      ["CPU", "AMD Ryzen 5 7600X (6-core)"],
+      ["GPU", "RTX 3060: transcoding, local AI"],
+      ["Memory", "64GB DDR5"],
+      ["Storage", "4x 12TB in ZFS, 36TB usable"],
+      ["Parity", "1 drive"],
+      ["DNS", "AdGuard Home"],
+      ["Services", "Docker, all of them"],
+      ["Uptime", "99.99%"],
     ],
   },
 ] as const;

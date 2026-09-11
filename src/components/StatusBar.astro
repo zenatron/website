@@ -11,6 +11,7 @@
 import { SITE } from "@/data/site";
 
 const branch = __GIT_BRANCH__;
+const version = __APP_VERSION__;
 const buildTime = __BUILD_TIME__;
 const buildLabel = new Date(buildTime).toLocaleString("en-US", {
   timeZone: SITE.timezone,
@@ -27,6 +28,7 @@ const buildLabel = new Date(buildTime).toLocaleString("en-US", {
   <span class="spacer"></span>
 
   <span class="clock tabular" data-clock></span>
+  <span class="version tabular" title="The version that's deployed">v{version}</span>
   <span class="deploy" title={`Built ${buildLabel}`}>
     <i aria-hidden="true"></i>deployed
   </span>
@@ -79,9 +81,12 @@ const buildLabel = new Date(buildTime).toLocaleString("en-US", {
     background: var(--c-link);
   }
 
-  /* Two items below 640px: branch and deploy status. */
+  /* The version sits with the deploy it describes: close, not a full gap. */
+  .version { margin-right: calc(var(--s-2) - var(--s-4)); }
+
+  /* Below 640px: branch, and the version with its deploy status. */
   @media (max-width: 640px) {
-    .statusbar > span:not(.spacer):not(.deploy),
+    .statusbar > span:not(.spacer):not(.deploy):not(.version),
     .statusbar > .clock {
       display: none;
     }

@@ -9,7 +9,7 @@ import { FORTUNES } from "@/data/site";
 
 /**
  * The dock (it was the desk): the apps I use and the things worth opening,
- * scattered on it. Icons are shown exactly as they ship — full colour,
+ * scattered on it. Icons are shown exactly as they ship — full color,
  * no tint — because an app icon is already a designed object.
  */
 
@@ -70,6 +70,7 @@ const windows = {
     <p>
       {apps.length} apps I actually use, and a few things worth opening.
       <span class="hint-hover">Hover</span><span class="hint-tap">Tap</span> for what they are.
+      The hardware they run on is on <a href="/about#setup">the desk</a>.
     </p>
   </header>
 
@@ -204,7 +205,7 @@ const windows = {
     place-items: center;
     width: calc(64px * var(--scale));
     height: calc(64px * var(--scale));
-    transition: transform var(--dur-state) var(--ease), filter var(--dur-state) var(--ease);
+    transition: transform var(--dur-state) var(--ease);
   }
 
   /* The label is absolutely placed so revealing it moves nothing. */
@@ -245,8 +246,6 @@ const windows = {
   @media (hover: hover) {
     .obj:hover .label { opacity: 1; }
     .obj:hover .icon { transform: translateY(-6px) scale(1.08); }
-    /* Everything else settles back while one object is picked up. */
-    .objects:hover li:not(:hover) .icon { filter: saturate(0.82) opacity(0.86); }
   }
 
   /* Window */

@@ -3,6 +3,15 @@ import type { CollectionEntry } from "astro:content";
 
 export type BlogPostEntry = CollectionEntry<"blog">;
 
+/**
+ * The series posts belong to, with the color each is drawn in wherever a
+ * post shows its kind — the explorer, the 404's suggestions.
+ */
+export const POST_SERIES: { key: string; label: string; hue: "violet" | "orange" | "blue" | "green" }[] = [
+  { key: "homelab-networking", label: "homelab & networking", hue: "blue" },
+  { key: "data-mining", label: "data mining coursework", hue: "violet" },
+];
+
 // Extract plain text from MDX content for searching
 function extractPlainText(content: string): string {
   let plainText = content.replace(/import\s+.*?from\s+['"].*?['"]/g, "");
