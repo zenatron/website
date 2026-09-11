@@ -195,4 +195,10 @@ import ThemeToggle from "@/components/ThemeToggle.astro";
   @media (max-width: 640px) {
     .lights { display: none; }
   }
+
+  /* No keyboard, no keyboard shortcut: the terminal is for typing, and a
+     phone or a touch screen without a pointer has the explorer's search. */
+  @media (max-width: 640px), (hover: none) {
+    .keycap { display: none; }
+  }
 </style>
