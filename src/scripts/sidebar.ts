@@ -37,7 +37,7 @@ function applyExpanded(set: Set<string>) {
 
 function syncActive() {
   const here = location.pathname.replace(/\/+$/, "") || "/";
-  let activeFolder: string | null = null;
+  const ancestors: string[] = [];
 
   document.querySelectorAll<HTMLAnchorElement>("#sidebar a[data-nav]").forEach((a) => {
     const href = new URL(a.href).pathname.replace(/\/+$/, "") || "/";
@@ -49,8 +49,13 @@ function syncActive() {
     if (isActive) a.setAttribute("aria-current", "page");
     else a.removeAttribute("aria-current");
     if (isActive) {
-      const group = a.closest<HTMLElement>("[data-group]");
-      if (group) activeFolder = group.dataset.group!;
+      // Walk every ancestor group, not just the nearest — blog nests its
+      // series one level deeper than projects does.
+      let node: HTMLElement | null = a.closest<HTMLElement>("[data-group]");
+      while (node) {
+        ancestors.push(node.dataset.group!);
+        node = node.parentElement?.closest<HTMLElement>("[data-group]") ?? null;
+      }
     }
   });
 
@@ -58,7 +63,7 @@ function syncActive() {
   // so it is applied on top of the stored set rather than written into it.
   const expanded = readExpanded();
   const seg = here.split("/")[1];
-  if (activeFolder) expanded.add(activeFolder);
+  if (ancestors.length) for (const a of ancestors) expanded.add(a);
   else if (seg && document.querySelector(`[data-group="${seg}"]`)) expanded.add(seg);
   applyExpanded(expanded);
 }
@@ -118,6 +123,7 @@ function wireSearch() {
       for (const r of rows) r.hidden = false;
       document.querySelectorAll<HTMLElement>("[data-group]").forEach((g) => {
         delete g.dataset.searching;
+        delete g.dataset.all;
       });
       // Restore whatever was expanded before the search forced them open.
       syncActive();
@@ -128,9 +134,13 @@ function wireSearch() {
     let hits = 0;
     for (const row of rows) {
       const label = row.querySelector("a")?.textContent?.toLowerCase() ?? "";
-      // The "N more" row is a control, not a file; never match it.
-      const match = !row.classList.contains("more") &&
-        (label.includes(q) || subsequence(q, label));
+      // Match the post's title too: someone searching "caddy" means the
+      // reverse-proxy post, whose filename never says so.
+      const title = (row.dataset.title ?? "").toLowerCase();
+      const match =
+        !row.classList.contains("more") &&
+        !row.classList.contains("index-row") &&
+        (label.includes(q) || title.includes(q) || subsequence(q, label));
       row.hidden = !match;
       if (match) hits += 1;
     }
@@ -139,6 +149,7 @@ function wireSearch() {
     document.querySelectorAll<HTMLElement>("[data-group]").forEach((g) => {
       g.dataset.open = "true";
       g.dataset.searching = "true";
+      g.dataset.all = "true";
     });
     if (empty) empty.hidden = hits > 0;
   };
@@ -157,9 +168,11 @@ function wireSearch() {
       const label = (r: HTMLElement) => r.querySelector("a")?.textContent?.toLowerCase() ?? "";
       // A substring hit beats a subsequence hit, or "sso" opens
       // projects-system-documentation instead of the SSO post.
+      const title = (r: HTMLElement) => (r.dataset.title ?? "").toLowerCase();
       const best =
         rows.find((r) => label(r).startsWith(q)) ??
         rows.find((r) => label(r).includes(q)) ??
+        rows.find((r) => title(r).includes(q)) ??
         rows[0];
       best?.querySelector<HTMLAnchorElement>("a")?.click();
     }

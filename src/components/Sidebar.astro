@@ -1,12 +1,11 @@
 ---
 /**
  * The nav is an actual file listing — rows are real content-collection
- * slugs — which is what earns the file-tree presentation. That only
- * holds up if the names are readable, so the rail is wide enough to fit
- * the longest one and the drawer is wide enough on a phone.
+ * slugs — and it mirrors how the content is actually organised, so the
+ * blog's two series are folders rather than twenty loose files.
  *
- * Persisted across navigation, so active state, expansion and the filter
- * are re-synced by scripts/sidebar.ts rather than re-rendered here.
+ * Persisted across navigation; active state, expansion and search are
+ * re-synced by scripts/sidebar.ts rather than re-rendered here.
  */
 import { getAllBlogPosts } from "@/lib/blog";
 import { getAllProjects, projectSlug } from "@/lib/projects";
@@ -16,24 +15,35 @@ const CAP = 8;
 const posts = await getAllBlogPosts();
 const projects = await getAllProjects();
 
-const tree = [
-  {
-    name: "projects",
-    href: "/projects",
-    children: projects.map((p) => ({
-      name: `${projectSlug(p)}.mdx`,
-      href: `/projects/${projectSlug(p)}`,
-    })),
-  },
-  {
-    name: "blog",
-    href: "/blog",
-    children: posts.map((p) => ({
-      name: `${p.slug}.mdx`,
-      href: `/blog/${p.slug}`,
-    })),
-  },
+const HUES = ["violet", "orange", "blue", "green", "accent", "link"] as const;
+function hue(s: string) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return HUES[(h >>> 0) % HUES.length];
+}
+
+interface Leaf { name: string; href: string; title: string }
+interface Folder { name: string; href?: string; children: Leaf[] }
+
+const bySeries = (key: string): Leaf[] =>
+  posts
+    .filter((p) => p.data.series === key)
+    .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0))
+    .map((p) => ({ name: `${p.slug}.mdx`, href: `/blog/${p.slug}`, title: p.data.title }));
+
+const projectLeaves: Leaf[] = projects.map((p) => ({
+  name: `${projectSlug(p)}.mdx`,
+  href: `/projects/${projectSlug(p)}`,
+  title: p.data.title,
+}));
+
+const blogSubfolders: Folder[] = [
+  { name: "homelab", children: bySeries("homelab-networking") },
+  { name: "coursework", children: bySeries("data-mining") },
 ];
+const blogLoose: Leaf[] = posts
+  .filter((p) => !p.data.series)
+  .map((p) => ({ name: `${p.slug}.mdx`, href: `/blog/${p.slug}`, title: p.data.title }));
 
 const files = [
   { name: "about", href: "/about" },
@@ -53,63 +63,92 @@ const files = [
 
   <div class="searchbar">
     <label class="sr-only" for="tree-search">Search files</label>
-    <input
-      id="tree-search"
-      type="search"
-      placeholder="search"
-      autocomplete="off"
-      spellcheck="false"
-      data-search
-    />
+    <input id="tree-search" type="search" placeholder="search" autocomplete="off" spellcheck="false" data-search />
   </div>
 
   <ul class="tree" data-tree>
     <li class="row"><a href="/" data-nav>home</a></li>
 
-    {
-      tree.map((folder) => {
-        // Every child is rendered; the ones past the cap are hidden until
-        // the folder is expanded in full or the filter is searching. A
-        // filter that can only see 8 of 20 posts isn't a filter.
-        const overflow = Math.max(0, folder.children.length - CAP);
-        return (
+    <!-- projects -->
+    <li>
+      <div class="row folder" data-row>
+        <button class="twisty" type="button" aria-expanded="false" aria-controls="group-projects" data-twisty="projects">
+          <span class="sr-only">Toggle projects</span><span class="tri" aria-hidden="true" />
+        </button>
+        <a href="/projects" data-nav>projects</a>
+        <span class="count" aria-hidden="true">{projectLeaves.length}</span>
+      </div>
+      <ul class="children" id="group-projects" data-group="projects">
+        <li class="row index-row"><a href="/projects" data-nav>All projects</a></li>
+        {projectLeaves.map((c, i) => (
+          <li class="row leaf" data-title={c.title} data-overflow={i >= CAP ? "" : undefined}>
+            <span class="dot" aria-hidden="true" style={`--d: var(--c-hue-${hue(c.name)}, var(--c-${hue(c.name)}))`} />
+            <a href={c.href} data-nav>{c.name}</a>
+          </li>
+        ))}
+        {projectLeaves.length > CAP && (
+          <li class="row more">
+            <button type="button" data-more="projects" aria-expanded="false">
+              <span data-more-label>{projectLeaves.length - CAP} more…</span>
+            </button>
+          </li>
+        )}
+      </ul>
+    </li>
+
+    <!-- blog, with its series as folders -->
+    <li>
+      <div class="row folder" data-row>
+        <button class="twisty" type="button" aria-expanded="false" aria-controls="group-blog" data-twisty="blog">
+          <span class="sr-only">Toggle blog</span><span class="tri" aria-hidden="true" />
+        </button>
+        <a href="/blog" data-nav>blog</a>
+        <span class="count" aria-hidden="true">{posts.length}</span>
+      </div>
+
+      <ul class="children" id="group-blog" data-group="blog">
+        <li class="row index-row"><a href="/blog" data-nav>All posts</a></li>
+        {blogSubfolders.map((sub) => (
           <li>
-            <div class="row" data-row>
+            <div class="row folder sub" data-row>
               <button
                 class="twisty"
                 type="button"
                 aria-expanded="false"
-                aria-controls={`group-${folder.name}`}
-                data-twisty={folder.name}
+                aria-controls={`group-${sub.name}`}
+                data-twisty={sub.name}
               >
-                <span class="sr-only">Toggle {folder.name}</span>
-                <span class="tri" aria-hidden="true" />
+                <span class="sr-only">Toggle {sub.name}</span><span class="tri" aria-hidden="true" />
               </button>
-              <a href={folder.href} data-nav>{folder.name}</a>
-              <span class="count" aria-hidden="true">{folder.children.length}</span>
+              <span class="foldername">{sub.name}/</span>
+              <span class="count" aria-hidden="true">{sub.children.length}</span>
             </div>
-
-            <ul class="children" id={`group-${folder.name}`} data-group={folder.name}>
-              <li class="row index-row">
-                <a href={folder.href} data-nav>All {folder.name}</a>
-              </li>
-              {folder.children.map((child, i) => (
-                <li class="row" data-overflow={i >= CAP ? "" : undefined}>
-                  <a href={child.href} data-nav>{child.name}</a>
+            <ul class="children deep" id={`group-${sub.name}`} data-group={sub.name}>
+              {sub.children.map((c, i) => (
+                <li class="row leaf" data-title={c.title} data-overflow={i >= CAP ? "" : undefined}>
+                  <span class="dot" aria-hidden="true" style={`--d: var(--c-hue-${hue(c.name)}, var(--c-${hue(c.name)}))`} />
+                  <a href={c.href} data-nav>{c.name}</a>
                 </li>
               ))}
-              {overflow > 0 && (
+              {sub.children.length > CAP && (
                 <li class="row more">
-                  <button type="button" data-more={folder.name} aria-expanded="false">
-                    <span data-more-label>{overflow} more…</span>
+                  <button type="button" data-more={sub.name} aria-expanded="false">
+                    <span data-more-label>{sub.children.length - CAP} more…</span>
                   </button>
                 </li>
               )}
             </ul>
           </li>
-        );
-      })
-    }
+        ))}
+
+        {blogLoose.map((c) => (
+          <li class="row leaf" data-title={c.title}>
+            <span class="dot" aria-hidden="true" style={`--d: var(--c-hue-${hue(c.name)}, var(--c-${hue(c.name)}))`} />
+            <a href={c.href} data-nav>{c.name}</a>
+          </li>
+        ))}
+      </ul>
+    </li>
 
     {files.map((f) => (
       <li class="row"><a href={f.href} data-nav>{f.name}</a></li>
@@ -138,7 +177,6 @@ const files = [
     padding-inline: var(--s-4) var(--s-3);
     margin-bottom: var(--s-2);
   }
-  /* The only letter-spaced text on the site. */
   .explorer {
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
@@ -157,12 +195,10 @@ const files = [
     cursor: pointer;
   }
   @media (hover: hover) {
-    .close:hover {
-    background: var(--c-raised); color: var(--c-text);
-    }
+    .close:hover { background: var(--c-raised); color: var(--c-text); }
   }
 
-  .searchbar { padding-inline: var(--s-3); margin-bottom: var(--s-2); }
+  .searchbar { padding-inline: var(--s-3); margin-bottom: var(--s-3); }
   .searchbar input {
     width: 100%;
     font-family: var(--font-mono);
@@ -171,7 +207,7 @@ const files = [
     background: var(--c-bg);
     border: 1px solid var(--c-hairline);
     border-radius: var(--radius-sm);
-    padding: 5px 9px;
+    padding: 6px 10px;
   }
   .searchbar input::-webkit-search-cancel-button { -webkit-appearance: none; }
 
@@ -182,11 +218,11 @@ const files = [
     padding: 0;
   }
 
-  /* Groups collapse only once JS has run; without it the whole site is
-     still reachable from the sidebar. */
   :global(.js) .children:not([data-open="true"]) { display: none; }
   .twisty { display: none; }
   :global(.js) .twisty { display: grid; }
+  :global(.js) .children:not([data-all="true"]) .row[data-overflow] { display: none; }
+  :global(.js) .children[data-searching="true"] .row[data-overflow] { display: flex; }
 
   .row {
     position: relative;
@@ -202,7 +238,17 @@ const files = [
   }
   .row[hidden] { display: none; }
 
-  .row a {
+  /* Folders carry weight; files don't. That's the rhythm the flat list
+     was missing. */
+  .folder a,
+  .foldername {
+    font-weight: 500;
+    color: var(--c-text);
+  }
+  .folder + .children { margin-bottom: var(--s-1); }
+
+  .row a,
+  .foldername {
     flex: 1 1 auto;
     min-width: 0;
     padding-left: var(--s-4);
@@ -213,7 +259,23 @@ const files = [
     text-overflow: ellipsis;
     transition: color var(--dur-state) var(--ease);
   }
-  .children .row a { padding-left: calc(var(--s-4) + var(--s-3)); }
+  .children > .row a,
+  .children > li > .row .foldername { padding-left: calc(var(--s-4) + var(--s-3)); }
+  .children.deep > .row a { padding-left: calc(var(--s-4) + var(--s-5) + var(--s-2)); }
+
+  /* A hue dot per file, from the same hash the tags and covers use. */
+  .dot {
+    position: absolute;
+    left: calc(var(--s-4) + var(--s-2));
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--d);
+    opacity: 0.85;
+  }
+  .children.deep .dot { left: calc(var(--s-4) + var(--s-3)); }
+  .leaf a { padding-left: calc(var(--s-4) + var(--s-5)); }
+  .children.deep > .leaf a { padding-left: calc(var(--s-4) + var(--s-5)); }
 
   .count {
     flex: 0 0 auto;
@@ -223,18 +285,15 @@ const files = [
   }
 
   @media (hover: hover) {
-    .row:hover {
-    background: var(--c-raised);
-    }
-  }
-  @media (hover: hover) {
-    .row:hover a {
-    color: var(--c-text);
-    }
+    .row:hover { background: var(--c-raised); }
+    .row:hover a { color: var(--c-text); }
+    .row:hover .tri { border-left-color: var(--c-text); }
+    .more button:hover { color: var(--c-text); }
   }
 
   .row[data-active] { background: var(--c-tint-accent); }
-  .row[data-active] a { color: var(--c-accent); }
+  .row[data-active] a { color: var(--c-accent); font-weight: 500; }
+  .row[data-active] .dot { opacity: 1; }
 
   .twisty {
     position: absolute;
@@ -247,6 +306,7 @@ const files = [
     padding: 0;
     cursor: pointer;
   }
+  .sub .twisty { left: calc(var(--s-2) + var(--s-3)); }
   .tri {
     width: 0;
     height: 0;
@@ -256,30 +316,17 @@ const files = [
     transition: transform var(--dur-state) var(--ease);
   }
   .twisty[aria-expanded="true"] .tri { transform: rotate(90deg); }
-  @media (hover: hover) {
-    .row:hover .tri {
-    border-left-color: var(--c-text);
-    }
-  }
-
-  /* Overflow rows exist in the document but are folded away until asked
-     for, or until the filter needs to reach them. */
-  :global(.js) .group:not([data-all="true"]) .row[data-overflow] { display: none; }
-  :global(.js) .children[data-searching="true"] .row[data-overflow] { display: flex; }
 
   .more button {
     flex: 1 1 auto;
     text-align: left;
-    padding-left: calc(var(--s-4) + var(--s-3));
+    padding-left: calc(var(--s-4) + var(--s-5));
     padding-right: var(--s-2);
     color: var(--c-dim);
     cursor: pointer;
     transition: color var(--dur-state) var(--ease);
   }
-  @media (hover: hover) {
-    .row:hover .more button,
-    .more button:hover { color: var(--c-text); }
-  }
+  .children.deep .more button { padding-left: calc(var(--s-4) + var(--s-5)); }
 
   .empty {
     padding-inline: var(--s-4);
@@ -288,8 +335,9 @@ const files = [
     color: var(--c-dim);
   }
 
-  /* The index row is a touch affordance; a pointer has the folder row. */
+  /* A touch affordance: a pointer still has the folder row itself. */
   .index-row { display: none; }
+  .index-row a { color: var(--c-link); padding-left: calc(var(--s-4) + var(--s-5)); }
 
   @media (max-width: 900px) {
     .sidebar {
@@ -297,7 +345,6 @@ const files = [
       inset-block: 0;
       inset-inline-start: 0;
       z-index: 3;
-      /* Wide enough for the longest real filename on a phone. */
       flex-basis: min(86vw, 320px);
       width: min(86vw, 320px);
       transform: translateX(-100%);
@@ -305,43 +352,15 @@ const files = [
     }
     .sidebar[data-open="true"] { transform: translateX(0); }
     .close { display: grid; }
-
-    /* 16px or iOS zooms the page when the field takes focus. */
-    .searchbar input {
-      font-size: 16px;
-      padding: 10px 12px;
-    }
-
-    /* Every row is a real touch target. */
+    .searchbar input { font-size: 16px; padding: 10px 12px; }
     .row { line-height: 1.4; min-height: 46px; }
     .row a,
-    .more button {
-      display: flex;
-      align-items: center;
-      min-height: 46px;
-    }
-
-    /*
-     * A 16x29 disclosure triangle is not a tap target. On touch the whole
-     * folder row toggles, and the folder's index moves into the group as
-     * an explicit "All blog" row — two targets stacked in one row is a
-     * mouse idiom that a thumb can't resolve.
-     */
-    .twisty {
-      inset: 0;
-      width: 100%;
-      z-index: 2;
-      place-items: center start;
-      padding-left: var(--s-2);
-    }
+    .foldername,
+    .more button { display: flex; align-items: center; min-height: 46px; }
+    .twisty { inset: 0; width: 100%; z-index: 2; place-items: center start; padding-left: var(--s-2); }
+    .sub .twisty { padding-left: calc(var(--s-2) + var(--s-3)); }
     [data-row] a { pointer-events: none; }
-    .tri {
-      border-top-width: 4.5px;
-      border-bottom-width: 4.5px;
-      border-left-width: 6.5px;
-    }
-
     .index-row { display: flex; }
-    .index-row a { color: var(--c-link); }
+    .tri { border-top-width: 4.5px; border-bottom-width: 4.5px; border-left-width: 6.5px; }
   }
 </style>

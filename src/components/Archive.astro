@@ -1,0 +1,169 @@
+---
+/**
+ * A dense index for a long series.
+ *
+ * The coursework is twelve posts that are structurally identical — same
+ * shape, same three tags, one line of description each. As cards they
+ * buried the writing that matters; as a numbered index they stay findable
+ * and cost a fraction of the page.
+ */
+interface Entry {
+  slug: string;
+  title: string;
+  order: number;
+  date?: string | Date;
+  readingTime?: string;
+}
+interface Props { title: string; blurb: string; entries: Entry[]; initial?: number; }
+const { title, blurb, entries, initial = 6 } = Astro.props;
+
+const when = (v?: string | Date) => {
+  if (!v) return "";
+  const d = new Date(v);
+  return Number.isNaN(d.getTime())
+    ? ""
+    : d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+};
+const minutes = (v?: string) => (v ? `${v.match(/\d+/)?.[0] ?? ""} min` : "");
+const hidden = Math.max(0, entries.length - initial);
+---
+
+<section class="archive">
+  <div class="head">
+    <p class="eyebrow">Archive</p>
+    <h2>{title}</h2>
+    <p class="blurb">{blurb}</p>
+  </div>
+
+  <ol class="index" data-archive>
+    {entries.map((e, i) => (
+      <li data-over={i >= initial ? "" : undefined}>
+        <a href={`/blog/${e.slug}`}>
+          <span class="n">{String(e.order).padStart(2, "0")}</span>
+          <span class="t">{e.title}</span>
+          <span class="rt">{minutes(e.readingTime)}</span>
+          <span class="d">{when(e.date)}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+
+  {hidden > 0 && (
+    <button class="more" type="button" data-archive-more aria-expanded="false">
+      <span data-more-label>Show {hidden} more</span>
+    </button>
+  )}
+</section>
+
+<style>
+  .archive {
+    margin-top: var(--s-7);
+    padding-top: var(--s-5);
+    border-top: 1px solid var(--c-hairline);
+  }
+  .head { max-width: 60ch; margin-bottom: var(--s-4); }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: 0.08em;
+    color: var(--c-dim);
+    margin-bottom: var(--s-2);
+  }
+  h2 {
+    font-size: var(--t-sans-lg);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .blurb {
+    margin-top: var(--s-2);
+    font-size: var(--t-sans-sm);
+    color: var(--c-muted);
+  }
+
+  .index {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--c-hairline);
+  }
+  .index li { border-bottom: 1px solid var(--c-hairline); }
+  :global(.js) .index li[data-over]:not([data-shown]) { display: none; }
+
+  .index a {
+    display: grid;
+    grid-template-columns: 3.5ch minmax(0, 1fr) auto auto;
+    gap: var(--s-4);
+    align-items: baseline;
+    padding: var(--s-3) var(--s-2);
+    color: inherit;
+    transition: background var(--dur-state) var(--ease);
+  }
+  @media (hover: hover) {
+    .index a:hover { background: var(--c-chrome); }
+    .index a:hover .t { color: var(--c-link); }
+  }
+
+  .n {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-dim);
+  }
+  .t {
+    font-size: var(--t-sans-sm);
+    font-weight: 600;
+    line-height: 1.35;
+    min-width: 0;
+  }
+  .rt,
+  .d {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+    white-space: nowrap;
+  }
+
+  .more {
+    margin-top: var(--s-3);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-muted);
+    background: none;
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-pill);
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: background var(--dur-state) var(--ease), color var(--dur-state) var(--ease);
+  }
+  @media (hover: hover) {
+    .more:hover { background: var(--c-chrome); color: var(--c-text); }
+  }
+
+  @media (max-width: 560px) {
+    .index a {
+      grid-template-columns: 3.5ch minmax(0, 1fr);
+      row-gap: 2px;
+    }
+    .rt { grid-column: 2; }
+    .d { display: none; }
+  }
+</style>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const btn = document.querySelector<HTMLButtonElement>("[data-archive-more]");
+    const list = document.querySelector<HTMLElement>("[data-archive]");
+    if (!btn || !list || btn.dataset.wired) return;
+    btn.dataset.wired = "1";
+    const label = btn.querySelector<HTMLElement>("[data-more-label]");
+    const original = label?.textContent ?? "";
+    btn.addEventListener("click", () => {
+      const open = btn.getAttribute("aria-expanded") === "true";
+      list.querySelectorAll<HTMLElement>("[data-over]").forEach((li) => {
+        if (open) li.removeAttribute("data-shown");
+        else li.setAttribute("data-shown", "");
+      });
+      btn.setAttribute("aria-expanded", String(!open));
+      if (label) label.textContent = open ? original : "Show fewer";
+    });
+  });
+</script>

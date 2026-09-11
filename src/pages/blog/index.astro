@@ -2,6 +2,7 @@
 import Shell from "@/layouts/Shell.astro";
 import Cells from "@/components/Cells.astro";
 import Series from "@/components/Series.astro";
+import Archive from "@/components/Archive.astro";
 import { cardArt } from "@/lib/cardart";
 import { getAllBlogPosts } from "@/lib/blog";
 
@@ -15,51 +16,85 @@ const monthYear = (v: string | Date | undefined) => {
     : d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 };
 
-/** Posts that belong to an ordered series get their own presentation. */
+/**
+ * Two series and a handful of standalone posts. The coursework is twelve
+ * structurally identical entries; rendering those as cards buried the
+ * five posts worth reading under thirteen that aren't.
+ */
 const SERIES = {
   "homelab-networking": {
     title: "Homelab & networking",
     blurb:
       "Five posts that build on each other, from what a VPN actually is up to a reverse proxy fronting the whole rack. Start at the top.",
   },
+  "data-mining": {
+    title: "Data mining coursework",
+    blurb:
+      "Weekly write-ups from an intro data mining course — the pipeline, classification, regression, clustering, and a midterm study guide.",
+  },
 } as const;
 
-const seriesKey = "homelab-networking";
-const inSeries = posts
-  .filter((p) => p.data.series === seriesKey)
-  .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0))
-  .map((p) => ({
-    slug: p.slug,
+const inSeries = (key: string) =>
+  posts
+    .filter((p) => p.data.series === key)
+    .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0))
+    .map((p) => ({
+      slug: p.slug,
+      title: p.data.title,
+      excerpt: p.data.excerpt,
+      readingTime: p.data.readingTime,
+      date: p.data.date,
+      order: p.data.seriesOrder ?? 0,
+    }));
+
+const homelab = inSeries("homelab-networking");
+const coursework = inSeries("data-mining");
+
+const standalone = posts.filter((p) => !p.data.series);
+const cells = await Promise.all(
+  standalone.map(async (p) => ({
     title: p.data.title,
-    excerpt: p.data.excerpt,
-    readingTime: p.data.readingTime,
-    order: p.data.seriesOrder ?? 0,
-  }));
-
-const rest = posts.filter((p) => p.data.series !== seriesKey);
-
-const cells = await Promise.all(rest.map(async (p) => ({
-  title: p.data.title,
-  href: `/blog/${p.slug}`,
-  slug: p.slug,
-  description: p.data.excerpt || undefined,
-  tags: p.data.tags ?? [],
-  meta: monthYear(p.data.date),
-  art: await cardArt({ slug: p.slug, title: p.data.title, collection: "blog" }),
-})));
+    href: `/blog/${p.slug}`,
+    slug: p.slug,
+    description: p.data.excerpt || undefined,
+    tags: p.data.tags ?? [],
+    meta: monthYear(p.data.date),
+    art: await cardArt({ slug: p.slug, title: p.data.title, collection: "blog" }),
+  }))
+);
 ---
+
 <Shell title="Blog | Phil Vishnevsky" description="Thoughts on code, tools, and building things." ogSlug="blog">
   <header class="pagehead">
     <h1>Writing</h1>
-    <p>{posts.length} posts on homelabs, networking, tooling, and whatever I broke recently.</p>
+    <p>
+      {posts.length} posts on homelabs, networking, tooling, and whatever I broke
+      recently.
+    </p>
   </header>
 
-  {inSeries.length > 0 && (
-    <Series title={SERIES[seriesKey].title} blurb={SERIES[seriesKey].blurb} entries={inSeries} />
+  {homelab.length > 0 && (
+    <Series
+      title={SERIES["homelab-networking"].title}
+      blurb={SERIES["homelab-networking"].blurb}
+      entries={homelab}
+    />
   )}
 
-  <h2 class="rest-head">Everything else</h2>
-  <Cells cells={cells} />
+  {cells.length > 0 && (
+    <section class="loose">
+      <h2>Posts</h2>
+      <Cells cells={cells} />
+    </section>
+  )}
+
+  {coursework.length > 0 && (
+    <Archive
+      title={SERIES["data-mining"].title}
+      blurb={SERIES["data-mining"].blurb}
+      entries={coursework}
+    />
+  )}
 </Shell>
 
 <style>
@@ -74,7 +109,7 @@ const cells = await Promise.all(rest.map(async (p) => ({
     max-width: 56ch;
     color: var(--c-muted);
   }
-  .rest-head {
+  .loose h2 {
     font-size: var(--t-sans-lg);
     font-weight: 600;
     margin-bottom: var(--s-5);
