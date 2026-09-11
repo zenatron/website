@@ -21,12 +21,36 @@ function gitBranch() {
   }
 }
 
+/**
+ * Wraps every table in a `.table-wrap` scroll container, which prose.css
+ * already styles, so a wide table scrolls inside itself on a phone instead
+ * of being clipped by the window. No dependency: it's a tree walk.
+ */
+function rehypeWrapTables() {
+  const walk = (node) => {
+    if (!node.children) return;
+    node.children = node.children.map((child) => {
+      if (child.type === "element" && child.tagName === "table") {
+        return {
+          type: "element",
+          tagName: "div",
+          properties: { className: ["table-wrap"] },
+          children: [child],
+        };
+      }
+      walk(child);
+      return child;
+    });
+  };
+  return (tree) => walk(tree);
+}
+
 export default defineConfig({
   site: "https://pvi.sh",
   integrations: [tailwind({ applyBaseStyles: false }), mdx(), sitemap()],
   markdown: {
     remarkPlugins: [remarkMath, remarkGfm],
-    rehypePlugins: [rehypeSlug, rehypeKatex],
+    rehypePlugins: [rehypeSlug, rehypeKatex, rehypeWrapTables],
     // Shiki mapped onto the palette. Shipping github-dark or dracula would
     // drop a dozen off-palette colors into the most prominent element on
     // the site — see src/lib/shiki-theme.js.
@@ -41,7 +65,11 @@ export default defineConfig({
     },
   },
   redirects: {
-    "/stack": "/desk",
+    // Renamed: the desk became the dock, elsewhere became say hi.
+    "/stack": "/dock",
+    "/desk": "/dock",
+    "/links": "/say-hi",
+    "/contact": "/say-hi",
     "/principles": "/blog/principles",
     "/resume": "/downloads/Resume_Phil_Vishnevsky.pdf",
   },

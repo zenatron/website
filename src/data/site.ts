@@ -16,6 +16,9 @@ export const SITE = {
 export const INTRO =
   "Full-stack engineer focused on developer experience. I build servers, performant web apps, explore creative projects, and occasionally ship things that don't break in production.";
 
+/** The one line of availability the explorer carries onto every page. */
+export const STATUS = "open to opportunities";
+
 /** One fact about the author, not a data table. Rendered as a single line. */
 export const FACTS = ["Hartford, CT", "SWE, AI, games", "open to opportunities"];
 

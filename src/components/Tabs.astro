@@ -52,16 +52,33 @@
   }
 
   .tabs :global(li a) {
-    display: block;
-    max-width: 22ch;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    max-width: 24ch;
     padding: 9px var(--s-2) 9px var(--s-3);
     font-family: var(--font-mono);
     font-size: var(--t-mono-sm);
     line-height: 1.4;
     color: var(--c-muted);
     white-space: nowrap;
+  }
+  .tabs :global(li a .label) {
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  /* The file's dot, the same one the explorer shows. */
+  .tabs :global(.dot) {
+    flex: 0 0 auto;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--h);
+  }
+  .tabs :global(.dot[data-plain]) {
+    background: transparent;
+    border: 1px solid var(--c-hairline-strong);
   }
   .tabs :global(li[data-active] a) { color: var(--c-text); }
 

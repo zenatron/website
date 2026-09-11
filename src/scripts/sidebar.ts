@@ -13,6 +13,29 @@ function subsequence(needle: string, hay: string): boolean {
   return i === needle.length;
 }
 
+/*
+ * The rail is sticky, and exactly as tall as the part of its column on
+ * screen. A plain 100vh pushes the footer below the fold until the
+ * titlebar has scrolled away, and pushes the header above it at the end
+ * of the page. Only near those two edges does the value change, so
+ * scrolling through the middle of a long post writes nothing.
+ */
+let fitQueued = false;
+function fitRail() {
+  fitQueued = false;
+  const col = document.getElementById("sidebar");
+  if (!col) return;
+  const r = col.getBoundingClientRect();
+  const h = Math.max(0, Math.round(Math.min(r.bottom, innerHeight) - Math.max(r.top, 0)));
+  const next = `${h}px`;
+  if (col.style.getPropertyValue("--rail-h") !== next) col.style.setProperty("--rail-h", next);
+}
+function queueFit() {
+  if (fitQueued) return;
+  fitQueued = true;
+  requestAnimationFrame(fitRail);
+}
+
 function syncActive() {
   const here = location.pathname.replace(/\/+$/, "") || "/";
 
@@ -25,14 +48,15 @@ function syncActive() {
     else a.removeAttribute("aria-current");
   });
 
-  // Keep the current file in view without yanking the whole page.
+  // Keep the current file in view. The tree is its own scroller, and
+  // scrollIntoView would scroll the page along with it.
   const active = document.querySelector<HTMLElement>("#sidebar .row[data-active]");
-  const rail = document.getElementById("sidebar");
-  if (active && rail) {
+  const tree = document.querySelector<HTMLElement>("[data-tree]");
+  if (active && tree) {
     const a = active.getBoundingClientRect();
-    const r = rail.getBoundingClientRect();
-    if (a.top < r.top || a.bottom > r.bottom) {
-      active.scrollIntoView({ block: "center" });
+    const t = tree.getBoundingClientRect();
+    if (a.top < t.top || a.bottom > t.bottom) {
+      tree.scrollTop += a.top - t.top - (t.height - a.height) / 2;
     }
   }
 }
@@ -40,6 +64,7 @@ function syncActive() {
 function wireSearch() {
   const input = document.querySelector<HTMLInputElement>("[data-search]");
   const empty = document.querySelector<HTMLElement>("[data-empty]");
+  const tree = document.querySelector<HTMLElement>("[data-tree]");
   if (!input || input.dataset.wired) return;
   input.dataset.wired = "1";
 
@@ -48,6 +73,7 @@ function wireSearch() {
     const rows = [...document.querySelectorAll<HTMLElement>("#sidebar .row")];
     const runs = [...document.querySelectorAll<HTMLElement>("#sidebar .runlabel")];
     const sections = [...document.querySelectorAll<HTMLElement>("#sidebar .sect")];
+    tree?.toggleAttribute("data-searching", q !== "");
 
     if (!q) {
       for (const r of rows) r.hidden = false;
@@ -69,8 +95,7 @@ function wireSearch() {
     }
     // Run labels only make sense next to their run.
     for (const run of runs) {
-      const name = run.textContent?.trim();
-      run.hidden = ![...rows].some((r) => !r.hidden && r.dataset.run === name);
+      run.hidden = !rows.some((r) => !r.hidden && r.dataset.run === run.dataset.run);
     }
     // And a section with nothing left in it is just a stray heading.
     for (const s of sections) {
@@ -108,10 +133,19 @@ function sync() {
   if (input) input.value = "";
   document.querySelectorAll<HTMLElement>("#sidebar .row, #sidebar .runlabel, #sidebar .sect")
     .forEach((r) => (r.hidden = false));
+  document.querySelector("[data-tree]")?.removeAttribute("data-searching");
   const empty = document.querySelector<HTMLElement>("[data-empty]");
   if (empty) empty.hidden = true;
+  // Size the rail before measuring what's in view inside it.
+  fitRail();
   syncActive();
 }
 
 document.addEventListener("astro:page-load", sync);
+addEventListener("scroll", queueFit, { passive: true });
+addEventListener("resize", queueFit);
+// The column follows the page's height, which changes on every route and
+// whenever an image above the fold finishes loading.
+const column = document.getElementById("sidebar");
+if (column) new ResizeObserver(queueFit).observe(column);
 sync();

@@ -1,38 +1,29 @@
 ---
 /**
- * The hero art is the actual stack — his own logos, tinted, in a loose
- * grid. Content-derived and personal, where the previous generative dot
- * field was both decorative and the reference site's signature motif.
+ * The hero art is the actual stack: the first sixteen icons from the
+ * dock, drawn exactly the way the dock draws them, since it's a preview
+ * of that page. Sixteen rather than twelve, because four rows balance
+ * the height of the text column beside it.
+ *
+ * With a mouse or trackpad, whichever icon is nearest the pointer — gaps
+ * included — lifts and leans toward it, and its name comes up underneath.
  */
+import AppIcon from "@/components/AppIcon.astro";
 import { FAVORITES } from "@/data/favorites";
 
-const HUES = ["violet", "orange", "blue", "green", "accent", "link"] as const;
-function hueFor(s: string) {
-  let h = 0x811c9dc5;
-  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
-  return HUES[(h >>> 0) % HUES.length];
-}
-
-// Masked logos only: the flat ones can't be tinted into a silhouette.
-// Sixteen, not twelve: four rows balances the height of the text column
-// beside it, which otherwise left ~220px of dead space in the row.
-const picks = FAVORITES.filter((f) => f.logo && !f.flat).slice(0, 16);
+const picks = FAVORITES.filter((f) => f.logo).slice(0, 16);
 ---
 
-<a class="heroart" href="/desk" aria-label={`the desk — ${picks.length}+ tools and apps I use`}>
-  <span class="logogrid" aria-hidden="true">
-    {picks.map((item) => {
-      const hue = hueFor(item.name);
-      return (
-        <span
-          class="cell"
-          style={`--fg: var(--c-hue-${hue}, var(--c-${hue})); --src: url(/logos/${item.logo})`}
-          title={item.name}
-        ></span>
-      );
-    })}
+<a class="heroart" href="/dock" aria-label={`the dock — ${picks.length}+ tools and apps I use`}>
+  <span class="logogrid" aria-hidden="true" data-snapgrid>
+    <span class="snapname" data-snapname></span>
+    {picks.map((item) => (
+      <span class="cell" data-name={item.name}>
+        <span class="icon" data-icon><AppIcon item={item} lazy={false} /></span>
+      </span>
+    ))}
   </span>
-  <span class="caption">the desk <span aria-hidden="true">&rarr;</span></span>
+  <span class="caption">the dock <span aria-hidden="true">&rarr;</span></span>
 </a>
 
 <style>
@@ -40,10 +31,12 @@ const picks = FAVORITES.filter((f) => f.logo && !f.flat).slice(0, 16);
     display: flex;
     flex-direction: column;
     gap: var(--s-3);
+    min-width: 0;
     color: inherit;
   }
 
   .logogrid {
+    position: relative;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: var(--s-2);
@@ -60,18 +53,38 @@ const picks = FAVORITES.filter((f) => f.logo && !f.flat).slice(0, 16);
   }
 
   .cell {
+    display: grid;
+    place-items: center;
     aspect-ratio: 1;
-    background: var(--fg);
-    -webkit-mask-image: var(--src);
-    mask-image: var(--src);
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-    -webkit-mask-size: 62%;
-    mask-size: 62%;
-    opacity: 1;
   }
+  /* Moved by the script every frame, never by a transition — a transition
+     restarted on every pointer move is what made this lag. */
+  .icon {
+    width: 66%;
+    aspect-ratio: 1;
+    will-change: transform;
+  }
+
+  /* The name, placed under the nearest icon by the same loop. */
+  .snapname {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    padding: 2px 8px;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    line-height: 1.5;
+    white-space: nowrap;
+    color: var(--c-bg);
+    background: var(--c-text);
+    border-radius: var(--radius-pill);
+    opacity: 0;
+    pointer-events: none;
+    will-change: transform;
+    transition: opacity var(--dur-state) var(--ease);
+  }
+  .logogrid[data-snapping] .snapname { opacity: 1; }
 
   .caption {
     align-self: flex-start;
@@ -84,7 +97,176 @@ const picks = FAVORITES.filter((f) => f.logo && !f.flat).slice(0, 16);
     }
   }
 
+  /*
+   * Narrow: below the introduction rather than above the name, and shaped
+   * like what it's named after — one row, like a dock, that you swipe
+   * through. The right edge fades so it's plain there's more.
+   */
   @media (max-width: 860px) {
-    .logogrid { grid-template-columns: repeat(6, 1fr); }
+    .logogrid {
+      grid-template-columns: none;
+      grid-auto-flow: column;
+      grid-auto-columns: 60px;
+      gap: var(--s-2);
+      padding: 10px var(--s-3);
+      border-radius: 22px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x proximity;
+      scroll-padding-inline: var(--s-3);
+      scrollbar-width: none;
+      -webkit-mask-image: linear-gradient(90deg, black 82%, transparent);
+      mask-image: linear-gradient(90deg, black 82%, transparent);
+    }
+    .logogrid::-webkit-scrollbar { display: none; }
+    .cell { scroll-snap-align: start; }
+    .icon { width: 86%; }
+    .snapname { display: none; }
   }
 </style>
+
+<script>
+  /** How hard the nearest icon leans toward the pointer, and how far at most. */
+  const PULL = 0.22;
+  const MAX_LEAN = 9;
+  /** How much it lifts: a little larger, a little higher. */
+  const LIFT_SCALE = 1.1;
+  const LIFT_Y = -3;
+  /** Easing time constant, ms. Frame-rate independent, so it's as smooth at
+      120Hz as at 60. */
+  const TAU = 70;
+
+  interface Item {
+    cell: HTMLElement;
+    icon: HTMLElement;
+    cx: number; cy: number; half: number;
+    x: number; y: number; s: number;
+    tx: number; ty: number; ts: number;
+  }
+
+  function wire() {
+    const grid = document.querySelector<HTMLElement>("[data-snapgrid]");
+    const name = grid?.querySelector<HTMLElement>("[data-snapname]");
+    if (!grid || !name || grid.dataset.wired) return;
+    grid.dataset.wired = "1";
+
+    // A finger has no position to follow until it's already pressed.
+    const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const items: Item[] = [...grid.querySelectorAll<HTMLElement>(".cell")].map((cell) => ({
+      cell,
+      icon: cell.querySelector<HTMLElement>("[data-icon]")!,
+      cx: 0, cy: 0, half: 0,
+      x: 0, y: 0, s: 1,
+      tx: 0, ty: 0, ts: 1,
+    }));
+    const label = { x: 0, y: 0, tx: 0, ty: 0, placed: false };
+
+    let origin = { left: 0, top: 0 };
+    let measured = false;
+    let current: Item | null = null;
+    let raf = 0;
+    let then = 0;
+
+    /** Cell centres relative to the grid, read once per visit rather than
+        on every move. Scrolling or resizing mid-hover marks them stale. */
+    const measure = () => {
+      const g = grid.getBoundingClientRect();
+      origin = { left: g.left, top: g.top };
+      for (const it of items) {
+        const r = it.cell.getBoundingClientRect();
+        it.cx = r.left - g.left + r.width / 2;
+        it.cy = r.top - g.top + r.height / 2;
+        it.half = r.height / 2;
+      }
+      measured = true;
+    };
+    const stale = () => { measured = false; };
+    window.addEventListener("scroll", stale, { passive: true });
+    window.addEventListener("resize", stale);
+
+    const paint = () => {
+      for (const it of items) {
+        it.icon.style.transform = `translate3d(${it.x.toFixed(2)}px, ${it.y.toFixed(2)}px, 0) scale(${it.s.toFixed(4)})`;
+      }
+      name.style.transform = `translate3d(${label.x.toFixed(2)}px, ${label.y.toFixed(2)}px, 0) translateX(-50%)`;
+    };
+
+    const tick = (now: number) => {
+      const dt = then ? Math.min(now - then, 64) : 16;
+      then = now;
+      const k = 1 - Math.exp(-dt / TAU);
+      let moving = false;
+      for (const it of items) {
+        it.x += (it.tx - it.x) * k;
+        it.y += (it.ty - it.y) * k;
+        it.s += (it.ts - it.s) * k;
+        if (Math.abs(it.tx - it.x) > 0.05 || Math.abs(it.ty - it.y) > 0.05 || Math.abs(it.ts - it.s) > 0.0005) moving = true;
+        else { it.x = it.tx; it.y = it.ty; it.s = it.ts; }
+      }
+      label.x += (label.tx - label.x) * k;
+      label.y += (label.ty - label.y) * k;
+      if (Math.abs(label.tx - label.x) > 0.05 || Math.abs(label.ty - label.y) > 0.05) moving = true;
+      paint();
+      raf = moving ? requestAnimationFrame(tick) : 0;
+      if (!raf) then = 0;
+    };
+    const run = () => {
+      if (still.matches) {
+        // No easing under reduced motion: the lift is simply there.
+        for (const it of items) { it.x = it.tx; it.y = it.ty; it.s = it.ts; }
+        label.x = label.tx; label.y = label.ty;
+        paint();
+        return;
+      }
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+
+    grid.addEventListener("pointermove", (e) => {
+      if (!fine.matches || e.pointerType !== "mouse") return;
+      if (!measured) measure();
+      const px = e.clientX - origin.left;
+      const py = e.clientY - origin.top;
+
+      // Nearest by centre, so the gaps belong to whichever icon is closer.
+      let best = items[0], bestD = Infinity;
+      for (const it of items) {
+        const d = (it.cx - px) ** 2 + (it.cy - py) ** 2;
+        if (d < bestD) { best = it; bestD = d; }
+      }
+
+      const lean = (v: number) => Math.max(-MAX_LEAN, Math.min(MAX_LEAN, v * PULL));
+      for (const it of items) {
+        if (it === best) {
+          it.tx = lean(px - it.cx);
+          it.ty = lean(py - it.cy) + LIFT_Y;
+          it.ts = LIFT_SCALE;
+        } else {
+          it.tx = 0; it.ty = 0; it.ts = 1;
+        }
+      }
+
+      label.tx = best.cx + best.tx * 0.5;
+      label.ty = best.cy + best.half - 4 + best.ty * 0.5;
+      if (!label.placed) { label.x = label.tx; label.y = label.ty; label.placed = true; }
+      if (best !== current) {
+        name.textContent = best.cell.dataset.name ?? "";
+        current = best;
+      }
+      grid.setAttribute("data-snapping", "");
+      run();
+    });
+
+    grid.addEventListener("pointerleave", () => {
+      for (const it of items) { it.tx = 0; it.ty = 0; it.ts = 1; }
+      grid.removeAttribute("data-snapping");
+      label.placed = false;
+      current = null;
+      measured = false;
+      run();
+    });
+  }
+
+  document.addEventListener("astro:page-load", wire);
+</script>

@@ -1,0 +1,142 @@
+---
+/**
+ * A file on the dock, drawn the way macOS draws files rather than apps.
+ *
+ *   doc   a sheet of paper with its corner folded, a glyph for what's in
+ *         it, and the extension on a coloured tag — TXT, MD, PDF
+ *   exec  the Unix executable: a black tile with "exec" in terminal green,
+ *         for the things you run rather than read
+ *
+ * Objects, like the app icons, so the paper and inks are the same in both
+ * themes. One SVG per icon, so it stays crisp at any scale the dock gives it.
+ */
+import type { FileGlyph, FileInk } from "@/data/desk";
+
+interface Props {
+  form: "doc" | "exec";
+  glyph: FileGlyph;
+  /** The tag on a document: "txt", "md", "pdf". */
+  ext?: string;
+  ink?: FileInk;
+}
+const { form, glyph, ext, ink = "blue" } = Astro.props;
+
+// Gradient ids must be unique on the page; each glyph appears once.
+const uid = `file-${form}-${glyph}`;
+const SWATCHES: string[] = ["paper", "red", "orange", "amber", "green", "teal", "blue", "violet"];
+---
+<svg class:list={["fileicon", form]} style={`--ink: var(--sticker-${ink})`} viewBox="0 0 64 64" aria-hidden="true">
+  <defs>
+    <linearGradient id={`${uid}-paper`} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" class="paper-hi" />
+      <stop offset="1" class="paper-lo" />
+    </linearGradient>
+    <linearGradient id={`${uid}-gloss`} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" class="gloss-hi" />
+      <stop offset="0.5" class="gloss-lo" />
+    </linearGradient>
+  </defs>
+
+  {form === "doc" ? (
+    <>
+      <path class="sheet" d="M16 4H40L52 16V56A4 4 0 0 1 48 60H16A4 4 0 0 1 12 56V8A4 4 0 0 1 16 4Z" fill={`url(#${uid}-paper)`} />
+      <path class="fold" d="M40 4V12A4 4 0 0 0 44 16H52Z" />
+
+      <g class="glyph">
+        {glyph === "checklist" && (
+          <>
+            <rect x="18" y="17" width="6" height="6" rx="1.6" />
+            <path d="M19.6 20.1 21 21.5 23.4 18.6" />
+            <path d="M28 20H44" />
+            <rect x="18" y="26" width="6" height="6" rx="1.6" />
+            <path d="M19.6 29.1 21 30.5 23.4 27.6" />
+            <path d="M28 29H41" />
+            <rect x="18" y="35" width="6" height="6" rx="1.6" />
+            <path d="M28 38H43" />
+          </>
+        )}
+        {glyph === "markdown" && (
+          <>
+            <rect x="17" y="20" width="30" height="18" rx="3.5" />
+            <path d="M21.5 33.5V24.5L25 28.8 28.5 24.5V33.5" />
+            <path d="M38.5 24.5V33M35 29.8 38.5 33.4 42 29.8" />
+          </>
+        )}
+        {glyph === "resume" && (
+          <>
+            <circle cx="24" cy="23.5" r="3.8" />
+            <path d="M17.5 37C17.5 32.4 20.4 30.2 24 30.2S30.5 32.4 30.5 37" />
+            <path d="M35 21H45M35 27H45M35 33H42M17.5 40.5H45" />
+          </>
+        )}
+      </g>
+
+      {ext && (
+        <>
+          <rect class="tag" x="18.5" y="45" width="27" height="10" rx="3" />
+          <text class="tagtext" x="32" y="52.3" text-anchor="middle">{ext.toUpperCase()}</text>
+        </>
+      )}
+    </>
+  ) : (
+    <>
+      <rect class="tile" x="5" y="5" width="54" height="54" rx="12.5" />
+      <text class="exectext" x="11.5" y="17.5">exec</text>
+
+      {glyph === "neofetch" && (
+        <>
+          <path class="prompt" d="M11.5 25.5 16.5 29.5 11.5 33.5M19.5 34.5H26" />
+          <path class="spec" d="M31 25.5H51M31 30.5H46M31 35.5H49" />
+          {SWATCHES.map((c, i) => (
+            <rect class="swatch" x={11.5 + i * 5.1} y="44" width="5.1" height="5.5" style={`fill: var(--sticker-${c})`} />
+          ))}
+        </>
+      )}
+      {glyph === "fortune" && (
+        <>
+          <path class="spark" d="M32 22C33.2 29.2 35.3 31.3 42.5 32.5 35.3 33.7 33.2 35.8 32 43 30.8 35.8 28.7 33.7 21.5 32.5 28.7 31.3 30.8 29.2 32 22Z" />
+          <path class="spark small" d="M44 20C44.5 22.6 45.4 23.5 48 24 45.4 24.5 44.5 25.4 44 28 43.5 25.4 42.6 24.5 40 24 42.6 23.5 43.5 22.6 44 20Z" />
+        </>
+      )}
+
+      <rect x="5" y="5" width="54" height="54" rx="12.5" fill={`url(#${uid}-gloss)`} />
+      <rect class="rim" x="5.5" y="5.5" width="53" height="53" rx="12" />
+    </>
+  )}
+</svg>
+
+<style>
+  .fileicon { display: block; width: 100%; height: 100%; overflow: visible; }
+
+  .paper-hi { stop-color: var(--c-tile-light); }
+  .paper-lo { stop-color: var(--c-tile-light-lo); }
+  .gloss-hi { stop-color: var(--glass-gloss); }
+  .gloss-lo { stop-color: transparent; }
+
+  /* A document: paper, a hairline, and the fold a shade darker. */
+  .sheet { stroke: var(--glass-line); stroke-width: 1; }
+  .fold { fill: var(--c-tile-light-lo); stroke: var(--glass-line); stroke-width: 1; stroke-linejoin: round; }
+  .glyph { fill: none; stroke: var(--ink); stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
+  .tag { fill: var(--ink); }
+  .tagtext {
+    fill: var(--sticker-paper);
+    font-family: var(--font-mono);
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+
+  /* An executable: the black tile and the green word macOS puts on it. */
+  .tile { fill: var(--sticker-ink); }
+  .exectext {
+    fill: var(--light-zoom);
+    font-family: var(--font-mono);
+    font-size: 7.5px;
+    font-weight: 700;
+  }
+  .prompt { fill: none; stroke: var(--light-zoom); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .spec { fill: none; stroke: var(--sticker-paper); stroke-opacity: 0.4; stroke-width: 2.2; stroke-linecap: round; }
+  .spark { fill: var(--light-min); }
+  .spark.small { opacity: 0.7; }
+  .rim { fill: none; stroke: var(--glass-rim-soft); stroke-width: 1; }
+</style>

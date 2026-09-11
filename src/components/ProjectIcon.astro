@@ -1,0 +1,82 @@
+---
+/**
+ * A project's icon, drawn the way AppIcon draws a real app's: a squircle
+ * with the same glass on it. Projects have no logos, so the face is the
+ * first letter of the name, tinted by the project's kind — green for an
+ * app, orange for a tool, as in the explorer. Coursework gets a chart
+ * instead, because "Project 1", "Project 2" and "Project 3" would
+ * otherwise all be a P.
+ */
+import { PROJECT_KIND } from "@/lib/projects";
+
+interface Props { title: string; type?: string }
+const { title, type = "other" } = Astro.props;
+
+const kind = PROJECT_KIND[type];
+const chart = type === "data";
+const letter = Array.from(title.trim())[0] ?? "?";
+const style = kind ? `--h: var(--c-hue-${kind.hue}); --t: var(--c-tint-${kind.hue})` : undefined;
+---
+<span class:list={["picon", { plain: !kind }]} style={style} aria-hidden="true">
+  {chart ? (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 20h16" /><path d="M7 16v-4" /><path d="M12 16V7" /><path d="M17 16v-7" />
+    </svg>
+  ) : (
+    <span class="letter">{letter}</span>
+  )}
+</span>
+
+<style>
+  .picon {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 22.5%;
+    overflow: hidden;
+    color: var(--h);
+    background: linear-gradient(160deg, var(--t), color-mix(in srgb, var(--t) 72%, var(--h)));
+    container-type: inline-size;
+  }
+  .picon.plain {
+    --h: var(--c-muted);
+    background: linear-gradient(160deg, var(--c-chrome), var(--c-raised));
+  }
+  .letter {
+    font-size: 52cqi;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    translate: 0 -0.03em;
+  }
+  .picon svg { width: 50%; height: 50%; }
+
+  /* The glass, as on AppIcon: gloss and shade, then the rim. */
+  .picon::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(var(--glass-gloss), transparent 45%, transparent 70%, var(--glass-shade));
+  }
+  .picon::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    padding: 1px;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      linear-gradient(155deg, var(--glass-rim), var(--glass-rim-soft) 28%, transparent 52%, var(--glass-rim-soft)),
+      linear-gradient(var(--glass-line), var(--glass-line));
+    -webkit-mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
+    mask-composite: exclude;
+  }
+</style>

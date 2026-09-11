@@ -1,0 +1,267 @@
+---
+/**
+ * Outside the terminal, literally: the lid of the laptop the terminal runs
+ * on, with the hobbies stuck to it as stickers and the site's >_ mark
+ * where the logo would glow.
+ *
+ * Stickers sit in a ring around the mark — a grid with the middle two
+ * cells of the middle row left to it — each with a tilt and a nudge from
+ * a hash of its name, so the arrangement looks hand-placed but never
+ * changes between visits. Hover or focus one and it straightens up and
+ * shows what it means; on a phone, a tap does the same.
+ */
+interface Item { name: string; description?: string }
+interface Props { items: Item[] }
+const { items } = Astro.props;
+
+type Ink = "violet" | "blue" | "teal" | "green" | "orange" | "amber" | "red";
+type Glyph = "server" | "gamepad" | "nodes" | "book" | "mountain" | "cup" | "dumbbell" | "globe" | "spark";
+
+/**
+ * What each hobby looks like as a sticker. A real lid is a pile of
+ * different shapes, so some are pills and some are stacked tiles, and
+ * some are printed on paper rather than ink. Anything new gets a spark.
+ */
+const LOOK: Record<string, { glyph: Glyph; ink: Ink; paper?: boolean; tile?: boolean }> = {
+  Homelabbing: { glyph: "server", ink: "blue" },
+  "Game Dev": { glyph: "gamepad", ink: "violet", tile: true },
+  Networking: { glyph: "nodes", ink: "teal", paper: true },
+  Reading: { glyph: "book", ink: "amber", tile: true },
+  Hiking: { glyph: "mountain", ink: "green" },
+  "Tea Brewing": { glyph: "cup", ink: "orange", paper: true, tile: true },
+  Weightlifting: { glyph: "dumbbell", ink: "red" },
+  Travel: { glyph: "globe", ink: "blue", paper: true },
+};
+const INKS: Ink[] = ["violet", "blue", "teal", "green", "orange", "amber", "red"];
+
+function seed(s: string) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return (h >>> 0) / 0xffffffff;
+}
+
+/** Cells around the mark first, then whole rows below if there are more. */
+const RING: [number, number][] = [[1, 1], [1, 2], [1, 3], [1, 4], [2, 1], [2, 4], [3, 2], [3, 3], [3, 1], [3, 4]];
+const cell = (i: number): [number, number] =>
+  RING[i] ?? [4 + Math.floor((i - RING.length) / 4), 1 + ((i - RING.length) % 4)];
+
+const stickers = items.map((item, i) => {
+  const look = LOOK[item.name] ?? { glyph: "spark" as Glyph, ink: INKS[i % INKS.length] };
+  const [row, col] = cell(i);
+  const a = seed(item.name), b = seed(item.name + "x"), c = seed(item.name + "y"), d = seed(item.name + "s");
+  return {
+    ...item,
+    ...look,
+    style: [
+      `--ink: var(--sticker-${look.ink})`,
+      `--row: ${row}`,
+      `--col: ${col}`,
+      `--rot: ${((a - 0.5) * 18).toFixed(1)}deg`,
+      `--jx: ${((b - 0.5) * 28).toFixed(0)}px`,
+      `--jy: ${((c - 0.5) * 22).toFixed(0)}px`,
+      `--size: ${(0.9 + d * 0.28).toFixed(2)}`,
+    ].join("; "),
+  };
+});
+---
+
+<div class="lidwrap">
+  <div class="lid">
+    <svg class="mark" aria-hidden="true" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 11 15 16 9 21" /><path d="M18 21h7" />
+    </svg>
+
+    <ul class="stickers">
+      {stickers.map((s) => (
+        <li class:list={["sticker", { paper: s.paper, tile: s.tile }]} style={s.style} tabindex="0">
+          <span class="face">
+            <svg aria-hidden="true" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              {s.glyph === "server" && (<><rect x="2.5" y="2.5" width="11" height="4.5" rx="1.2" /><rect x="2.5" y="9" width="11" height="4.5" rx="1.2" /><circle cx="5" cy="4.75" r=".9" fill="currentColor" stroke="none" /><circle cx="5" cy="11.25" r=".9" fill="currentColor" stroke="none" /></>)}
+              {s.glyph === "gamepad" && (<><path d="M5 5h6a3.4 3.4 0 0 1 3.3 4.2l-.5 2.2a1.6 1.6 0 0 1-2.8.6L9.8 10.6H6.2L5 12a1.6 1.6 0 0 1-2.8-.6l-.5-2.2A3.4 3.4 0 0 1 5 5z" /><path d="M5.3 6.9v2.2M4.2 8h2.2" /><circle cx="10.9" cy="7.7" r=".8" fill="currentColor" stroke="none" /></>)}
+              {s.glyph === "nodes" && (<><circle cx="4" cy="4.2" r="1.8" /><circle cx="12" cy="4.2" r="1.8" /><circle cx="8" cy="12" r="1.8" /><path d="M5.8 4.2h4.4M4.9 5.8l2.2 4.5M11.1 5.8l-2.2 4.5" /></>)}
+              {s.glyph === "book" && (<><path d="M8 4.6C6.5 3.4 4.5 3 2.5 3.2v9c2-.2 4 .2 5.5 1.3 1.5-1.1 3.5-1.5 5.5-1.3v-9C11.5 3 9.5 3.4 8 4.6z" /><path d="M8 4.6v8.9" /></>)}
+              {s.glyph === "mountain" && (<><path d="M1.5 13 6 5.5l2.6 4.1L10.2 7.5 14.5 13z" /><circle cx="11.6" cy="3.8" r="1.3" /></>)}
+              {s.glyph === "cup" && (<><path d="M3 7h8v2.4A3.6 3.6 0 0 1 7.4 13h-.8A3.6 3.6 0 0 1 3 9.4z" /><path d="M11 8h.7a1.7 1.7 0 0 1 0 3.4h-1" /><path d="M5.6 2.4c-.6.8.6 1.4 0 2.3M8.3 2.4c-.6.8.6 1.4 0 2.3" /></>)}
+              {s.glyph === "dumbbell" && (<><path d="M5 8h6" /><rect x="2.6" y="4.8" width="2.4" height="6.4" rx=".8" /><rect x="11" y="4.8" width="2.4" height="6.4" rx=".8" /><path d="M1.2 7v2M14.8 7v2" /></>)}
+              {s.glyph === "globe" && (<><circle cx="8" cy="8" r="6" /><path d="M2 8h12M8 2c1.8 1.7 2.6 3.7 2.6 6S9.8 12.3 8 14c-1.8-1.7-2.6-3.7-2.6-6S6.2 3.7 8 2z" /></>)}
+              {s.glyph === "spark" && (<><path d="M8 2.5v11M2.5 8h11M4.2 4.2l7.6 7.6M11.8 4.2l-7.6 7.6" /></>)}
+            </svg>
+            <span class="name">{s.name}</span>
+          </span>
+          {s.description && <span class="note">{s.description}</span>}
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
+
+<style>
+  .lidwrap { container-type: inline-size; }
+
+  /* Space grey, lit from the top-left, with the same rim as the icons. */
+  .lid {
+    position: relative;
+    isolation: isolate;
+    aspect-ratio: 2 / 1;
+    max-width: 100%;
+    padding: var(--s-6) var(--s-5);
+    background:
+      radial-gradient(120% 90% at 20% 0%, var(--lid-hi), transparent 60%),
+      var(--lid);
+    border-radius: 22px;
+  }
+  .lid::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    padding: 1px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(155deg, var(--glass-rim-soft), transparent 40%, transparent 70%, var(--glass-rim-soft));
+    -webkit-mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
+    mask-composite: exclude;
+  }
+
+  .mark {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 72px;
+    height: 72px;
+    translate: -50% -50%;
+    color: var(--lid-logo);
+    pointer-events: none;
+  }
+
+  .stickers {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: minmax(0, 1fr);
+    align-items: center;
+    justify-items: center;
+  }
+
+  .sticker {
+    --dx: var(--jx);
+    --dy: var(--jy);
+    position: relative;
+    grid-row: var(--row);
+    grid-column: var(--col);
+    transform: translate(var(--dx), var(--dy)) rotate(var(--rot));
+    transition: transform var(--dur-state) var(--ease);
+    outline: none;
+  }
+
+  /* Vinyl: an ink ground, a die-cut paper edge, and a gloss on top. */
+  .face {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    padding: 0.45em 0.9em 0.45em 0.75em;
+    font-size: calc(var(--t-sans-md) * var(--size));
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    color: var(--sticker-paper);
+    background: var(--ink);
+    border: 3px solid var(--sticker-paper);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+  }
+  .paper .face {
+    color: var(--ink);
+    background: var(--sticker-paper);
+    border-color: var(--sticker-paper);
+  }
+  .face::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(115deg, transparent 40%, var(--glass-glint) 50%, transparent 60%) 100% 0 / 300% 100% no-repeat,
+      linear-gradient(var(--glass-gloss), transparent 55%);
+  }
+  .face svg { flex: 0 0 auto; }
+
+  /* A tile: the glyph big and the name under it, on a rounded square. */
+  .tile .face {
+    flex-direction: column;
+    gap: 0.3em;
+    padding: 0.7em 0.9em 0.55em;
+    border-radius: 16px;
+  }
+  .tile .face svg { width: 1.7em; height: 1.7em; }
+
+  /* What it means, hanging under it. */
+  .note {
+    position: absolute;
+    z-index: 2;
+    top: calc(100% + 10px);
+    left: 50%;
+    width: max-content;
+    max-width: 200px;
+    padding: 4px 10px;
+    font-size: var(--t-sans-xs);
+    line-height: 1.35;
+    text-align: center;
+    color: var(--sticker-ink);
+    background: var(--sticker-paper);
+    border-radius: var(--radius-sm);
+    translate: -50% -4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-state) var(--ease), translate var(--dur-state) var(--ease);
+  }
+
+  .sticker:focus-visible .face { outline: 2px solid var(--c-accent); outline-offset: 3px; }
+  .sticker:hover,
+  .sticker:focus-visible,
+  .sticker:focus {
+    z-index: 3;
+    transform: translate(var(--dx), calc(var(--dy) - 3px)) rotate(0deg) scale(1.06);
+  }
+  .sticker:hover .note,
+  .sticker:focus .note {
+    opacity: 1;
+    translate: -50% 0;
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .sticker:hover .face::after { animation: sticker-glint calc(var(--dur-pane) * 2) var(--ease); }
+  }
+  @keyframes sticker-glint {
+    from { background-position: 100% 0, 0 0; }
+    to   { background-position: 0% 0, 0 0; }
+  }
+
+  /* A narrow lid: two columns, the mark on its own row at the top. */
+  @container (max-width: 560px) {
+    .lid {
+      aspect-ratio: auto;
+      padding: 104px var(--s-4) var(--s-5);
+    }
+    .mark { top: 52px; width: 56px; height: 56px; }
+    /* Rows fit their stickers, and the nudges shrink, so a tile can't
+       land on the one beneath it. */
+    .stickers {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: auto;
+      row-gap: var(--s-5);
+    }
+    .sticker {
+      --dx: calc(var(--jx) * 0.35);
+      --dy: calc(var(--jy) * 0.35);
+      grid-row: auto;
+      grid-column: auto;
+    }
+    .face { font-size: calc(var(--t-sans-sm) * var(--size)); }
+  }
+</style>

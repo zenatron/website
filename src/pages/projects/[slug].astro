@@ -1,11 +1,24 @@
 ---
+/**
+ * A project, laid out like an app's page in the App Store: its icon,
+ * what kind of thing it is, the one line that says what it does, and the
+ * buttons to go and use it. The facts sit in an info panel beside the
+ * writing, the way Finder's Get Info does — kind, date, stack, links,
+ * files — so the header can stay about the project rather than its
+ * metadata.
+ *
+ * A banner is shown only when the project has a real landscape image. The
+ * typographic fallback set the title a second time, very large, above the
+ * title; a phone screenshot cropped to a banner is an unreadable zoom.
+ */
 import Shell from "@/layouts/Shell.astro";
 import { cardArt } from "@/lib/cardart";
-import PostMeta from "@/components/PostMeta.astro";
 import Tags from "@/components/Tags.astro";
 import CardArt from "@/components/CardArt.astro";
 import Cells from "@/components/Cells.astro";
-import { getAllProjects, getSuggestedProjects, projectSlug } from "@/lib/projects";
+import SectionHead from "@/components/SectionHead.astro";
+import ProjectIcon from "@/components/ProjectIcon.astro";
+import { getAllProjects, getSuggestedProjects, projectSlug, PROJECT_KIND } from "@/lib/projects";
 
 export async function getStaticPaths() {
   const projects = await getAllProjects();
@@ -25,18 +38,34 @@ const heroArt = await cardArt({
   collection: "projects",
   context: "hero",
 });
+const banner = heroArt.kind === "image" ? heroArt : null;
 
 const hasMath = /\$\$|\\\(|\\\[|\$[^$\n]+\$/.test(entry.body ?? "");
 
-const external = [
-  entry.data.github && { label: "Source", href: entry.data.github },
-  (entry.data.live || entry.data.demoUrl) && {
-    label: "Live",
-    href: entry.data.live || entry.data.demoUrl,
-  },
-].filter(Boolean) as { label: string; href: string }[];
+const kind = PROJECT_KIND[entry.data.type];
+const made = entry.data.date
+  ? new Date(entry.data.date).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+  : undefined;
 
+/** `https://github.com/zenatron/ledger/` → `github.com/zenatron/ledger` */
+const bare = (url: string) => {
+  try {
+    const u = new URL(url);
+    return `${u.host.replace(/^www\./, "")}${u.pathname}`.replace(/\/+$/, "");
+  } catch {
+    return url;
+  }
+};
+
+const source = entry.data.github || entry.data.githubRepo;
+const live = entry.data.live || entry.data.demoUrl;
 const downloads = entry.data.downloads ?? [];
+/** A file is shown as what it is — the filename is in the link. */
+const FILE_KIND: Record<string, string> = { ipynb: "notebook", html: "notebook, rendered", pdf: "document", zip: "archive" };
+const describe = (name: string) => {
+  const ext = name.split(".").pop()?.toLowerCase() ?? "";
+  return { what: FILE_KIND[ext] ?? name.replace(/\.[^.]+$/, ""), ext: ext ? `.${ext}` : "" };
+};
 
 const suggested = await Promise.all((await getSuggestedProjects(slug, 3)).map(async (p) => ({
   title: p.data.title,
@@ -59,96 +88,284 @@ const suggested = await Promise.all((await getSuggestedProjects(slug, 3)).map(as
   ogSlug={`projects/${slug}`}
   math={hasMath}
 >
-  <article>
-    <div class="hero"><CardArt art={heroArt} slug={slug} crop /></div>
-    <header>
-      <h1>{entry.data.title}</h1>
-      <PostMeta date={entry.data.date} />
-      {entry.data.tags && entry.data.tags.length > 0 && (
-        <div class="tagrow"><Tags tags={entry.data.tags} /></div>
-      )}
-      {(external.length > 0 || downloads.length > 0) && (
-        <ul class="actions">
-          {external.map((link) => (
-            <li><a href={link.href} rel="noopener noreferrer">{link.label}</a></li>
-          ))}
-          {downloads.map((d) => (
-            <li>
-              <a href={`/downloads/${d.filename}`} download>{d.label ?? d.filename}</a>
-            </li>
-          ))}
-        </ul>
-      )}
+  <article class="project">
+    <header class="head">
+      <span class="icon"><ProjectIcon title={entry.data.title} type={entry.data.type} /></span>
+      <div class="headtext">
+        <p class="eyebrow">
+          <span class:list={["kind", { plain: !kind }]} style={kind ? `--h: var(--c-hue-${kind.hue})` : undefined}>
+            <i aria-hidden="true"></i>{kind?.label ?? "project"}
+          </span>
+          {made && <span class="made"> · {made}</span>}
+        </p>
+        <h1>{entry.data.title}</h1>
+        {entry.data.description && <p class="lede">{entry.data.description}</p>}
+        {(live || source) && (
+          <p class="cta">
+            {live && (
+              <a class="btn primary" href={live} rel="noopener noreferrer">
+                Open the live demo
+                <svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 11 5" /><path d="M6 5h5v5" /></svg>
+              </a>
+            )}
+            {source && (
+              <a class="btn" href={source} rel="noopener noreferrer">
+                <span class="gh" aria-hidden="true"></span>
+                Source
+              </a>
+            )}
+          </p>
+        )}
+      </div>
     </header>
 
-    <div class="prose"><Content /></div>
+    {banner && (
+      <figure class="banner"><CardArt art={banner} slug={slug} hue={kind?.hue} /></figure>
+    )}
+
+    <div class="layout">
+      <aside class="info" aria-label="Project info">
+        <div class="inner">
+          <p class="info-head">info</p>
+          <dl>
+            <div>
+              <dt>kind</dt>
+              <dd>
+                <span class:list={["kind", { plain: !kind }]} style={kind ? `--h: var(--c-hue-${kind.hue})` : undefined}>
+                  <i aria-hidden="true"></i>{kind?.label ?? "project"}
+                </span>
+              </dd>
+            </div>
+            {made && <div><dt>made</dt><dd>{made}</dd></div>}
+            {entry.data.tags.length > 0 && (
+              <div class="stack"><dt>stack</dt><dd><Tags tags={entry.data.tags} /></dd></div>
+            )}
+            {source && (
+              <div><dt>source</dt><dd><a href={source} rel="noopener noreferrer">{bare(source)}</a></dd></div>
+            )}
+            {live && (
+              <div><dt>live</dt><dd><a href={live} rel="noopener noreferrer">{bare(live)}</a></dd></div>
+            )}
+            {downloads.length > 0 && (
+              <div class="files">
+                <dt>files</dt>
+                <dd>
+                  <ul>
+                    {downloads.map((d) => {
+                      const { what, ext } = describe(d.filename);
+                      return (
+                        <li>
+                          <a href={`/downloads/${d.filename}`} download title={d.filename}>
+                            <svg aria-hidden="true" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5v8M4.5 7 8 10.5 11.5 7M3 13.5h10" /></svg>
+                            <span class="fname">{d.label ?? what}<span class="ext">{d.label ? "" : ` ${ext}`}</span></span>
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </dd>
+              </div>
+            )}
+          </dl>
+        </div>
+      </aside>
+
+      <div class="prose"><Content /></div>
+    </div>
   </article>
 
   {suggested.length > 0 && (
     <section class="more">
-      <h2>More projects</h2>
+      <SectionHead title="More projects" meta={`${suggested.length}`} />
       <Cells cells={suggested} />
     </section>
   )}
 </Shell>
 
 <style>
-  .hero {
-    container-type: inline-size;
-    aspect-ratio: 21 / 7;
-    overflow: hidden;
-    border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-card);
-    margin-bottom: var(--s-5);
+  .project { container-type: inline-size; }
+
+  /* Header: icon, then what it is, what it's called, what it does. */
+  .head {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: var(--s-5);
+    align-items: start;
+    padding-block: var(--s-3) var(--s-6);
   }
-  header {
-    padding-bottom: var(--s-5);
-    margin-bottom: var(--s-6);
-    border-bottom: 1px solid var(--c-hairline);
+  .icon { width: 96px; height: 96px; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+    letter-spacing: 0.04em;
   }
+  .kind {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--h);
+  }
+  .kind i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .kind.plain { color: var(--c-muted); }
+  .kind.plain i { background: transparent; border: 1px solid var(--c-hairline-strong); }
+
   h1 {
+    margin-top: var(--s-1);
     font-size: var(--t-sans-2xl);
     font-weight: 700;
     letter-spacing: -0.03em;
-    max-width: 26ch;
+    line-height: 1.1;
   }
-  .tagrow { margin-top: var(--s-4); }
-  .actions {
-    list-style: none;
+  .lede {
+    margin-top: var(--s-3);
+    max-width: 58ch;
+    font-size: var(--t-sans-md);
+    line-height: 1.55;
+    color: var(--c-muted);
+  }
+
+  .cta {
+    margin-top: var(--s-5);
     display: flex;
-    gap: var(--s-2);
-    margin: var(--s-4) 0 0;
-    padding: 0;
-    width: fit-content;
     flex-wrap: wrap;
+    gap: var(--s-2);
   }
-  .actions li {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: 9px 18px;
+    font-size: var(--t-sans-sm);
+    font-weight: 600;
+    color: var(--c-text);
+    background: var(--c-chrome);
     border: 1px solid var(--c-hairline);
     border-radius: var(--radius-pill);
-    overflow: hidden;
+    transition: background var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease), filter var(--dur-state) var(--ease);
   }
-  .actions a {
-    display: block;
-    padding: var(--s-2) var(--s-4);
-    font-size: var(--t-sans-sm);
-    color: var(--c-link);
-    transition: background var(--dur-state) var(--ease);
+  .btn.primary {
+    color: var(--c-bg);
+    background: var(--c-link);
+    border-color: transparent;
+  }
+  .gh {
+    width: 15px;
+    height: 15px;
+    background: currentColor;
+    -webkit-mask: url(/logos/github.svg) center / contain no-repeat;
+    mask: url(/logos/github.svg) center / contain no-repeat;
   }
   @media (hover: hover) {
-    .actions a:hover {
-    background: var(--c-raised);
-    }
+    .btn:hover { background: var(--c-raised); border-color: var(--c-hairline-strong); }
+    .btn.primary:hover { background: var(--c-link); filter: brightness(1.08); }
   }
-  .more {
-    margin-top: var(--s-8);
-    padding-top: var(--s-5);
+
+  /* A real landscape image, inset on its tint like the cards do. */
+  .banner {
+    margin: 0 0 var(--s-6);
+    aspect-ratio: 21 / 8;
+    max-height: 340px;
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
+  }
+
+  /* Writing and the info panel. The panel leads on a narrow pane, as a
+     compact card, and moves beside the writing when there's room. */
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-6);
+    padding-top: var(--s-6);
     border-top: 1px solid var(--c-hairline);
   }
-  .more h2 {
-    font-size: var(--t-sans-xl);
-    font-weight: 600;
-    margin-bottom: var(--s-5);
+
+  .info .inner {
+    padding: var(--s-4);
+    background: var(--c-chrome);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
   }
+  .info-head {
+    margin-bottom: var(--s-3);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: 0.08em;
+    color: var(--c-dim);
+  }
+  .info dl {
+    margin: 0;
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: var(--s-3) var(--s-4);
+  }
+  .info dl > div {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    align-items: baseline;
+  }
+  .info dt {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+  }
+  .info dd {
+    margin: 0;
+    min-width: 0;
+    font-size: var(--t-sans-xs);
+    color: var(--c-text);
+  }
+  .info dd .kind { font-family: var(--font-mono); font-size: var(--t-mono-sm); }
+  .info dd a {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-link);
+    overflow-wrap: anywhere;
+  }
+  .info .stack dd :global(.tags) { gap: 6px; }
+  .info .stack dd :global(.tags li) { font-size: var(--t-mono-xs); padding: 2px 8px; }
+  .info .stack { align-items: start; }
+  .files ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-1); }
+  .info .files a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--c-text);
+  }
+  .files svg { flex: 0 0 auto; color: var(--c-muted); }
+  .files .ext { color: var(--c-dim); }
+  @media (hover: hover) {
+    .info dd a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  }
+
+  @container (min-width: 900px) {
+    .layout {
+      grid-template-columns: minmax(0, 1fr) 250px;
+      gap: var(--s-7);
+    }
+    .info { grid-column: 2; grid-row: 1; height: 100%; }
+    .prose { grid-column: 1; grid-row: 1; }
+    /* Sticky on an inner box, as the post outline does: sticky on the grid
+       item itself would leave it nothing to travel inside. */
+    .info .inner { position: sticky; top: var(--s-5); }
+  }
+
+  @container (max-width: 560px) {
+    .head { grid-template-columns: minmax(0, 1fr); gap: var(--s-4); }
+    .icon { width: 72px; height: 72px; }
+    h1 { font-size: var(--t-sans-xl); }
+    .btn { flex: 1 1 auto; justify-content: center; }
+  }
+
+  .more { margin-top: var(--s-8); }
 </style>
 
 <script>

@@ -1,22 +1,66 @@
 ---
+/**
+ * About.
+ *
+ * One page rhythm, the same as /blog: every band opens with a rule, a
+ * heading and a quiet note on the right. Colour keeps the job it has in
+ * the explorer — it says what kind of thing something is — so a status
+ * dot here means the same as a dot anywhere else: filled for underway,
+ * hollow for not yet.
+ *
+ * It ends on the same two cards as /say-hi, because the end of an about
+ * page is exactly where someone decides to get in touch.
+ */
+import { getEntry } from "astro:content";
 import Shell from "@/layouts/Shell.astro";
-import Contact from "@/components/Contact.astro";
 import Mark from "@/components/Mark.astro";
-import { SITE } from "@/data/site";
-import { TIMELINE, NOW, PRINCIPLES, MACHINES } from "@/data/about";
+import SectionHead from "@/components/SectionHead.astro";
+import ReachCards from "@/components/ReachCards.astro";
+import LaptopLid from "@/components/LaptopLid.astro";
+import { FACTS, SITE, STATUS } from "@/data/site";
+import { MACHINES, NOW, PRINCIPLES, TIMELINE } from "@/data/about";
 import { FAVORITES } from "@/data/favorites";
+
+type Hue = "violet" | "orange" | "blue" | "green" | "accent" | "link";
+const vars = (hue: Hue) => `--h: var(--c-hue-${hue}, var(--c-${hue})); --t: var(--c-tint-${hue})`;
 
 const HOBBIES = FAVORITES.filter((f) => f.category === "hobbies");
 const toolCount = FAVORITES.filter((f) => f.logo).length;
 
-/** One hue per principle, so the four lines read as four distinct ideas. */
-const PRINCIPLE_HUES = ["violet", "blue", "green", "orange"] as const;
-const NOW_HUES = ["accent", "blue", "violet"] as const;
-const KIND_LABEL: Record<string, string> = {
-  work: "work",
-  education: "study",
-  milestone: "milestone",
+const essay = await getEntry("blog", "principles");
+const essayMinutes = essay?.data.readingTime?.match(/\d+/)?.[0];
+
+const education = TIMELINE.find((t) => t.kind === "education");
+const start = TIMELINE.find((t) => t.kind === "milestone");
+
+/** Who, where, what, since when — the four things a reader checks first. */
+const facts = [
+  FACTS[0],
+  education && `${education.description} · ${education.title}`,
+  start && `coding since ${start.year}`,
+].filter(Boolean) as string[];
+
+const PRINCIPLE_HUES: Hue[] = ["violet", "blue", "green", "orange"];
+
+/** The homepage's "currently" chips use green for building and blue for running. */
+const NOW_HUE: Record<string, Hue> = { Building: "green", Learning: "blue", Reading: "violet" };
+
+/** Filled means underway; hollow means not started, or not the point. */
+const STATUS_HUE: Record<string, Hue | undefined> = {
+  "in progress": "accent",
+  deployed: "link",
+  exploring: "blue",
 };
+
+const KIND: Record<string, { label: string; hue: Hue }> = {
+  work: { label: "work", hue: "green" },
+  education: { label: "study", hue: "violet" },
+  milestone: { label: "milestone", hue: "orange" },
+};
+
+/** neofetch colours its keys by OS. */
+const MACHINE_HUE: Record<string, Hue> = { macbook: "green", desktop: "blue" };
+const SWATCHES = ["text", "danger", "hue-orange", "accent", "hue-green", "link", "hue-blue", "hue-violet"];
 ---
 
 <Shell title="About | Phil Vishnevsky" description="The story so far." ogSlug="about">
@@ -24,7 +68,7 @@ const KIND_LABEL: Record<string, string> = {
     <div class="portrait">
       <img
         src="/images/phil_headshot_scaled.webp"
-        alt="Phil Vishnevsky"
+        alt="Phil Vishnevsky presenting at a podium"
         width="518"
         height="345"
         loading="eager"
@@ -33,40 +77,66 @@ const KIND_LABEL: Record<string, string> = {
     </div>
     <div class="lede">
       <h1>About</h1>
-      <p>
+      <p class="statement">
         I write code, break things, and occasionally ship something useful.
         Mostly <Mark hue="blue">servers</Mark>, developer tooling, and
         <Mark hue="orange">games</Mark> — from a desk in Hartford, Connecticut.
+      </p>
+
+      <ul class="facts">
+        <li class="status"><i aria-hidden="true"></i>{STATUS}</li>
+        {facts.map((f) => <li>{f}</li>)}
+      </ul>
+
+      <p class="actions">
+        <a class="file" href={SITE.resume}>
+          <svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 2.5v8M4.5 7 8 10.5 11.5 7M3 13.5h10" />
+          </svg>
+          <span>resume<span class="ext">.pdf</span></span>
+        </a>
+        <a class="jump" href="#contact">get in touch</a>
       </p>
     </div>
   </section>
 
   <section id="principles" class="band">
-    <h2 class="eyebrow">Principles</h2>
+    <SectionHead title="Principles" meta="the short version" />
     <ol class="manifesto">
       {PRINCIPLES.map((line, i) => (
-        <li style={`--fg: var(--c-hue-${PRINCIPLE_HUES[i % PRINCIPLE_HUES.length]})`}>
+        <li style={vars(PRINCIPLE_HUES[i % PRINCIPLE_HUES.length])}>
           <span class="n" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
           <span class="say">{line}</span>
         </li>
       ))}
     </ol>
-    <p class="action"><a href="/blog/principles">Read the long version</a></p>
+    {essay && (
+      <a class="file essay" href={`/blog/${essay.slug}`}>
+        <span>{essay.slug}<span class="ext">.mdx</span></span>
+        <span class="aside">the long version{essayMinutes && ` · ${essayMinutes}m`}</span>
+        <span aria-hidden="true">&rarr;</span>
+      </a>
+    )}
   </section>
 
   <section id="now" class="band">
-    <h2 class="eyebrow">Now</h2>
-    <div class="nowgrid">
-      {NOW.map((group, i) => (
-        <div class="panel" style={`--fg: var(--c-hue-${NOW_HUES[i % NOW_HUES.length]}); --bg: var(--c-tint-${NOW_HUES[i % NOW_HUES.length]})`}>
-          <p class="panel-head">{group.heading}</p>
+    <SectionHead title="Now" meta="building · learning · reading" />
+    <div class="now">
+      {NOW.map((group) => (
+        <div class="col" style={vars(NOW_HUE[group.heading] ?? "accent")}>
+          <p class="chip">{group.heading.toLowerCase()}</p>
           <ul>
-            {group.items.map((item) => (
-              <li>
-                <span class="what">{item.name}</span>
-                <span class="status">{item.status}</span>
-              </li>
-            ))}
+            {group.items.map((item) => {
+              const hue = STATUS_HUE[item.status];
+              return (
+                <li>
+                  <span class="what">{item.name}</span>
+                  <span class:list={["state", { hollow: !hue }]} style={hue ? vars(hue) : undefined}>
+                    <i aria-hidden="true"></i>{item.status}
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         </div>
       ))}
@@ -74,216 +144,340 @@ const KIND_LABEL: Record<string, string> = {
   </section>
 
   <section id="resume" class="band">
-    <h2 class="eyebrow">Experience</h2>
+    <SectionHead title="Experience" meta={start ? `since ${start.year}` : undefined} />
     <ol class="timeline">
-      {TIMELINE.map((item) => (
-        <li>
-          <span class="when">{item.year}</span>
-          <span class="dot" aria-hidden="true"></span>
-          <span class="entry">
-            <span class="role">{item.title}</span>
-            <span class="detail">{item.description}</span>
-            <span class="kind">{KIND_LABEL[item.kind] ?? item.kind}</span>
-          </span>
-        </li>
-      ))}
+      {TIMELINE.map((item, i) => {
+        const kind = KIND[item.kind] ?? { label: item.kind, hue: "accent" as Hue };
+        return (
+          <li class:list={{ last: i === TIMELINE.length - 1 }} style={vars(kind.hue)}>
+            <span class="when">{item.year}</span>
+            <span class="stop" aria-hidden="true"></span>
+            <span class="entry">
+              <span class="role">
+                {item.title}
+                <span class="kind">{kind.label}</span>
+              </span>
+              <span class="detail">{item.description}</span>
+            </span>
+          </li>
+        );
+      })}
     </ol>
-    <p class="action"><a href={SITE.resume}>Download the full resume</a></p>
+    <a class="file" href={SITE.resume}>
+      <svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 2.5v8M4.5 7 8 10.5 11.5 7M3 13.5h10" />
+      </svg>
+      <span>resume<span class="ext">.pdf</span></span>
+      <span class="aside">the full version</span>
+    </a>
   </section>
 
   <section id="setup" class="band">
-    <h2 class="eyebrow">Setup</h2>
+    <SectionHead title="Setup" meta={`${MACHINES.length} machines`} />
     <div class="machines">
-      {MACHINES.map((machine) => (
-        <div class="win">
-          <div class="win-bar">
-            <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="win-name">phil@{machine.name}</span>
+      {MACHINES.map((machine) => {
+        const host = `phil@${machine.name}`;
+        return (
+          <div class="win" style={vars(MACHINE_HUE[machine.name] ?? "accent")}>
+            <div class="win-bar">
+              <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="win-name">{host} — zsh</span>
+            </div>
+            <div class="term">
+              <p class="prompt" aria-hidden="true"><span class="cwd">~</span> <span class="sigil">%</span> neofetch</p>
+              <p class="host"><span>phil</span>@<span>{machine.name}</span></p>
+              <p class="underline" aria-hidden="true">{"-".repeat(host.length)}</p>
+              <dl class="spec">
+                {machine.fields.map(([label, value]) => (
+                  <>
+                    <dt>{label}</dt>
+                    <dd>{value}</dd>
+                  </>
+                ))}
+              </dl>
+              <p class="swatches" aria-hidden="true">
+                {SWATCHES.map((c) => <i style={`background: var(--c-${c})`}></i>)}
+              </p>
+            </div>
           </div>
-          <dl class="spec">
-            {machine.fields.map(([label, value]) => (
-              <>
-                <dt>{label}</dt>
-                <dd>{value}</dd>
-              </>
-            ))}
-          </dl>
-        </div>
-      ))}
+        );
+      })}
     </div>
   </section>
 
   <section id="hobbies" class="band">
-    <h2 class="eyebrow">Outside the terminal</h2>
-    <ul class="hobbies">
-      {HOBBIES.map((item) => (
-        <li>
-          <span class="hobby-name">{item.name}</span>
-          {item.description && <span class="hobby-desc">{item.description}</span>}
-        </li>
-      ))}
-    </ul>
-    <p class="action"><a href="/desk">See the {toolCount} apps I use</a></p>
+    <SectionHead title="Outside the terminal" meta={`${HOBBIES.length}`} />
+    <LaptopLid items={HOBBIES.map((h) => ({ name: h.name, description: h.description }))} />
+    <a class="file" href="/dock">
+      dock
+      <span class="aside">the {toolCount} apps I use</span>
+      <span aria-hidden="true">&rarr;</span>
+    </a>
   </section>
 
-  <Contact />
+  <section id="contact" class="band">
+    <SectionHead title="Get in touch" />
+    <ReachCards />
+  </section>
 </Shell>
 
 <style>
-  /* Hero */
+  /* Hero: a portrait crop of the photo, so he's the subject rather than
+     the step-and-repeat behind him. */
   .hero {
     display: grid;
-    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+    grid-template-columns: 220px minmax(0, 1fr);
     gap: var(--s-6);
     align-items: center;
-    padding-block: var(--s-4) var(--s-6);
+    padding-block: var(--s-4) var(--s-2);
   }
   .portrait {
+    aspect-ratio: 4 / 5;
+    max-width: 100%;
     border: 1px solid var(--c-hairline);
     border-radius: var(--radius-card);
     overflow: hidden;
     background: var(--c-chrome);
   }
-  .portrait img { width: 100%; height: auto; display: block; }
+  .portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 58% 30%;
+  }
 
   h1 {
     font-size: var(--t-sans-2xl);
     font-weight: 700;
     letter-spacing: -0.03em;
   }
-  .lede p {
+  .statement {
     margin-top: var(--s-3);
     font-size: var(--t-sans-lg);
     line-height: 1.55;
-    max-width: 40ch;
+    max-width: 42ch;
   }
+
+  .facts {
+    list-style: none;
+    margin: var(--s-4) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+  .facts li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    line-height: 1.5;
+    color: var(--c-muted);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-pill);
+  }
+  .facts .status {
+    color: var(--c-accent);
+    background: var(--c-tint-accent);
+    border-color: transparent;
+  }
+  .facts .status i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .actions {
+    margin-top: var(--s-5);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-4);
+  }
+  .jump {
+    font-size: var(--t-sans-sm);
+    color: var(--c-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+
+  /* A file, set the way the explorer sets one: the pill every "read more"
+     on this page uses, so they read as one kind of thing. */
+  .file {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: 6px 14px;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-text);
+    background: var(--c-chrome);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-pill);
+    transition: background var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease);
+  }
+  .file svg { color: var(--c-muted); }
+  .file .ext { color: var(--c-dim); }
+  .file .aside {
+    font-family: var(--font-sans);
+    font-size: var(--t-sans-xs);
+    color: var(--c-muted);
+  }
+  @media (hover: hover) {
+    .file:hover { background: var(--c-raised); border-color: var(--c-hairline-strong); }
+    .jump:hover { color: var(--c-text); }
+  }
+  .band .file { margin-top: var(--s-5); }
 
   /* Bands */
   .band {
-    padding-block: var(--s-6);
-    border-top: 1px solid var(--c-hairline);
+    margin-top: var(--s-7);
     scroll-margin-top: var(--s-5);
   }
-  .eyebrow {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    letter-spacing: 0.08em;
-    color: var(--c-dim);
-    font-weight: 400;
-    margin-bottom: var(--s-5);
-  }
+
+  ul, ol { list-style: none; margin: 0; padding: 0; }
 
   /* Principles — the strongest four lines on the site, set like it. */
   .manifesto {
-    list-style: none;
-    margin: 0;
-    padding: 0;
     display: grid;
-    gap: var(--s-4);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-5) var(--s-6);
   }
   .manifesto li {
-    display: grid;
-    grid-template-columns: 3.5ch minmax(0, 1fr);
-    gap: var(--s-4);
+    display: flex;
     align-items: baseline;
+    gap: var(--s-3);
   }
   .manifesto .n {
+    flex: 0 0 auto;
     font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    color: var(--fg);
+    font-size: var(--t-mono-xs);
+    color: var(--h);
+    background: var(--t);
+    padding: 2px 7px;
+    border-radius: var(--radius-pill);
+    transform: translateY(-0.3em);
   }
   .manifesto .say {
     font-size: var(--t-sans-xl);
     font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
   }
 
-  /* Now */
-  .nowgrid {
+  /* Now: three columns, each headed by the homepage's state chip. */
+  .now {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: var(--s-4);
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--s-5) var(--s-6);
   }
-  .panel {
-    padding: var(--s-4);
-    background: var(--bg);
-    border-radius: var(--radius-card);
-  }
-  .panel-head {
-    font-size: var(--t-sans-sm);
-    font-weight: 600;
-    color: var(--fg);
-    margin-bottom: var(--s-3);
-  }
-  .panel ul { list-style: none; margin: 0; padding: 0; }
-  .panel li {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: var(--s-3);
-    padding-block: var(--s-2);
-  }
-  .panel li + li { border-top: 1px solid var(--c-hairline); }
-  .what { font-size: var(--t-sans-sm); }
-  .status {
-    flex: 0 0 auto;
+  .chip {
+    display: inline-block;
+    margin-bottom: var(--s-2);
+    padding: 3px 10px;
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
-    color: var(--c-muted);
+    line-height: 1.4;
+    color: var(--h);
+    background: var(--t);
+    border-radius: var(--radius-pill);
   }
-
-  /* Experience — a rail, so it reads as a sequence. */
-  .timeline {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    max-width: 68ch;
+  .col li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-block: var(--s-3);
   }
-  .timeline li {
-    position: relative;
-    display: grid;
-    grid-template-columns: 12ch 1px minmax(0, 1fr);
-    gap: 0 var(--s-4);
-    padding-bottom: var(--s-5);
-  }
-  .timeline li:last-child { padding-bottom: 0; }
-  .when {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    color: var(--c-muted);
-    padding-top: 2px;
-  }
-  .dot {
-    position: relative;
-    background: var(--c-hairline);
-  }
-  .timeline li:last-child .dot { background: transparent; }
-  .dot::before {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 4px;
-    width: 7px;
-    height: 7px;
-    margin-left: -3.5px;
-    border-radius: 50%;
-    background: var(--c-accent);
-  }
-  .entry { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .role { font-size: var(--t-sans-md); font-weight: 600; }
-  .detail { font-size: var(--t-sans-sm); color: var(--c-muted); }
-  .kind {
-    margin-top: var(--s-1);
+  .col li + li { border-top: 1px solid var(--c-hairline); }
+  .what { font-size: var(--t-sans-sm); line-height: 1.4; }
+  .state {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
     color: var(--c-dim);
   }
+  .state i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--h);
+  }
+  .state.hollow i {
+    background: transparent;
+    border: 1px solid var(--c-hairline-strong);
+  }
 
-  /* Setup — the same window the desk uses. */
+  /* Experience: the explorer's line through its stops, one colour per kind. */
+  .timeline {
+    max-width: 72ch;
+  }
+  .timeline li {
+    position: relative;
+    display: grid;
+    grid-template-columns: 13ch 20px minmax(0, 1fr);
+    column-gap: var(--s-3);
+    padding-bottom: var(--s-5);
+  }
+  .timeline li.last { padding-bottom: 0; }
+  /* The line runs down the stop column, from this stop to the next. */
+  .timeline li:not(.last)::before {
+    content: "";
+    position: absolute;
+    left: calc(13ch + var(--s-3) + 10px);
+    top: 14px;
+    bottom: -6px;
+    width: 1px;
+    background: var(--c-hairline-strong);
+  }
+  .when {
+    padding-top: 3px;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .stop {
+    position: relative;
+    z-index: 1;
+    justify-self: center;
+    margin-top: 7px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--h);
+    outline: 3px solid var(--c-bg);
+  }
+  .entry { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .role {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s-2);
+    font-size: var(--t-sans-md);
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .kind {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    font-weight: 400;
+    color: var(--h);
+    background: var(--t);
+    padding: 1px 8px;
+    border-radius: var(--radius-pill);
+  }
+  .detail { font-size: var(--t-sans-sm); color: var(--c-muted); }
+
+  /* Setup: neofetch, as it actually prints. */
   .machines {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--s-4);
   }
   .win {
@@ -296,7 +490,7 @@ const KIND_LABEL: Record<string, string> = {
     display: flex;
     align-items: center;
     gap: var(--s-3);
-    height: var(--h-titlebar);
+    height: 36px;
     padding-inline: var(--s-3);
     background: var(--c-chrome);
     border-bottom: 1px solid var(--c-hairline);
@@ -309,60 +503,61 @@ const KIND_LABEL: Record<string, string> = {
     background: var(--c-trafficlight);
   }
   .win-name {
+    flex: 1 1 auto;
+    text-align: center;
+    margin-right: 49px; /* the lights' width, so the title centres on the bar */
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-muted);
+  }
+  .term {
+    padding: var(--s-4);
     font-family: var(--font-mono);
     font-size: var(--t-mono-sm);
-    color: var(--c-accent);
+    line-height: 1.8;
   }
+  .prompt { color: var(--c-dim); margin-bottom: var(--s-2); }
+  .prompt .cwd { color: var(--c-link); }
+  .prompt .sigil { color: var(--c-accent); }
+  .host { color: var(--c-text); font-weight: 600; }
+  .host span { color: var(--h); }
+  .underline { color: var(--c-dim); line-height: 1; margin-bottom: var(--s-2); }
   .spec {
     display: grid;
     grid-template-columns: 9ch minmax(0, 1fr);
     gap: 0 var(--s-3);
     margin: 0;
-    padding: var(--s-4);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    line-height: 1.95;
   }
-  .spec dt { color: var(--c-dim); }
+  .spec dt { color: var(--h); font-weight: 600; }
   .spec dd { margin: 0; color: var(--c-muted); min-width: 0; }
-
-  /* Hobbies */
-  .hobbies {
-    list-style: none;
+  .swatches {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--s-2);
-    margin: 0;
-    padding: 0;
-    max-width: 68ch;
+    margin-top: var(--s-3);
   }
-  .hobbies li {
-    display: flex;
-    align-items: baseline;
-    gap: var(--s-2);
-    padding: 6px 14px;
-    border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-pill);
+  .swatches i {
+    width: 22px;
+    height: 12px;
   }
-  .hobby-name { font-size: var(--t-sans-sm); }
-  .hobby-desc { font-size: var(--t-sans-xs); color: var(--c-muted); }
 
-  .action { margin-top: var(--s-5); }
-  .action a {
-    font-size: var(--t-sans-sm);
-    color: var(--c-link);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-thickness: 1px;
+  @media (max-width: 860px) {
+    .manifesto { grid-template-columns: minmax(0, 1fr); gap: var(--s-4); }
   }
 
   @media (max-width: 720px) {
     .hero {
-      grid-template-columns: 1fr;
-      gap: var(--s-4);
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--s-5);
     }
-    .portrait { max-width: 220px; }
+    .portrait { width: 180px; }
     .manifesto .say { font-size: var(--t-sans-lg); }
-    .timeline li { grid-template-columns: 10ch 1px minmax(0, 1fr); }
+  }
+
+  /* Narrow: the year moves above its entry and the line keeps its column. */
+  @media (max-width: 560px) {
+    .timeline li { grid-template-columns: 20px minmax(0, 1fr); }
+    .timeline li:not(.last)::before { left: 10px; }
+    .when { grid-column: 2; grid-row: 1; padding-top: 0; font-size: var(--t-mono-xs); }
+    .stop { grid-column: 1; grid-row: 1 / span 2; }
+    .entry { grid-column: 2; }
   }
 </style>

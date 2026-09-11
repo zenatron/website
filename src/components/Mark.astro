@@ -1,10 +1,14 @@
 ---
-/** An inline highlighted word. The site's one bit of typographic play. */
+/**
+ * An inline highlighted word. The site's one bit of typographic play.
+ *
+ * The span is the last thing in this file, with nothing after it: any
+ * whitespace after it renders as a space after the word, which is how
+ * "servers ," happened on /about.
+ */
 interface Props { hue?: "violet" | "orange" | "blue" | "green" | "accent" | "link"; }
 const { hue = "accent" } = Astro.props;
 ---
-<span class="mark" style={`--fg: var(--c-hue-${hue}, var(--c-${hue})); --bg: var(--c-tint-${hue});`}><slot /></span>
-
 <style>
   .mark {
     color: var(--fg);
@@ -15,3 +19,4 @@ const { hue = "accent" } = Astro.props;
     -webkit-box-decoration-break: clone;
   }
 </style>
+<span class="mark" style={`--fg: var(--c-hue-${hue}, var(--c-${hue})); --bg: var(--c-tint-${hue});`}><slot /></span>

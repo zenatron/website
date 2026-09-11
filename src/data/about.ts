@@ -77,7 +77,7 @@ export const MACHINES = [
       ["Shell", "zsh + oh-my-zsh"],
       ["PM", "brew"],
       ["Editor", "VS Code, nvim"],
-      ["Emulator", "Ghostty"],
+      ["Emulator", "cmux"],
     ],
   },
   {

@@ -8,8 +8,10 @@ interface Props {
   slug: string;
   /** Crop into the artwork instead of shrinking all of it to fit. */
   crop?: boolean;
+  /** The tint behind the art, when the caller knows what colour the thing is. */
+  hue?: "violet" | "orange" | "blue" | "green" | "accent" | "link";
 }
-const { art, slug, crop = false } = Astro.props;
+const { art, slug, crop = false, hue: fixedHue } = Astro.props;
 
 const HUES = ["violet", "orange", "blue", "green", "accent", "link"] as const;
 function hueFor(s: string) {
@@ -17,7 +19,7 @@ function hueFor(s: string) {
   for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
   return HUES[(h >>> 0) % HUES.length];
 }
-const hue = hueFor(slug);
+const hue = fixedHue ?? hueFor(slug);
 
 // Diagrams are inlined so they inherit the theme, same as in the post body.
 let svg = "";

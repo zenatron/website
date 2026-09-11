@@ -52,22 +52,26 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     <link rel="preload" href="/fonts/atkinson-hyperlegible-next-latin.woff2" as="font" type="font/woff2" crossorigin />
     {math && <link rel="stylesheet" href="/katex/katex.css" />}
     <script is:inline>
-      // Blocking, so the correct theme is painted on the first frame.
+      // Blocking, so the correct theme — and the window's size and whether
+      // the explorer is put away — are painted on the first frame. A swap
+      // replaces <html>'s attributes, so they're restored after every one.
       (function () {
         var r = document.documentElement;
         r.classList.add("js");
-        try {
-          var t = localStorage.getItem("theme");
-          if (t === "light" || t === "dark") r.setAttribute("data-theme", t);
-        } catch (e) {}
+        function restore() {
+          try {
+            var t = localStorage.getItem("theme");
+            if (t === "light" || t === "dark") r.setAttribute("data-theme", t);
+            else r.removeAttribute("data-theme");
+            if (localStorage.getItem("window-rail") === "hidden") r.setAttribute("data-rail", "hidden");
+            else r.removeAttribute("data-rail");
+            if (localStorage.getItem("window-zoom") === "full") r.setAttribute("data-zoom", "full");
+            else r.removeAttribute("data-zoom");
+          } catch (e) {}
+        }
+        restore();
+        document.addEventListener("astro:after-swap", restore);
       })();
-      document.addEventListener("astro:after-swap", function () {
-        try {
-          var t = localStorage.getItem("theme");
-          if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
-          else document.documentElement.removeAttribute("data-theme");
-        } catch (e) {}
-      });
     </script>
     <ClientRouter />
   </head>
@@ -95,6 +99,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
       import "@/scripts/shell";
       import "@/scripts/sidebar";
       import "@/scripts/tabs";
+      import "@/scripts/window";
       import "@/scripts/clock";
       import "@/scripts/terminal";
     </script>
@@ -123,6 +128,24 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
    */
   body { padding: var(--s-5); }
 
+  /*
+   * The desktop the window sits on. Without it the window and the page
+   * behind it were the same paper, and the gutter read as empty margin
+   * rather than as somewhere the window was.
+   */
+  html { background: var(--c-wallpaper); }
+
+  /*
+   * The app has edges, so the page doesn't rubber-band past them and show
+   * what's behind it. Vertical only: horizontal overscroll is the browser's
+   * swipe-to-go-back, and that should keep working.
+   */
+  html, body { overscroll-behavior-y: none; }
+  body {
+    background: var(--wallpaper);
+    background-attachment: fixed;
+  }
+
   .window {
     display: flex;
     flex-direction: column;
@@ -130,17 +153,26 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     min-height: calc(100vh - var(--s-5) * 2);
     margin-inline: auto;
     background: var(--c-bg);
-    border: 1px solid var(--c-hairline);
+    border: 1px solid var(--c-hairline-strong);
     border-radius: var(--radius-window);
+    transition: max-width var(--dur-pane) var(--ease);
     /* `clip`, not `hidden`: hidden makes the window a scroll container,
        which silently disables position:sticky for everything inside it —
        the post outline and the reading-progress rule both depend on it. */
     overflow: clip;
   }
 
-  /* Sidebar + content. `position: relative` anchors the mobile drawer. */
+  /* Zoom: the window fills the screen instead of stopping at --w-content. */
+  html[data-zoom="full"] .window { max-width: 100%; }
+
+  /* Minimise: the explorer is put away. Only where it's a column; as a
+     drawer it's already away. */
+  @media (min-width: 901px) {
+    html[data-rail="hidden"] #sidebar { display: none; }
+  }
+
+  /* Sidebar + content. */
   .shell-body {
-    position: relative;
     display: flex;
     flex: 1 1 auto;
     min-height: 0;

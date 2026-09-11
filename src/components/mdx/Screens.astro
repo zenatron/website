@@ -33,8 +33,12 @@ const { shots } = Astro.props;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
   }
+  /* Sized by the column, not the viewport: the phones share whatever width
+     the writing has, and only scroll once each would drop below 150px. */
   li {
-    flex: 0 0 clamp(160px, 30vw, 236px);
+    flex: 1 1 0;
+    min-width: 150px;
+    max-width: 236px;
     scroll-snap-align: start;
     display: flex;
     flex-direction: column;

@@ -3,160 +3,301 @@
  * The explorer.
  *
  * Two levels, never three: sections, then files. A series is a labelled
- * run inside its section rather than another folder to open — the extra
- * depth cost a click and a chunk of width and bought nothing.
+ * run inside its section rather than another folder to open.
  *
- * Rhythm comes from three things the old flat list had none of: tracked
- * section labels, a right-hand metadata column the way a file browser
- * shows size and date, and a hue dot per file from the same hash the tags
- * and covers use.
+ * Colour is category, never decoration. The hues say the same things the
+ * homepage says — servers are blue, web apps are green — so a dot tells
+ * you what a file is: an app, a tool, part of the homelab series, or
+ * coursework. Files that belong to nothing get a hollow ring. A run is
+ * drawn as a line through its files in order, because the order is real.
+ *
+ * The rail is pinned: who this is at the top, where else to find him at
+ * the bottom, and the files scroll between them, so on a long post the
+ * navigation is still where you left it.
  */
 import { getAllBlogPosts } from "@/lib/blog";
-import { getAllProjects, projectSlug } from "@/lib/projects";
+import { getAllProjects, projectSlug, PROJECT_KIND } from "@/lib/projects";
+import { links } from "@/lib/links";
+import { SITE, STATUS } from "@/data/site";
 
 const posts = await getAllBlogPosts();
 const projects = await getAllProjects();
 
-const HUES = ["violet", "orange", "blue", "green", "accent", "link"] as const;
-function hue(s: string) {
-  let h = 0x811c9dc5;
-  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
-  return HUES[(h >>> 0) % HUES.length];
-}
+type Hue = "violet" | "orange" | "blue" | "green";
+const vars = (hue: Hue) => `--h: var(--c-hue-${hue}); --t: var(--c-tint-${hue})`;
+
+const SERIES: { key: string; label: string; hue: Hue }[] = [
+  { key: "homelab-networking", label: "homelab & networking", hue: "blue" },
+  { key: "data-mining", label: "data mining coursework", hue: "violet" },
+];
+const COURSEWORK = SERIES[1];
+
 const minutes = (v?: string) => (v ? `${v.match(/\d+/)?.[0] ?? ""}m` : "");
-const year = (v?: string | Date) => {
-  if (!v) return "";
-  const d = new Date(v);
-  return Number.isNaN(d.getTime()) ? "" : `'${String(d.getFullYear()).slice(2)}`;
+const time = (v?: string) => (v ? new Date(v).getTime() || 0 : 0);
+
+interface Row {
+  stem: string;
+  href: string;
+  title: string;
+  meta: string;
+  hue?: Hue;
+  /** The meta is a category word, set in the category's colour. */
+  typed?: boolean;
+}
+interface Group { run?: { label: string; hue: Hue }; rows: Row[] }
+
+type ProjectEntry = (typeof projects)[number];
+type PostEntry = (typeof posts)[number];
+
+const projectRow = (p: ProjectEntry): Row => {
+  const type = PROJECT_KIND[p.data.type];
+  return {
+    stem: projectSlug(p),
+    href: `/projects/${projectSlug(p)}`,
+    title: p.data.title,
+    meta: type && type.hue !== COURSEWORK.hue ? type.label : "",
+    hue: type?.hue,
+    typed: true,
+  };
 };
-
-interface Row { name: string; href: string; title: string; meta: string; run?: string }
-
-const projectRows: Row[] = projects.map((p) => ({
-  name: `${projectSlug(p)}.mdx`,
-  href: `/projects/${projectSlug(p)}`,
+const postRow = (p: PostEntry, hue?: Hue): Row => ({
+  stem: p.slug,
+  href: `/blog/${p.slug}`,
   title: p.data.title,
-  meta: year(p.data.date),
-}));
+  meta: minutes(p.data.readingTime),
+  hue,
+});
 
-const bySeries = (key: string, run: string): Row[] =>
-  posts
-    .filter((p) => p.data.series === key)
-    .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0))
-    .map((p) => ({
-      name: `${p.slug}.mdx`,
-      href: `/blog/${p.slug}`,
-      title: p.data.title,
-      meta: minutes(p.data.readingTime),
-      run,
-    }));
+// Coursework is a syllabus, so it reads oldest first, like the series do.
+const shipped = projects.filter((p) => p.data.type !== "data");
+const coursework = projects
+  .filter((p) => p.data.type === "data")
+  .sort((a, b) => time(a.data.date) - time(b.data.date));
 
-const blogRows: Row[] = [
-  ...posts
-    .filter((p) => !p.data.series)
-    .map((p) => ({
-      name: `${p.slug}.mdx`,
-      href: `/blog/${p.slug}`,
-      title: p.data.title,
-      meta: minutes(p.data.readingTime),
-    })),
-  ...bySeries("homelab-networking", "homelab & networking"),
-  ...bySeries("data-mining", "data mining coursework"),
+const sections: { key: string; label: string; href: string; groups: Group[] }[] = [
+  {
+    key: "projects",
+    label: "projects",
+    href: "/projects",
+    groups: [
+      { rows: shipped.map(projectRow) },
+      { run: COURSEWORK, rows: coursework.map(projectRow) },
+    ],
+  },
+  {
+    key: "blog",
+    label: "writing",
+    href: "/blog",
+    groups: [
+      { rows: posts.filter((p) => !p.data.series).map((p) => postRow(p)) },
+      ...SERIES.map((s) => ({
+        run: s,
+        rows: posts
+          .filter((p) => p.data.series === s.key)
+          .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0))
+          .map((p) => postRow(p, s.hue)),
+      })),
+    ],
+  },
 ];
 
-const sections = [
-  { key: "projects", label: "projects", href: "/projects", rows: projectRows },
-  { key: "blog", label: "writing", href: "/blog", rows: blogRows },
+const pages: { name: string; href: string; hue: Hue; glyph: string }[] = [
+  { name: "about", href: "/about", hue: "violet", glyph: "person" },
+  { name: "dock", href: "/dock", hue: "orange", glyph: "dock" },
+  { name: "say hi", href: "/say-hi", hue: "blue", glyph: "bubble" },
 ];
 
-const pages = [
-  { name: "home", href: "/" },
-  { name: "about", href: "/about" },
-  { name: "desk", href: "/desk" },
-  { name: "elsewhere", href: "/links" },
-];
+const find = (title: string) => links.find((l) => l.title === title)?.url;
+const socials = [
+  { label: "GitHub", href: find("GitHub"), logo: "github.svg" },
+  { label: "LinkedIn", href: find("LinkedIn"), glyph: "linkedin" },
+  { label: "Bluesky", href: find("Bluesky"), logo: "bluesky.svg" },
+  { label: "Email", href: `mailto:${SITE.email}`, glyph: "mail" },
+].filter((s) => s.href);
 ---
 
 <nav id="sidebar" class="sidebar" aria-label="Site" transition:persist="sidebar">
-  <div class="head">
-    <p class="explorer">explorer</p>
-    <button class="close" type="button" data-drawer-close>
-      <span class="sr-only">Close menu</span><span aria-hidden="true">&times;</span>
-    </button>
-  </div>
+  <div class="rail">
+    <div class="id">
+      <a class="me" href="/" data-nav>
+        <img src="/favicon.svg" alt="" width="32" height="32" />
+        <span class="who">
+          <span class="name">{SITE.name}</span>
+          <span class="status"><i aria-hidden="true"></i>{STATUS}</span>
+        </span>
+      </a>
+      <button class="close" type="button" data-drawer-close>
+        <span class="sr-only">Close menu</span><span aria-hidden="true">&times;</span>
+      </button>
+    </div>
 
-  <div class="searchbar">
-    <label class="sr-only" for="tree-search">Search files</label>
-    <input id="tree-search" type="search" placeholder="search" autocomplete="off" spellcheck="false" data-search />
-  </div>
+    <div class="searchbar">
+      <label class="sr-only" for="tree-search">Search files</label>
+      <svg aria-hidden="true" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <circle cx="7" cy="7" r="4.5" /><path d="m10.4 10.4 3.1 3.1" />
+      </svg>
+      <input id="tree-search" type="search" placeholder="search" autocomplete="off" spellcheck="false" data-search />
+    </div>
 
-  <div class="tree" data-tree>
-    <ul class="pages">
-      {pages.map((f) => (
-        <li class="row page"><a href={f.href} data-nav>{f.name}</a></li>
-      ))}
-    </ul>
+    <div class="tree" data-tree>
+      <ul class="pages">
+        {pages.map((p) => (
+          <li class="row page" style={vars(p.hue)}>
+            <span class="tile" aria-hidden="true">
+              <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                {p.glyph === "person" && (<><circle cx="8" cy="5.4" r="2.6" /><path d="M3 13.6c.8-2.6 2.8-4 5-4s4.2 1.4 5 4" /></>)}
+                {p.glyph === "dock" && (<><rect x="1.8" y="10" width="12.4" height="3.6" rx="1.4" /><rect x="3.4" y="5.4" width="2.8" height="2.8" rx=".8" /><rect x="6.6" y="5.4" width="2.8" height="2.8" rx=".8" /><rect x="9.8" y="5.4" width="2.8" height="2.8" rx=".8" /></>)}
+                {p.glyph === "bubble" && (<><path d="M3.2 3h9.6A1.7 1.7 0 0 1 14.5 4.7v5a1.7 1.7 0 0 1-1.7 1.7H7.4L4.3 13.8v-2.4H3.2A1.7 1.7 0 0 1 1.5 9.7v-5A1.7 1.7 0 0 1 3.2 3z" /></>)}
+              </svg>
+            </span>
+            <a href={p.href} data-nav>{p.name}</a>
+          </li>
+        ))}
+      </ul>
 
-    {sections.map((section) => {
-      let lastRun: string | undefined;
-      return (
+      {sections.map((section) => (
         <section class="sect">
           <div class="sectlabel">
             <a href={section.href} data-nav>{section.label}</a>
-            <span class="count" aria-hidden="true">{section.rows.length}</span>
+            <span class="rule" aria-hidden="true"></span>
+            <span class="count" aria-hidden="true">
+              {section.groups.reduce((n, g) => n + g.rows.length, 0)}
+            </span>
           </div>
           <ul data-group={section.key}>
-            {section.rows.map((r, i) => {
-              const startsRun = r.run && r.run !== lastRun;
-              lastRun = r.run;
-              return (
-                <>
-                  {startsRun && <li class="runlabel" aria-hidden="true">{r.run}</li>}
-                  <li class="row file" data-title={r.title} data-run={r.run}>
-                    <span class="dot" aria-hidden="true" style={`--d: var(--c-hue-${hue(r.name)}, var(--c-${hue(r.name)}))`} />
-                    <a href={r.href} data-nav>{r.name}</a>
-                    <span class="rowmeta" aria-hidden="true">{r.meta}</span>
+            {section.groups.map((group) => (
+              <>
+                {group.run && group.rows.length > 0 && (
+                  <li class="runlabel" data-run={group.run.label} style={vars(group.run.hue)} aria-hidden="true">
+                    <span>{group.run.label}</span>
                   </li>
-                </>
-              );
-            })}
+                )}
+                {group.rows.map((r, i) => (
+                  <li
+                    class:list={["row", "file", { plain: !r.hue, inrun: group.run, last: group.run && i === group.rows.length - 1 }]}
+                    style={r.hue ? vars(r.hue) : undefined}
+                    data-title={r.title}
+                    data-run={group.run?.label}
+                  >
+                    <span class="dot" aria-hidden="true"></span>
+                    <a href={r.href} data-nav>{r.stem}<span class="ext">.mdx</span></a>
+                    {r.meta && <span class:list={["rowmeta", { typed: r.typed }]} aria-hidden="true">{r.meta}</span>}
+                  </li>
+                ))}
+              </>
+            ))}
           </ul>
         </section>
-      );
-    })}
-  </div>
+      ))}
 
-  <p class="empty" data-empty hidden>No match.</p>
+      <p class="empty" data-empty hidden>No match.</p>
+    </div>
+
+    <div class="foot">
+      <a class="resume" href={SITE.resume}>resume<span class="ext">.pdf</span></a>
+      <ul class="socials">
+        {socials.map((s) => (
+          <li>
+            <a href={s.href} rel={s.href!.startsWith("http") ? "noopener noreferrer" : undefined} aria-label={s.label} title={s.label}>
+              {s.logo && <span class="logo" aria-hidden="true" style={`--src: url(/logos/${s.logo})`}></span>}
+              {s.glyph === "linkedin" && (
+                <svg aria-hidden="true" viewBox="0 0 128 128" width="15" height="15" fill="currentColor" fill-rule="evenodd">
+                  <path d="M116 3H12a8.91 8.91 0 0 0-9 8.8v104.42a8.91 8.91 0 0 0 9 8.78h104a8.93 8.93 0 0 0 9-8.81V11.77A8.93 8.93 0 0 0 116 3ZM21.06 48.73h18.11V107H21.06zm9.06-29a10.5 10.5 0 1 1-10.5 10.49a10.5 10.5 0 0 1 10.5-10.49m20.41 29h17.36v8h.24c2.42-4.58 8.32-9.41 17.13-9.41C103.6 47.28 107 59.35 107 75v32H88.89V78.65c0-6.75-.12-15.44-9.41-15.44s-10.87 7.36-10.87 15V107H50.53z" />
+                </svg>
+              )}
+              {s.glyph === "mail" && (
+                <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round">
+                  <rect x="2" y="3.5" width="12" height="9" rx="1.8" /><path d="m2.6 4.4 5.4 4.2 5.4-4.2" />
+                </svg>
+              )}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
 </nav>
 
 <style>
+  /*
+   * The column is as tall as the page and never taller: `contain: size`
+   * stops the rail inside it from propping short pages open. The rail
+   * is sticky and as tall as the part of the column on screen, which
+   * scripts/sidebar.ts measures; without it, 100% capped at 100vh.
+   */
   .sidebar {
-    display: flex;
-    flex-direction: column;
     flex: 0 0 var(--w-sidebar);
     width: var(--w-sidebar);
     background: var(--c-chrome);
     border-right: 1px solid var(--c-hairline);
-    padding-block: var(--s-3) var(--s-6);
-    overflow-y: auto;
+    contain: size;
+  }
+  .rail {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    height: var(--rail-h, 100%);
+    max-height: 100vh;
   }
 
-  .head {
+  /* Who this is. The homepage's voice, carried onto every page. */
+  .id {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding-inline: var(--s-4) var(--s-3);
-    margin-bottom: var(--s-2);
+    gap: var(--s-2);
+    padding: var(--s-4) var(--s-3) var(--s-3) var(--s-4);
   }
-  .explorer {
+  .me {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    color: inherit;
+  }
+  .me img {
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+  }
+  .who {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.3;
+  }
+  .name {
+    font-size: var(--t-sans-sm);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--c-text);
+    transition: color var(--dur-state) var(--ease);
+  }
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
-    color: var(--c-dim);
-    letter-spacing: 0.08em;
+    color: var(--c-accent);
+    white-space: nowrap;
   }
+  .status i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  @media (hover: hover) {
+    .me:hover .name { color: var(--c-link); }
+  }
+
   .close {
     display: none;
-    width: 30px; height: 30px;
+    flex: 0 0 auto;
+    width: 36px; height: 36px;
     place-items: center;
     border-radius: var(--radius-sm);
     color: var(--c-muted);
@@ -165,7 +306,19 @@ const pages = [
     cursor: pointer;
   }
 
-  .searchbar { padding-inline: var(--s-3); margin-bottom: var(--s-4); }
+  .searchbar {
+    position: relative;
+    padding-inline: var(--s-3);
+    margin-bottom: var(--s-2);
+  }
+  .searchbar svg {
+    position: absolute;
+    left: calc(var(--s-3) + 10px);
+    top: 50%;
+    translate: 0 -50%;
+    color: var(--c-dim);
+    pointer-events: none;
+  }
   .searchbar input {
     width: 100%;
     font-family: var(--font-mono);
@@ -174,21 +327,85 @@ const pages = [
     background: var(--c-bg);
     border: 1px solid var(--c-hairline);
     border-radius: var(--radius-sm);
-    padding: 6px 10px;
+    padding: 6px 10px 6px 30px;
+    transition: border-color var(--dur-state) var(--ease);
   }
+  .searchbar input:focus { border-color: var(--c-hairline-strong); }
   .searchbar input::-webkit-search-cancel-button { -webkit-appearance: none; }
+
+  /* Files soften out under the search box and over the footer instead of
+     being guillotined. The fades sit in the padding, so at rest nothing is
+     faded; only a scrolled list passes through them. */
+  .tree {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding-block: var(--s-2) var(--s-5);
+    scrollbar-width: thin;
+    scrollbar-color: var(--c-hairline-strong) transparent;
+    -webkit-mask-image: linear-gradient(transparent, black var(--s-3), black calc(100% - var(--s-4)), transparent);
+    mask-image: linear-gradient(transparent, black var(--s-3), black calc(100% - var(--s-4)), transparent);
+  }
 
   ul { list-style: none; margin: 0; padding: 0; }
 
-  /* Section label: the loudest small thing in the rail. */
+  .row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin-inline: var(--s-1);
+    padding-inline: var(--s-2);
+    border-radius: var(--radius-sm);
+    line-height: 2;
+    transition: background var(--dur-state) var(--ease);
+  }
+  .row[hidden] { display: none; }
+
+  /* The whole row is the target, not just the letters in it. */
+  .row a::after { content: ""; position: absolute; inset: 0; }
+
+  .row a {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color var(--dur-state) var(--ease);
+  }
+  /* Every file is .mdx, so the extension steps back and the name leads. */
+  .ext { color: var(--c-dim); }
+
+  /* Pages: the top level, in sans, each with a tile the way the homepage
+     tints its words. */
+  .pages { margin-top: var(--s-1); }
+  .page { gap: var(--s-3); line-height: 2.2; }
+  .page a {
+    font-family: var(--font-sans);
+    font-size: var(--t-sans-sm);
+  }
+  .tile {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    color: var(--h);
+    background: var(--t);
+  }
+
+  /* Section label: a rule and a count, the same rhythm as SectionHead. */
   .sect { margin-top: var(--s-5); }
   .sectlabel {
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
+    align-items: center;
     gap: var(--s-2);
-    padding-inline: var(--s-4) var(--s-3);
-    margin-bottom: var(--s-2);
+    padding-inline: var(--s-3);
+    margin-bottom: var(--s-1);
   }
   .sectlabel a {
     font-family: var(--font-mono);
@@ -198,69 +415,70 @@ const pages = [
     color: var(--c-text);
     font-weight: 500;
   }
+  .sectlabel .rule {
+    flex: 1 1 auto;
+    height: 1px;
+    background: var(--c-hairline);
+  }
   .sectlabel .count {
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
     color: var(--c-dim);
+    font-variant-numeric: tabular-nums;
   }
 
-  /* A series is a labelled run, not another folder. */
+  /*
+   * The dot. 7px so it can sit on a line; hollow when the file belongs
+   * to nothing. Its centre is 11.5px into the row, which is where the
+   * run's line is drawn.
+   */
+  .dot {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 auto;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--h);
+    transition: transform var(--dur-state) var(--ease);
+  }
+  .plain .dot {
+    background: transparent;
+    border: 1px solid var(--c-hairline-strong);
+  }
+
+  /* A run: a chip in its colour, and a line through its files in order. */
   .runlabel {
-    padding: var(--s-3) var(--s-4) var(--s-1);
+    position: relative;
+    padding: var(--s-3) var(--s-3) var(--s-1) var(--s-2);
+  }
+  .runlabel span {
+    display: inline-block;
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
-    color: var(--c-dim);
+    line-height: 1.5;
+    color: var(--h);
+    background: var(--t);
+    padding: 1px 8px;
+    border-radius: var(--radius-pill);
   }
-  .runlabel::before {
+  .runlabel::after,
+  .inrun::before {
     content: "";
-    display: block;
-    width: 18px;
-    border-top: 1px solid var(--c-hairline-strong);
-    margin-bottom: var(--s-2);
+    position: absolute;
+    width: 1px;
+    background: var(--h);
+    opacity: 0.4;
   }
+  .runlabel::after { left: 15px; bottom: 0; height: var(--s-1); }
+  .inrun::before { left: 11px; top: 0; bottom: 0; }
+  .inrun.last::before { bottom: 50%; }
+  /* With rows filtered out the line would join files that aren't neighbours. */
+  .tree[data-searching] .runlabel::after,
+  .tree[data-searching] .inrun::before { display: none; }
 
-  .row {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: var(--s-1);
-    margin-inline: var(--s-1);
-    padding-inline: var(--s-2);
-    border-radius: var(--radius-sm);
-    line-height: 2;
-    transition: background var(--dur-state) var(--ease);
-  }
-  .row[hidden] { display: none; }
-
-  .row a {
-    flex: 1 1 auto;
-    min-width: 0;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    color: var(--c-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: color var(--dur-state) var(--ease);
-  }
-
-  /* Pages read as the top level: sans, a size up, no dot. */
-  .page a {
-    font-family: var(--font-sans);
-    font-size: var(--t-sans-sm);
-    color: var(--c-text);
-  }
-
-  .dot {
-    flex: 0 0 auto;
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--d);
-    opacity: 0.9;
-  }
-
-  /* The metadata column is what breaks the monotony — a file browser
-     shows size and date, so this shows reading time and year. */
+  /* A file browser shows size and date; this shows reading time, or for
+     a project, what kind of thing it is — in that kind's colour. */
   .rowmeta {
     flex: 0 0 auto;
     font-family: var(--font-mono);
@@ -268,40 +486,96 @@ const pages = [
     color: var(--c-dim);
     font-variant-numeric: tabular-nums;
   }
+  .rowmeta.typed { color: var(--h); }
 
   @media (hover: hover) {
     .row:hover { background: var(--c-raised); }
-    .row:hover a { color: var(--c-text); }
     .sectlabel a:hover { color: var(--c-link); }
   }
 
   .row[data-active] { background: var(--c-tint-accent); }
-  .row[data-active] a { color: var(--c-accent); font-weight: 500; }
-  .row[data-active] .dot { opacity: 1; }
+  .row[data-active] a,
+  .row[data-active] .ext { color: var(--c-accent); font-weight: 500; }
+  .row[data-active] .dot { transform: scale(1.4); }
   .row[data-active] .rowmeta { color: var(--c-accent); }
 
   .empty {
-    padding-inline: var(--s-4);
+    padding: var(--s-3) var(--s-4);
     font-family: var(--font-mono);
     font-size: var(--t-mono-sm);
     color: var(--c-dim);
   }
 
+  /* Where else to find him, pinned under the files. */
+  .foot {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-2);
+    padding: var(--s-2) var(--s-2) var(--s-2) var(--s-3);
+    border-top: 1px solid var(--c-hairline);
+  }
+  .resume {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-text);
+    padding: 4px var(--s-2);
+    margin-inline-start: calc(var(--s-2) * -1 + var(--s-1));
+    border-radius: var(--radius-sm);
+    transition: background var(--dur-state) var(--ease);
+  }
+  .socials { display: flex; }
+  .socials a {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    color: var(--c-muted);
+    transition: background var(--dur-state) var(--ease), color var(--dur-state) var(--ease);
+  }
+  .logo {
+    width: 15px;
+    height: 15px;
+    background: currentColor;
+    -webkit-mask: var(--src) center / contain no-repeat;
+    mask: var(--src) center / contain no-repeat;
+  }
+  @media (hover: hover) {
+    .resume:hover,
+    .socials a:hover { background: var(--c-raised); color: var(--c-text); }
+  }
+
+  /*
+   * Below 900px the rail is a drawer over the page. Fixed rather than
+   * absolute, so it opens on screen wherever you've scrolled to, and
+   * invisible while closed so its links leave the tab order.
+   */
   @media (max-width: 900px) {
     .sidebar {
-      position: absolute;
+      position: fixed;
       inset-block: 0;
       inset-inline-start: 0;
       z-index: 3;
-      flex-basis: min(86vw, 320px);
       width: min(86vw, 320px);
+      height: 100dvh;
+      contain: none;
       transform: translateX(-100%);
+      visibility: hidden;
+      transition: transform var(--dur-state) var(--ease), visibility 0s linear var(--dur-state);
+    }
+    .sidebar[data-open="true"] {
+      transform: translateX(0);
+      visibility: visible;
       transition: transform var(--dur-state) var(--ease);
     }
-    .sidebar[data-open="true"] { transform: translateX(0); }
+    .rail { position: static; height: 100%; max-height: none; }
     .close { display: grid; }
-    .searchbar input { font-size: 16px; padding: 10px 12px; }
+    .searchbar input { font-size: 16px; padding: 10px 12px 10px 32px; }
     .row { line-height: 1.4; min-height: 46px; }
     .row a { display: flex; align-items: center; min-height: 46px; }
+    .socials a { width: 44px; height: 44px; }
+    .resume { padding-block: 12px; }
   }
 </style>

@@ -9,11 +9,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const paths = [
     // Static pages
     { params: { slug: "home" }, props: { title: "Phil Vishnevsky", subtitle: "SWE, AI Enthusiast, and Homelabber", type: "page", tags: [] } },
-    { params: { slug: "blog" }, props: { title: "Blog", subtitle: "Thoughts on code, tools, and building things", type: "page", tags: [] } },
+    { params: { slug: "blog" }, props: { title: "Writing", subtitle: "Thoughts on code, tools, and building things", type: "page", tags: [] } },
     { params: { slug: "projects" }, props: { title: "Projects", subtitle: "My experiments, projects, and failures", type: "page", tags: [] } },
     { params: { slug: "about" }, props: { title: "About", subtitle: "The story so far", type: "page", tags: [], variant: "about" } },
-    { params: { slug: "links" }, props: { title: "Elsewhere", subtitle: "Where to find me on the rest of the internet", type: "page", tags: [] } },
-    { params: { slug: "desk" }, props: { title: "Desk", subtitle: "The apps I use, and things worth opening", type: "page", tags: [] } },
+    { params: { slug: "say-hi" }, props: { title: "Say hi", subtitle: "Email, a call, or wherever else I am", type: "page", tags: [] } },
+    { params: { slug: "dock" }, props: { title: "Dock", subtitle: "The apps I use, and things worth opening", type: "page", tags: [] } },
 
     // Blog posts
     ...blogPosts.map((post) => ({

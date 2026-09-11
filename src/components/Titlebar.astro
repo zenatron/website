@@ -1,7 +1,15 @@
 ---
 /**
- * Persistent across navigation. The path is re-synced by shell.ts on
+ * Persistent across navigation. The title is re-synced by shell.ts on
  * astro:page-load rather than re-rendered, because the node never remounts.
+ *
+ * The title is what a macOS document window shows: a proxy icon and the
+ * document's name. The path it used to show is still there, as a tooltip.
+ *
+ * The traffic lights are the focused window's, so they're in colour, and
+ * they work: close closes the tab you're on, minimise puts the explorer
+ * away, zoom lets the window fill the screen. scripts/window.ts wires them;
+ * the choices persist, and are restored before first paint in Shell.
  */
 import { SITE } from "@/data/site";
 import ThemeToggle from "@/components/ThemeToggle.astro";
@@ -13,9 +21,22 @@ import ThemeToggle from "@/components/ThemeToggle.astro";
     <span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>
   </button>
 
-  <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+  <div class="lights" role="group" aria-label="Window">
+    <button class="light close" type="button" data-light="close" aria-label="Close tab" title="Close tab">
+      <svg aria-hidden="true" viewBox="0 0 12 12"><path d="M4 4l4 4M8 4l-4 4" /></svg>
+    </button>
+    <button class="light min" type="button" data-light="rail" aria-label="Hide sidebar" aria-pressed="false" title="Hide sidebar">
+      <svg aria-hidden="true" viewBox="0 0 12 12"><path d="M3.5 6h5" /></svg>
+    </button>
+    <button class="light zoom" type="button" data-light="zoom" aria-label="Zoom window" aria-pressed="false" title="Zoom">
+      <svg aria-hidden="true" viewBox="0 0 12 12"><path d="M6 3.5v5M3.5 6h5" /></svg>
+    </button>
+  </div>
 
-  <span class="path" data-titlebar-path>{SITE.user}@{SITE.host} — ~</span>
+  <p class="title" data-titlebar-title>
+    <span class="proxy" data-titlebar-proxy aria-hidden="true"><img src="/favicon.svg" alt="" width="16" height="16" /></span>
+    <span class="name" data-titlebar-name>{SITE.name}</span>
+  </p>
 
   <ThemeToggle />
   <button class="keycap" type="button" data-open-terminal>
@@ -36,29 +57,100 @@ import ThemeToggle from "@/components/ThemeToggle.astro";
     border-bottom: 1px solid var(--c-hairline);
   }
 
+  /*
+   * Each light is a 20px button around a 12px dot, so the targets touch
+   * and the dots sit 8px apart, as macOS spaces them. Hovering the group
+   * shows all three glyphs at once, the way macOS does.
+   */
   .lights {
     display: flex;
-    gap: var(--s-2);
     flex: 0 0 auto;
+    margin-inline-start: calc(var(--s-1) * -1);
   }
-  .lights i {
-    width: 11px;
-    height: 11px;
+  .light {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    cursor: pointer;
+  }
+  .light::before {
+    content: "";
+    grid-area: 1 / 1;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
-    background: var(--c-trafficlight);
+    background: var(--c);
+    outline: 0.5px solid var(--light-edge);
+    outline-offset: -0.5px;
   }
+  .light svg {
+    grid-area: 1 / 1;
+    z-index: 1;
+    width: 12px;
+    height: 12px;
+    fill: none;
+    stroke: var(--light-glyph);
+    stroke-width: 1.3;
+    stroke-linecap: round;
+    opacity: 0;
+    transition: opacity var(--dur-state) var(--ease);
+  }
+  .close { --c: var(--light-close); }
+  .min   { --c: var(--light-min); }
+  .zoom  { --c: var(--light-zoom); }
+  .lights:hover .light svg,
+  .light:focus-visible svg { opacity: 1; }
+  .light:focus-visible { outline: none; }
+  .light:focus-visible::before { outline: 1px solid var(--c-accent); outline-offset: 2px; }
 
-  .path {
+  /* The window's title: proxy icon, then the name, centred. */
+  .title {
     flex: 1 1 auto;
     min-width: 0;
-    text-align: center;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    color: var(--c-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-size: var(--t-sans-xs);
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    color: var(--c-text);
+  }
+  .name {
+    min-width: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .proxy {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+  }
+  .proxy img { width: 16px; height: 16px; border-radius: 4px; }
+  /* A page's tile from the explorer, shrunk to proxy size. */
+  .proxy :global(.ptile) {
+    display: grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 4.5px;
+    color: var(--h);
+    background: var(--t);
+  }
+  .proxy :global(.ptile svg) { width: 11px; height: 11px; }
+  /* A file's dot from the explorer. */
+  .proxy :global(.pdot) {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--h);
+  }
+  .proxy :global(.pdot[data-plain]) { background: transparent; border: 1px solid var(--c-hairline-strong); }
 
   .keycap {
     flex: 0 0 auto;
@@ -69,6 +161,10 @@ import ThemeToggle from "@/components/ThemeToggle.astro";
     padding: 3px 7px;
     border-radius: var(--radius-sm);
     line-height: 1;
+    transition: color var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease);
+  }
+  @media (hover: hover) {
+    .keycap:hover { color: var(--c-text); border-color: var(--c-hairline-strong); }
   }
 
   /* The drawer toggle only exists below 900px. */

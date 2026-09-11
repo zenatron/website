@@ -34,7 +34,7 @@ function labelFor(pathname: string): string {
   if (path === "") return "home";
   const parts = path.split("/").filter(Boolean);
   if (parts.length === 1) {
-    return parts[0] === "links" ? "elsewhere" : parts[0];
+    return parts[0] === "say-hi" ? "say hi" : parts[0];
   }
   return `${parts[parts.length - 1]}.mdx`;
 }
@@ -60,7 +60,22 @@ function render() {
 
     const a = document.createElement("a");
     a.href = tab.href;
-    a.textContent = tab.label;
+    // The file's dot, in the colour the explorer gives it — read from the
+    // explorer rather than stored, so a tab can't disagree with its row.
+    const row = document.querySelector<HTMLElement>(`#sidebar a[data-nav][href="${CSS.escape(tab.href)}"]`)?.closest<HTMLElement>(".row");
+    if (row) {
+      const dot = document.createElement("span");
+      dot.className = "dot";
+      dot.setAttribute("aria-hidden", "true");
+      const hue = row.style.getPropertyValue("--h");
+      if (hue) dot.style.setProperty("--h", hue);
+      else dot.dataset.plain = "";
+      a.append(dot);
+    }
+    const label = document.createElement("span");
+    label.className = "label";
+    label.textContent = tab.label;
+    a.append(label);
     if (tab.href === here) a.setAttribute("aria-current", "page");
 
     const close = document.createElement("button");
@@ -114,6 +129,9 @@ function open() {
   }
   render();
 }
+
+// The close light in the titlebar closes the tab you're on.
+document.addEventListener("tabs:close-current", () => closeTab(currentHref()));
 
 document.addEventListener("astro:page-load", open);
 open();

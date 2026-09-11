@@ -1,0 +1,172 @@
+---
+/**
+ * The ways to reach Phil, as two cards: each whole card is the target,
+ * and the thing you came for is set large — the address itself for
+ * email, what it does for the calendar.
+ *
+ * An address is something you copy, so that card has a button for
+ * exactly that; everything else is something you follow.
+ *
+ * Leads /say-hi, and closes /about.
+ */
+import AppIcon from "@/components/AppIcon.astro";
+import { links } from "@/lib/links";
+
+const reach = links.filter((l) => l.reach);
+const rel = (url: string) => (url.startsWith("http") ? "noopener noreferrer" : undefined);
+---
+
+<ul class="reach">
+  {reach.map((l) => (
+    <li class="card glint-host">
+      <span class="icon"><AppIcon item={l} lazy={false} /></span>
+      <span class="body">
+        <span class="eyebrow">{l.title.toLowerCase()}{l.via && <span> · {l.via}</span>}</span>
+        <a class="lead" href={l.url} rel={rel(l.url)}>{l.copy ? l.handle : l.description}</a>
+        <span class:list={["sub", !l.copy && "addr"]}>{l.copy ? l.description : l.handle}</span>
+      </span>
+      {l.copy ? (
+        <button class="copy" type="button" data-copy={l.handle} aria-label={`Copy ${l.handle}`}>
+          <span data-copy-label>copy</span>
+          <span class="sr-only" aria-live="polite" data-copy-status></span>
+        </button>
+      ) : (
+        <svg class="go" aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 11 11 5" /><path d="M6 5h5v5" />
+        </svg>
+      )}
+    </li>
+  ))}
+</ul>
+
+<style>
+  .reach {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--s-3);
+  }
+  .card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--s-4);
+    padding: var(--s-5);
+    background: var(--c-chrome);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
+    transition: border-color var(--dur-state) var(--ease), background var(--dur-state) var(--ease);
+  }
+  .icon {
+    flex: 0 0 auto;
+    width: 56px;
+    height: 56px;
+  }
+  .body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: 0.04em;
+    color: var(--c-dim);
+  }
+  .lead {
+    font-size: var(--t-sans-lg);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    color: var(--c-text);
+    overflow-wrap: anywhere;
+    transition: color var(--dur-state) var(--ease);
+  }
+  /* The lead link covers the card; the copy button sits above it. */
+  .lead::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+  .sub {
+    font-size: var(--t-sans-sm);
+    color: var(--c-muted);
+  }
+  /* A handle is mono wherever it appears. */
+  .sub.addr {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-dim);
+  }
+
+  .copy {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 auto;
+    min-width: 7ch;
+    padding: 5px 12px;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-muted);
+    background: var(--c-bg);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: color var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease), background var(--dur-state) var(--ease);
+  }
+  .copy[data-done] {
+    color: var(--c-link);
+    background: var(--c-tint-link);
+    border-color: transparent;
+  }
+
+  .go {
+    flex: 0 0 auto;
+    color: var(--c-dim);
+    transition: color var(--dur-state) var(--ease), transform var(--dur-state) var(--ease);
+  }
+
+  @media (hover: hover) {
+    .card:hover { border-color: var(--c-hairline-strong); background: var(--c-raised); }
+    .card:hover .lead { color: var(--c-link); }
+    .card:hover .go { color: var(--c-text); transform: translate(2px, -2px); }
+    .copy:hover { color: var(--c-text); border-color: var(--c-hairline-strong); }
+  }
+
+  @media (max-width: 600px) {
+    .card { padding: var(--s-4); }
+    .icon { width: 48px; height: 48px; }
+  }
+</style>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    for (const btn of document.querySelectorAll<HTMLButtonElement>("[data-copy]")) {
+      if (btn.dataset.wired) continue;
+      btn.dataset.wired = "1";
+      const label = btn.querySelector<HTMLElement>("[data-copy-label]");
+      const status = btn.querySelector<HTMLElement>("[data-copy-status]");
+      const set = (done: boolean) => {
+        btn.toggleAttribute("data-done", done);
+        if (label) label.textContent = done ? "copied" : "copy";
+        if (status) status.textContent = done ? "Copied to clipboard" : "";
+      };
+      btn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(btn.dataset.copy ?? "");
+          set(true);
+        } catch {
+          // No clipboard access; the address is still right there to select.
+        }
+      });
+      // "copied" holds until you move on, rather than on a timer.
+      btn.addEventListener("pointerleave", () => set(false));
+      btn.addEventListener("blur", () => set(false));
+    }
+  });
+</script>

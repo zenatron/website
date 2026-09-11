@@ -1,0 +1,123 @@
+---
+/**
+ * One app's icon, the way macOS draws it: full colour, cut to a squircle
+ * (or a circle, if that's what the artwork is), with glass on top — a
+ * bright rim where the light catches the edge, a gloss, and a glint that
+ * crosses it when you hover.
+ *
+ * What goes behind the artwork depends on what the artwork is:
+ *   - an app icon that is already a squircle or circle wears that shape
+ *     itself, scaled until it covers the clip;
+ *   - a glyph, or an app icon of no particular shape (CrowdSec's mascot),
+ *     sits on a plate, centred on its real ink rather than its canvas and
+ *     sized by area so a wide wordmark and a tall crystal read the same;
+ *   - white artwork gets the dark plate.
+ *
+ * Every icon has the plate painted behind it, even the ones that cover
+ * it: artwork with cut-outs (Karakeep's H, Spotify's arcs) otherwise shows
+ * the page through them, and turns into a dark blob on a dark page.
+ *
+ * Fills its parent; the parent decides the size. The dock and the home
+ * page both draw icons through this, so the rules can't drift apart.
+ */
+import type { Favorite } from "@/data/favorites";
+import { iconBox } from "@/lib/iconbox";
+
+interface Props {
+  item: Pick<Favorite, "logo" | "appIcon" | "darkTile">;
+  lazy?: boolean;
+}
+const { item, lazy = true } = Astro.props;
+
+const box = await iconBox(item.logo!);
+const bare = Boolean(item.appIcon) && box.shape !== "free";
+const k = bare
+  ? box.cover / Math.max(box.w, box.h)
+  : Math.min(0.58 / Math.sqrt(box.w * box.h), 0.72 / Math.max(box.w, box.h));
+const pct = (n: number) => `${(n * 100).toFixed(2)}%`;
+const style = `--k: ${k.toFixed(3)}; --dx: ${pct((0.5 - box.cx) * k)}; --dy: ${pct((0.5 - box.cy) * k)}`;
+---
+<span
+  class:list={["appicon", bare ? box.shape : "plate", !bare && item.darkTile && "ondark"]}
+  style={style}
+>
+  <img
+    src={`/logos/${item.logo}`}
+    alt=""
+    width="64"
+    height="64"
+    loading={lazy ? "lazy" : undefined}
+    decoding="async"
+  />
+</span>
+
+<style>
+  .appicon {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* Apple's squircle, near enough. SQUIRCLE in lib/iconbox.ts must match. */
+    border-radius: 22.5%;
+    overflow: hidden;
+    isolation: isolate;
+    background: linear-gradient(var(--c-tile-light), var(--c-tile-light-lo));
+  }
+  .appicon.circle { border-radius: 50%; }
+
+  .appicon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform: translate(var(--dx), var(--dy)) scale(var(--k));
+  }
+
+  .plate.ondark { background: var(--c-tile-dark); }
+
+  /* Gloss from the top, shade at the bottom, and the glint waiting just
+     off the left edge. */
+  .appicon::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      linear-gradient(115deg, transparent 40%, var(--glass-glint) 50%, transparent 60%) 100% 0 / 300% 100% no-repeat,
+      linear-gradient(var(--glass-gloss), transparent 45%, transparent 70%, var(--glass-shade));
+  }
+
+  /* The rim: a 1px ring, brightest where the light hits the top-left,
+     over a hairline that gives a light plate an edge on a light page. */
+  .appicon::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    padding: 1px;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      linear-gradient(155deg, var(--glass-rim), var(--glass-rim-soft) 28%, transparent 52%, var(--glass-rim-soft)),
+      linear-gradient(var(--glass-line), var(--glass-line));
+    -webkit-mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
+    mask-composite: exclude;
+  }
+
+  /* Hovering the icon glints it; so does hovering anything that marks
+     itself a `glint-host` — a card or row whose whole area is the target,
+     where the pointer is rarely on the icon itself. */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .appicon:hover::before,
+    :global(.glint-host:hover) .appicon::before {
+      animation: appicon-glint calc(var(--dur-pane) * 2) var(--ease);
+    }
+  }
+  @keyframes appicon-glint {
+    from { background-position: 100% 0, 0 0; }
+    to   { background-position: 0% 0, 0 0; }
+  }
+</style>
