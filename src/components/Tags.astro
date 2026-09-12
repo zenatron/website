@@ -1,25 +1,20 @@
 ---
-/** Soft tinted pills. The tint is derived from the tag, so a given tag
-    keeps its color everywhere it appears on the site. */
+/**
+ * A list of small facts: a post's topics, a project's stack.
+ *
+ * No color. Color on this site means category — a hue says "this is a
+ * tool", "this is part of the homelab series" — and a tag is not a
+ * category, so tinting one per tag spent the palette on decoration and
+ * left six hues that meant nothing. These sit in the machine's voice,
+ * quiet, and let the title lead.
+ */
 interface Props { tags: string[]; max?: number; }
 const { tags, max } = Astro.props;
 const shown = max ? tags.slice(0, max) : tags;
-
-const HUES = ["violet", "orange", "blue", "green", "accent", "link"];
-function hueFor(tag: string): string {
-  let h = 0x811c9dc5;
-  for (let i = 0; i < tag.length; i++) { h ^= tag.charCodeAt(i); h = Math.imul(h, 0x01000193); }
-  return HUES[(h >>> 0) % HUES.length];
-}
 ---
 {shown.length > 0 && (
   <ul class="tags">
-    {shown.map((tag) => {
-      const hue = hueFor(tag);
-      return (
-        <li style={`--fg: var(--c-hue-${hue}, var(--c-${hue})); --bg: var(--c-tint-${hue});`}>{tag}</li>
-      );
-    })}
+    {shown.map((tag) => <li>{tag}</li>)}
   </ul>
 )}
 
@@ -28,18 +23,19 @@ function hueFor(tag: string): string {
     list-style: none;
     display: flex;
     flex-wrap: wrap;
-    gap: var(--s-2);
+    gap: var(--s-1) var(--s-2);
     margin: 0;
     padding: 0;
   }
   .tags li {
     font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
+    font-size: var(--t-mono-xs);
     line-height: 1.5;
-    color: var(--fg);
-    background: var(--bg);
-    padding: 3px 10px;
-    border-radius: var(--radius-pill);
+    color: var(--c-muted);
+    background: var(--c-sunken);
+    border: 1px solid var(--c-hairline);
+    padding: 2px 7px;
+    border-radius: var(--radius-chip);
     white-space: nowrap;
   }
 </style>

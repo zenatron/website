@@ -66,7 +66,6 @@ const suggested = seriesKey
         href: `/blog/${p.slug}`,
         slug: p.slug,
         description: p.data.excerpt || undefined,
-        tags: p.data.tags ?? [],
         art: await cardArt({ slug: p.slug, title: p.data.title, collection: "blog" }),
       }))
     );

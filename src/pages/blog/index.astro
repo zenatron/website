@@ -58,7 +58,6 @@ const cells = await Promise.all(
     href: `/blog/${p.slug}`,
     slug: p.slug,
     description: p.data.excerpt || undefined,
-    tags: p.data.tags ?? [],
     meta: monthYear(p.data.date),
     art: await cardArt({ slug: p.slug, title: p.data.title, collection: "blog" }),
   }))

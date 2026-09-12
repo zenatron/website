@@ -228,6 +228,13 @@ const socials = [
     display: flex;
     flex-direction: column;
     height: 100%;
+    /*
+     * Where a run's line is drawn: the center of the dot column. A row is
+     * inset --s-1 and padded --s-2, and the dot is 7px wide, so its center
+     * lands 15.5px in. Everything that has to line up with a dot — the
+     * line, its stub, a run's name — is keyed to this one number.
+     */
+    --run-line: 15px;
   }
 
   /* Who this is. The homepage's voice, carried onto every page. */
@@ -437,20 +444,28 @@ const socials = [
     border: 1px solid var(--c-hairline-strong);
   }
 
-  /* A run: a chip in its color, and a line through its files in order. */
+  /*
+   * A run: its name in its color, and a line through its files in order.
+   *
+   * The name used to sit on a tinted plate, which made it the loudest
+   * thing in a rail of quiet filenames — a label for a group, shouting
+   * over the group. The color is enough to tie it to its line and its
+   * dots, so it's set like the section label one level up, a size down
+   * and in the run's hue rather than the text color.
+   */
   .runlabel {
     position: relative;
-    padding: var(--s-3) var(--s-3) var(--s-1) var(--s-2);
+    /* The name starts where its line runs, so it captions the line. */
+    padding: var(--s-3) var(--s-3) var(--s-1) var(--run-line);
   }
   .runlabel span {
     display: inline-block;
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
     line-height: 1.5;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     color: var(--h);
-    background: var(--t);
-    padding: 1px 8px;
-    border-radius: var(--radius-pill);
   }
   .runlabel::after,
   .inrun::before {
@@ -460,8 +475,9 @@ const socials = [
     background: var(--h);
     opacity: 0.4;
   }
-  .runlabel::after { left: 15px; bottom: 0; height: var(--s-1); }
-  .inrun::before { left: 11px; top: 0; bottom: 0; }
+  .runlabel::after { left: var(--run-line); bottom: 0; height: var(--s-1); }
+  /* A file row is inset by --s-1, so the same column is that much nearer. */
+  .inrun::before { left: calc(var(--run-line) - var(--s-1)); top: 0; bottom: 0; }
   .inrun.last::before { bottom: 50%; }
   /* With rows filtered out the line would join files that aren't neighbors. */
   .tree[data-searching] .runlabel::after,

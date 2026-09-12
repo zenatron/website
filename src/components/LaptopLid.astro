@@ -254,7 +254,8 @@ const stickers = items.map((item, i) => {
     color: var(--sticker-paper);
     background: var(--ink);
     border: 3px solid var(--sticker-paper);
-    border-radius: var(--radius-pill);
+    /* A die-cut vinyl edge, not a UI radius — this is a drawn object. */
+    border-radius: 999px;
     overflow: hidden;
   }
   .paper .face {

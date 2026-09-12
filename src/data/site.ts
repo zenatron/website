@@ -13,15 +13,8 @@ export const SITE = {
   kofi: "https://ko-fi.com/zenatron",
 } as const;
 
-/** The homepage headline paragraph. Author's voice, so: sans. */
-export const INTRO =
-  "Full-stack engineer focused on developer experience. I build servers, performant web apps, explore creative projects, and occasionally ship things that don't break in production.";
-
 /** The one line of availability the explorer carries onto every page. */
 export const STATUS = "open to interesting projects";
-
-/** One fact about the author, not a data table. Rendered as a single line. */
-export const FACTS = ["Hartford, CT", "SWE, AI, games", "open to interesting projects"];
 
 /** Answers `whoami` in the terminal. This is where the old homepage identity block went. */
 export const WHOAMI = [
@@ -39,20 +32,6 @@ export const FORTUNES = [
   "Keep your friends rich and your enemies rich, and wait to find out which is which. — Ultron",
   "Every expert was once a beginner who refused to quit. — probably a poster somewhere",
   "Make it work, make it right, make it fast. In that order. — Kent Beck (paraphrased)",
-];
-
-/**
- * Click-to-cycle contact label. Sentence case, because these are now
- * the author's voice rather than paths.
- */
-export const CONTACT_LABELS = [
-  "Get in touch",
-  "Reach out",
-  "Say hello",
-  "Shoot your shot",
-  "Let's talk",
-  "Slide into my DMs",
-  "Make my day",
 ];
 
 /**

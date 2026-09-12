@@ -317,7 +317,7 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
     line-height: 1.5;
     color: var(--c-muted);
     border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-chip);
   }
   .facts .status {
     color: var(--c-accent);
@@ -348,8 +348,8 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
     text-decoration-thickness: 1px;
   }
 
-  /* A file, set the way the explorer sets one: the pill every "read more"
-     on this page uses, so they read as one kind of thing. */
+  /* A file, set the way the explorer sets one: the button every "read
+     more" on this page uses, so they read as one kind of thing. */
   .file {
     display: inline-flex;
     align-items: center;
@@ -360,7 +360,7 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
     color: var(--c-text);
     background: var(--c-chrome);
     border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-sm);
     transition: background var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease);
   }
   .file svg { color: var(--c-muted); }
@@ -402,7 +402,7 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
     color: var(--h);
     background: var(--t);
     padding: 2px 7px;
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-chip);
     transform: translateY(-0.3em);
   }
   .manifesto .say {
@@ -427,7 +427,7 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
     line-height: 1.4;
     color: var(--h);
     background: var(--t);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-chip);
   }
   .col li {
     display: flex;
@@ -513,7 +513,7 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
     color: var(--h);
     background: var(--t);
     padding: 1px 8px;
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-chip);
   }
   .job {
     font-family: var(--font-mono);

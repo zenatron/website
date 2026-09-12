@@ -72,7 +72,6 @@ const suggested = await Promise.all((await getSuggestedProjects(slug, 3)).map(as
   href: `/projects/${projectSlug(p)}`,
   slug: projectSlug(p),
   description: p.data.description || undefined,
-  tags: p.data.tags ?? [],
   art: await cardArt({
     slug: projectSlug(p),
     title: p.data.title,
@@ -246,7 +245,7 @@ const suggested = await Promise.all((await getSuggestedProjects(slug, 3)).map(as
     color: var(--c-text);
     background: var(--c-chrome);
     border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-sm);
     transition: background var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease), filter var(--dur-state) var(--ease);
   }
   .btn.primary {
@@ -330,8 +329,6 @@ const suggested = await Promise.all((await getSuggestedProjects(slug, 3)).map(as
     color: var(--c-link);
     overflow-wrap: anywhere;
   }
-  .info .stack dd :global(.tags) { gap: 6px; }
-  .info .stack dd :global(.tags li) { font-size: var(--t-mono-xs); padding: 2px 8px; }
   .info .stack { align-items: start; }
   .files ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-1); }
   .info .files a {

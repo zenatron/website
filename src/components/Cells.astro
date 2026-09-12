@@ -1,6 +1,14 @@
 ---
-/** Cards lead with artwork. Without it they read as a list of filenames. */
-import Tags from "@/components/Tags.astro";
+/**
+ * Cards lead with artwork. Without it they read as a list of filenames.
+ *
+ * A card carries what you need to decide whether to open it: the picture,
+ * the title, when it was made, and a sentence. Tags went under the
+ * description once and did the opposite — three identical rows of chips
+ * across a grid flattened the cards into one texture and buried the
+ * sentence that actually distinguishes them. They live on the page
+ * itself, where there's one set of them and room to read it.
+ */
 import CardArt from "@/components/CardArt.astro";
 import type { CardArt as Art } from "@/lib/cardart";
 
@@ -8,12 +16,11 @@ interface Cell {
   title: string;
   href: string;
   description?: string;
-  tags?: string[];
   meta?: string;
   slug?: string;
   art?: Art;
 }
-interface Props { cells: Cell[]; columns?: number; }
+interface Props { cells: Cell[]; }
 const { cells } = Astro.props;
 ---
 
@@ -30,9 +37,6 @@ const { cells } = Astro.props;
           {cell.description && <span class="desc">{cell.description}</span>}
         </span>
       </a>
-      {cell.tags && cell.tags.length > 0 && (
-        <div class="tagrow"><Tags tags={cell.tags} max={3} /></div>
-      )}
     </li>
   ))}
 </ul>
@@ -114,5 +118,4 @@ const { cells } = Astro.props;
     color: var(--c-muted);
     line-height: 1.5;
   }
-  .tagrow { margin-top: auto; }
 </style>

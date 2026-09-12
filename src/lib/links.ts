@@ -14,8 +14,6 @@ export interface LinkItem {
    * point of it.
    */
   reach?: boolean;
-  /** What it runs on, when that's worth saying: "Proton Mail". */
-  via?: string;
   /** The handle is worth copying rather than following — an address. */
   copy?: boolean;
 }
@@ -30,7 +28,6 @@ export const links: LinkItem[] = [
     handle: "phil@pvi.sh",
     description: "The reliable way to reach me",
     logo: "proton-mail.svg",
-    via: "Proton Mail",
     reach: true,
     copy: true,
   },
@@ -41,7 +38,6 @@ export const links: LinkItem[] = [
     description: "Book a call",
     logo: "fantastical.webp",
     appIcon: true,
-    via: "Fantastical",
     reach: true,
   },
   {

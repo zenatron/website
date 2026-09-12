@@ -265,10 +265,17 @@
   --s-1: 4px;   --s-2: 8px;   --s-3: 12px;  --s-4: 16px;
   --s-5: 24px;  --s-6: 32px;  --s-7: 48px;  --s-8: 64px;
 
+  /*
+     Four radii, all rectangles. Nothing on this site is a capsule: a
+     capsule has no corner to align to anything else, and a window
+     manager is built out of aligned corners. Depicted objects — a vinyl
+     sticker, an LED strip — set their own curve inline, because those
+     are drawings, not chrome.
+  */
   --radius-window: 16px;
   --radius-card:   12px;
   --radius-sm:      8px;
-  --radius-pill:  999px;
+  --radius-chip:    5px;
 
   --h-titlebar:  40px;
   --h-statusbar: 28px;

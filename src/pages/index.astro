@@ -2,7 +2,7 @@
 import Shell from "@/layouts/Shell.astro";
 import { cardArt } from "@/lib/cardart";
 import Cells from "@/components/Cells.astro";
-import Contact from "@/components/Contact.astro";
+import ReachCards from "@/components/ReachCards.astro";
 import Mark from "@/components/Mark.astro";
 import HeroArt from "@/components/HeroArt.astro";
 import { SITE } from "@/data/site";
@@ -24,7 +24,6 @@ const latestProjects = await Promise.all(projects.slice(0, 3).map(async (p) => (
   href: `/projects/${projectSlug(p)}`,
   slug: projectSlug(p),
   description: p.data.description || undefined,
-  tags: p.data.tags ?? [],
   meta: monthYear(p.data.date),
   art: await cardArt({
     slug: projectSlug(p),
@@ -39,7 +38,6 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
   href: `/blog/${p.slug}`,
   slug: p.slug,
   description: p.data.excerpt || undefined,
-  tags: p.data.tags ?? [],
   meta: monthYear(p.data.date),
   art: await cardArt({ slug: p.slug, title: p.data.title, collection: "blog" }),
 })));
@@ -92,7 +90,13 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
     <Cells cells={latestPosts} />
   </section>
 
-  <Contact />
+  <section class="band">
+    <div class="bandhead">
+      <h2>Get in touch</h2>
+      <a href="/say-hi">Everywhere else</a>
+    </div>
+    <ReachCards />
+  </section>
 </Shell>
 
 <style>
@@ -153,7 +157,7 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
     color: var(--fg);
     background: var(--bg);
     padding: 3px 8px;
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-chip);
     line-height: 1.4;
   }
   .currently dd {

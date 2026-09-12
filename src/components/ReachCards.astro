@@ -7,7 +7,13 @@
  * An address is something you copy, so that card has a button for
  * exactly that; everything else is something you follow.
  *
- * Leads /say-hi, and closes /about.
+ * Two lines, not three. There used to be an eyebrow above them naming
+ * the service — "email · Proton Mail" — which is the icon's job and the
+ * address's job already, and it pushed the thing you came for down into
+ * the middle of the card. Who runs the mail server is not why anyone is
+ * reading this.
+ *
+ * Closes /, leads /say-hi, and closes /about.
  */
 import AppIcon from "@/components/AppIcon.astro";
 import { links } from "@/lib/links";
@@ -21,8 +27,7 @@ const rel = (url: string) => (url.startsWith("http") ? "noopener noreferrer" : u
     <li class="card glint-host">
       <span class="icon"><AppIcon item={l} lazy={false} /></span>
       <span class="body">
-        <span class="eyebrow">{l.title.toLowerCase()}{l.via && <span> · {l.via}</span>}</span>
-        <a class="lead" href={l.url} rel={rel(l.url)}>{l.copy ? l.handle : l.description}</a>
+        <a class:list={["lead", l.copy && "addr"]} href={l.url} rel={rel(l.url)}>{l.copy ? l.handle : l.description}</a>
         <span class:list={["sub", !l.copy && "addr"]}>{l.copy ? l.description : l.handle}</span>
       </span>
       {l.copy ? (
@@ -71,12 +76,6 @@ const rel = (url: string) => (url.startsWith("http") ? "noopener noreferrer" : u
     flex-direction: column;
     gap: 2px;
   }
-  .eyebrow {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    letter-spacing: 0.04em;
-    color: var(--c-dim);
-  }
   .lead {
     font-size: var(--t-sans-lg);
     font-weight: 600;
@@ -85,6 +84,13 @@ const rel = (url: string) => (url.startsWith("http") ? "noopener noreferrer" : u
     color: var(--c-text);
     overflow-wrap: anywhere;
     transition: color var(--dur-state) var(--ease);
+  }
+  /* A handle is mono wherever it appears, lead or not — and mono at the
+     sans size beside it would tower, so it steps down one. */
+  .lead.addr {
+    font-family: var(--font-mono);
+    font-size: var(--t-sans-md);
+    letter-spacing: -0.01em;
   }
   /* The lead link covers the card; the copy button sits above it. */
   .lead::after {
@@ -115,7 +121,7 @@ const rel = (url: string) => (url.startsWith("http") ? "noopener noreferrer" : u
     color: var(--c-muted);
     background: var(--c-bg);
     border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-sm);
     cursor: pointer;
     transition: color var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease), background var(--dur-state) var(--ease);
   }
