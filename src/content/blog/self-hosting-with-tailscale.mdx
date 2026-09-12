@@ -2,7 +2,7 @@
 title: "Self‑Hosting With Tailscale: Secure Access Without Open Ports"
 date: "2026-02-19"
 readingTime: "25min"
-excerpt: "A practical guide to self‑hosting services and reaching them securely with Tailscale, no port forwarding required."
+excerpt: "Running services at home and reaching them from anywhere, without forwarding a single port."
 tags: ["self-hosting", "tailscale", "homelab", "security", "docker"]
 series: "homelab-networking"
 seriesOrder: 3
@@ -11,7 +11,7 @@ seriesOrder: 3
 import Diagram from '@/components/mdx/Diagram.astro';
 import Callout from '@/components/mdx/Callout.astro';
 
-Self‑hosting is empowering — but opening ports on your router can feel like hanging a neon sign that says "Please scan me." There's a better way: **private access via Tailscale**. If you're new here, [self‑hosting](https://en.wikipedia.org/wiki/Self-hosting_(web_services)) just means running services on hardware you control.
+Self‑hosting is empowering — but opening ports on your router can feel like hanging a neon sign that says "Please scan me." There's a better way: private access via Tailscale. If you're new here, [self‑hosting](https://en.wikipedia.org/wiki/Self-hosting_(web_services)) just means running services on hardware you control.
 
 <Diagram src="/images/blog/self-hosting-with-tailscale/remote-access.svg" alt="Remote access diagram showing encrypted tailnet links" />
 *All traffic flows through an encrypted mesh overlay — no port forwarding, no public exposure. Your services are invisible to automated internet scans.*
@@ -191,7 +191,7 @@ You can advertise multiple subnets: `--advertise-routes=192.168.1.0/24,192.168.2
 
 ## Docker networking with Tailscale
 
-Here's where things get interesting (and where I spent way too many hours debugging). Docker's networking model doesn't play nicely with Tailscale out of the box. Let me save you the headache.
+Docker's networking model doesn't play nicely with Tailscale out of the box. This is where I spent way too many hours debugging, so here is the short version.
 
 ### The problem
 
@@ -356,7 +356,7 @@ Funnel makes your service publicly accessible. Anyone with the URL can reach it.
 
 ## Example services that are perfect for this
 
-- **[Jellyfin](https://jellyfin.org/)** or **[Plex](https://www.plex.tv/)** for media
+- **[Jellyfin](https://jellyfin.org/)** or [Plex](https://www.plex.tv/) for media
 - **[Home Assistant](https://www.home-assistant.io/)** for smart home dashboards
 - **[Paperless‑ngx](https://docs.paperless-ngx.com/)** for document storage
 - **[Grafana](https://grafana.com/)** for monitoring your stack
@@ -470,7 +470,7 @@ With Tailscale SSH, you can go even further and disable the regular SSH daemon e
 
 ## Backups are not optional
 
-If it's worth hosting, it's worth backing up. A basic rule: **[3‑2‑1 backups](https://en.wikipedia.org/wiki/Backup#3-2-1_rule)** (three copies, two different media, one off‑site). Even a cheap external drive plus an encrypted cloud backup is better than nothing.
+If it's worth hosting, it's worth backing up. A basic rule: [3‑2‑1 backups](https://en.wikipedia.org/wiki/Backup#3-2-1_rule) (three copies, two different media, one off‑site). Even a cheap external drive plus an encrypted cloud backup is better than nothing.
 
 For Docker setups, back up your volumes:
 
@@ -495,18 +495,18 @@ rclone sync "$BACKUP_DIR" remote:backups/
 ```
 
 <Callout type="warning" title="Database backups" showEmoji={true}>
-The "stop container + tar" approach works for config files and flat data, but **databases need native backup tools**. Use `pg_dump` for Postgres, `mysqldump` for MySQL/MariaDB, or `sqlite3 .backup` for SQLite. These ensure consistent, recoverable snapshots even if the database is running.
+The "stop container + tar" approach works for config files and flat data, but databases need native backup tools. Use `pg_dump` for Postgres, `mysqldump` for MySQL/MariaDB, or `sqlite3 .backup` for SQLite. These ensure consistent, recoverable snapshots even if the database is running.
 </Callout>
 
 ## When you *do* need public access
 
 Sometimes a service must be public (a personal site, a demo, a webhook endpoint). In that case, I still prefer a layered setup:
 
-- Put it behind a **[reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy)** (Nginx, Caddy, Traefik).
-- Terminate **TLS** there and keep internal services private.
+- Put it behind a [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy) (Nginx, Caddy, Traefik).
+- Terminate TLS there and keep internal services private.
 - Rate‑limit or require auth for anything that isn't meant for the world.
 
-If you want a quick, clean way to do this, look into **[Caddy](https://caddyserver.com/)** — it handles HTTPS automatically via Let's Encrypt and is very easy to configure:
+If you want a quick, clean way to do this, look into [Caddy](https://caddyserver.com/) — it handles HTTPS automatically via Let's Encrypt and is very easy to configure:
 
 ```bash
 # Caddyfile
@@ -524,11 +524,11 @@ Tailscale solves the **network access** problem, but you still want good app‑l
 - **[TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security)** for any web UI, even inside your tailnet.
 - **[MFA](https://en.wikipedia.org/wiki/Multi-factor_authentication)** on your identity provider.
 - **App‑level auth** (don't leave dashboards wide open).
-- A basic **[firewall](https://en.wikipedia.org/wiki/Firewall_(computing))** on the server for defense in depth.
+- A basic [firewall](https://en.wikipedia.org/wiki/Firewall_(computing)) on the server for defense in depth.
 
 ## Updates and patching (the boring part that saves you)
 
-Most real‑world compromises happen because something wasn't updated. Set a reminder, automate updates where safe, and **subscribe to release notes** for the apps you expose.
+Most real‑world compromises happen because something wasn't updated. Set a reminder, automate updates where safe, and subscribe to release notes for the apps you expose.
 
 For Docker images, [Watchtower](https://containrrr.dev/watchtower/) can auto-update containers:
 

@@ -1,8 +1,8 @@
 ---
-title: "What Is a VPN? A Practical, No‑Hype Guide"
+title: "What Is a VPN? What It Hides, and From Whom"
 date: "2026-02-15"
 readingTime: "18min"
-excerpt: "A clear, practical explanation of VPNs, what they protect, what they don't, and how to choose one without the marketing noise."
+excerpt: "A VPN moves the point where your traffic joins the internet. That is the whole trick, and it explains most of what the ads get wrong."
 tags: ["vpn", "networking", "security", "privacy"]
 series: "homelab-networking"
 seriesOrder: 1
@@ -13,8 +13,6 @@ import Callout from '@/components/mdx/Callout.astro';
 
 You're on café Wi‑Fi. Your laptop auto‑connects, your bank app loads, and a tiny voice in your head asks: *"Can anyone see this?"* That's the moment a VPN makes sense — but only if you understand what it **does** and what it **doesn't** do.
 
-This post explains VPNs like a friend would: plain language, real risks, no over‑promising.
-
 <Diagram src="/images/blog/what-is-a-vpn/vpn-tunnel-diagram.svg" alt="Diagram showing internet traffic with and without a VPN tunnel" />
 *Traffic flows compared: without a VPN, your ISP and websites see everything. With a VPN, your ISP sees only encrypted traffic to the VPN server, and websites see the VPN's IP — but the VPN provider inherits visibility.*
  
@@ -23,9 +21,9 @@ This post explains VPNs like a friend would: plain language, real risks, no over
 
 ## The one‑sentence definition
 
-A **[VPN](https://en.wikipedia.org/wiki/Virtual_private_network)** creates an **[encrypted](https://en.wikipedia.org/wiki/Encryption)** tunnel between your device and a trusted server, so anyone sitting in the middle (like your [ISP](https://en.wikipedia.org/wiki/Internet_service_provider) or a public Wi‑Fi operator) can't read your traffic in transit.
+A [VPN](https://en.wikipedia.org/wiki/Virtual_private_network) creates an [encrypted](https://en.wikipedia.org/wiki/Encryption) tunnel between your device and a trusted server, so anyone sitting in the middle (like your [ISP](https://en.wikipedia.org/wiki/Internet_service_provider) or a public Wi‑Fi operator) can't read your traffic in transit.
 
-If you've ever used **[HTTPS](https://en.wikipedia.org/wiki/HTTPS)**, you've already benefited from encryption. The difference is scope: HTTPS encrypts *a single connection* to a site, while a VPN encrypts **everything leaving your device**, including DNS lookups, app traffic, and background sync.
+If you've ever used [HTTPS](https://en.wikipedia.org/wiki/HTTPS), you've already benefited from encryption. The difference is scope: HTTPS encrypts *a single connection* to a site, while a VPN encrypts everything leaving your device, including DNS lookups, app traffic, and background sync.
 
 <Callout type="info" title="Pick Your VPN Goal" showEmoji={true}>
 **What are you trying to do?** VPN means different things depending on your goal:
@@ -45,7 +43,7 @@ When you turn on a VPN, your device builds a secure tunnel to a VPN server. Your
 
 ### 2. Changes your apparent public IP address
 
-Websites you visit see the **VPN server's [IP address](https://en.wikipedia.org/wiki/IP_address)**, not your home IP. That can be useful for privacy, geo‑testing, or reducing the amount of location data that sites can infer.
+Websites you visit see the VPN server's [IP address](https://en.wikipedia.org/wiki/IP_address), not your home IP. That can be useful for privacy, geo‑testing, or reducing the amount of location data that sites can infer.
 
 ### 3. Helps on untrusted networks
 
@@ -57,7 +55,7 @@ When a VPN is active, your device typically installs a new **default route** in 
 
 ## How VPN tunneling actually works
 
-Let's get into the weeds for a minute. When you send data through a VPN, your original IP packet gets wrapped inside *another* packet — like putting a letter in an envelope, then putting that envelope in a secure tube.
+When you send data through a VPN, your original IP packet gets wrapped inside *another* packet — like putting a letter in an envelope, then putting that envelope in a secure tube.
 
 ### The encapsulation process
 
@@ -110,9 +108,9 @@ A VPN is not a magic invisibility cloak. It does **not** make you anonymous, and
 
 ## The trust trade‑off (who can see what now)
 
-A VPN doesn't eliminate trust — it **moves** it. Without a VPN, your ISP can see the destinations you connect to. With a VPN, **your VPN provider** can see that metadata instead. That's why logging policies matter, and why reputable providers publish audits (like [Mullvad's infrastructure audit](https://mullvad.net/en/blog/2024/1/mullvad-completes-second-infrastructure-audit) or [ProtonVPN's no-logs audit](https://protonvpn.com/blog/no-logs-audit/)). You're choosing who you trust with your traffic's "outside envelope," not erasing it from existence.
+A VPN doesn't eliminate trust — it **moves** it. Without a VPN, your ISP can see the destinations you connect to. With a VPN, your VPN provider can see that metadata instead. That's why logging policies matter, and why reputable providers publish audits (like [Mullvad's infrastructure audit](https://mullvad.net/en/blog/2024/1/mullvad-completes-second-infrastructure-audit) or [ProtonVPN's no-logs audit](https://protonvpn.com/blog/no-logs-audit/)). You're choosing who you trust with your traffic's "outside envelope," not erasing it from existence.
 
-If that trade‑off feels uncomfortable, you're not wrong. It's why many power users prefer **self‑hosted VPNs** or mesh tools like Tailscale — you become the provider.
+If that trade‑off feels uncomfortable, you're not wrong. It's why many power users prefer self‑hosted VPNs or mesh tools like Tailscale — you become the provider.
 
 ## Common VPN use cases (the legit ones)
 
@@ -123,9 +121,9 @@ If that trade‑off feels uncomfortable, you're not wrong. It's why many power u
 
 ## VPNs vs proxies (not the same thing)
 
-A **[proxy server](https://en.wikipedia.org/wiki/Proxy_server)** can forward traffic for a *single app* (usually your browser), but it doesn't encrypt everything on your device. A VPN works at the **network layer**, so it covers *all* traffic unless you intentionally split it. If you need broad protection, a proxy is the wrong tool. (Note: **reverse proxies** like Caddy or Nginx are a different concept entirely — they sit in front of your servers, not your client. I cover those in the [reverse proxy guide](/blog/reverse-proxy-homelab).)
+A [proxy server](https://en.wikipedia.org/wiki/Proxy_server) can forward traffic for a *single app* (usually your browser), but it doesn't encrypt everything on your device. A VPN works at the **network layer**, so it covers *all* traffic unless you intentionally split it. If you need broad protection, a proxy is the wrong tool. (Note: **reverse proxies** like Caddy or Nginx are a different concept entirely — they sit in front of your servers, not your client. I cover those in the [reverse proxy guide](/blog/reverse-proxy-homelab).)
 
-If you're curious about modern remote access that *feels* like magic, read my [Tailscale guide](/blog/tailscale-explained) — it's a newer, more user‑friendly approach built on WireGuard.
+If what you actually want is to reach your own machines rather than hide your browsing, read my [Tailscale guide](/blog/tailscale-explained) — same cryptography, built on WireGuard, but pointed at a different problem.
 
 ## VPN types, in plain English
 
@@ -135,9 +133,9 @@ If you're curious about modern remote access that *feels* like magic, read my [T
 
 ### A quick note on corporate VPNs
 
-In many companies, the VPN is really just a **gate** into internal systems — dashboards, staging environments, and file shares. It's usually combined with **[single sign‑on](https://en.wikipedia.org/wiki/Single_sign-on)** and sometimes **[MFA](https://en.wikipedia.org/wiki/Multi-factor_authentication)**. This is less about privacy and more about *access control*.
+In many companies, the VPN is really just a **gate** into internal systems — dashboards, staging environments, and file shares. It's usually combined with [single sign‑on](https://en.wikipedia.org/wiki/Single_sign-on) and sometimes [MFA](https://en.wikipedia.org/wiki/Multi-factor_authentication). This is less about privacy and more about *access control*.
 
-## VPN protocols: a deep dive
+## VPN protocols, one at a time
 
 Different VPNs use different tunnel protocols. Here's the full rundown — including some you should probably avoid.
 
@@ -155,7 +153,7 @@ Still widely used in enterprise environments where customization matters more th
 
 ### IKEv2/IPsec
 
-**[IKEv2](https://en.wikipedia.org/wiki/Internet_Key_Exchange)** (Internet Key Exchange version 2) paired with **[IPsec](https://en.wikipedia.org/wiki/IPsec)** is the protocol you'll find baked into most operating systems. It's fast, handles network changes gracefully (great for mobile), and is standardized via [RFC 7296](https://www.rfc-editor.org/rfc/rfc7296).
+**[IKEv2](https://en.wikipedia.org/wiki/Internet_Key_Exchange)** (Internet Key Exchange version 2) paired with [IPsec](https://en.wikipedia.org/wiki/IPsec) is the protocol you'll find baked into most operating systems. It's fast, handles network changes gracefully (great for mobile), and is standardized via [RFC 7296](https://www.rfc-editor.org/rfc/rfc7296).
 
 The downside? IPsec configuration is notoriously fiddly. There's a reason enterprise network admins both love and hate it. But if your VPN app "just works" on iOS or Windows, there's a good chance IKEv2 is doing the heavy lifting.
 
@@ -182,43 +180,43 @@ You'll still find L2TP/IPsec in legacy corporate setups, but there's rarely a go
 | **IKEv2/IPsec** | Very Good | Excellent | Excellent | Easy (native OS) | Mobile users, built-in clients |
 | **L2TP/IPsec** | Moderate | Good | Good | Easy | Legacy systems only |
 | **SSTP** | Good | Good | Windows only | Easy (Windows) | Bypassing firewalls on Windows |
-| **PPTP** | Fast | **Broken** | Wide | Easy | **Nothing. Don't use it.** |
+| **PPTP** | Fast | Broken | Wide | Easy | Nothing. Don't use it. |
 
 ## Split tunneling vs full tunneling
 
-Some VPNs let you choose **[split tunneling](https://en.wikipedia.org/wiki/Split_tunneling)**, where only certain apps or domains go through the VPN. The rest of your traffic goes out normally. Full tunneling routes *everything* through the VPN, which is simpler and usually more private, but can be slower or break local devices.
+Some VPNs let you choose [split tunneling](https://en.wikipedia.org/wiki/Split_tunneling), where only certain apps or domains go through the VPN. The rest of your traffic goes out normally. Full tunneling routes *everything* through the VPN, which is simpler and usually more private, but can be slower or break local devices.
 
 ## VPN vs HTTPS (and why both matter)
 
 HTTPS protects **browser‑to‑website** traffic. A VPN protects **device‑to‑internet** traffic. The overlap is large, but not total:
 
 - VPNs protect **non‑browser apps** that might not use HTTPS correctly.
-- HTTPS does nothing for DNS requests unless you use **[DoH](https://en.wikipedia.org/wiki/DNS_over_HTTPS)** or **[DoT](https://en.wikipedia.org/wiki/DNS_over_TLS)**.
+- HTTPS does nothing for DNS requests unless you use [DoH](https://en.wikipedia.org/wiki/DNS_over_HTTPS) or [DoT](https://en.wikipedia.org/wiki/DNS_over_TLS).
 - If you already use HTTPS everywhere, the VPN is mostly about metadata, routing, and untrusted networks.
 
 ## DNS: the leaky faucet people forget about
 
-Even if your traffic is encrypted, **DNS** requests can reveal what you're trying to access. A VPN should either run its own **[DNS resolver](https://en.wikipedia.org/wiki/Domain_Name_System)** or tunnel your DNS queries through the VPN. If your DNS queries escape, it's called a **DNS leak** and it defeats much of the privacy value.
+Even if your traffic is encrypted, DNS requests can reveal what you're trying to access. A VPN should either run its own [DNS resolver](https://en.wikipedia.org/wiki/Domain_Name_System) or tunnel your DNS queries through the VPN. If your DNS queries escape, it's called a DNS leak and it defeats much of the privacy value.
 
 What counts as a "leak"? It's not just your ISP — if your DNS queries go to your home router (which then forwards them to your ISP), that's still a leak. Any DNS path outside the VPN tunnel exposes your browsing destinations.
 
 <Callout type="warning" title="DoH/DoT doesn't fully protect you" showEmoji={true}>
-Using **DNS-over-HTTPS** (DoH) in your browser? That only covers browser traffic. Other apps (email clients, chat apps, system services) still use OS-level DNS, which may leak outside the VPN. For full coverage, you need the VPN to handle *all* DNS or configure DoH/DoT at the system level.
+Using DNS-over-HTTPS (DoH) in your browser? That only covers browser traffic. Other apps (email clients, chat apps, system services) still use OS-level DNS, which may leak outside the VPN. For full coverage, you need the VPN to handle *all* DNS or configure DoH/DoT at the system level.
 </Callout>
 
 You can test for DNS leaks at [dnsleaktest.com](https://www.dnsleaktest.com/) or [ipleak.net](https://ipleak.net/).
 
 ## Kill switches and why they matter
 
-A **[kill switch](https://en.wikipedia.org/wiki/Kill_switch)** is a safety feature that blocks all internet traffic if the VPN disconnects unexpectedly. Without it, your traffic can fall back to the normal route for a few seconds — which is exactly the moment you didn't want it to.
+A [kill switch](https://en.wikipedia.org/wiki/Kill_switch) is a safety feature that blocks all internet traffic if the VPN disconnects unexpectedly. Without it, your traffic can fall back to the normal route for a few seconds — which is exactly the moment you didn't want it to.
 
 ## Performance: the hidden cost
 
-VPNs add **latency** because your traffic now takes a detour. They also add **CPU overhead** for encryption. On modern hardware it's usually fine, but on phones or small routers it can be noticeable. If your video calls get choppy, the VPN is a prime suspect.
+VPNs add **latency** because your traffic now takes a detour. They also add CPU overhead for encryption. On modern hardware it's usually fine, but on phones or small routers it can be noticeable. If your video calls get choppy, the VPN is a prime suspect.
 
 ## MTU, fragmentation, and the occasional weird bug
 
-VPNs can reduce your effective **[MTU](https://en.wikipedia.org/wiki/Maximum_transmission_unit)** because packets are wrapped inside other packets. That overhead can cause fragmentation and lead to odd issues: a site loads but images don't, or large uploads stall. Some VPN clients auto‑tune MTU; if you're troubleshooting "mysterious" network bugs, it's worth checking.
+VPNs can reduce your effective [MTU](https://en.wikipedia.org/wiki/Maximum_transmission_unit) because packets are wrapped inside other packets. That overhead can cause fragmentation and lead to odd issues: a site loads but images don't, or large uploads stall. Some VPN clients auto‑tune MTU; if you're troubleshooting "mysterious" network bugs, it's worth checking.
 
 ## Troubleshooting common VPN issues
 
@@ -289,7 +287,7 @@ Here's a practical checklist:
 - **"I want full privacy."** Be careful — no VPN gives full anonymity. Combine with good browser hygiene.
 
 <Callout type="info" title="Quick rule of thumb" showEmoji={true}>
-If you want **private remote access**, consider a mesh VPN like Tailscale. If you want **privacy from your ISP**, a reputable consumer VPN is better.
+If you want private remote access, consider a mesh VPN like Tailscale. If you want privacy from your ISP, a reputable consumer VPN is better.
 </Callout>
 
 ## A short myth‑busting list
@@ -301,7 +299,7 @@ If you want **private remote access**, consider a mesh VPN like Tailscale. If yo
 
 ## Where to go next
 
-- **Tailscale deep dive**: [Tailscale Explained: The Mesh VPN That Feels Like Magic](/blog/tailscale-explained)
+- **Tailscale**: [Tailscale Explained: A Mesh VPN With No Open Ports](/blog/tailscale-explained)
 - **Remote access walkthrough**: [Self‑Hosting With Tailscale](/blog/self-hosting-with-tailscale)
 - **WireGuard documentation**: [wireguard.com](https://www.wireguard.com/)
 - **Privacy basics**: [EFF Surveillance Self‑Defense](https://ssd.eff.org/)

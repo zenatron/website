@@ -1,8 +1,8 @@
 ---
-title: "Reverse Proxy for a Homelab: Caddy Done Right"
+title: "Reverse Proxy for a Homelab: Caddy and Automatic HTTPS"
 date: "2026-02-25"
 readingTime: "22min"
-excerpt: "How to set up Caddy as a reverse proxy for your self-hosted services, with automatic HTTPS, internal domains, and clean URLs."
+excerpt: "Putting Caddy in front of a rack of services: real certificates on internal domains, and no port numbers in any URL."
 tags: ["self-hosting", "homelab", "caddy", "networking", "security"]
 series: "homelab-networking"
 seriesOrder: 5
@@ -23,7 +23,7 @@ A **reverse proxy** solves all of this: one entry point, clean URLs, automatic H
 
 ## What a reverse proxy actually does
 
-A **[reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy)** sits in front of your backend services and forwards requests to them. From the outside, users see `jellyfin.yourdomain.com` — they never know it's actually running on port 8096 on some box in your closet.
+A [reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy) sits in front of your backend services and forwards requests to them. From the outside, users see `jellyfin.yourdomain.com` — they never know it's actually running on port 8096 on some box in your closet.
 
 Key benefits:
 - **Clean URLs** — `grafana.home.local` instead of `192.168.1.50:3000`
@@ -37,7 +37,7 @@ A **forward proxy** sits in front of *clients* (like a corporate web filter). A 
 
 ## Why Caddy (and not Nginx or Traefik)
 
-I've used all three. Here's why I settled on **[Caddy](https://caddyserver.com/)**:
+I've used all three. Here's why I settled on [Caddy](https://caddyserver.com/):
 
 | Feature | Caddy | Nginx | Traefik |
 |---------|-------|-------|---------|
@@ -46,7 +46,7 @@ I've used all three. Here's why I settled on **[Caddy](https://caddyserver.com/)
 | **Hot reload** | Yes | Requires reload | Yes |
 | **Best for** | Simplicity + power | Raw performance, legacy | Container-native, k8s |
 
-Caddy's killer feature: **automatic HTTPS**. It handles Let's Encrypt certificates, renewal, and OCSP stapling without any configuration. You just define your domains, and it works.
+Caddy's killer feature: automatic HTTPS. It handles Let's Encrypt certificates, renewal, and OCSP stapling without any configuration. You just define your domains, and it works.
 
 For homelabs, that's huge. Less toil, fewer moving parts.
 
@@ -232,7 +232,7 @@ Now Caddy can obtain wildcards certs for internal domains using DNS validation.
 
 ## Authentication (forward auth)
 
-Caddy integrates cleanly with forward auth providers like **Tinyauth** or **Authelia**. This protects apps that don't have their own authentication.
+Caddy integrates cleanly with forward auth providers like Tinyauth or Authelia. This protects apps that don't have their own authentication.
 
 ```caddyfile
 dashboard.yourdomain.com {

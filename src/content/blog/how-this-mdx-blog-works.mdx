@@ -1,22 +1,22 @@
 ---
-title: "How I Built My MDX Blog System (and Why It's Fast Enough)"
+title: "How This Blog Renders MDX"
 date: "2025-02-21"
 readingTime: "22min"
-excerpt: "A behind-the-scenes look at how my Astro + MDX pipeline works, how I render posts, and where performance really matters."
+excerpt: "The Astro and MDX pipeline behind this site: what runs at build time, what ships to the browser, and why that is almost nothing."
 tags: ["mdx", "astro", "performance", "web-dev"]
 ---
 
 import Diagram from '@/components/mdx/Diagram.astro';
 import Callout from '@/components/mdx/Callout.astro';
 
-I wanted a blog that felt like **[Markdown](https://en.wikipedia.org/wiki/Markdown)**, but could still render React components, callouts, and embeds without turning into a templating mess. **[MDX](https://mdxjs.com/)** hit the sweet spot — and **[Astro](https://astro.build/)** makes it fly.
+I wanted a blog that felt like [Markdown](https://en.wikipedia.org/wiki/Markdown), but could still render React components, callouts, and embeds without turning into a templating mess. [MDX](https://mdxjs.com/) hit the sweet spot — and [Astro](https://astro.build/) makes it fly.
 
 <Diagram src="/images/blog/how-this-mdx-blog-works/mdx-pipeline.svg" alt="MDX pipeline diagram" />
 <Diagram src="/images/blog/how-this-mdx-blog-works/compile-flow.svg" alt="MDX compilation flow diagram" />
 
 ## Why MDX (not just Markdown)
 
-Markdown is simple and portable. The downside: you're stuck with plain content. MDX gives you the ability to **import React components** right inside a post, which means you can drop in things like callouts, counters, or custom embeds. Under the hood, MDX turns your content into a structured syntax tree (think **[AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree)**) before it becomes HTML.
+Markdown is simple and portable. The downside: you're stuck with plain content. MDX gives you the ability to import React components right inside a post, which means you can drop in things like callouts, counters, or custom embeds. Under the hood, MDX turns your content into a structured syntax tree (think [AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree)) before it becomes HTML.
 
 If you've used a static site generator before, MDX feels like "Markdown with superpowers" — but it's still readable in plain text, which keeps the writing workflow fast.
 
@@ -32,7 +32,7 @@ import Callout from '@/components/mdx/Callout.astro';
 
 ## The pipeline: content collections to compiled HTML
 
-At a high level, my posts live in `src/content/blog/*.mdx`. Astro's **[Content Collections](https://docs.astro.build/en/guides/content-collections/)** handle the heavy lifting: schema validation, frontmatter parsing, and compilation all happen at build time.
+At a high level, my posts live in `src/content/blog/*.mdx`. Astro's [Content Collections](https://docs.astro.build/en/guides/content-collections/) handle the heavy lifting: schema validation, frontmatter parsing, and compilation all happen at build time.
 
 Here's how it works:
 
@@ -85,9 +85,9 @@ const headings = rendered.headings ?? [];
 
 The key point: the MDX compilation happens at build time, not in the browser. Visitors get clean, static HTML with zero JavaScript needed to display the content.
 
-## Deep dive: the remark/rehype plugin pipeline
+## The remark/rehype plugin pipeline
 
-Here's where things get interesting. MDX doesn't just parse Markdown — it runs your content through a **[unified](https://unifiedjs.com/)** pipeline with two processing stages:
+MDX doesn't just parse Markdown — it runs your content through a **[unified](https://unifiedjs.com/)** pipeline with two processing stages:
 
 1. **[Remark](https://github.com/remarkjs/remark)** — operates on the Markdown AST ([mdast](https://github.com/syntax-tree/mdast))
 2. **[Rehype](https://github.com/rehypejs/rehype)** — operates on the HTML AST ([hast](https://github.com/syntax-tree/hast))
@@ -259,7 +259,7 @@ When you run `astro build`, here's the flow:
 4. **Astro outputs static HTML** — every page is pre-rendered with zero client-side compilation
 5. **Vite bundles** only the JavaScript needed for interactive islands
 
-This is [Static Site Generation (SSG)](https://en.wikipedia.org/wiki/Static_site_generator) — pages are built once and served as static HTML. Astro's build is fast because it ships **zero JavaScript by default** and only hydrates the interactive islands you explicitly opt into.
+This is [Static Site Generation (SSG)](https://en.wikipedia.org/wiki/Static_site_generator) — pages are built once and served as static HTML. Astro's build is fast because it ships zero JavaScript by default and only hydrates the interactive islands you explicitly opt into.
 
 ## SEO considerations
 
