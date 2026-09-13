@@ -251,7 +251,7 @@ dashboard.yourdomain.com {
 
 The `copy_headers` directive passes the authenticated user's identity to the backend. Some apps can use this for user identification.
 
-For a full SSO setup, see my [SSO for Self-Hosted Apps](/blog/sso-for-self-hosted-apps) guide.
+For a full SSO setup, see my [SSO for Self-Hosted Apps](/blog/sso-for-self-hosted-apps/) guide.
 
 ## Headers and security
 
@@ -495,7 +495,7 @@ api.yourdomain.com {
 - [Caddyfile tutorial](https://caddyserver.com/docs/caddyfile-tutorial)
 - [Caddy Docker guide](https://caddyserver.com/docs/running#docker-compose)
 - [DNS providers for Caddy](https://github.com/caddy-dns) — for DNS challenge
-- [Self-hosting with Tailscale](/blog/self-hosting-with-tailscale) — secure access without exposing ports
+- [Self-hosting with Tailscale](/blog/self-hosting-with-tailscale/) — secure access without exposing ports
 
 ## FAQ
 
@@ -509,7 +509,7 @@ No. A wildcard certificate covers `*.yourdomain.com`, and split DNS — a Pi-hol
 
 ### Can the proxy add a login to apps that don't have one?
 
-Yes — forward auth. The proxy checks the session before the request reaches the app, so anything behind it is protected even if the app ships with no authentication. The [SSO guide](/blog/sso-for-self-hosted-apps) wires this up properly with Pocket ID and Tinyauth.
+Yes — forward auth. The proxy checks the session before the request reaches the app, so anything behind it is protected even if the app ships with no authentication. The [SSO guide](/blog/sso-for-self-hosted-apps/) wires this up properly with Pocket ID and Tinyauth.
 
 ### Which ports do I actually need to open?
 

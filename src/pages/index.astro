@@ -22,7 +22,7 @@ const monthYear = (v: string | Date | undefined) => {
 
 const latestProjects = await Promise.all(projects.slice(0, 3).map(async (p) => ({
   title: p.data.title,
-  href: `/projects/${projectSlug(p)}`,
+  href: `/projects/${projectSlug(p)}/`,
   slug: projectSlug(p),
   description: p.data.description || undefined,
   meta: monthYear(p.data.date),
@@ -36,7 +36,7 @@ const latestProjects = await Promise.all(projects.slice(0, 3).map(async (p) => (
 
 const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
   title: p.data.title,
-  href: `/blog/${p.slug}`,
+  href: `/blog/${p.slug}/`,
   slug: p.slug,
   description: p.data.excerpt || undefined,
   meta: monthYear(p.data.date),
@@ -78,7 +78,7 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
   <section class="band">
     <div class="bandhead">
       <h2>Projects</h2>
-      <a href="/projects">All projects</a>
+      <a href="/projects/">All projects</a>
     </div>
     <Cells cells={latestProjects} />
   </section>
@@ -86,7 +86,7 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
   <section class="band">
     <div class="bandhead">
       <h2>Writing</h2>
-      <a href="/blog">All posts</a>
+      <a href="/blog/">All posts</a>
     </div>
     <Cells cells={latestPosts} />
   </section>
@@ -94,7 +94,7 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
   <section class="band">
     <div class="bandhead">
       <h2>Get in touch</h2>
-      <a href="/say-hi">Everywhere else</a>
+      <a href="/say-hi/">Everywhere else</a>
     </div>
     <ReachCards />
   </section>

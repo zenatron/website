@@ -14,14 +14,14 @@ const { prev, next, seriesTitle } = Astro.props;
     {seriesTitle && <p class="series-label">{seriesTitle}</p>}
     <div class="pair">
       {prev ? (
-        <a href={`/blog/${prev.slug}`} class="side prev">
+        <a href={`/blog/${prev.slug}/`} class="side prev">
           <span class="dir">{seriesTitle ? "Previous part" : "Previous"}</span>
           <span class="t">{prev.order != null && <em>{String(prev.order).padStart(2, "0")}</em>}{prev.title}</span>
         </a>
       ) : <span class="side empty"></span>}
 
       {next ? (
-        <a href={`/blog/${next.slug}`} class="side next">
+        <a href={`/blog/${next.slug}/`} class="side next">
           <span class="dir">{seriesTitle ? "Next part" : "Next"}</span>
           <span class="t">{next.order != null && <em>{String(next.order).padStart(2, "0")}</em>}{next.title}</span>
         </a>

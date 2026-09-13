@@ -26,7 +26,7 @@ const withArt = await Promise.all(
   <ol class="parts">
     {withArt.map((e, i) => (
       <li class:list={["part", i === 0 && "first"]}>
-        <a href={`/blog/${e.slug}`}>
+        <a href={`/blog/${e.slug}/`}>
           <span class="n">{String(e.order).padStart(2, "0")}</span>
           <span class="art">
             <CardArt art={e.art} slug={e.slug} crop />

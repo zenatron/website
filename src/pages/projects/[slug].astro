@@ -70,7 +70,7 @@ const describe = (name: string) => {
 
 const suggested = await Promise.all((await getSuggestedProjects(slug, 3)).map(async (p) => ({
   title: p.data.title,
-  href: `/projects/${projectSlug(p)}`,
+  href: `/projects/${projectSlug(p)}/`,
   slug: projectSlug(p),
   description: p.data.description || undefined,
   art: await cardArt({

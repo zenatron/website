@@ -35,7 +35,7 @@ const hidden = Math.max(0, entries.length - initial);
   <ol class="index" data-archive>
     {entries.map((e, i) => (
       <li data-over={i >= initial ? "" : undefined}>
-        <a href={`/blog/${e.slug}`}>
+        <a href={`/blog/${e.slug}/`}>
           <span class="n">{String(e.order).padStart(2, "0")}</span>
           <span class="t">{e.title}</span>
           <span class="rt">{minutes(e.readingTime)}</span>

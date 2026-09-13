@@ -21,15 +21,15 @@ const page = (href: string) => PAGES.find((p) => p.href === href);
 
 const places: { href: string; name: string; blurb: string; glyph: Glyph; hue?: string }[] = [
   { href: "/", name: "home", blurb: "Back to the start", glyph: "home" },
-  { href: "/about", name: "about", blurb: "The story, the desk, and the lid", glyph: "person", hue: page("/about")?.hue },
-  { href: "/dock", name: "dock", blurb: `${apps} apps I use, and a few files`, glyph: "dock", hue: page("/dock")?.hue },
-  { href: "/projects", name: "projects", blurb: `${projects.length} things I've built`, glyph: "folder" },
-  { href: "/blog", name: "writing", blurb: `${posts.length} posts on homelabs and more`, glyph: "pen" },
-  { href: "/say-hi", name: "say hi", blurb: page("/say-hi")?.blurb ?? "", glyph: "bubble", hue: page("/say-hi")?.hue },
+  { href: "/about/", name: "about", blurb: "The story, the desk, and the lid", glyph: "person", hue: page("/about/")?.hue },
+  { href: "/dock/", name: "dock", blurb: `${apps} apps I use, and a few files`, glyph: "dock", hue: page("/dock/")?.hue },
+  { href: "/projects/", name: "projects", blurb: `${projects.length} things I've built`, glyph: "folder" },
+  { href: "/blog/", name: "writing", blurb: `${posts.length} posts on homelabs and more`, glyph: "pen" },
+  { href: "/say-hi/", name: "say hi", blurb: page("/say-hi/")?.blurb ?? "", glyph: "bubble", hue: page("/say-hi/")?.hue },
 ];
 
 const here = Astro.url.pathname.replace(/\/+$/, "") || "/";
-const shown = places.filter((p) => p.href !== here);
+const shown = places.filter((p) => (p.href.replace(/\/+$/, "") || "/") !== here);
 const vars = (hue?: string) =>
   hue ? `--h: var(--c-hue-${hue}); --t: var(--c-tint-${hue})` : "--h: var(--c-muted); --t: var(--c-raised)";
 ---

@@ -49,7 +49,7 @@ export const PAGES: {
   /** One line on what's there, from the page's own description. */
   blurb: string;
 }[] = [
-  { name: "about", href: "/about", hue: "violet", glyph: "person", aliases: ["me", "bio", "resume", "cv"], blurb: "The story so far" },
-  { name: "dock", href: "/dock", hue: "orange", glyph: "dock", aliases: ["desk", "stack", "uses", "apps", "tools", "setup"], blurb: "The apps I actually use" },
-  { name: "say hi", href: "/say-hi", hue: "blue", glyph: "bubble", aliases: ["elsewhere", "links", "contact", "email", "socials"], blurb: "Email, book a call, or find me elsewhere" },
+  { name: "about", href: "/about/", hue: "violet", glyph: "person", aliases: ["me", "bio", "resume", "cv"], blurb: "The story so far" },
+  { name: "dock", href: "/dock/", hue: "orange", glyph: "dock", aliases: ["desk", "stack", "uses", "apps", "tools", "setup"], blurb: "The apps I actually use" },
+  { name: "say hi", href: "/say-hi/", hue: "blue", glyph: "bubble", aliases: ["elsewhere", "links", "contact", "email", "socials"], blurb: "Email, book a call, or find me elsewhere" },
 ];

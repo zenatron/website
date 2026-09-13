@@ -50,7 +50,7 @@ const projectRow = (p: ProjectEntry): Row => {
   const type = PROJECT_KIND[p.data.type];
   return {
     stem: projectSlug(p),
-    href: `/projects/${projectSlug(p)}`,
+    href: `/projects/${projectSlug(p)}/`,
     title: p.data.title,
     meta: type && type.hue !== COURSEWORK.hue ? type.label : "",
     hue: type?.hue,
@@ -59,7 +59,7 @@ const projectRow = (p: ProjectEntry): Row => {
 };
 const postRow = (p: PostEntry, hue?: Hue): Row => ({
   stem: p.slug,
-  href: `/blog/${p.slug}`,
+  href: `/blog/${p.slug}/`,
   title: p.data.title,
   meta: minutes(p.data.readingTime),
   hue,
@@ -75,7 +75,7 @@ const sections: { key: string; label: string; href: string; groups: Group[] }[] 
   {
     key: "projects",
     label: "projects",
-    href: "/projects",
+    href: "/projects/",
     groups: [
       { rows: shipped.map(projectRow) },
       { run: COURSEWORK, rows: coursework.map(projectRow) },
@@ -84,7 +84,7 @@ const sections: { key: string; label: string; href: string; groups: Group[] }[] 
   {
     key: "blog",
     label: "writing",
-    href: "/blog",
+    href: "/blog/",
     groups: [
       { rows: posts.filter((p) => !p.data.series).map((p) => postRow(p)) },
       ...SERIES.map((s) => ({
@@ -173,7 +173,7 @@ const socials = [
                     data-run={group.run?.label}
                   >
                     <span class="dot" aria-hidden="true"></span>
-                    <a href={r.href} data-nav>{r.stem}<span class="ext">.mdx</span></a>
+                    <a href={r.href} data-nav>{r.stem}<span class="ext">.mdx</span><span class="sr-only"> — {r.title}</span></a>
                     {r.meta && <span class:list={["rowmeta", { typed: r.typed }]} aria-hidden="true">{r.meta}</span>}
                   </li>
                 ))}
@@ -191,7 +191,7 @@ const socials = [
       <ul class="socials">
         {socials.map((s) => (
           <li>
-            <a href={s.href} rel={s.href!.startsWith("http") ? "noopener noreferrer" : undefined} aria-label={s.label} title={s.label}>
+            <a href={s.href} rel={s.href!.startsWith("http") ? "me noopener noreferrer" : undefined} aria-label={s.label} title={s.label}>
               {s.logo && <span class="logo" aria-hidden="true" style={`--src: url(/logos/${s.logo})`}></span>}
               {s.glyph === "linkedin" && (
                 <svg aria-hidden="true" viewBox="0 0 128 128" width="15" height="15" fill="currentColor" fill-rule="evenodd">

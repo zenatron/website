@@ -16,7 +16,7 @@ const monthYear = (v: string | Date | undefined) => {
 
 const cells = await Promise.all(projects.map(async (p) => ({
   title: p.data.title,
-  href: `/projects/${projectSlug(p)}`,
+  href: `/projects/${projectSlug(p)}/`,
   slug: projectSlug(p),
   description: p.data.description || undefined,
   meta: monthYear(p.data.date),

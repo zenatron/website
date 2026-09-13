@@ -55,7 +55,7 @@ const standalone = posts.filter((p) => !p.data.series);
 const cells = await Promise.all(
   standalone.map(async (p) => ({
     title: p.data.title,
-    href: `/blog/${p.slug}`,
+    href: `/blog/${p.slug}/`,
     slug: p.slug,
     description: p.data.excerpt || undefined,
     meta: monthYear(p.data.date),

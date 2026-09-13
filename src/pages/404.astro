@@ -31,17 +31,17 @@ const hueVar = (h?: string) => (h ? `var(--c-hue-${h})` : "");
 
 const candidates: Candidate[] = [
   ...PAGES.map((p) => ({ href: p.href, name: p.name, title: p.blurb, section: "page" as const, hue: hueVar(p.hue), aliases: p.aliases })),
-  { href: "/projects", name: "projects", title: "My experiments, projects, and failures", section: "page", hue: "", aliases: ["project", "work", "portfolio"] },
-  { href: "/blog", name: "writing", title: "Thoughts on code, tools, and building things", section: "page", hue: "", aliases: ["blog", "posts", "articles"] },
+  { href: "/projects/", name: "projects", title: "My experiments, projects, and failures", section: "page", hue: "", aliases: ["project", "work", "portfolio"] },
+  { href: "/blog/", name: "writing", title: "Thoughts on code, tools, and building things", section: "page", hue: "", aliases: ["blog", "posts", "articles"] },
   ...projects.map((p) => ({
-    href: `/projects/${projectSlug(p)}`,
+    href: `/projects/${projectSlug(p)}/`,
     name: `${projectSlug(p)}.mdx`,
     title: p.data.title,
     section: "projects" as const,
     hue: hueVar(PROJECT_KIND[p.data.type]?.hue),
   })),
   ...posts.map((p) => ({
-    href: `/blog/${p.slug}`,
+    href: `/blog/${p.slug}/`,
     name: `${p.slug}.mdx`,
     title: p.data.title,
     section: "blog" as const,

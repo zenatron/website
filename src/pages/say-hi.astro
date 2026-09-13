@@ -13,7 +13,8 @@ import ReachCards from "@/components/ReachCards.astro";
 import { links } from "@/lib/links";
 
 const profiles = links.filter((l) => !l.reach);
-const rel = (url: string) => (url.startsWith("http") ? "noopener noreferrer" : undefined);
+/* rel=me: these are Phil's profiles, and this page is his — the rel ties them together. */
+const rel = (url: string) => (url.startsWith("http") ? "me noopener noreferrer" : undefined);
 ---
 
 <Shell title="Say hi | Phil Vishnevsky" description="Email, book a call, or find me on the rest of the internet." ogSlug="say-hi">
@@ -21,7 +22,7 @@ const rel = (url: string) => (url.startsWith("http") ? "noopener noreferrer" : u
     <h1>Say hi</h1>
     <p>
       Where to find me. For what I <em>use</em> rather than where I am, that's
-      <a href="/dock">the dock</a>.
+      <a href="/dock/">the dock</a>.
     </p>
   </header>
 

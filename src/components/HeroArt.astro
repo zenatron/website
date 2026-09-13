@@ -14,7 +14,7 @@ import { FAVORITES } from "@/data/favorites";
 const picks = FAVORITES.filter((f) => f.logo).slice(0, 16);
 ---
 
-<a class="heroart" href="/dock" aria-label={`the dock — ${picks.length}+ tools and apps I use`}>
+<a class="heroart" href="/dock/" aria-label={`the dock — ${picks.length}+ tools and apps I use`}>
   <span class="logogrid" aria-hidden="true" data-snapgrid>
     <span class="snapname" data-snapname></span>
     {picks.map((item) => (
