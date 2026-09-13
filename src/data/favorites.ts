@@ -50,7 +50,7 @@ export const FAVORITES: Favorite[] = [
   },
   {
     name: "cmux",
-    logo: "cmux.png",
+    logo: "cmux.webp",
     appIcon: true,
     description: "cool terminal",
     url: "https://cmux.com",
@@ -378,7 +378,7 @@ export const FAVORITES: Favorite[] = [
   },
   {
     name: "FluidVoice",
-    logo: "fluidvoice.png",
+    logo: "fluidvoice.webp",
     appIcon: true,
     description: "dictation, all on-device",
     url: "https://github.com/altic-dev/FluidVoice",

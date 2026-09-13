@@ -1,0 +1,14 @@
+{
+  "name": "Phil Vishnevsky",
+  "short_name": "pvi.sh",
+  "description": "Full-stack engineer in Hartford, CT building servers, web apps, and games.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#FDFCF9",
+  "theme_color": "#FDFCF9",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

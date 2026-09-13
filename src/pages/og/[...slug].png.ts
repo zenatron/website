@@ -8,10 +8,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   const paths = [
     // Static pages
-    { params: { slug: "home" }, props: { title: "Phil Vishnevsky", subtitle: "SWE, AI Enthusiast, and Homelabber", type: "page", tags: [] } },
+    { params: { slug: "home" }, props: { title: "Phil Vishnevsky", subtitle: "Full-stack engineer in Hartford, CT", type: "page", tags: [] } },
     { params: { slug: "blog" }, props: { title: "Writing", subtitle: "Thoughts on code, tools, and building things", type: "page", tags: [] } },
     { params: { slug: "projects" }, props: { title: "Projects", subtitle: "My experiments, projects, and failures", type: "page", tags: [] } },
-    { params: { slug: "about" }, props: { title: "About", subtitle: "The story so far", type: "page", tags: [], variant: "about" } },
+    { params: { slug: "about" }, props: { title: "About", subtitle: "The story so far", type: "page", tags: [] } },
     { params: { slug: "say-hi" }, props: { title: "Say hi", subtitle: "Email, a call, or wherever else I am", type: "page", tags: [] } },
     { params: { slug: "dock" }, props: { title: "Dock", subtitle: "The apps I use, and things worth opening", type: "page", tags: [] } },
 
@@ -42,15 +42,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const GET: APIRoute = async ({ props }) => {
-  const { title, subtitle, type, tags, variant } = props as {
+  const { title, subtitle, type, tags } = props as {
     title: string;
     subtitle: string;
     type: string;
     tags: string[];
-    variant?: "default" | "about";
   };
 
-  const png = await generateOGImage({ title, subtitle, type, tags, variant });
+  const png = await generateOGImage({ title, subtitle, type, tags });
 
   return new Response(png, {
     headers: {

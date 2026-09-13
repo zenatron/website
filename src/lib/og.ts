@@ -41,7 +41,6 @@ interface OGOptions {
   subtitle?: string;
   type?: string;
   tags?: string[];
-  variant?: "default" | "about";
 }
 
 /** `~`, `~/blog/some-post` — the same path the real titlebar shows. */
