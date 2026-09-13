@@ -7,7 +7,42 @@ import remarkGfm from "remark-gfm";
 import rehypeKatex from "rehype-katex";
 import rehypeSlug from "rehype-slug";
 import { execSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
+
+/**
+ * Sitemap dates and series, read straight from frontmatter: the sitemap
+ * integration runs before the content layer exists, so there is no
+ * astro:content here. `updated` wins over `date` when a post was revised.
+ */
+function readContent(dir, prefix) {
+  return readdirSync(dir)
+    .filter((file) => file.endsWith(".mdx"))
+    .map((file) => {
+      const text = readFileSync(new URL(`./${dir}/${file}`, import.meta.url), "utf8");
+      const fm = text.slice(0, text.indexOf("---", 3));
+      const pick = (key) => fm.match(new RegExp(`^${key}:\\s*["']?([^"'\\n]+)`, "m"))?.[1];
+      return {
+        // Astro slugifies filenames to lowercase; a frontmatter slug is used as-is.
+        path: `${prefix}/${(pick("slug") ?? file.replace(/\.mdx$/, "")).toLowerCase()}/`,
+        date: pick("updated") ?? pick("date"),
+        series: pick("series"),
+      };
+    });
+}
+
+const content = [
+  ...readContent("src/content/blog", "/blog"),
+  ...readContent("src/content/projects", "/projects"),
+];
+
+/** Coursework stays live for the class, but leaves the index and sitemap. */
+const coursework = new Set(content.filter((e) => e.series === "data-mining").map((e) => e.path));
+
+const lastmod = new Map(
+  content
+    .filter((e) => e.date && !Number.isNaN(new Date(e.date).getTime()))
+    .map((e) => [e.path, new Date(e.date).toISOString()])
+);
 
 /** The status bar shows the site's version, from package.json. */
 const { version } = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf8"));
@@ -51,7 +86,18 @@ function rehypeWrapTables() {
 
 export default defineConfig({
   site: "https://pvi.sh",
-  integrations: [tailwind({ applyBaseStyles: false }), mdx(), sitemap()],
+  integrations: [
+    tailwind({ applyBaseStyles: false }),
+    mdx(),
+    sitemap({
+      filter: (page) => !coursework.has(new URL(page).pathname),
+      serialize: (item) => {
+        const date = lastmod.get(new URL(item.url).pathname);
+        if (date) item.lastmod = date;
+        return item;
+      },
+    }),
+  ],
   markdown: {
     remarkPlugins: [remarkMath, remarkGfm],
     rehypePlugins: [rehypeSlug, rehypeKatex, rehypeWrapTables],

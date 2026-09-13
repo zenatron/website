@@ -3,9 +3,16 @@
  * Two facts, one separator, sentence case, sans.
  * Deliberately not the all-caps middle-dot mono eyebrow — that stacks
  * three machine-voice elements into one line and reads as a template.
+ * The date is a <time> and the author a link, so both are facts a
+ * machine can check, not just display strings.
  */
 interface Props { date?: string | Date; readingTime?: string; }
 const { date, readingTime } = Astro.props;
+
+function iso(value: string | Date): string | null {
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10);
+}
 
 function monthYear(value: string | Date): string | null {
   const d = new Date(value);
@@ -20,17 +27,28 @@ function minutes(value: string): string {
   return n ? `${n} min read` : value;
 }
 
-const parts = [
-  date ? monthYear(date) : null,
-  readingTime ? minutes(readingTime) : null,
-].filter(Boolean);
+const when = date ? { iso: iso(date), label: monthYear(date) } : null;
 ---
-{parts.length > 0 && <p class="meta">{parts.join(" · ")}</p>}
+
+<p class="meta">
+  by <a href="/about/">Phil Vishnevsky</a>
+  {when && <> · <time datetime={when.iso ?? undefined}>{when.label}</time></>}
+  {readingTime && <> · {minutes(readingTime)}</>}
+</p>
 
 <style>
   .meta {
     font-size: var(--t-sans-sm);
     color: var(--c-muted);
     margin-top: var(--s-2);
+  }
+  .meta a {
+    color: var(--c-muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--c-hairline);
+  }
+  .meta a:hover {
+    color: var(--c-link);
+    border-bottom-color: currentColor;
   }
 </style>

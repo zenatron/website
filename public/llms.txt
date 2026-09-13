@@ -1,0 +1,43 @@
+# pvi.sh — Phil Vishnevsky
+
+> Personal site of Phil Vishnevsky, a full-stack software engineer in Hartford, CT who builds servers, web apps, and games, runs a homelab at 99.99% uptime, and co-founded Underscore Games. The site carries his technical writing — practical guides on VPNs, Tailscale, self-hosting, reverse proxies, and single sign-on — and his projects. Writing feed: https://pvi.sh/rss.xml
+
+## Pages
+
+- [About](https://pvi.sh/about/): Who Phil is — the story, experience, principles, and the desk it all happens at.
+- [Projects](https://pvi.sh/projects/): Everything Phil has built, from a self-hosted budget tracker to a Rust FLAC library manager.
+- [Writing](https://pvi.sh/blog/): Technical guides and notes, newest first.
+- [Dock](https://pvi.sh/dock/): The apps and tools Phil actually uses, and why.
+- [Say hi](https://pvi.sh/say-hi/): Email, calendar link, and profiles — GitHub, LinkedIn, Bluesky, Ko-fi.
+
+## Writing — homelab and networking guides
+
+- [What Is a VPN? What It Hides, and From Whom](https://pvi.sh/blog/what-is-a-vpn/): A plain-English explanation of what a VPN actually does and doesn't do — tunneling, protocols compared in a table, VPN vs HTTPS vs proxy, and the trust trade-off involved.
+- [Tailscale Explained: A Mesh VPN With No Open Ports](https://pvi.sh/blog/tailscale-explained/): How Tailscale builds a WireGuard mesh — identity, NAT traversal, DERP relays, and how two machines find each other without any open port.
+- [Self-Hosting With Tailscale: Secure Access Without Open Ports](https://pvi.sh/blog/self-hosting-with-tailscale/): Running services at home and reaching them from anywhere without forwarding a single port — the layered-security way to self-host.
+- [SSO for Self-Hosted Apps: One Login for the Whole Rack](https://pvi.sh/blog/sso-for-self-hosted-apps/): Pocket ID and Tinyauth behind a reverse proxy, so every service in the rack takes the same login via OIDC.
+- [Reverse Proxy for a Homelab: Caddy and Automatic HTTPS](https://pvi.sh/blog/reverse-proxy-homelab/): Putting Caddy in front of a rack of services — real certificates on internal domains, clean URLs, centralized access control, no port numbers.
+
+## Writing — other
+
+- [How This Blog Renders MDX](https://pvi.sh/blog/how-this-mdx-blog-works/): The Astro and MDX pipeline behind this site — what runs at build time, what ships to the browser, and why that is almost nothing.
+- [Principles](https://pvi.sh/blog/principles/): Twelve principles that guide Phil's life and work, including why you should spend real money on anything that separates you from the ground.
+
+## Projects — shipped
+
+- [Ledger](https://pvi.sh/projects/ledger/): A self-hosted budget tracker for households — SvelteKit, Bun, Postgres; live at ledger.pvi.sh.
+- [preamble](https://pvi.sh/projects/preamble/): A terminal music-library manager for FLAC collections, written in Rust.
+- [diffl](https://pvi.sh/projects/diffl/): A browser-only file comparison tool — no upload, everything client-side.
+- [πCompress](https://pvi.sh/projects/pi-compress/): An April Fools' data compression tool that reliably makes files bigger.
+
+## Projects — data-mining coursework
+
+- [Final project: clustering wines by chemical composition](https://pvi.sh/projects/itcs-3162-final-project/), plus [project 1](https://pvi.sh/projects/project_1_problem_definition/), [project 2](https://pvi.sh/projects/project_2_classification/), [project 3](https://pvi.sh/projects/project_3_regression/), and the [Python](https://pvi.sh/projects/python_exercise/), [Pandas & NumPy](https://pvi.sh/projects/pandas_numpy_exercise/), and [scikit-learn](https://pvi.sh/projects/scikit_learn_exercise/) exercises from UNC Charlotte's ITCS 3162.
+
+## Facts
+
+- Name: Phil Vishnevsky. Site: https://pvi.sh. Email: phil@pvi.sh.
+- GitHub: https://github.com/zenatron · LinkedIn: https://www.linkedin.com/in/philvishnevsky/ · Bluesky: https://bsky.app/profile/zenatron.bsky.social
+- Studio: Underscore Games (https://underscore.games) — games and tools for game developers.
+- Education: BS Computer Science, UNC Charlotte, 4.0 GPA.
+- Data-mining coursework posts (twelve weekly prep notes) exist at /blog/week-2-prep/ through /blog/week-12-prep/ and /blog/midterm-1-review-algorithms/; they are class notes and kept out of search indexes.
