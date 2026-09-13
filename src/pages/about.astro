@@ -203,7 +203,7 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
   <section id="hobbies" class="band">
     <SectionHead title="Outside the terminal" meta={`${HOBBIES.length}`} />
     <div class="lidstage">
-      <LaptopLid items={HOBBIES.map((h) => ({ name: h.name, description: h.description }))} photo="/images/desk/macbook.webp" photoAspect={1800 / 1273} badge={{ href: "/dock", label: "Dock", note: `the ${toolCount} apps I use →` }} logo={{ img: "/logos/underscore-games-fire.svg", href: "https://underscore.games", label: "Underscore Games", note: "the game studio I co-founded →" }} />
+      <LaptopLid items={HOBBIES.map((h) => ({ name: h.name, description: h.description }))} photo="/images/desk/macbook.webp" photoAspect={1800 / 1273} badge={{ href: "/dock/", label: "Dock", note: `the ${toolCount} apps I use →` }} logo={{ img: "/logos/underscore-games-fire.svg", href: "https://underscore.games", label: "Underscore Games", note: "the game studio I co-founded →" }} />
     </div>
     <a class="file" href="/dock/">
       dock

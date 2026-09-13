@@ -60,6 +60,21 @@ const info = GEAR.map((g) => ({
   machine: g.machine ? MACHINES.find((m) => m.name === g.machine) ?? null : null,
   cards: g.id === "cubicle" ? CUBICLE_CARDS : null,
 }));
+
+/**
+ * Every Get Info panel is rendered here, hidden, inside the dialog — the
+ * script only switches between them. The text used to live in a JSON
+ * payload built into the DOM on click, which meant nothing a crawler or
+ * a no-JS visitor read matched what a visitor saw.
+ */
+
+/** neofetch colors its keys by OS; the homelab wears the site's homelab blue. */
+const MACHINE_HUE: Record<string, string> = { macbook: "var(--c-hue-green)", desktop: "var(--c-hue-blue)", homelab: "var(--c-hue-blue)" };
+const SWATCHES = ["--c-text", "--c-danger", "--c-hue-orange", "--c-accent", "--c-hue-green", "--c-link", "--c-hue-blue", "--c-hue-violet"];
+
+const hue = (name: string) => MACHINE_HUE[name] ?? "var(--c-accent)";
+const sourceLine = (source: (typeof info)[number]["source"]) =>
+  source === "photo" ? "Photographed by Phil." : source === "drawn" ? "Drawn for this page." : null;
 ---
 
 <div class="deskwrap" data-desk>
@@ -83,7 +98,7 @@ const info = GEAR.map((g) => ({
           <img class="layer" src={l.img} alt="" loading="lazy" decoding="async" style={`--lx: ${l.x}%; --ly: ${l.y}%; --lw: ${l.w}%; --lr: ${l.rot ?? 0}deg`} />
         ))}
         {g.id === "macbook" ? (
-          <span class="lidhost"><LaptopLid items={hobbies} photo={g.img} photoAspect={g.aspect} compact badge={{ href: "/dock", label: "Dock", note: `the ${toolCount} apps I use →` }} logo={{ img: "/logos/underscore-games-fire.svg", href: "https://underscore.games", label: "Underscore Games", note: "the game studio I co-founded →" }} /></span>
+          <span class="lidhost"><LaptopLid items={hobbies} photo={g.img} photoAspect={g.aspect} compact badge={{ href: "/dock/", label: "Dock", note: `the ${toolCount} apps I use →` }} logo={{ img: "/logos/underscore-games-fire.svg", href: "https://underscore.games", label: "Underscore Games", note: "the game studio I co-founded →" }} /></span>
         ) : g.id === "a1mini" ? (
           <>
             <img class="photo" src={RIG.base} alt="" loading="lazy" decoding="async" />
@@ -138,10 +153,69 @@ const info = GEAR.map((g) => ({
     </span>
     <span class="title" id="gear-info-title" data-gear-title>Info</span>
   </div>
-  <div class="body" data-gear-body></div>
-</dialog>
+  <div class="body" data-gear-body>
+    {info.map((it) => (
+      <div class="panel" data-gear-panel={it.id} data-name={it.name} hidden>
+        <div class="ihead">
+          <img src={it.img} alt="" width="84" height="84" loading="lazy" decoding="async" />
+          <div>
+            <p class="iname">{it.maker} {it.name}</p>
+            <p class="ikind">{it.kind}</p>
+          </div>
+        </div>
 
-<script type="application/json" data-gear-data set:html={JSON.stringify(info)} />
+        <p class="isec">general</p>
+        <dl class="facts">
+          <dt>Kind</dt>
+          <dd>{it.kind}</dd>
+          {it.facts.map(([k, v]) => (<Fragment><dt>{k}</dt><dd>{v}</dd></Fragment>))}
+        </dl>
+
+        {it.cards && (
+          <Fragment>
+            <p class="isec">in the box</p>
+            <div class="hand">
+              {it.cards.map((c, i) => (
+                <figure>
+                  <img src={c.img} alt={`${c.name} card, from the ${c.deck} deck`} style={`--r: ${(i - 1.5) * 7}deg`} />
+                  <figcaption>{c.name.toLowerCase()}</figcaption>
+                </figure>
+              ))}
+            </div>
+          </Fragment>
+        )}
+
+        {it.machine && (
+          <Fragment>
+            <p class="isec">neofetch</p>
+            <div class="tty" style={`--h: ${hue(it.machine.name)}`}>
+              <p class="host"><b>phil</b>@<b>{it.machine.name}</b></p>
+              <p class="rule" aria-hidden="true">{"-".repeat(`phil@${it.machine.name}`.length)}</p>
+              <dl>
+                {it.machine.fields.map(([k, v]) => (<Fragment><dt>{k}</dt><dd>{v}</dd></Fragment>))}
+              </dl>
+              <p class="swatches" aria-hidden="true">
+                {SWATCHES.map((c) => <i style={`background: var(${c})`}></i>)}
+              </p>
+            </div>
+          </Fragment>
+        )}
+
+        {it.href && (
+          <a class="ilink" href={it.href} rel="noopener noreferrer">{new URL(it.href).host} ↗</a>
+        )}
+
+        <p class="isource">
+          {sourceLine(it.source) ?? (
+            <Fragment>
+              Product image: <a href={(it.source as { url: string }).url} rel="noopener noreferrer">{(it.source as { by: string }).by}</a>.
+            </Fragment>
+          )}
+        </p>
+      </div>
+    ))}
+  </div>
+</dialog>
 
 <style>
   /* On a phone the desk keeps its composition and pans; the scrollbar is
@@ -622,111 +696,25 @@ const info = GEAR.map((g) => ({
 <script>
   import { KEYBOARD_KEYS, PRINTER_RIG, tubePath } from "@/data/gear";
 
-  interface Info {
-    id: string; name: string; maker: string; kind: string; img: string;
-    facts: [string, string][]; href: string | null;
-    source: "photo" | "drawn" | { by: string; url: string };
-    machine: { name: string; fields: [string, string][] } | null;
-    cards: { img: string; name: string; deck: string }[] | null;
-  }
-
-  /** neofetch colors its keys by OS; the homelab wears the site's homelab blue. */
-  const MACHINE_HUE: Record<string, string> = { macbook: "var(--c-hue-green)", desktop: "var(--c-hue-blue)", homelab: "var(--c-hue-blue)" };
-  const SWATCHES = ["--c-text", "--c-danger", "--c-hue-orange", "--c-accent", "--c-hue-green", "--c-link", "--c-hue-blue", "--c-hue-violet"];
-
-  function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string) {
-    const n = document.createElement(tag);
-    if (cls) n.className = cls;
-    if (text !== undefined) n.textContent = text;
-    return n;
-  }
-
-  function render(it: Info): HTMLElement[] {
-    const out: HTMLElement[] = [];
-
-    const head = el("div", "ihead");
-    const img = el("img");
-    img.src = it.img;
-    img.alt = "";
-    const names = el("div");
-    names.append(el("p", "iname", `${it.maker} ${it.name}`), el("p", "ikind", it.kind));
-    head.append(img, names);
-    out.push(head);
-
-    out.push(el("p", "isec", "general"));
-    const dl = el("dl", "facts");
-    for (const [k, v] of [["Kind", it.kind], ...it.facts] as [string, string][]) dl.append(el("dt", undefined, k), el("dd", undefined, v));
-    out.push(dl);
-
-    if (it.cards) {
-      out.push(el("p", "isec", "in the box"));
-      const hand = el("div", "hand");
-      it.cards.forEach((c, i) => {
-        const fig = el("figure");
-        const ci = el("img");
-        ci.src = c.img;
-        ci.alt = `${c.name} card, from the ${c.deck} deck`;
-        ci.style.setProperty("--r", `${(i - 1.5) * 7}deg`);
-        fig.append(ci, el("figcaption", undefined, c.name.toLowerCase()));
-        hand.append(fig);
-      });
-      out.push(hand);
-    }
-
-    if (it.machine) {
-      out.push(el("p", "isec", "neofetch"));
-      const tty = el("div", "tty");
-      tty.style.setProperty("--h", MACHINE_HUE[it.machine.name] ?? "var(--c-accent)");
-      const host = el("p", "host");
-      host.append(el("b", undefined, "phil"), "@", el("b", undefined, it.machine.name));
-      const rule = el("p", "rule", "-".repeat(`phil@${it.machine.name}`.length));
-      rule.setAttribute("aria-hidden", "true");
-      const spec = el("dl");
-      for (const [k, v] of it.machine.fields) spec.append(el("dt", undefined, k), el("dd", undefined, v));
-      const sw = el("p", "swatches");
-      sw.setAttribute("aria-hidden", "true");
-      for (const c of SWATCHES) { const i = el("i"); i.style.background = `var(${c})`; sw.append(i); }
-      tty.append(host, rule, spec, sw);
-      out.push(tty);
-    }
-
-    if (it.href) {
-      const a = el("a", "ilink", `${new URL(it.href).host} ↗`);
-      a.href = it.href;
-      a.rel = "noopener noreferrer";
-      out.push(a);
-    }
-
-    const src = el("p", "isource");
-    if (it.source === "photo") src.textContent = "Photographed by Phil.";
-    else if (it.source === "drawn") src.textContent = "Drawn for this page.";
-    else {
-      src.append("Product image: ");
-      const a = el("a", undefined, it.source.by);
-      a.href = it.source.url;
-      a.rel = "noopener noreferrer";
-      src.append(a, ".");
-    }
-    out.push(src);
-    return out;
-  }
-
   function wire() {
     const root = document.querySelector<HTMLElement>("[data-desk]");
     const dialog = document.querySelector<HTMLDialogElement>("[data-gear-info]");
-    const raw = document.querySelector<HTMLScriptElement>("[data-gear-data]")?.textContent;
-    if (!root || !dialog || !raw || root.dataset.wired) return;
+    if (!root || !dialog || root.dataset.wired) return;
     root.dataset.wired = "1";
-    const items: Info[] = JSON.parse(raw);
     const title = dialog.querySelector<HTMLElement>("[data-gear-title]")!;
     const body = dialog.querySelector<HTMLElement>("[data-gear-body]")!;
 
+    // The panels ship rendered and hidden; a click just shows its own.
+    const panels = new Map<string, HTMLElement>();
+    for (const p of dialog.querySelectorAll<HTMLElement>("[data-gear-panel]"))
+      panels.set(p.dataset.gearPanel!, p);
+
     root.addEventListener("click", (e) => {
       const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("[data-gear]");
-      const it = btn && items.find((i) => i.id === btn.dataset.gear);
-      if (!it) return;
-      title.textContent = `${it.name} Info`;
-      body.replaceChildren(...render(it));
+      const panel = btn && panels.get(btn.dataset.gear!);
+      if (!panel) return;
+      title.textContent = `${panel.dataset.name} Info`;
+      for (const p of panels.values()) p.hidden = p !== panel;
       body.scrollTop = 0;
       dialog.showModal();
     });

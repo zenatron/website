@@ -35,5 +35,5 @@ export const DESK: DeskItem[] = [
   { file: "principles.md", kind: "text",     icon: { form: "doc", glyph: "markdown", ext: "md", ink: "violet" },  x: 48, y: 6,  note: "The whole essay in four lines." },
   { file: "fortune",       kind: "fortune",  icon: { form: "exec", glyph: "fortune" },                           x: 70, y: 12, note: "Roll again." },
   { file: "resume.pdf",    kind: "link",     icon: { form: "doc", glyph: "resume", ext: "pdf", ink: "red" },      x: 34, y: 52, href: "/downloads/Resume_Phil_Vishnevsky.pdf", note: "The formal version." },
-  { file: "desk",          kind: "link",     icon: { form: "folder", glyph: "desk" },                             x: 56, y: 52, href: "/about#setup", note: "Everything these run on." },
+  { file: "desk",          kind: "link",     icon: { form: "folder", glyph: "desk" },                             x: 56, y: 52, href: "/about/#setup", note: "Everything these run on." },
 ];

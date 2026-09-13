@@ -25,16 +25,16 @@ const fs: Record<string, { dirs: string[]; files: Node[] }> = {
   "~": {
     dirs: ["projects", "blog"],
     files: [
-      { name: "about", href: "/about" },
-      { name: "dock", href: "/dock" },
-      { name: "say-hi", href: "/say-hi" },
+      { name: "about", href: "/about/" },
+      { name: "dock", href: "/dock/" },
+      { name: "say-hi", href: "/say-hi/" },
     ],
   },
   "~/projects": {
     dirs: [],
     files: projects.map((p) => ({
       name: projectSlug(p),
-      href: `/projects/${projectSlug(p)}`,
+      href: `/projects/${projectSlug(p)}/`,
       title: p.data.title,
       date: p.data.date ? String(p.data.date) : undefined,
       desc: p.data.description || undefined,
@@ -44,7 +44,7 @@ const fs: Record<string, { dirs: string[]; files: Node[] }> = {
     dirs: [],
     files: posts.map((p) => ({
       name: p.slug,
-      href: `/blog/${p.slug}`,
+      href: `/blog/${p.slug}/`,
       title: p.data.title,
       date: String(p.data.date),
       desc: p.data.excerpt || undefined,

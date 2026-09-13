@@ -50,7 +50,7 @@ const candidates: Candidate[] = [
 ];
 
 /** Where to start when nothing is close: shown without JS, and as the fallback. */
-const starters = candidates.filter((c) => ["/about", "/projects", "/blog"].includes(c.href));
+const starters = candidates.filter((c) => ["/about/", "/projects/", "/blog/"].includes(c.href));
 const split = (name: string) => {
   const dot = name.lastIndexOf(".");
   return dot > 0 ? [name.slice(0, dot), name.slice(dot)] : [name, ""];

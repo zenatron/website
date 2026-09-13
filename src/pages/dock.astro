@@ -55,13 +55,6 @@ const items: Item[] = [
     darkTile: Boolean(a.darkTile),
   })),
 ];
-
-const windows = {
-  neofetch: MACHINES.map((m) => ({ name: m.name, fields: m.fields })),
-  now: NOW,
-  principles: PRINCIPLES,
-  fortunes: FORTUNES,
-};
 ---
 
 <Shell title="Dock | Phil Vishnevsky" description="The apps I actually use, and the things worth opening." ogSlug="dock">
@@ -123,11 +116,42 @@ const windows = {
       <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
       <span class="win-name" data-win-name></span>
     </div>
-    <div class="win-body" data-win-body></div>
+    {/*
+      Every window's contents ship rendered and hidden inside the dialog;
+      the script only switches between them. It used to build them from a
+      JSON payload on click, which put the desk's only text where neither
+      a crawler nor a no-JS visitor could read it.
+    */}
+    <div class="win-body" data-win-body>
+      <div data-win-variant="neofetch" hidden>
+        {MACHINES.map((m) => (
+          <Fragment>
+            <p class="host">phil@{m.name}</p>
+            <dl class="spec">
+              {m.fields.map(([k, v]) => (<Fragment><dt>{k}</dt><dd>{v}</dd></Fragment>))}
+            </dl>
+          </Fragment>
+        ))}
+      </div>
+      <div data-win-variant="list" hidden>
+        {NOW.map((g) => (
+          <div class="group">
+            <p class="group-head">{g.heading}</p>
+            {g.items.map((it) => (
+              <div class="row"><span>{it.name}</span><span>{it.status}</span></div>
+            ))}
+          </div>
+        ))}
+      </div>
+      <div data-win-variant="text" hidden>
+        {PRINCIPLES.map((line) => <p class="line">{line}</p>)}
+      </div>
+      <div data-win-variant="fortune" hidden>
+        {FORTUNES.map((f) => <p class="quote">{f}</p>)}
+      </div>
+    </div>
     <div class="win-foot" data-win-foot></div>
   </dialog>
-
-  <script type="application/json" data-desk-windows set:html={JSON.stringify(windows)} />
 </Shell>
 
 <style>
