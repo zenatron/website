@@ -1,6 +1,7 @@
 ---
 title: "What Is a VPN? What It Hides, and From Whom"
 date: "2026-02-15"
+updated: "2026-09-13"
 readingTime: "18min"
 excerpt: "A VPN moves the point where your traffic joins the internet. That is the whole trick, and it explains most of what the ads get wrong."
 tags: ["vpn", "networking", "security", "privacy"]
@@ -12,6 +13,10 @@ import Diagram from '@/components/mdx/Diagram.astro';
 import Callout from '@/components/mdx/Callout.astro';
 
 You're on café Wi‑Fi. Your laptop auto‑connects, your bank app loads, and a tiny voice in your head asks: *"Can anyone see this?"* That's the moment a VPN makes sense — but only if you understand what it **does** and what it **doesn't** do.
+
+<Callout type="info" title="tl;dr">
+A VPN moves the point where your traffic joins the internet: instead of your ISP, it's a VPN server, and everything between your device and that server is encrypted. What a VPN **doesn't** do is make you anonymous — the provider can now see what your ISP used to, so you're choosing who to trust, not removing trust. And most people who think they need a "privacy VPN" actually need remote access to their own network, which is a different thing that shares the name.
+</Callout>
 
 <Diagram src="/images/blog/what-is-a-vpn/vpn-tunnel-diagram.svg" alt="Diagram showing internet traffic with and without a VPN tunnel" />
 *Traffic flows compared: without a VPN, your ISP and websites see everything. With a VPN, your ISP sees only encrypted traffic to the VPN server, and websites see the VPN's IP — but the VPN provider inherits visibility.*
@@ -273,7 +278,7 @@ If your bank's fraud detection keeps locking you out, it might be easier to whit
 Here's a practical checklist:
 
 - **Threat model**: Do you want privacy from your ISP, or are you trying to safely access your home network?
-- **Logging policy**: Read the provider's privacy policy and independent audits. [That One Privacy Site](https://www.safetydetectives.com/best-vpns/) and [Techlore's VPN Toolkit](https://www.techlore.tech/vpn) are good starting points.
+- **Logging policy**: Read the provider's privacy policy and independent audits. [Safety Detectives' VPN reviews](https://www.safetydetectives.com/best-vpns/) and [Techlore's VPN Toolkit](https://www.techlore.tech/vpn) are good starting points.
 - **Performance**: VPNs add latency. Look for WireGuard‑based providers if possible.
 - **Jurisdiction**: Different countries have different [data retention laws](https://en.wikipedia.org/wiki/Data_retention). [Five Eyes](https://en.wikipedia.org/wiki/Five_Eyes), Nine Eyes, and Fourteen Eyes alliances share intelligence.
 - **DNS behavior**: A good VPN should prevent [DNS leaks](https://en.wikipedia.org/wiki/DNS_leak) (when your DNS queries escape the tunnel).
@@ -296,6 +301,28 @@ If you want private remote access, consider a mesh VPN like Tailscale. If you wa
 - **"VPNs are illegal."** → Legal in most countries, but rules vary. Check [this overview](https://www.comparitech.com/vpn/where-are-vpns-legal-banned/).
 - **"Free VPNs are good enough."** → Free often means *you* are the product. A [2016 CSIRO study](https://arxiv.org/abs/1610.05215) found 38% of free Android VPN apps contained malware.
 - **"A VPN hides me from my employer."** → If your employer controls the device, they likely still have visibility.
+
+## FAQ
+
+### Is a VPN the same as HTTPS?
+
+No — and you need both. HTTPS encrypts one connection: your browser to one site. A VPN encrypts *everything* leaving your device, including DNS lookups, app traffic, and background sync. HTTPS already protects the contents of most web traffic; the VPN's job is hiding who's talking to whom from the network you're sitting on.
+
+### Is a VPN the same as a proxy?
+
+No. A proxy forwards traffic for a single app, usually your browser. A VPN works at the network layer and covers all of it unless you deliberately split-tunnel. If you need broad protection, a proxy is the wrong tool.
+
+### Does a VPN make me anonymous?
+
+No. Your ISP can't see your traffic anymore, but the VPN provider can — you've moved trust, not eliminated it. That's why a no-logs policy backed by independent audits is the first thing to check on a provider.
+
+### Are free VPNs safe?
+
+Treat them as guilty until proven otherwise. A [2016 CSIRO study](https://arxiv.org/abs/1610.05215) found 38% of free Android VPN apps contained malware. If you're not paying, the business model is usually you.
+
+### What is split tunneling?
+
+A setting that routes only chosen apps or domains through the VPN while the rest of your traffic goes out normally. Full tunneling sends everything through the VPN — simpler and usually more private, but sometimes slower.
 
 ## Where to go next
 

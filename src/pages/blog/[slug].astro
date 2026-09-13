@@ -33,6 +33,9 @@ const heroArt = await cardArt({
 // Only pages that actually render math pay for the KaTeX stylesheet.
 const hasMath = /\$\$|\\\(|\\\[|\$[^$\n]+\$/.test(post.body ?? "");
 
+/* Coursework prep stays live for the class, out of the index. */
+const coursework = post.data.series === "data-mining";
+
 /* ── what to read next ─────────────────────────────────────── */
 const all = await getAllBlogPosts();
 const seriesKey = post.data.series;
@@ -78,6 +81,7 @@ const suggested = seriesKey
   ogSlug={`blog/${post.slug}`}
   math={hasMath}
   article
+  noindex={coursework}
   publishedTime={isoDate(post.data.date)}
   modifiedTime={isoDate(post.data.updated) ?? isoDate(post.data.date)}
   articleTags={post.data.tags}

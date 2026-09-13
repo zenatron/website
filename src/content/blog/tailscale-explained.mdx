@@ -1,6 +1,7 @@
 ---
 title: "Tailscale Explained: A Mesh VPN With No Open Ports"
 date: "2026-02-17"
+updated: "2026-09-13"
 readingTime: "24min"
 excerpt: "How Tailscale gets two machines talking directly through a router that should not allow it, and what it falls back to when NAT wins."
 tags: ["tailscale", "vpn", "networking", "homelab", "wireguard"]
@@ -13,6 +14,10 @@ import Callout from '@/components/mdx/Callout.astro';
 import NerdCorner from '@/components/mdx/NerdCorner.astro';
 
 The first time you SSH into your home server from a coffee shop **without** opening a port on your router, it's hard to see how it worked. There's no forwarded port, no static IP, and nothing listening on the public internet. This post is about what actually happened.
+
+<Callout type="info" title="tl;dr">
+Tailscale gives every device you own a WireGuard tunnel to every other device, with no ports open anywhere. A coordination server handles the parts nobody wants to hand-roll — identity, key exchange, NAT hole-punching — and only ever sees metadata, never your traffic. To the apps on your machines, the whole thing looks like one LAN. If your goal is reaching your own stuff from anywhere rather than hiding your browsing, it's the cleanest way to get there.
+</Callout>
 
 <Diagram src="/images/blog/tailscale-explained/tailnet-mesh.svg" alt="A simplified tailnet mesh diagram" />
 
@@ -558,6 +563,24 @@ Ask yourself:
 - Is my primary goal remote access, not anonymity?
 
 If you answer "yes" to most of these, Tailscale is a strong fit.
+
+## FAQ
+
+### Is Tailscale a VPN?
+
+Yes, in the practical sense: your devices sit on a private encrypted network. It's just not the legacy kind — there's no server everyone tunnels through, no port to forward, and no shared password. Each pair of devices gets its own WireGuard tunnel.
+
+### Can Tailscale see my traffic?
+
+No. Tailscale's coordination server is a control plane: it checks identity, hands out public keys, and tells devices how to find each other. Your actual traffic goes device-to-device over WireGuard. If even the control plane bothers you, Headscale lets you run that part yourself.
+
+### What happens when NAT hole-punching fails?
+
+Traffic falls back to DERP — Tailscale's relay network. Connections keep working and stay end-to-end encrypted; they just bounce through a relay instead of going direct, so they're slower. You can see whether a connection is direct or relayed in `tailscale status`.
+
+### Do I need to open any ports?
+
+No. Outbound connections from each device are enough, because the coordination server tells both sides how to reach each other and they punch holes simultaneously. Nothing has to listen on the public internet unless you deliberately use Funnel to expose a service.
 
 ## Further reading
 

@@ -1,6 +1,7 @@
 ---
 title: "Reverse Proxy for a Homelab: Caddy and Automatic HTTPS"
 date: "2026-02-25"
+updated: "2026-09-13"
 readingTime: "22min"
 excerpt: "Putting Caddy in front of a rack of services: real certificates on internal domains, and no port numbers in any URL."
 tags: ["self-hosting", "homelab", "caddy", "networking", "security"]
@@ -15,6 +16,10 @@ import NerdCorner from '@/components/mdx/NerdCorner.astro';
 You've got services running on different ports: Jellyfin on 8096, Grafana on 3000, Nextcloud on 443, and a dozen others. Remembering `server:8096` is annoying. Typing IPs is worse. And exposing random ports to the internet? That's a security incident waiting to happen.
 
 A **reverse proxy** solves all of this: one entry point, clean URLs, automatic HTTPS, and centralized access control.
+
+<Callout type="info" title="tl;dr">
+One front door for the whole rack: Caddy listens on 443, gets a real Let's Encrypt certificate for every hostname, and forwards each one to whatever port the service actually runs on — `jellyfin.domain` to 8096, `grafana.domain` to 3000. Clean URLs, automatic HTTPS, no port numbers, and one place to add auth later. Internal hostnames work too, with wildcard certificates and split DNS instead of public records.
+</Callout>
 
 
 <Diagram src="/images/blog/reverse-proxy-homelab/proxy-architecture.svg" alt="Reverse proxy architecture: internet users connect over HTTPS on port 443 to Caddy, which terminates TLS and obtains and renews certificates automatically from Let's Encrypt via ACME. Caddy then routes clean hostnames like jellyfin.domain and grafana.domain to internal services (Jellyfin on 8096, Grafana on 3000, Nextcloud on 80, NAS on 5000), which never expose their own ports.">
@@ -491,6 +496,24 @@ api.yourdomain.com {
 - [Caddy Docker guide](https://caddyserver.com/docs/running#docker-compose)
 - [DNS providers for Caddy](https://github.com/caddy-dns) — for DNS challenge
 - [Self-hosting with Tailscale](/blog/self-hosting-with-tailscale) — secure access without exposing ports
+
+## FAQ
+
+### Why Caddy instead of Nginx or Traefik?
+
+Automatic HTTPS with zero configuration: Caddy requests and renews Let's Encrypt certificates by itself, no certbot, no cron. Nginx does everything Caddy does with more config; Traefik with more concepts. For a homelab rack, the shortest config that works wins.
+
+### Do my internal hostnames need public DNS records?
+
+No. A wildcard certificate covers `*.yourdomain.com`, and split DNS — a Pi-hole or AdGuard record pointing `jellyfin.yourdomain` at your server — makes the name resolve only inside your network. Real certificates, no public trace.
+
+### Can the proxy add a login to apps that don't have one?
+
+Yes — forward auth. The proxy checks the session before the request reaches the app, so anything behind it is protected even if the app ships with no authentication. The [SSO guide](/blog/sso-for-self-hosted-apps) wires this up properly with Pocket ID and Tinyauth.
+
+### Which ports do I actually need to open?
+
+Only 80 and 443, and only if you want services reachable from outside. Between Caddy and the backends, nothing needs publishing at all: containers on a shared Docker network are reachable by container name, and their ports stay internal.
 
 ## Summary
 

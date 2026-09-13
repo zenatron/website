@@ -1,6 +1,7 @@
 ---
 title: "Self‑Hosting With Tailscale: Secure Access Without Open Ports"
 date: "2026-02-19"
+updated: "2026-09-13"
 readingTime: "25min"
 excerpt: "Running services at home and reaching them from anywhere, without forwarding a single port."
 tags: ["self-hosting", "tailscale", "homelab", "security", "docker"]
@@ -12,6 +13,10 @@ import Diagram from '@/components/mdx/Diagram.astro';
 import Callout from '@/components/mdx/Callout.astro';
 
 Self‑hosting is empowering — but opening ports on your router can feel like hanging a neon sign that says "Please scan me." There's a better way: private access via Tailscale. If you're new here, [self‑hosting](https://en.wikipedia.org/wiki/Self-hosting_(web_services)) just means running services on hardware you control.
+
+<Callout type="info" title="tl;dr">
+Run your services at home, put nothing on the public internet, and reach everything through your tailnet: install Tailscale on the server and on whatever you carry, and they're on one private network. Add a subnet router for devices that can't run Tailscale themselves, and Tailscale Serve when a service needs real HTTPS. Private by default, exposed only on purpose — that's the whole pattern.
+</Callout>
 
 <Diagram src="/images/blog/self-hosting-with-tailscale/remote-access.svg" alt="Remote access diagram showing encrypted tailnet links" />
 *All traffic flows through an encrypted mesh overlay — no port forwarding, no public exposure. Your services are invisible to automated internet scans.*
@@ -669,6 +674,24 @@ Tailscale makes private access to self‑hosted services feel effortless — and
 The pattern is simple: keep services private by default, expose only what you must, and monitor enough to know when things break.
 
 Want the deeper networking explanation? Read [Tailscale Explained](/blog/tailscale-explained).
+
+## FAQ
+
+### Do I have to forward ports to self-host?
+
+No — and that's the point. Classic guides say "forward 443 to your box," which hands your server to every scanner on the internet. With Tailscale, services are reachable only from devices on your tailnet, and nothing of yours listens publicly at all.
+
+### What's a subnet router?
+
+One machine running Tailscale that advertises your LAN — say, `192.168.1.0/24` — into the tailnet. Devices that can't run Tailscale themselves, like printers and smart TVs, become reachable as if they were on it. The routes need approval in the admin console the first time.
+
+### How do I get HTTPS for a service that never leaves the house?
+
+Tailscale Serve. It puts a valid certificate on a tailnet service, so `https://jellyfin.your-tailnet.ts.net` works without public DNS, without Let's Encrypt, and without a single open port.
+
+### Can I run Tailscale inside Docker?
+
+Yes, two ways: `network_mode: host` so the container shares the machine's tailnet interface (simple, but port conflicts become yours), or a Tailscale sidecar container that other containers use as their gateway (more setup, more flexible).
 
 ## Further reading
 

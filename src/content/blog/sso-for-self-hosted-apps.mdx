@@ -1,6 +1,7 @@
 ---
 title: "SSO for Self-Hosted Apps: One Login for the Whole Rack"
 date: "2026-02-23"
+updated: "2026-09-13"
 readingTime: "20min"
 excerpt: "Pocket ID, Tinyauth, and a reverse proxy, wired so every service behind them takes the same login."
 tags: ["self-hosting", "homelab", "security", "sso", "oidc"]
@@ -15,6 +16,10 @@ import NerdCorner from '@/components/mdx/NerdCorner.astro';
 You've got Jellyfin, Nextcloud, Grafana, n8n, and a dozen other services running on your homelab. Each one has its own login. Some use email, some use usernames, and you've probably reused the same password more times than you'd like to admit.
 
 **Single sign-on (SSO)** fixes this: one login, one identity, access to everything. It's not just convenient — it's more secure, because you can enforce MFA in one place instead of hoping each app supports it.
+
+<Callout type="info" title="tl;dr">
+One identity provider in front of the whole rack solves it: Pocket ID if your apps speak OIDC, Tinyauth as forward auth for the ones that don't, both behind your reverse proxy. You log in once, MFA lives in exactly one place, and even apps with no authentication of their own inherit the same front door.
+</Callout>
 
 <Diagram src="/images/blog/sso-for-self-hosted-apps/sso-flow.svg" alt="SSO authentication flow diagram" />
 *The full SSO flow: you authenticate once with your identity provider (Pocket ID), and the reverse proxy (Caddy + forward_auth) carries that trust to every protected service. Apps that support OIDC can talk to the IdP directly.*
@@ -314,6 +319,24 @@ Verify:
 - [Caddy forward_auth directive](https://caddyserver.com/docs/caddyfile/directives/forward_auth)
 - [OIDC explained simply](https://developer.okta.com/blog/2019/10/21/illustrated-guide-to-oauth-and-oidc)
 - [Authentik documentation](https://goauthentik.io/docs/) (if you want more features)
+
+## FAQ
+
+### Is SSO the same as a password manager?
+
+No. A password manager syncs per-app passwords; SSO eliminates them. With SSO there's one identity provider, and every app outsources the "who are you" question to it.
+
+### What's the difference between OIDC and forward auth?
+
+With OIDC, the app natively asks your identity provider to log you in — the app knows about users and groups. With forward auth, the reverse proxy checks every request *before* the app ever sees it. The app doesn't know an authentication happened; it just never receives unauthenticated traffic.
+
+### My app has no login at all. Can I still protect it?
+
+Yes. That's the forward-auth case: the proxy demands a valid session and drops anything else, so even an app that ships with zero authentication is gated behind your one login. Great for internal dashboards and admin panels that assume they're on a trusted LAN.
+
+### Pocket ID or Tinyauth — which do I pick?
+
+Pocket ID if you want a real OIDC provider and your apps can speak it. Tinyauth if what you mostly need is forward auth in front of apps that can't. Plenty of racks run both: OIDC where it's supported, forward auth everywhere else.
 
 ## Next steps
 
