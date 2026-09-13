@@ -19,6 +19,7 @@ import Cells from "@/components/Cells.astro";
 import SectionHead from "@/components/SectionHead.astro";
 import ProjectIcon from "@/components/ProjectIcon.astro";
 import { getAllProjects, getSuggestedProjects, projectSlug, PROJECT_KIND } from "@/lib/projects";
+import { creativeWorkSchema, isoDate } from "@/lib/schema";
 
 export async function getStaticPaths() {
   const projects = await getAllProjects();
@@ -86,6 +87,16 @@ const suggested = await Promise.all((await getSuggestedProjects(slug, 3)).map(as
   description={entry.data.description}
   ogSlug={`projects/${slug}`}
   math={hasMath}
+  schema={creativeWorkSchema({
+    name: entry.data.title,
+    description: entry.data.description,
+    path: `/projects/${slug}/`,
+    date: isoDate(entry.data.date),
+    image: new URL(`/og/projects/${slug}.png`, Astro.site).href,
+    tags: entry.data.tags,
+    repo: source,
+    live,
+  })}
 >
   <article class="project">
     <header class="head">

@@ -5,6 +5,8 @@ const blog = defineCollection({
   schema: z.object({
     title: z.string(),
     date: z.string(),
+    /** Set when a published post is revised; feeds dateModified and lastmod. */
+    updated: z.string().optional(),
     readingTime: z.string().optional(),
     excerpt: z.string().optional(),
     tags: z.array(z.string()).optional(),

@@ -11,6 +11,7 @@ import AppIcon from "@/components/AppIcon.astro";
 import { SITE } from "@/data/site";
 import { cardArt } from "@/lib/cardart";
 import { getAllBlogPosts, getSuggestedPosts } from "@/lib/blog";
+import { blogPostingSchema, isoDate } from "@/lib/schema";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
@@ -76,6 +77,19 @@ const suggested = seriesKey
   description={post.data.excerpt}
   ogSlug={`blog/${post.slug}`}
   math={hasMath}
+  article
+  publishedTime={isoDate(post.data.date)}
+  modifiedTime={isoDate(post.data.updated) ?? isoDate(post.data.date)}
+  articleTags={post.data.tags}
+  schema={blogPostingSchema({
+    title: post.data.title,
+    description: post.data.excerpt,
+    path: `/blog/${post.slug}/`,
+    published: isoDate(post.data.date),
+    modified: isoDate(post.data.updated) ?? isoDate(post.data.date),
+    image: new URL(`/og/blog/${post.slug}.png`, Astro.site).href,
+    tags: post.data.tags,
+  })}
 >
   <div class="progress" data-progress aria-hidden="true"></div>
 

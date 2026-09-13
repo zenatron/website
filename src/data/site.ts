@@ -2,6 +2,7 @@
 
 export const SITE = {
   name: "Phil Vishnevsky",
+  url: "https://pvi.sh",
   user: "phil",
   host: "pvish",
   timezone: "America/New_York",

@@ -19,6 +19,7 @@ import ReachCards from "@/components/ReachCards.astro";
 import LaptopLid from "@/components/LaptopLid.astro";
 import DeskScene from "@/components/DeskScene.astro";
 import { SITE, STATUS } from "@/data/site";
+import { profilePageSchema } from "@/lib/schema";
 import { NOW, PRINCIPLES, TIMELINE } from "@/data/about";
 import { FAVORITES } from "@/data/favorites";
 
@@ -69,7 +70,7 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
 
 ---
 
-<Shell title="About | Phil Vishnevsky" description="The story so far." ogSlug="about">
+<Shell title="About | Phil Vishnevsky" description="The story so far." ogSlug="about" schema={profilePageSchema()}>
   <section class="hero">
     <div class="portrait">
       <img

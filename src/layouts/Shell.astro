@@ -11,6 +11,8 @@ import Sidebar from "@/components/Sidebar.astro";
 import StatusBar from "@/components/StatusBar.astro";
 import Terminal from "@/components/Terminal.astro";
 import Explore from "@/components/Explore.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { SITE } from "@/data/site";
 
 interface Props {
   title?: string;
@@ -20,6 +22,16 @@ interface Props {
   math?: boolean;
   /** The "keep exploring" list at the foot of the page, on narrow screens. */
   explore?: boolean;
+  /** og:type article — writing, not a landing page. */
+  article?: boolean;
+  /** ISO dates, for article:published_time / article:modified_time. */
+  publishedTime?: string;
+  modifiedTime?: string;
+  articleTags?: string[];
+  /** Keeps the page live at its URL, but out of the index. */
+  noindex?: boolean;
+  /** schema.org node(s); see src/lib/schema.ts. */
+  schema?: object | object[];
 }
 
 const {
@@ -28,6 +40,12 @@ const {
   ogSlug = "home",
   math = false,
   explore = true,
+  article = false,
+  publishedTime,
+  modifiedTime,
+  articleTags,
+  noindex = false,
+  schema,
 } = Astro.props;
 
 const ogUrl = new URL(`/og/${ogSlug}.png`, Astro.site).href;
@@ -42,11 +60,20 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     <meta name="description" content={description} />
     <title>{title}</title>
     <link rel="canonical" href={canonicalUrl} />
+    {noindex && <meta name="robots" content="noindex" />}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogUrl} />
-    <meta property="og:type" content="website" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
+    <meta property="og:type" content={article ? "article" : "website"} />
     <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="en_US" />
+    {article && publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {article && modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+    {article && articleTags?.map((tag) => <meta property="article:tag" content={tag} />)}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
@@ -78,6 +105,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
       })();
     </script>
     <ClientRouter />
+    {schema && <JsonLd schema={schema} />}
   </head>
 
   <body>

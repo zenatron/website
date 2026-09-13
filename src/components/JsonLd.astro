@@ -1,0 +1,15 @@
+---
+/**
+ * One place that turns a schema.org object into a script tag. `<` is
+ * escaped so a title or excerpt containing `</script>` can't break out
+ * of the tag.
+ */
+interface Props {
+  schema: object | object[];
+}
+
+const { schema } = Astro.props;
+const data = JSON.stringify(schema).replace(/</g, "\\u003c");
+---
+
+<script type="application/ld+json" set:html={data} />

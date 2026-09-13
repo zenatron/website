@@ -8,6 +8,7 @@ import HeroArt from "@/components/HeroArt.astro";
 import { SITE } from "@/data/site";
 import { getAllBlogPosts } from "@/lib/blog";
 import { getAllProjects, projectSlug } from "@/lib/projects";
+import { personSchema, websiteSchema } from "@/lib/schema";
 
 const [posts, projects] = await Promise.all([getAllBlogPosts(), getAllProjects()]);
 
@@ -43,7 +44,7 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
 })));
 ---
 
-<Shell>
+<Shell schema={[personSchema(), websiteSchema()]}>
   <section class="hero">
     <div class="intro">
       <h1>{SITE.name}</h1>
