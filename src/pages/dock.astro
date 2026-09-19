@@ -2,6 +2,7 @@
 import Shell from "@/layouts/Shell.astro";
 import AppIcon from "@/components/AppIcon.astro";
 import FileIcon from "@/components/FileIcon.astro";
+import Neofetch from "@/components/Neofetch.astro";
 import { DESK } from "@/data/desk";
 import { FAVORITES } from "@/data/favorites";
 import { MACHINES, NOW, PRINCIPLES } from "@/data/about";
@@ -124,14 +125,7 @@ const items: Item[] = [
     */}
     <div class="win-body" data-win-body>
       <div data-win-variant="neofetch" hidden>
-        {MACHINES.map((m) => (
-          <Fragment>
-            <p class="host">phil@{m.name}</p>
-            <dl class="spec">
-              {m.fields.map(([k, v]) => (<Fragment><dt>{k}</dt><dd>{v}</dd></Fragment>))}
-            </dl>
-          </Fragment>
-        ))}
+        {MACHINES.map((m) => <Neofetch machine={m} />)}
       </div>
       <div data-win-variant="list" hidden>
         {NOW.map((g) => (
@@ -147,7 +141,12 @@ const items: Item[] = [
         {PRINCIPLES.map((line) => <p class="line">{line}</p>)}
       </div>
       <div data-win-variant="fortune" hidden>
-        {FORTUNES.map((f) => <p class="quote">{f}</p>)}
+        {FORTUNES.map((f) => (
+          <p class="quote">
+            {f.text}
+            <span class="by">— {f.by}</span>
+          </p>
+        ))}
       </div>
     </div>
     <div class="win-foot" data-win-foot></div>
@@ -316,23 +315,6 @@ const items: Item[] = [
   }
   .win-foot:empty { display: none; }
 
-  .win-body :global(.spec) {
-    display: grid;
-    grid-template-columns: 9ch minmax(0, 1fr);
-    gap: 0 var(--s-3);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    line-height: 1.95;
-  }
-  .win-body :global(.spec dt) { color: var(--c-dim); }
-  .win-body :global(.spec dd) { margin: 0; color: var(--c-text); }
-  .win-body :global(.host) {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-md);
-    color: var(--c-accent);
-    margin-bottom: var(--s-2);
-  }
-  .win-body :global(.host + .spec) { margin-bottom: var(--s-5); }
   .win-body :global(.group-head) {
     font-size: var(--t-sans-sm);
     font-weight: 600;
@@ -354,6 +336,14 @@ const items: Item[] = [
   }
   .win-body :global(.line) { font-size: var(--t-sans-lg); line-height: 1.6; }
   .win-body :global(.quote) { font-size: var(--t-sans-md); line-height: 1.6; }
+  /* Whoever said it, on their own line, as colophon. */
+  .win-body :global(.quote .by) {
+    display: block;
+    margin-top: var(--s-2);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+  }
 
   @media (max-width: 640px) {
     .surface { padding: var(--s-5) var(--s-3); }

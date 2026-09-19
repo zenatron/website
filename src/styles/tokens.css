@@ -11,7 +11,7 @@
   /* Surfaces — ascending elevation */
   --c-bg:        #FDFCF9;  /* page ground */
   --c-chrome:    #F6F3ED;  /* titlebar, status bar, sidebar */
-  --c-raised:    #EFEBE2;  /* hover, active row, terminal */
+  --c-raised:    #EFEBE2;  /* hover, active row */
   --c-sunken:    #F2EFE8;  /* code blocks, insets */
 
   /* Structure */

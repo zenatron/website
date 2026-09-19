@@ -1,0 +1,71 @@
+---
+/**
+ * A machine's neofetch, as it prints: the host line and its rule, the
+ * keys in the machine's hue, and the swatch row. Shared by the desk's
+ * Get Info windows on /about and the neofetch file on /dock, so the two
+ * can't drift — the specs come from MACHINES, and so does this.
+ */
+import { MACHINES } from "@/data/about";
+
+/** neofetch colors its keys by OS; the homelab wears the site's homelab blue. */
+const MACHINE_HUE: Record<string, string> = {
+  macbook: "var(--c-hue-green)",
+  desktop: "var(--c-hue-blue)",
+  homelab: "var(--c-hue-blue)",
+};
+const SWATCHES = [
+  "--c-text",
+  "--c-danger",
+  "--c-hue-orange",
+  "--c-accent",
+  "--c-hue-green",
+  "--c-link",
+  "--c-hue-blue",
+  "--c-hue-violet",
+];
+
+interface Props {
+  machine: (typeof MACHINES)[number];
+}
+const { machine } = Astro.props;
+const hue = MACHINE_HUE[machine.name] ?? "var(--c-accent)";
+---
+
+<div class="tty" style={`--h: ${hue}`}>
+  <p class="host"><b>phil</b>@<b>{machine.name}</b></p>
+  <p class="rule" aria-hidden="true">{"-".repeat(`phil@${machine.name}`.length)}</p>
+  <dl>
+    {machine.fields.map(([k, v]) => (<Fragment><dt>{k}</dt><dd>{v}</dd></Fragment>))}
+  </dl>
+  <p class="swatches" aria-hidden="true">
+    {SWATCHES.map((c) => <i style={`background: var(${c})`}></i>)}
+  </p>
+</div>
+
+<style>
+  .tty {
+    margin-top: var(--s-2);
+    padding: var(--s-3) var(--s-4);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    line-height: 1.75;
+    background: var(--c-chrome);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-sm);
+  }
+  /* Machines stacked in one window (the dock's neofetch file). */
+  .tty + .tty { margin-top: var(--s-5); }
+  .host { font-weight: 600; }
+  .host b { color: var(--h); }
+  .rule { color: var(--c-dim); line-height: 1; margin-bottom: 4px; }
+  dl {
+    display: grid;
+    grid-template-columns: 9ch minmax(0, 1fr);
+    gap: 0 var(--s-3);
+    margin: 0;
+  }
+  dt { color: var(--h); font-weight: 600; }
+  dd { margin: 0; color: var(--c-muted); min-width: 0; }
+  .swatches { display: flex; margin-top: var(--s-2); }
+  .swatches i { width: 20px; height: 10px; }
+</style>

@@ -7,7 +7,7 @@
  *
  * Without JavaScript it still says what happened and offers three places
  * to start. The zsh line survives underneath, smaller: a 404 genuinely is
- * an error, so it's the one place the terminal gets to say so.
+ * an error, and the site's desktop fiction lets it say so.
  */
 import Shell from "@/layouts/Shell.astro";
 import FileIcon from "@/components/FileIcon.astro";
@@ -83,10 +83,7 @@ const split = (name: string) => {
 
     <p class="actions">
       <a class="btn primary" href="/">Go home</a>
-      <button class="btn keyed" type="button" data-open-terminal>
-        Search <kbd data-nf-keycap aria-hidden="true">⌘K</kbd>
-      </button>
-      <button class="btn touch" type="button" data-nf-search>Search</button>
+      <button class="btn" type="button" data-nf-search>Search</button>
     </p>
 
     <p class="zsh" aria-hidden="true"><span class="zshname">zsh:</span> no such file or directory: <span data-nf-path></span></p>
@@ -200,23 +197,6 @@ const split = (name: string) => {
     transition: background var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease), filter var(--dur-state) var(--ease);
   }
   .btn.primary { color: var(--c-bg); background: var(--c-link); border-color: transparent; }
-  /* The terminal where there's a keyboard; the explorer's search where
-     there isn't. The same breakpoints as the titlebar's keycap. */
-  .touch { display: none; }
-  @media (max-width: 640px), (hover: none) {
-    .keyed { display: none; }
-    .touch { display: inline-flex; }
-  }
-
-  .btn kbd {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    font-weight: 400;
-    color: var(--c-muted);
-    border: 1px solid var(--c-hairline);
-    border-radius: 5px;
-    padding: 1px 5px;
-  }
   @media (hover: hover) {
     .btn:hover { background: var(--c-raised); border-color: var(--c-hairline-strong); }
     .btn.primary:hover { background: var(--c-link); filter: brightness(1.08); }
@@ -242,8 +222,7 @@ const split = (name: string) => {
 </style>
 
 <script>
-  // Search without a keyboard: the explorer's search, in its drawer where
-  // it's a drawer.
+  // Search: the explorer's search, in its drawer where it's a drawer.
   document.addEventListener("astro:page-load", () => {
     const btn = document.querySelector<HTMLButtonElement>("[data-nf-search]");
     if (!btn || btn.dataset.wired) return;
@@ -321,9 +300,6 @@ const split = (name: string) => {
     const section = folder && /^(blog|posts?|writing)$/.test(folder) ? "blog" : folder && /^projects?$/.test(folder) ? "projects" : null;
 
     root.querySelector("[data-nf-path]")!.textContent = path;
-    const kbd = root.querySelector("[data-nf-keycap]");
-    const platform = (navigator as any).userAgentData?.platform ?? navigator.platform ?? "";
-    if (kbd) kbd.textContent = /mac/i.test(platform) ? "⌘K" : "Ctrl K";
 
     if (leaf) {
       const shown = decodeURIComponent(leaf).replace(/\.(mdx?|html?)$/i, "");

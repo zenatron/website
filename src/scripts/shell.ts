@@ -56,14 +56,6 @@ function syncTitlebar() {
   proxy.replaceChildren(icon);
 }
 
-function syncKeycap() {
-  const el = document.querySelector<HTMLElement>("[data-keycap]");
-  if (!el) return;
-  const platform =
-    (navigator as any).userAgentData?.platform ?? navigator.platform ?? "";
-  el.textContent = /mac/i.test(platform) ? "⌘K" : "Ctrl K";
-}
-
 /*  Mobile drawer */
 
 function setDrawer(open: boolean) {
@@ -178,7 +170,6 @@ addEventListener("resize", () => {
 
 function sync() {
   syncTitlebar();
-  syncKeycap();
   wireDrawer();
   setDrawer(false); // a navigation always closes the drawer
   syncPane();

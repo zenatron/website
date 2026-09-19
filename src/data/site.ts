@@ -17,22 +17,15 @@ export const SITE = {
 /** The one line of availability the explorer carries onto every page. */
 export const STATUS = "open to interesting projects";
 
-/** Answers `whoami` in the terminal. This is where the old homepage identity block went. */
-export const WHOAMI = [
-  "Phil Vishnevsky — full-stack engineer in Hartford, CT.",
-  "Servers, developer tooling, web apps, and indie games.",
-  "Currently open to interesting projects.",
-];
-
-/** Answers `fortune`. This is where the deleted ~/fortune block went. */
-export const FORTUNES = [
-  "The best code is the code you don't have to think about at 2am. — me, mass apply reject era",
-  "Ship it. Fix it later. Unless it's auth. Don't ship broken auth. — me, learning from others' mistakes",
-  "The goal isn't to write clever code. It's to write code the next person can delete. — me, after inheriting spaghetti",
-  "Good tools disappear. You only notice the bad ones. — me, after switching IDEs",
-  "Keep your friends rich and your enemies rich, and wait to find out which is which. — Ultron",
-  "Every expert was once a beginner who refused to quit. — probably a poster somewhere",
-  "Make it work, make it right, make it fast. In that order. — Kent Beck (paraphrased)",
+/** Quips the dock's fortune window deals out. This is where the deleted ~/fortune block went. */
+export const FORTUNES: { text: string; by: string }[] = [
+  { text: "The best code is the code you don't have to think about at 2am.", by: "me, mass apply reject era" },
+  { text: "Ship it. Fix it later. Unless it's auth. Don't ship broken auth.", by: "me, learning from others' mistakes" },
+  { text: "The goal isn't to write clever code. It's to write code the next person can delete.", by: "me, after inheriting spaghetti" },
+  { text: "Good tools disappear. You only notice the bad ones.", by: "me, after switching IDEs" },
+  { text: "Keep your friends rich and your enemies rich, and wait to find out which is which.", by: "Ultron" },
+  { text: "Every expert was once a beginner who refused to quit.", by: "probably a poster somewhere" },
+  { text: "Make it work, make it right, make it fast. In that order.", by: "Kent Beck (paraphrased)" },
 ];
 
 /**

@@ -9,7 +9,6 @@ import Titlebar from "@/components/Titlebar.astro";
 import Tabs from "@/components/Tabs.astro";
 import Sidebar from "@/components/Sidebar.astro";
 import StatusBar from "@/components/StatusBar.astro";
-import Terminal from "@/components/Terminal.astro";
 import Explore from "@/components/Explore.astro";
 import JsonLd from "@/components/JsonLd.astro";
 import { SITE } from "@/data/site";
@@ -130,8 +129,6 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
       <StatusBar />
     </div>
 
-    <Terminal transition:persist="terminal" />
-
     <script>
       import "@/scripts/theme";
       import "@/scripts/shell";
@@ -139,7 +136,6 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
       import "@/scripts/tabs";
       import "@/scripts/window";
       import "@/scripts/clock";
-      import "@/scripts/terminal";
     </script>
   </body>
 </html>

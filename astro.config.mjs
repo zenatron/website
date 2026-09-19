@@ -114,15 +114,6 @@ export default defineConfig({
       langAlias: { caddyfile: "nginx", Caddyfile: "nginx" },
     },
   },
-  redirects: {
-    // Renamed: the desk became the dock, elsewhere became say hi.
-    "/stack": "/dock",
-    "/desk": "/dock",
-    "/links": "/say-hi",
-    "/contact": "/say-hi",
-    "/principles": "/blog/principles",
-    "/resume": "/downloads/Resume_Phil_Vishnevsky.pdf",
-  },
   vite: {
     server: { allowedHosts: ["cachyos"] },
     define: {

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    { "source": "/links(/)?", "destination": "/say-hi/", "statusCode": 301 },
+    { "source": "/contact(/)?", "destination": "/say-hi/", "statusCode": 301 },
+    { "source": "/principles(/)?", "destination": "/blog/principles/", "statusCode": 301 },
+    { "source": "/resume(/)?", "destination": "/downloads/Resume_Phil_Vishnevsky.pdf", "statusCode": 301 }
+  ]
+}

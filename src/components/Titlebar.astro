@@ -39,10 +39,6 @@ import ThemeToggle from "@/components/ThemeToggle.astro";
   </p>
 
   <ThemeToggle />
-  <button class="keycap" type="button" data-open-terminal>
-    <span class="sr-only">Open terminal</span>
-    <kbd data-keycap aria-hidden="true">⌘K</kbd>
-  </button>
 </div>
 
 <style>
@@ -152,21 +148,6 @@ import ThemeToggle from "@/components/ThemeToggle.astro";
   }
   .proxy :global(.pdot[data-plain]) { background: transparent; border: 1px solid var(--c-hairline-strong); }
 
-  .keycap {
-    flex: 0 0 auto;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    color: var(--c-muted);
-    border: 1px solid var(--c-hairline);
-    padding: 3px 7px;
-    border-radius: var(--radius-sm);
-    line-height: 1;
-    transition: color var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease);
-  }
-  @media (hover: hover) {
-    .keycap:hover { color: var(--c-text); border-color: var(--c-hairline-strong); }
-  }
-
   /* The drawer toggle only exists below 900px. */
   .drawer-toggle {
     display: none;
@@ -194,11 +175,5 @@ import ThemeToggle from "@/components/ThemeToggle.astro";
 
   @media (max-width: 640px) {
     .lights { display: none; }
-  }
-
-  /* No keyboard, no keyboard shortcut: the terminal is for typing, and a
-     phone or a touch screen without a pointer has the explorer's search. */
-  @media (max-width: 640px), (hover: none) {
-    .keycap { display: none; }
   }
 </style>
