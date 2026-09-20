@@ -3,7 +3,7 @@
  * with stable @id anchors — `/#person` and `/#website` — so a BlogPosting's
  * author reference resolves to the same Person the homepage describes.
  */
-import { SITE } from "@/data/site";
+import { COPYRIGHT_YEAR, SITE } from "@/data/site";
 import { links } from "@/lib/links";
 
 const URL_ = SITE.url.replace(/\/+$/, "");
@@ -22,6 +22,13 @@ export function isoDate(value: string | undefined): string | undefined {
   if (!value) return undefined;
   const d = new Date(value);
   return Number.isNaN(d.getTime()) ? undefined : d.toISOString().slice(0, 10);
+}
+
+/** The year a piece was published, for its own copyright line. */
+function postYear(value: string | undefined): number | undefined {
+  if (!value) return undefined;
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? undefined : d.getFullYear();
 }
 
 export function personSchema() {
@@ -58,6 +65,8 @@ export function websiteSchema() {
     inLanguage: "en",
     author: { "@id": `${URL_}/#person` },
     publisher: { "@id": `${URL_}/#person` },
+    copyrightHolder: { "@id": `${URL_}/#person` },
+    copyrightYear: COPYRIGHT_YEAR,
   };
 }
 
@@ -106,6 +115,9 @@ export function blogPostingSchema({
       url: `${URL_}/about/`,
     },
     publisher: { "@id": `${URL_}/#person` },
+    copyrightHolder: { "@id": `${URL_}/#person` },
+    // The year it was written, not the year it was deployed.
+    copyrightYear: postYear(published) ?? COPYRIGHT_YEAR,
     isPartOf: { "@id": `${URL_}/#website` },
     ...(tags?.length ? { keywords: tags.join(", ") } : {}),
     inLanguage: "en",

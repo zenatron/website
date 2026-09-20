@@ -8,7 +8,7 @@
  * would be hostile. The branch link is therefore tabindex="-1" too — the
  * repo is reachable from /say-hi, which is in the tab order.
  */
-import { SITE } from "@/data/site";
+import { COPYRIGHT, SITE } from "@/data/site";
 
 const branch = __GIT_BRANCH__;
 const version = __APP_VERSION__;
@@ -24,6 +24,7 @@ const buildLabel = new Date(buildTime).toLocaleString("en-US", {
   <a class="branch" href={SITE.repo} tabindex="-1" rel="noopener noreferrer" title="Built from this branch">{branch}</a>
   <span>Ln 1, Col 1</span>
   <span>UTF-8</span>
+  <span class="copyright">{COPYRIGHT}</span>
 
   <span class="spacer"></span>
 
@@ -83,6 +84,9 @@ const buildLabel = new Date(buildTime).toLocaleString("en-US", {
 
   /* The version sits with the deploy it describes: close, not a full gap. */
   .version { margin-right: calc(var(--s-2) - var(--s-4)); }
+
+  /* Selectable: a notice you can't copy isn't much of a notice. */
+  .copyright { user-select: text; }
 
   /* Below 640px: branch, and the version with its deploy status. */
   @media (max-width: 640px) {

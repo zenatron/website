@@ -14,6 +14,15 @@ export const SITE = {
   kofi: "https://ko-fi.com/zenatron",
 } as const;
 
+/**
+ * The copyright, derived from the deploy rather than typed: the year comes
+ * from the build, so it's right the morning of January 1st without anyone
+ * remembering it. The status bar, the feed and the schema graph all say it
+ * from here, so they can't drift apart.
+ */
+export const COPYRIGHT_YEAR = new Date(__BUILD_TIME__).getFullYear();
+export const COPYRIGHT = `© ${COPYRIGHT_YEAR} ${SITE.name}`;
+
 /** The one line of availability the explorer carries onto every page. */
 export const STATUS = "open to interesting projects";
 

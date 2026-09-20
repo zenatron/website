@@ -1,7 +1,7 @@
 import rss from "@astrojs/rss";
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
-import { SITE } from "@/data/site";
+import { COPYRIGHT, SITE } from "@/data/site";
 
 /**
  * The writing feed. Coursework prep posts stay out: a feed is a promise
@@ -28,6 +28,6 @@ export const GET: APIRoute = async (context) => {
       link: `/blog/${post.slug}/`,
       categories: post.data.tags,
     })),
-    customData: "<language>en-us</language>",
+    customData: `<language>en-us</language><copyright>${COPYRIGHT}</copyright>`,
   });
 };
