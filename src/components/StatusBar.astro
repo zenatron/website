@@ -10,6 +10,9 @@
  */
 import { COPYRIGHT, SITE } from "@/data/site";
 
+/** "©" / "2026" / "Phil Vishnevsky" — split so the mark can be nudged and the name dropped on phones. */
+const [mark, year, ...name] = COPYRIGHT.split(" ");
+
 const branch = __GIT_BRANCH__;
 const version = __APP_VERSION__;
 const buildTime = __BUILD_TIME__;
@@ -24,7 +27,7 @@ const buildLabel = new Date(buildTime).toLocaleString("en-US", {
   <a class="branch" href={SITE.repo} tabindex="-1" rel="noopener noreferrer" title="Built from this branch">{branch}</a>
   <span>Ln 1, Col 1</span>
   <span>UTF-8</span>
-  <span class="copyright">{COPYRIGHT}</span>
+  <span class="copyright"><span class="mark">{mark}</span> {year} <span class="name">{name.join(" ")}</span></span>
 
   <span class="spacer"></span>
 
@@ -88,10 +91,24 @@ const buildLabel = new Date(buildTime).toLocaleString("en-US", {
   /* Selectable: a notice you can't copy isn't much of a notice. */
   .copyright { user-select: text; }
 
-  /* Below 640px: branch, and the version with its deploy status. */
+  /*
+   * Atkinson draws © from baseline to cap height, so beside digits and
+   * lowercase it reads as riding high. Nudge it onto the text's optical
+   * midline — relative units, so the nudge survives a token size change.
+   */
+  .copyright .mark {
+    position: relative;
+    top: 0.06em;
+  }
+
+  /* Below 640px: branch, and the version with its deploy status. The
+     copyright stays as "© 2026" — the year carries it when the name can't fit. */
   @media (max-width: 640px) {
-    .statusbar > span:not(.spacer):not(.deploy):not(.version),
+    .statusbar > span:not(.spacer):not(.deploy):not(.version):not(.copyright),
     .statusbar > .clock {
+      display: none;
+    }
+    .copyright .name {
       display: none;
     }
   }
