@@ -10,7 +10,8 @@
     "astro": "astro",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "diagrams:retheme": "node scripts/retheme-diagrams.mjs"
+    "diagrams:retheme": "node scripts/retheme-diagrams.mjs",
+    "photos": "node scripts/photos.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",
@@ -27,6 +28,7 @@
     "sharp": "^0.34.5"
   },
   "devDependencies": {
+    "exifr": "^7.1.3",
     "postcss": "^8",
     "prettier": "^3.5.3",
     "prettier-plugin-astro": "^0.14.1",

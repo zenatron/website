@@ -1,5 +1,5 @@
 /** What's drawn on a file's icon, and the ink it's drawn in. See FileIcon. */
-export type FileGlyph = "checklist" | "markdown" | "resume" | "neofetch" | "fortune" | "desk";
+export type FileGlyph = "checklist" | "markdown" | "resume" | "neofetch" | "fortune" | "desk" | "photos";
 export type FileInk = "violet" | "blue" | "teal" | "green" | "orange" | "amber" | "red";
 
 /**
@@ -35,5 +35,6 @@ export const DESK: DeskItem[] = [
   { file: "principles.md", kind: "text",     icon: { form: "doc", glyph: "markdown", ext: "md", ink: "violet" },  x: 48, y: 6,  note: "The whole essay in four lines." },
   { file: "fortune",       kind: "fortune",  icon: { form: "exec", glyph: "fortune" },                           x: 70, y: 12, note: "Roll again." },
   { file: "resume.pdf",    kind: "link",     icon: { form: "doc", glyph: "resume", ext: "pdf", ink: "red" },      x: 34, y: 52, href: "/downloads/Resume_Phil_Vishnevsky.pdf", note: "The formal version." },
+  { file: "photos",        kind: "link",     icon: { form: "folder", glyph: "photos" },                           x: 78, y: 52, href: "/photos/", note: "Shot on iPhone, edited on iPhone & Mac." },
   { file: "desk",          kind: "link",     icon: { form: "folder", glyph: "desk" },                             x: 56, y: 52, href: "/about/#setup", note: "Everything these run on." },
 ];

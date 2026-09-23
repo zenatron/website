@@ -1,0 +1,101 @@
+/**
+ * Turn the originals in image_drop/photos/ into what /photos serves.
+ *
+ * The originals are 12–48MP JPEGs straight out of Photos, carrying the
+ * full EXIF — GPS included, for anything shot in ProCam. None of that is
+ * deployed. For each one this writes:
+ *
+ *   public/images/photos/<id>-<w>.avif|webp   three widths, no metadata
+ *   src/data/photos.generated.json            the few fields /photos shows
+ *
+ * Only the fields named in `pick` are read, so a location can't leak into
+ * the JSON by accident; sharp writes nothing but pixels and an sRGB
+ * profile unless it's told to, so it can't leak into the images either.
+ *
+ * Existing images are skipped; pass --force to re-encode them.
+ * Run with `bun run photos`.
+ */
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import sharp from "sharp";
+import exifr from "exifr";
+
+const SRC = "image_drop/photos";
+const OUT = "public/images/photos";
+const DATA = "src/data/photos.generated.json";
+
+/** The grid, the viewer on a laptop, and the viewer on a big or dense screen. */
+const WIDTHS = [480, 960, 1600];
+const FORMATS = {
+  avif: (img) => img.avif({ quality: 55, effort: 6 }),
+  webp: (img) => img.webp({ quality: 80, effort: 6 }),
+};
+
+const force = process.argv.includes("--force");
+
+/** The physical focal length says which camera it was; the 35mm figure says how it was framed. */
+function lens(mm) {
+  if (Math.abs(mm - 6.765) < 0.1) return "Main";
+  if (mm < 3) return "Ultra Wide";
+  if (mm > 10) return "Telephoto";
+  return undefined;
+}
+
+/** "iOS 18.2" writes its version number; third-party apps write their name. */
+function app(software) {
+  if (!software) return undefined;
+  return /^\d/.test(software) ? "Camera" : software.replace(/\s+[\d.]+$/, "");
+}
+
+mkdirSync(OUT, { recursive: true });
+
+const files = readdirSync(SRC).filter((f) => /\.jpe?g$/i.test(f)).sort();
+const photos = [];
+
+for (const file of files) {
+  const id = file.replace(/\.jpe?g$/i, "");
+  const path = `${SRC}/${file}`;
+  // A buffer, not the path: exifr's chunked file reader breaks on Node 26.
+  const buf = readFileSync(path);
+
+  const exif = await exifr.parse(buf, {
+    pick: [
+      "Model", "LensModel", "Software", "FocalLength", "FocalLengthIn35mmFormat",
+      "FNumber", "ExposureTime", "ISO", "ExposureCompensation", "DateTimeOriginal",
+    ],
+    // The raw "YYYY:MM:DD HH:MM:SS", which is the camera's local time. Revived,
+    // it's reinterpreted in whatever timezone this script runs in.
+    reviveValues: false,
+  });
+
+  // .rotate() applies the EXIF orientation before the EXIF is dropped.
+  const base = sharp(buf).rotate();
+  const { width, height } = await base.metadata();
+
+  for (const w of WIDTHS) {
+    for (const [ext, encode] of Object.entries(FORMATS)) {
+      const out = `${OUT}/${id}-${w}.${ext}`;
+      if (!force && existsSync(out)) continue;
+      await encode(base.clone().resize({ width: w, withoutEnlargement: true })).toFile(out);
+      console.log(`wrote ${out}`);
+    }
+  }
+
+  const [date] = String(exif?.DateTimeOriginal ?? "").split(" ");
+  photos.push({
+    id,
+    width,
+    height,
+    taken: date ? date.replaceAll(":", "-") : undefined,
+    camera: exif?.Model,
+    app: app(exif?.Software),
+    lens: exif?.FocalLength ? lens(exif.FocalLength) : undefined,
+    focal: exif?.FocalLengthIn35mmFormat,
+    aperture: exif?.FNumber ? Math.round(exif.FNumber * 100) / 100 : undefined,
+    shutter: exif?.ExposureTime,
+    iso: exif?.ISO,
+    ev: exif?.ExposureCompensation != null ? Math.round(exif.ExposureCompensation * 10) / 10 : undefined,
+  });
+}
+
+writeFileSync(DATA, JSON.stringify(photos, null, 2) + "\n");
+console.log(`${photos.length} photos → ${DATA}`);

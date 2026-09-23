@@ -12,8 +12,9 @@ import { PAGES } from "@/data/site";
 import { FAVORITES } from "@/data/favorites";
 import { getAllProjects } from "@/lib/projects";
 import { getAllBlogPosts } from "@/lib/blog";
+import { PHOTOS } from "@/data/photos";
 
-type Glyph = "home" | "person" | "dock" | "bubble" | "folder" | "pen";
+type Glyph = "home" | "person" | "dock" | "camera" | "bubble" | "folder" | "pen";
 
 const [projects, posts] = await Promise.all([getAllProjects(), getAllBlogPosts()]);
 const apps = FAVORITES.filter((f) => f.logo).length;
@@ -25,6 +26,7 @@ const places: { href: string; name: string; blurb: string; glyph: Glyph; hue?: s
   { href: "/dock/", name: "dock", blurb: `${apps} apps I use, and a few files`, glyph: "dock", hue: page("/dock/")?.hue },
   { href: "/projects/", name: "projects", blurb: `${projects.length} things I've built`, glyph: "folder" },
   { href: "/blog/", name: "writing", blurb: `${posts.length} posts on homelabs and more`, glyph: "pen" },
+  { href: "/photos/", name: "photos", blurb: `${PHOTOS.length} shot on iPhone, edited on iPhone & Mac`, glyph: "camera", hue: page("/photos/")?.hue },
   { href: "/say-hi/", name: "say hi", blurb: page("/say-hi/")?.blurb ?? "", glyph: "bubble", hue: page("/say-hi/")?.hue },
 ];
 
@@ -45,6 +47,7 @@ const vars = (hue?: string) =>
               {p.glyph === "home" && <path d="M2.5 7.4 8 2.8l5.5 4.6M4 6.3v6.9h3v-3.6h2v3.6h3V6.3" />}
               {p.glyph === "person" && (<><circle cx="8" cy="5.4" r="2.6" /><path d="M3 13.6c.8-2.6 2.8-4 5-4s4.2 1.4 5 4" /></>)}
               {p.glyph === "dock" && (<><rect x="1.8" y="10" width="12.4" height="3.6" rx="1.4" /><rect x="3.4" y="5.4" width="2.8" height="2.8" rx=".8" /><rect x="6.6" y="5.4" width="2.8" height="2.8" rx=".8" /><rect x="9.8" y="5.4" width="2.8" height="2.8" rx=".8" /></>)}
+              {p.glyph === "camera" && (<><path d="M2 5.6A1.4 1.4 0 0 1 3.4 4.2h1.7l1.1-1.6h3.6l1.1 1.6h1.7A1.4 1.4 0 0 1 14 5.6v6.2a1.4 1.4 0 0 1-1.4 1.4H3.4A1.4 1.4 0 0 1 2 11.8z" /><circle cx="8" cy="8.6" r="2.4" /></>)}
               {p.glyph === "bubble" && <path d="M3.2 3h9.6A1.7 1.7 0 0 1 14.5 4.7v5a1.7 1.7 0 0 1-1.7 1.7H7.4L4.3 13.8v-2.4H3.2A1.7 1.7 0 0 1 1.5 9.7v-5A1.7 1.7 0 0 1 3.2 3z" />}
               {p.glyph === "folder" && <path d="M1.8 4.6A1.3 1.3 0 0 1 3.1 3.3h3.1l1.4 1.5h5.3a1.3 1.3 0 0 1 1.3 1.3v5.8a1.3 1.3 0 0 1-1.3 1.3H3.1a1.3 1.3 0 0 1-1.3-1.3z" />}
               {p.glyph === "pen" && (<><path d="M10.6 2.9a1.5 1.5 0 0 1 2.1 2.1L6 11.7l-2.9.8.8-2.9z" /><path d="M9.4 4.1l2.1 2.1" /></>)}

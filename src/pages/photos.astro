@@ -1,0 +1,491 @@
+---
+/**
+ * Photos.
+ *
+ * The library the way Photos shows it: a tight grid of thumbnails, edge
+ * to edge, and a window that opens over it with the photo and its Info —
+ * the camera, the lens, and the exposure strip Photos puts under a photo.
+ *
+ * Every photo's window ships rendered and hidden, as the dock's do, so
+ * what the windows say is in the static HTML; the script only switches
+ * between them. With JS off each thumbnail links to the full-size image.
+ *
+ * The images are made by scripts/photos.mjs, which strips their metadata;
+ * the few fields shown here come through src/data/photos.ts.
+ */
+import Shell from "@/layouts/Shell.astro";
+import { PHOTOS, PHOTO_WIDTHS, type Photo } from "@/data/photos";
+
+const src = (id: string, w: number, ext: "avif" | "webp") => `/images/photos/${id}-${w}.${ext}`;
+const srcset = (id: string, ext: "avif" | "webp") =>
+  PHOTO_WIDTHS.map((w) => `${src(id, w, ext)} ${w}w`).join(", ");
+const largest = PHOTO_WIDTHS[PHOTO_WIDTHS.length - 1];
+
+/** A date as the camera's local calendar has it — noon, so no timezone can move it a day. */
+const day = (d: string) => new Date(`${d}T12:00:00`);
+const longDate = (d?: string) =>
+  d ? day(d).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : undefined;
+const monthYear = (d?: string) =>
+  d ? day(d).toLocaleDateString("en-US", { month: "short", year: "numeric" }) : undefined;
+
+/** The exposure strip, in Photos' own notation. */
+const shutter = (t: number) => (t >= 1 ? `${t} s` : `1/${Math.round(1 / t)} s`);
+const ev = (v: number) => `${v < 0 ? "−" : ""}${Math.abs(v)} ev`;
+const strip = (p: Photo) =>
+  [
+    p.iso != null && `ISO ${p.iso}`,
+    p.focal != null && `${p.focal} mm`,
+    p.ev != null && ev(p.ev),
+    p.aperture != null && `ƒ${p.aperture}`,
+    p.shutter != null && shutter(p.shutter),
+  ].filter(Boolean) as string[];
+
+/** 48.8 million pixels is what Apple sells as 48MP. */
+const megapixels = (p: Photo) => Math.floor((p.width * p.height) / 1e6);
+
+const cameras = [...new Set(PHOTOS.map((p) => p.camera).filter(Boolean))];
+const range = [monthYear(PHOTOS[0]?.taken), monthYear(PHOTOS.at(-1)?.taken)]
+  .filter((v, i, all) => v && all.indexOf(v) === i)
+  .join(" – ");
+---
+
+<Shell
+  title="Photos | Phil Vishnevsky"
+  description={`${PHOTOS.length} photos, shot on an iPhone and edited on iPhone & Mac.`}
+  ogSlug="photos"
+>
+  <header class="pagehead">
+    <h1>Photos</h1>
+    <p>
+      {PHOTOS.length} photos, all shot on an iPhone and
+      edited on iPhone &amp; Mac. Open one for how it was taken.
+    </p>
+  </header>
+
+  <section class="library" aria-labelledby="library-title">
+    <div class="libbar">
+      <h2 id="library-title">Library</h2>
+      <span class="libmeta">{PHOTOS.length} photos{range && ` · ${range}`}</span>
+    </div>
+    <ul class="grid">
+      {PHOTOS.map((p, i) => (
+        <li id={p.id}>
+          <a href={src(p.id, largest, "webp")} data-photo={p.id}>
+            <picture>
+              <source type="image/avif" srcset={srcset(p.id, "avif")} sizes="(max-width: 640px) 34vw, 320px" />
+              <img
+                src={src(p.id, 480, "webp")}
+                srcset={srcset(p.id, "webp")}
+                sizes="(max-width: 640px) 34vw, 320px"
+                alt={p.alt}
+                width={p.width}
+                height={p.height}
+                loading={i < 6 ? "eager" : "lazy"}
+                decoding="async"
+              />
+            </picture>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <dialog class="viewer" data-viewer aria-labelledby="viewer-name">
+    <div class="bar">
+      <span class="lights">
+        <button class="light close" type="button" data-viewer-close aria-label="Close" title="Close">
+          <svg aria-hidden="true" viewBox="0 0 12 12"><path d="M4 4l4 4M8 4l-4 4" /></svg>
+        </button>
+        <i aria-hidden="true"></i><i aria-hidden="true"></i>
+      </span>
+      <p class="name" id="viewer-name" data-viewer-name></p>
+      <span class="nav">
+        <span class="count tabular" data-viewer-count aria-hidden="true"></span>
+        <button type="button" data-viewer-step="-1" aria-label="Previous photo" title="Previous">
+          <svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14"><path d="M10 3.5 5.5 8l4.5 4.5" /></svg>
+        </button>
+        <button type="button" data-viewer-step="1" aria-label="Next photo" title="Next">
+          <svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
+        </button>
+      </span>
+    </div>
+
+    <div class="stage" data-viewer-stage>
+      {PHOTOS.map((p) => {
+        const exposure = strip(p);
+        return (
+          <figure data-slide={p.id} hidden>
+            <div class="frame">
+              <picture>
+                <source type="image/avif" srcset={srcset(p.id, "avif")} sizes="(min-width: 901px) 620px, 100vw" />
+                <img
+                  src={src(p.id, 960, "webp")}
+                  srcset={srcset(p.id, "webp")}
+                  sizes="(min-width: 901px) 620px, 100vw"
+                  alt={p.alt}
+                  width={p.width}
+                  height={p.height}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+            </div>
+            <figcaption class="info">
+              <p class="where">{p.place ?? longDate(p.taken) ?? p.id}</p>
+              {p.place && p.taken && <p class="when">{longDate(p.taken)}</p>}
+
+              <div class="device">
+                {p.camera && <p class="model">{p.camera}</p>}
+                {(p.lens || p.focal) && (
+                  <p class="line">
+                    {p.lens && `${p.lens} camera`}{p.lens && p.focal && " — "}{p.focal && `${p.focal} mm`}{p.aperture && ` ƒ${p.aperture}`}
+                  </p>
+                )}
+                <p class="line tabular">{megapixels(p)} MP · {p.width} × {p.height}</p>
+                {exposure.length > 0 && (
+                  <ul class="exposure tabular" aria-label="Exposure">
+                    {exposure.map((v) => <li>{v}</li>)}
+                  </ul>
+                )}
+              </div>
+
+              <p class="made">shot on iPhone · edited on iPhone &amp; Mac</p>
+            </figcaption>
+          </figure>
+        );
+      })}
+    </div>
+  </dialog>
+</Shell>
+
+<style>
+  .pagehead { margin-bottom: var(--s-5); }
+  h1 {
+    font-size: var(--t-sans-2xl);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  .pagehead p {
+    margin-top: var(--s-3);
+    max-width: 56ch;
+    color: var(--c-muted);
+  }
+
+  /*
+   * The library: a pane of its own, with Photos' own chrome strip on top
+   * and the grid running to its edges. Thumbnails are cropped to one shape
+   * and sit 2px apart, the way Photos lays out a library, so the photos
+   * read as one wall rather than nine cards.
+   */
+  .library {
+    max-width: 1000px;
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
+    background: var(--c-chrome);
+    overflow: clip;
+  }
+  .libbar {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-4);
+    padding: var(--s-3) var(--s-4);
+    border-bottom: 1px solid var(--c-hairline);
+  }
+  .libbar h2 {
+    font-size: var(--t-sans-sm);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .libmeta {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+  }
+
+  /* Three across at every size, as Photos is on a phone and a Mac alike. */
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2px;
+    background: var(--c-bg);
+  }
+  .grid a {
+    position: relative;
+    display: block;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background: var(--c-sunken);
+  }
+  .grid img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--dur-pane) var(--ease);
+  }
+  .grid a:focus-visible { outline-offset: -3px; }
+  @media (hover: hover) {
+    .grid a:hover img { transform: scale(1.03); }
+  }
+
+  /*
+   * The window a photo opens in: the dock's window, grown to photo size.
+   * The close light is real and the other two are disabled, the way macOS
+   * draws a window that can't be minimized or zoomed.
+   */
+  .viewer {
+    padding: 0;
+    width: min(calc(100vw - var(--s-6)), 1000px);
+    height: min(calc(100dvh - var(--s-6)), 860px);
+    max-width: none;
+    max-height: none;
+    background: var(--c-bg);
+    color: var(--c-text);
+    border: 1px solid var(--c-hairline-strong);
+    border-radius: var(--radius-window);
+    overflow: hidden;
+  }
+  .viewer[open] {
+    display: grid;
+    grid-template-rows: var(--h-titlebar) minmax(0, 1fr);
+  }
+  .viewer::backdrop { background: var(--c-scrim); }
+  .viewer:focus, .viewer:focus-visible { outline: none; }
+
+  .bar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: var(--s-3);
+    padding-inline: var(--s-3);
+    background: var(--c-chrome);
+    border-bottom: 1px solid var(--c-hairline);
+  }
+  .lights {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+  }
+  .lights i {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--c-trafficlight);
+  }
+  /* A 12px dot in a larger target, as the titlebar's lights are. */
+  .light {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    margin-inline: -4px;
+    padding: 0;
+    cursor: pointer;
+  }
+  .light::before {
+    content: "";
+    grid-area: 1 / 1;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--light-close);
+    outline: 0.5px solid var(--light-edge);
+    outline-offset: -0.5px;
+  }
+  .light svg {
+    grid-area: 1 / 1;
+    z-index: 1;
+    width: 12px;
+    height: 12px;
+    fill: none;
+    stroke: var(--light-glyph);
+    stroke-width: 1.3;
+    stroke-linecap: round;
+    opacity: 0;
+    transition: opacity var(--dur-state) var(--ease);
+  }
+  .light:hover svg, .light:focus-visible svg { opacity: 1; }
+  .light:focus-visible { outline: none; }
+  .light:focus-visible::before { outline: 1px solid var(--c-accent); outline-offset: 2px; }
+
+  .name {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--c-muted);
+    white-space: nowrap;
+  }
+  .nav {
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .count {
+    margin-right: var(--s-2);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+  }
+  .nav button {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-sm);
+    color: var(--c-muted);
+    cursor: pointer;
+    transition: background var(--dur-state) var(--ease), color var(--dur-state) var(--ease);
+  }
+  .nav svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .nav button:disabled { opacity: 0.35; cursor: default; }
+  @media (hover: hover) {
+    .nav button:not(:disabled):hover { background: var(--c-raised); color: var(--c-text); }
+  }
+
+  /* The photo, letterboxed on the sunken ground, with Info docked beside it. */
+  .stage { min-height: 0; }
+  figure {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    height: 100%;
+  }
+  figure[hidden] { display: none; }
+  /* Pinned rather than max-sized: a percentage max-height doesn't resolve
+     in an auto grid row, and the photo spilled out of the bottom. */
+  /* Until the full photo arrives, the thumbnail the grid already loaded
+     stands in for it, fitted to the same box — set by the script. */
+  .frame {
+    --pad: var(--s-4);
+    position: relative;
+    min-height: 0;
+    padding: var(--pad);
+    background: var(--thumb, none) center / contain no-repeat content-box, var(--c-sunken);
+    touch-action: pan-y;
+  }
+  .frame img {
+    position: absolute;
+    top: var(--pad);
+    left: var(--pad);
+    width: calc(100% - var(--pad) * 2);
+    height: calc(100% - var(--pad) * 2);
+    object-fit: contain;
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-1);
+    padding: var(--s-5) var(--s-4);
+    border-left: 1px solid var(--c-hairline);
+    background: var(--c-chrome);
+    overflow-y: auto;
+  }
+  .where {
+    font-size: var(--t-sans-lg);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .when {
+    font-size: var(--t-sans-xs);
+    color: var(--c-muted);
+  }
+
+  /* Photos' device card: the camera, the lens, the size, then the strip. */
+  .device {
+    margin-top: var(--s-4);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-sm);
+    background: var(--c-bg);
+    overflow: hidden;
+  }
+  .model {
+    padding: var(--s-2) var(--s-3);
+    font-size: var(--t-sans-xs);
+    font-weight: 600;
+    border-bottom: 1px solid var(--c-hairline);
+  }
+  .line {
+    padding: 2px var(--s-3);
+    font-size: var(--t-sans-xs);
+    color: var(--c-muted);
+  }
+  .model + .line { padding-top: var(--s-2); }
+  .line:has(+ .exposure), .line:last-child { padding-bottom: var(--s-2); }
+  /* Cells that share the width and wrap when a shutter speed is long; the
+     hairlines between them are the list's own ground showing through. */
+  .exposure {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+    border-top: 1px solid var(--c-hairline);
+    background: var(--c-hairline);
+  }
+  .exposure li {
+    flex: 1 0 auto;
+    padding: 6px var(--s-2);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-muted);
+    white-space: nowrap;
+    text-align: center;
+    background: var(--c-sunken);
+  }
+
+  .made {
+    margin-top: auto;
+    padding-top: var(--s-4);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+  }
+
+  /* Narrower: Info goes under the photo rather than beside it. */
+  @media (max-width: 900px) {
+    figure {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: minmax(0, 1fr) auto;
+    }
+    .info {
+      border-left: 0;
+      border-top: 1px solid var(--c-hairline);
+      padding: var(--s-4);
+    }
+    .device { margin-top: var(--s-3); }
+    .made { padding-top: var(--s-3); }
+  }
+
+  /* A phone: the window is the whole screen, as the site's own is. */
+  @media (max-width: 640px) {
+    .libbar { padding-inline: var(--s-3); }
+    .viewer {
+      width: 100vw;
+      height: 100dvh;
+      border: 0;
+      border-radius: 0;
+    }
+    .frame { --pad: var(--s-2); }
+    .count { display: none; }
+    .nav button { width: 40px; height: 40px; }
+    .lights i { display: none; }
+    .light { width: 40px; height: 40px; margin-inline: -14px; }
+    .light svg { opacity: 1; }
+    .where { font-size: var(--t-sans-md); }
+  }
+</style>
+
+<script>
+  import "@/scripts/photos";
+</script>
