@@ -12,7 +12,9 @@
  * the JSON by accident; sharp writes nothing but pixels and an sRGB
  * profile unless it's told to, so it can't leak into the images either.
  *
- * Existing images are skipped; pass --force to re-encode them.
+ * Existing images are skipped; pass --force to re-encode them. Entries
+ * already in the JSON whose originals are no longer here are kept, so the
+ * drop folder only needs to hold what's new.
  * Run with `bun run photos`.
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -34,7 +36,8 @@ const force = process.argv.includes("--force");
 
 /** The physical focal length says which camera it was; the 35mm figure says how it was framed. */
 function lens(mm) {
-  if (Math.abs(mm - 6.765) < 0.1) return "Main";
+  // 6.765 on a 16 Pro, 6.93 on an 18 Pro.
+  if (mm > 6 && mm < 8) return "Main";
   if (mm < 3) return "Ultra Wide";
   if (mm > 10) return "Telephoto";
   return undefined;
@@ -49,7 +52,10 @@ function app(software) {
 mkdirSync(OUT, { recursive: true });
 
 const files = readdirSync(SRC).filter((f) => /\.jpe?g$/i.test(f)).sort();
-const photos = [];
+const ids = new Set(files.map((f) => f.replace(/\.jpe?g$/i, "")));
+const photos = existsSync(DATA)
+  ? JSON.parse(readFileSync(DATA, "utf8")).filter((p) => !ids.has(p.id))
+  : [];
 
 for (const file of files) {
   const id = file.replace(/\.jpe?g$/i, "");
@@ -97,5 +103,6 @@ for (const file of files) {
   });
 }
 
+photos.sort((a, b) => a.id.localeCompare(b.id));
 writeFileSync(DATA, JSON.stringify(photos, null, 2) + "\n");
 console.log(`${photos.length} photos → ${DATA}`);

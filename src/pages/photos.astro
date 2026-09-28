@@ -131,8 +131,9 @@ const range = [monthYear(PHOTOS[0]?.taken), monthYear(PHOTOS.at(-1)?.taken)]
               </picture>
             </div>
             <figcaption class="info">
-              <p class="where">{p.place ?? longDate(p.taken) ?? p.id}</p>
-              {p.place && p.taken && <p class="when">{longDate(p.taken)}</p>}
+              <p class="title">{p.title}</p>
+              {p.place && <p class="where">{p.place}</p>}
+              {p.taken && <p class="when">{longDate(p.taken)}</p>}
 
               <div class="device">
                 {p.camera && <p class="model">{p.camera}</p>}
@@ -389,11 +390,14 @@ const range = [monthYear(PHOTOS[0]?.taken), monthYear(PHOTOS.at(-1)?.taken)]
     background: var(--c-chrome);
     overflow-y: auto;
   }
-  .where {
+  .title {
     font-size: var(--t-sans-lg);
     font-weight: 600;
     letter-spacing: -0.02em;
     line-height: 1.2;
+  }
+  .where {
+    font-size: var(--t-sans-sm);
   }
   .when {
     font-size: var(--t-sans-xs);
@@ -482,7 +486,7 @@ const range = [monthYear(PHOTOS[0]?.taken), monthYear(PHOTOS.at(-1)?.taken)]
     .lights i { display: none; }
     .light { width: 40px; height: 40px; margin-inline: -14px; }
     .light svg { opacity: 1; }
-    .where { font-size: var(--t-sans-md); }
+    .title { font-size: var(--t-sans-md); }
   }
 </style>
 
