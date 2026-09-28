@@ -3,6 +3,13 @@
  * The outline pane. Long posts here run 25 minutes across a dozen
  * headings, and there was no way to see the shape of one or jump inside
  * it — which the editor metaphor should have solved on day one.
+ *
+ * Beside it, the minimap: the whole post at a glance, drawn the way
+ * Xcode draws one — every line a bar at its real length, in its real
+ * color, code in its syntax colors, blocks as the blocks they are — with
+ * a lens over the part you're reading. scripts/minimap.ts draws it from
+ * the rendered page, so it can't disagree with it. Pointer-only: the
+ * outline is the same navigation, for everyone.
  */
 interface Heading { depth: number; slug: string; text: string; }
 interface Props { headings: Heading[]; }
@@ -15,14 +22,20 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
 {items.length > 2 && (
   <nav class="toc" aria-labelledby="toc-label" data-toc>
     <div class="inner">
-    <p class="toc-head" id="toc-label">outline</p>
-    <ol>
-      {items.map((h) => (
-        <li class:list={[`d${h.depth}`]}>
-          <a href={`#${h.slug}`} data-toc-link={h.slug}>{h.text}</a>
-        </li>
-      ))}
-    </ol>
+      <div class="map" data-minimap aria-hidden="true">
+        <canvas></canvas>
+        <div class="lens" data-minimap-lens></div>
+      </div>
+      <div class="toc-list">
+        <p class="toc-head" id="toc-label">outline</p>
+        <ol>
+          {items.map((h) => (
+            <li class:list={[`d${h.depth}`]}>
+              <a href={`#${h.slug}`} data-toc-link={h.slug}>{h.text}</a>
+            </li>
+          ))}
+        </ol>
+      </div>
     </div>
   </nav>
 )}
@@ -36,7 +49,7 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
    */
   .toc {
     height: 100%;
-    padding-left: var(--s-4);
+    padding-left: var(--s-3);
     border-left: 1px solid var(--c-hairline);
   }
   /* The pane's own padding already holds it off the edge where the pane
@@ -44,16 +57,55 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
   .inner {
     position: sticky;
     top: var(--s-5);
-    max-height: calc(var(--pane-h, 100vh) - var(--s-7));
-    overflow-y: auto;
+    height: calc(var(--pane-h, 100vh) - var(--s-7));
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: var(--s-3);
   }
   @media screen and (min-width: 641px) {
-    .inner { top: 0; max-height: calc(var(--pane-h, 100vh) - var(--s-5) * 2); }
+    .inner { top: 0; height: calc(var(--pane-h, 100vh) - var(--s-5) * 2); }
+  }
+  /* The outline scrolls on its own when it's longer than the rail; the
+     map never does — it's scaled to fit. */
+  .toc-list { min-height: 0; overflow-y: auto; }
+
+  /* Without the script there's nothing to draw, so there's no strip. */
+  .map { display: none; }
+  :global(.js) .map {
+    display: block;
+    position: relative;
+    height: 100%;
+    cursor: pointer;
+    touch-action: none;
+    user-select: none;
+  }
+  .map canvas { display: block; width: 100%; }
+  /* The part of the post in view, like the lens over Xcode's minimap. */
+  .lens {
+    position: absolute;
+    left: -3px;
+    right: -3px;
+    top: 0;
+    height: 0;
+    background: color-mix(in srgb, var(--c-text) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--c-text) 35%, transparent);
+    border-radius: var(--radius-chip);
+    pointer-events: none;
+    transition: background var(--dur-state) var(--ease);
+  }
+  .map[data-dragging] .lens,
+  .map:hover .lens {
+    background: color-mix(in srgb, var(--c-text) 16%, transparent);
+  }
+  /* Pointed at on the map: its section lights in the outline. */
+  a[data-peek]:not([data-current]) {
+    color: var(--c-text);
+    background: var(--c-raised);
   }
   .toc-head {
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
-    letter-spacing: 0.08em;
+    letter-spacing: var(--track-label);
     color: var(--c-dim);
     margin-bottom: var(--s-3);
   }
@@ -66,13 +118,14 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     padding: 3px var(--s-2);
     border-radius: var(--radius-sm);
     font-size: var(--t-sans-sm);
-    line-height: 1.35;
+    line-height: var(--lh-snug);
     color: var(--c-muted);
     transition: color var(--dur-state) var(--ease), background var(--dur-state) var(--ease);
   }
   @media (hover: hover) {
     a:hover {
-    color: var(--c-text); background: var(--c-chrome);
+      color: var(--c-text);
+      background: var(--c-raised);
     }
   }
   a[data-current] {
@@ -80,7 +133,7 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     background: var(--c-tint-accent);
   }
 
-  @media (max-width: 1080px) {
+  @media (max-width: 1200px) {
     .toc { display: none; }
   }
 </style>

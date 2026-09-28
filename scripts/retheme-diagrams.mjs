@@ -24,7 +24,8 @@ const MAP = {
   "#161b22": ["--c-raised", "#26231d"],
   "#21262d": ["--c-raised", "#26231d"],
   "#1a1f2e": ["--c-raised", "#26231d"],
-  "#e6e6e6": ["--c-hairline", "#e4dfd4"],
+  // Text in the two MDX-post diagrams; as a hairline it vanished on both grounds.
+  "#e6e6e6": ["--c-text", "#ede7da"],
   // text
   "#f0f6fc": ["--c-text", "#ede7da"],
   "#1e1e1e": ["--c-text", "#35312a"],

@@ -9,6 +9,7 @@ series: "homelab-networking"
 seriesOrder: 5
 ---
 
+import CodeGroup from '@/components/mdx/CodeGroup.astro';
 import Diagram from '@/components/mdx/Diagram.astro';
 import Callout from '@/components/mdx/Callout.astro';
 import NerdCorner from '@/components/mdx/NerdCorner.astro';
@@ -57,11 +58,11 @@ For homelabs, that's huge. Less toil, fewer moving parts.
 
 ## Basic setup: one domain, one backend
 
-Let's start simple. You want `jellyfin.yourdomain.com` to point to Jellyfin running on port 8096.
+Let's start simple. You want `jellyfin.yourdomain.com` to point to Jellyfin running on port 8096. It takes two files: a compose file that runs Caddy and Jellyfin on one network, and the Caddyfile it mounts, which routes between them.
 
-### Docker Compose
+<CodeGroup>
 
-```yaml
+```yaml title="docker-compose.yml"
 services:
   caddy:
     image: caddy:latest
@@ -92,13 +93,13 @@ networks:
     name: proxy
 ```
 
-### Caddyfile
-
-```caddyfile
+```caddyfile title="Caddyfile"
 jellyfin.yourdomain.com {
     reverse_proxy jellyfin:8096
 }
 ```
+
+</CodeGroup>
 
 That's it. Caddy will:
 1. Obtain a certificate from Let's Encrypt
@@ -195,7 +196,9 @@ Run your own certificate authority and trust it on your devices. More work, but 
 
 2. **Use the Caddy image with DNS plugins:**
 
-```yaml
+<CodeGroup>
+
+```yaml title="docker-compose.yml"
 services:
   caddy:
     image: caddy:latest  # or build custom with dns.providers.cloudflare
@@ -204,14 +207,15 @@ services:
       dockerfile: Dockerfile.caddy
 ```
 
-```dockerfile
-# Dockerfile.caddy
+```dockerfile title="Dockerfile.caddy"
 FROM caddy:builder AS builder
 RUN xcaddy build --with github.com/caddy-dns/cloudflare
 
 FROM caddy:latest
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 ```
+
+</CodeGroup>
 
 3. **Set the environment variable:**
 
@@ -222,7 +226,7 @@ environment:
 
 4. **Configure TLS in your Caddyfile:**
 
-```caddyfile
+```caddyfile title="Caddyfile"
 *.home.yourdomain.com {
     tls {
         dns cloudflare {env.CF_API_TOKEN}
@@ -389,7 +393,7 @@ docker logs caddy --tail 100 -f
 
 Here's a simplified version of what I actually run:
 
-```caddyfile
+```caddyfile title="Caddyfile"
 # Global options
 {
     email you@yourdomain.com  # For Let's Encrypt notifications

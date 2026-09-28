@@ -17,7 +17,7 @@ const monthYear = (v: string | Date | undefined) => {
   const d = new Date(v);
   return Number.isNaN(d.getTime())
     ? undefined
-    : d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+    : d.toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
 };
 
 const latestProjects = await Promise.all(projects.slice(0, 3).map(async (p) => ({
@@ -40,7 +40,7 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
   slug: p.slug,
   description: p.data.excerpt || undefined,
   meta: monthYear(p.data.date),
-  art: await cardArt({ slug: p.slug, title: p.data.title, collection: "blog" }),
+  art: await cardArt({ slug: p.slug, title: p.data.title, cover: p.data.cover, collection: "blog" }),
 })));
 ---
 
@@ -78,17 +78,17 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
   <section class="band">
     <div class="bandhead">
       <h2>Projects</h2>
-      <a href="/projects/">All projects</a>
+      <a href="/projects/">All projects <span aria-hidden="true">&rarr;</span></a>
     </div>
-    <Cells cells={latestProjects} />
+    <Cells cells={latestProjects} layout="pairs" />
   </section>
 
   <section class="band">
     <div class="bandhead">
       <h2>Writing</h2>
-      <a href="/blog/">All posts</a>
+      <a href="/blog/">All posts <span aria-hidden="true">&rarr;</span></a>
     </div>
-    <Cells cells={latestPosts} />
+    <Cells cells={latestPosts} layout="pairs" />
   </section>
 
   <section class="band">
@@ -112,15 +112,15 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
   h1 {
     font-size: var(--t-sans-3xl);
     font-weight: 700;
-    letter-spacing: -0.035em;
+    letter-spacing: var(--track-display);
   }
 
   .statement {
     margin-top: var(--s-4);
     font-size: var(--t-sans-xl);
     font-weight: 400;
-    line-height: 1.45;
-    letter-spacing: -0.02em;
+    line-height: var(--lh-ui);
+    letter-spacing: var(--track-head);
     max-width: 22ch;
   }
 
@@ -133,7 +133,7 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
     margin-top: var(--s-6);
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
-    letter-spacing: 0.08em;
+    letter-spacing: var(--track-label);
     color: var(--c-dim);
   }
   /* One grid for the whole list, shared by every row through subgrid, so
@@ -159,12 +159,12 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
     background: var(--bg);
     padding: 3px 8px;
     border-radius: var(--radius-chip);
-    line-height: 1.4;
+    line-height: var(--lh-snug);
   }
   .currently dd {
     margin: 0;
     font-size: var(--t-sans-sm);
-    line-height: 1.6;
+    line-height: var(--lh-body);
     color: var(--c-muted);
   }
 
@@ -175,7 +175,7 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
     font-size: 0.92em;
     font-variant-numeric: tabular-nums;
     color: var(--c-text);
-    letter-spacing: -0.01em;
+    letter-spacing: var(--track-snug);
   }
 
   /*
@@ -187,7 +187,7 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
     .currently { row-gap: 0; }
     .currently .row { padding-block: var(--s-3); }
     .currently .row + .row { border-top: 1px solid var(--c-hairline); }
-    .currently dd { font-size: var(--t-sans-xs); line-height: 1.55; }
+    .currently dd { font-size: var(--t-sans-xs); line-height: var(--lh-ui); }
   }
 
   /* min-width: 0, or the dock strip on a phone sizes the column to all
@@ -214,7 +214,7 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
   }
   @media (hover: hover) {
     .bandhead a:hover {
-    text-decoration: underline; text-underline-offset: 3px;
+      text-decoration: underline; text-underline-offset: 3px;
     }
   }
 

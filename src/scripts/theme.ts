@@ -22,6 +22,7 @@ function apply(mode: Mode) {
   root.classList.add("theming");
   if (mode === "system") root.removeAttribute("data-theme");
   else root.setAttribute("data-theme", mode);
+  syncThemeColor(mode);
   try {
     mode === "system" ? localStorage.removeItem(KEY) : localStorage.setItem(KEY, mode);
   } catch {
@@ -35,6 +36,18 @@ function apply(mode: Mode) {
     );
   }
   requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove("theming")));
+}
+
+/**
+ * The browser's toolbar color. The two <meta> tags answer to the OS
+ * setting, so a chosen theme would leave the toolbar in the other one;
+ * pin both to the titlebar's color instead, and hand back on "system".
+ */
+function syncThemeColor(mode: Mode) {
+  const chrome = getComputedStyle(document.documentElement).getPropertyValue("--c-chrome").trim();
+  for (const meta of document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')) {
+    meta.content = mode === "system" ? (meta.dataset.system ?? meta.content) : chrome;
+  }
 }
 
 const NEXT: Record<Mode, Mode> = { system: "light", light: "dark", dark: "system" };

@@ -9,6 +9,7 @@ series: "homelab-networking"
 seriesOrder: 3
 ---
 
+import CodeGroup from '@/components/mdx/CodeGroup.astro';
 import Diagram from '@/components/mdx/Diagram.astro';
 import Callout from '@/components/mdx/Callout.astro';
 
@@ -258,20 +259,22 @@ Don't commit `TS_AUTHKEY` to git. Use a `.env` file or Docker secrets. Generate 
 
 ### Option 3: Tailscale on the host, containers on a bridge
 
-If you run Tailscale on the host and containers on the default bridge network, you need to ensure the host's firewall allows traffic from Docker's bridge to reach Tailscale:
+If you run Tailscale on the host and containers on the default bridge network, you need to ensure the host's firewall allows traffic from Docker's bridge to reach Tailscale. With iptables, or with [firewalld](https://firewalld.org/) if that's what your distro runs:
 
-```bash
+<CodeGroup>
+
+```bash title="iptables"
 # Allow Docker bridge traffic to be forwarded
 sudo iptables -I FORWARD -i docker0 -o tailscale0 -j ACCEPT
 sudo iptables -I FORWARD -i tailscale0 -o docker0 -j ACCEPT
 ```
 
-Or use [firewalld](https://firewalld.org/):
-
-```bash
+```bash title="firewalld"
 sudo firewall-cmd --zone=trusted --add-interface=docker0 --permanent
 sudo firewall-cmd --reload
 ```
+
+</CodeGroup>
 
 ### Which option should you pick?
 
@@ -457,7 +460,7 @@ Unattended-Upgrade::Automatic-Reboot-Time "03:00";
 
 If you're not using Tailscale SSH, harden your SSH config in `/etc/ssh/sshd_config`:
 
-```bash
+```ssh-config title="/etc/ssh/sshd_config"
 PermitRootLogin no
 PasswordAuthentication no
 PubkeyAuthentication yes
@@ -598,7 +601,7 @@ It supports HTTP, TCP, DNS, and Docker container monitoring, with notifications 
 
 Add health checks to your compose files so Docker knows when a service is unhealthy:
 
-```yaml
+```yaml title="docker-compose.yml"
 services:
   jellyfin:
     image: jellyfin/jellyfin

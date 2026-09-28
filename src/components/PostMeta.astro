@@ -18,7 +18,7 @@ function monthYear(value: string | Date): string | null {
   const d = new Date(value);
   return Number.isNaN(d.getTime())
     ? null
-    : d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+    : d.toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
 }
 
 /** Frontmatter stores "7min"; the pane reads "7 min read". */

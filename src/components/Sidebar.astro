@@ -32,6 +32,25 @@ const COURSEWORK = SERIES[1];
 const minutes = (v?: string) => (v ? `${v.match(/\d+/)?.[0] ?? ""}m` : "");
 const time = (v?: string) => (v ? new Date(v).getTime() || 0 : 0);
 
+/*
+ * Source control's letters, from the frontmatter: A for a file added in
+ * the last month, M for one revised in it. Measured from the build, the
+ * way git status is measured from the last commit — the status bar
+ * already says when that was — and the tooltip carries the real date,
+ * which stays true however long the build stands.
+ */
+const RECENT = 30 * 24 * 60 * 60 * 1000;
+const built = new Date(__BUILD_TIME__).getTime();
+const short = (v: string) =>
+  new Date(v).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+type Change = { letter: "A" | "M"; note: string };
+function change(date?: string, updated?: string): Change | undefined {
+  const recent = (v?: string) => v && built - time(v) >= 0 && built - time(v) < RECENT;
+  if (recent(date)) return { letter: "A", note: `Added ${short(date!)}` };
+  if (updated && updated !== date && recent(updated)) return { letter: "M", note: `Revised ${short(updated)}` };
+  return undefined;
+}
+
 interface Row {
   stem: string;
   href: string;
@@ -40,6 +59,7 @@ interface Row {
   hue?: Hue;
   /** The meta is a category word, set in the category's color. */
   typed?: boolean;
+  change?: Change;
 }
 interface Group { run?: { label: string; hue: Hue }; rows: Row[] }
 
@@ -55,6 +75,7 @@ const projectRow = (p: ProjectEntry): Row => {
     meta: type && type.hue !== COURSEWORK.hue ? type.label : "",
     hue: type?.hue,
     typed: true,
+    change: change(p.data.date),
   };
 };
 const postRow = (p: PostEntry, hue?: Hue): Row => ({
@@ -63,6 +84,7 @@ const postRow = (p: PostEntry, hue?: Hue): Row => ({
   title: p.data.title,
   meta: minutes(p.data.readingTime),
   hue,
+  change: change(p.data.date, p.data.updated),
 });
 
 // Coursework is a syllabus, so it reads oldest first, like the series do.
@@ -174,7 +196,8 @@ const socials = [
                     data-run={group.run?.label}
                   >
                     <span class="dot" aria-hidden="true"></span>
-                    <a href={r.href} data-nav>{r.stem}<span class="ext">.mdx</span><span class="sr-only"> — {r.title}</span></a>
+                    <a href={r.href} data-nav>{r.stem}<span class="ext">.mdx</span><span class="sr-only"> — {r.title}{r.change && `, ${r.change.note.toLowerCase()}`}</span></a>
+                    {r.change && <span class="scm" data-change={r.change.letter} title={r.change.note} aria-hidden="true">{r.change.letter}</span>}
                     {r.meta && <span class:list={["rowmeta", { typed: r.typed }]} aria-hidden="true">{r.meta}</span>}
                   </li>
                 ))}
@@ -183,6 +206,18 @@ const socials = [
           </ul>
         </section>
       ))}
+
+      {/* Hits inside the files, filled by scripts/sidebar.ts from the
+          Pagefind index a build writes. Under `astro dev` there's no
+          index, and this just never appears. */}
+      <section class="sect hits" data-hits hidden>
+        <div class="sectlabel">
+          <span class="label">in files</span>
+          <span class="rule" aria-hidden="true"></span>
+          <span class="count" aria-hidden="true" data-hits-count></span>
+        </div>
+        <ul data-hits-list aria-live="polite"></ul>
+      </section>
 
       <p class="empty" data-empty hidden>No match.</p>
     </div>
@@ -263,12 +298,12 @@ const socials = [
     display: flex;
     flex-direction: column;
     min-width: 0;
-    line-height: 1.3;
+    line-height: var(--lh-snug);
   }
   .name {
     font-size: var(--t-sans-sm);
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: var(--track-snug);
     color: var(--c-text);
     transition: color var(--dur-state) var(--ease);
   }
@@ -391,7 +426,7 @@ const socials = [
     place-items: center;
     width: 22px;
     height: 22px;
-    border-radius: 6px;
+    border-radius: var(--radius-tile);
     color: var(--h);
     background: var(--t);
   }
@@ -405,11 +440,11 @@ const socials = [
     padding-inline: var(--s-3);
     margin-bottom: var(--s-1);
   }
-  .sectlabel a {
+  .sectlabel a,
+  .sectlabel .label {
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+    letter-spacing: var(--track-label);
     color: var(--c-text);
     font-weight: 500;
   }
@@ -463,9 +498,8 @@ const socials = [
     display: inline-block;
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
-    line-height: 1.5;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    line-height: var(--lh-ui);
+    letter-spacing: var(--track-label);
     color: var(--h);
   }
   .runlabel::after,
@@ -495,6 +529,18 @@ const socials = [
   }
   .rowmeta.typed { color: var(--h); }
 
+  /* A and M, colored the way an editor's source control colors them:
+     green for new, the accent for changed. */
+  .scm {
+    flex: 0 0 auto;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    font-weight: 500;
+    cursor: default;
+  }
+  .scm[data-change="A"] { color: var(--c-hue-green); }
+  .scm[data-change="M"] { color: var(--c-accent); }
+
   @media (hover: hover) {
     .row:hover { background: var(--c-raised); }
     .sectlabel a:hover { color: var(--c-link); }
@@ -505,6 +551,60 @@ const socials = [
   .row[data-active] .ext { color: var(--c-accent); font-weight: 500; }
   .row[data-active] .dot { transform: scale(1.4); }
   .row[data-active] .rowmeta { color: var(--c-accent); }
+
+  /*
+   * A hit in a file's text: the file, set like its row above, then the
+   * heading it's under and the words around it. Built by script, so the
+   * rules reach it through :global.
+   */
+  .hits ul { list-style: none; margin: 0; padding: 0; }
+  .hits :global(.hit a) {
+    display: grid;
+    grid-template-columns: 7px minmax(0, 1fr);
+    column-gap: var(--s-2);
+    align-items: center;
+    margin-inline: var(--s-1);
+    padding: var(--s-1) var(--s-2);
+    border-radius: var(--radius-sm);
+    color: var(--c-text);
+    transition: background var(--dur-state) var(--ease);
+  }
+  .hits :global(.hit .dot) {
+    grid-row: 1;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--h, var(--c-dim));
+  }
+  .hits :global(.hit .dot[data-plain]) { background: transparent; border: 1px solid var(--c-hairline-strong); }
+  .hits :global(.hit .file) {
+    min-width: 0;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    line-height: var(--lh-ui);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .hits :global(.hit .where) { color: var(--c-dim); }
+  .hits :global(.hit .excerpt) {
+    grid-column: 2;
+    font-size: var(--t-sans-xs);
+    line-height: var(--lh-snug);
+    color: var(--c-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .hits :global(.hit mark) {
+    color: var(--c-accent);
+    background: var(--c-tint-accent);
+    border-radius: 2px;
+  }
+  @media (hover: hover) {
+    .hits :global(.hit a:hover) { background: var(--c-raised); }
+  }
 
   .empty {
     padding: var(--s-3) var(--s-4);
@@ -580,7 +680,7 @@ const socials = [
     .rail { height: 100%; }
     .close { display: grid; }
     .searchbar input { font-size: 16px; padding: 10px 12px 10px 32px; }
-    .row { line-height: 1.4; min-height: 46px; }
+    .row { line-height: var(--lh-snug); min-height: 46px; }
     .row a { display: flex; align-items: center; min-height: 46px; }
     .socials a { width: 44px; height: 44px; }
     .resume { padding-block: 12px; }

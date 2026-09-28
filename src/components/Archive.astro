@@ -23,7 +23,7 @@ const when = (v?: string | Date) => {
   const d = new Date(v);
   return Number.isNaN(d.getTime())
     ? ""
-    : d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+    : d.toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
 };
 const minutes = (v?: string) => (v ? `${v.match(/\d+/)?.[0] ?? ""} min` : "");
 const hidden = Math.max(0, entries.length - initial);
@@ -74,7 +74,7 @@ const hidden = Math.max(0, entries.length - initial);
     transition: background var(--dur-state) var(--ease);
   }
   @media (hover: hover) {
-    .index a:hover { background: var(--c-chrome); }
+    .index a:hover { background: var(--c-raised); }
     .index a:hover .t { color: var(--c-link); }
   }
 
@@ -86,7 +86,7 @@ const hidden = Math.max(0, entries.length - initial);
   .t {
     font-size: var(--t-sans-sm);
     font-weight: 600;
-    line-height: 1.35;
+    line-height: var(--lh-snug);
     min-width: 0;
   }
   .rt,
@@ -110,7 +110,7 @@ const hidden = Math.max(0, entries.length - initial);
     transition: background var(--dur-state) var(--ease), color var(--dur-state) var(--ease);
   }
   @media (hover: hover) {
-    .more:hover { background: var(--c-chrome); color: var(--c-text); }
+    .more:hover { background: var(--c-raised); color: var(--c-text); }
   }
 
   @media (max-width: 560px) {

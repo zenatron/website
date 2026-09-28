@@ -4,7 +4,7 @@
 .prose {
   max-width: 68ch;
   font-size: var(--t-sans-md);
-  line-height: 1.7;
+  line-height: var(--lh-prose);
   color: var(--c-text);
 }
 
@@ -16,12 +16,17 @@
   margin-top: var(--s-6);
   margin-bottom: var(--s-3);
   font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  line-height: var(--lh-head);
+  letter-spacing: var(--track-head);
 }
 .prose h2 { font-size: var(--t-sans-xl); }
 .prose h3 { font-size: var(--t-sans-lg); }
 .prose h4 { font-size: var(--t-sans-md); color: var(--c-muted); }
+/* On a phone the page title steps down a size; the headings under it follow. */
+@media (max-width: 640px) {
+  .prose h2 { font-size: var(--t-sans-lg); }
+  .prose h3 { font-size: var(--t-sans-md); }
+}
 
 .prose a {
   color: var(--c-link);
@@ -33,8 +38,12 @@
 .prose strong { font-weight: 500; color: var(--c-text); }
 .prose em { font-style: italic; }
 
+/* Preflight strips list-style from every list; prose wants its markers back. */
 .prose ul,
 .prose ol { padding-left: var(--s-5); }
+.prose ul { list-style: disc; }
+.prose ol { list-style: decimal; }
+.prose ul ul { list-style: circle; }
 .prose li + li { margin-top: var(--s-2); }
 .prose li::marker { color: var(--c-muted); }
 
@@ -61,7 +70,7 @@
   padding: var(--s-4);
   overflow-x: auto;
   font-size: var(--t-mono-md);
-  line-height: 1.6;
+  line-height: var(--lh-body);
 }
 .prose pre code {
   font-family: var(--font-mono);
@@ -105,16 +114,22 @@
 .prose .katex { font-size: 1.05em; }
 .prose .katex-display { overflow-x: auto; overflow-y: hidden; padding-block: var(--s-2); }
 
-/* Shiki dual-theme: the dark palette swaps in with the site's theme. */
+/* Shiki dual-theme: the dark palette swaps in with the site's theme. The
+   ground goes on the block only — on every span it painted over the
+   highlighted and diff lines. */
 :root[data-theme="dark"] .prose .astro-code,
 :root[data-theme="dark"] .prose .astro-code span {
   color: var(--shiki-dark) !important;
+}
+:root[data-theme="dark"] .prose .astro-code {
   background-color: var(--shiki-dark-bg) !important;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .prose .astro-code,
   :root:not([data-theme="light"]) .prose .astro-code span {
     color: var(--shiki-dark) !important;
+  }
+  :root:not([data-theme="light"]) .prose .astro-code {
     background-color: var(--shiki-dark-bg) !important;
   }
 }
@@ -143,13 +158,6 @@
   padding: var(--s-2) var(--s-3);
   pointer-events: none;
 }
-.prose .codelang {
-  font-family: var(--font-mono);
-  font-size: var(--t-mono-xs);
-  color: var(--c-dim);
-}
-.prose .codelang:empty { display: none; }
-
 .prose .codecopy {
   pointer-events: auto;
   font-family: var(--font-mono);
@@ -177,3 +185,124 @@
 
 /* Keep the first line clear of the chrome. */
 .prose .codewrap pre { padding-top: calc(var(--s-4) + var(--s-3)); }
+
+/*
+   Lines. Shiki writes each line as a span with a newline between them; a
+   grid makes each one a full-width row, so a highlighted line's band runs
+   the width of the block — the scroll width, on a long line — and bleeds
+   into the padding the way an editor's current-line band does.
+*/
+.prose pre code {
+  display: grid;
+  width: max-content;
+  min-width: 100%;
+}
+.prose pre .line {
+  min-height: 1lh;
+  margin-inline: calc(var(--s-4) * -1);
+  padding-inline: var(--s-4);
+}
+
+/* The lines the prose is about: the accent, which means "here". */
+.prose pre .line.highlighted {
+  background: var(--c-tint-accent);
+  box-shadow: inset 2px 0 var(--c-accent);
+}
+
+/*
+   Added and removed, with the sign in a gutter the copy button can't
+   select. Removed is orange, not red: red on this site means something
+   actually failed, and a line you're replacing hasn't.
+*/
+.prose pre.has-diff .line { padding-left: calc(var(--s-4) + 2ch); }
+.prose pre .line.diff { position: relative; }
+.prose pre .line.diff::before {
+  position: absolute;
+  left: var(--s-4);
+  user-select: none;
+}
+.prose pre .line.diff.add { background: var(--c-tint-green); }
+.prose pre .line.diff.add::before { content: "+"; color: var(--c-hue-green); }
+.prose pre .line.diff.remove { background: var(--c-tint-orange); }
+.prose pre .line.diff.remove::before { content: "−"; color: var(--c-hue-orange); }
+.prose pre .line.diff.remove > span { opacity: 0.7; }
+
+/*
+   A file's name, on a tab above its block — set like the window's own
+   tabs: the surface it opens onto, a hairline edge, and the accent across
+   the top of the one that's open.
+*/
+.prose .codefile .codetab,
+.prose .cg-tabs [role="tab"] {
+  position: relative;
+  /* A block, not inline-block: on a line of its own it took the prose's
+     leading and stood off its file by a gap. */
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  padding: 6px var(--s-4) 5px;
+  font-family: var(--font-mono);
+  font-size: var(--t-mono-xs);
+  color: var(--c-text);
+  background: var(--c-sunken);
+  border: 1px solid var(--c-hairline);
+  border-bottom: 0;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* Over the pre's top border, so the tab and its file are one surface. */
+  margin-bottom: -1px;
+  z-index: 1;
+}
+.prose .codefile .codetab::before,
+.prose .cg-tabs [aria-selected="true"]::before {
+  content: "";
+  position: absolute;
+  inset: -1px var(--s-2) auto;
+  height: 2px;
+  border-radius: 0 0 2px 2px;
+  background: var(--c-accent);
+}
+.prose .codefile pre { border-top-left-radius: 0; }
+.prose .codefile .codewrap { margin: 0; }
+/* A tab that only knows the language says so more quietly than a name. */
+.prose .codetab[data-kind="lang"],
+.prose .cg-tabs [data-kind="lang"] { color: var(--c-muted); }
+/* The copy button floats over the first line; a tabbed block needs no
+   extra room for a label up there. */
+.prose .codefile .codewrap pre { padding-top: var(--s-4); }
+
+/*
+   A group: one row of tabs over several blocks, one open at a time. The
+   row is built at build time (components/mdx/CodeGroup.astro) and only
+   shown with script; without it each block keeps its own tab and they
+   stack.
+*/
+.prose .cg-tabs { display: none; }
+/* The script keeps the tab row still on a switch; the browser's own
+   anchoring would fight it. */
+.prose .codegroup { overflow-anchor: none; }
+.prose .codegroup > .codefile + .codefile { margin-top: var(--s-4); }
+:root.js .prose .cg-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+:root.js .prose .codegroup > .codefile > .codetab { display: none; }
+:root.js .prose .codegroup > .codefile { margin-top: 0; }
+:root.js .prose .codegroup > .codefile:not([data-active]) { display: none; }
+.prose .cg-tabs [role="tab"] { cursor: pointer; }
+.prose .cg-tabs [aria-selected="false"] {
+  color: var(--c-muted);
+  background: transparent;
+  border-color: transparent;
+  transition: color var(--dur-state) var(--ease), background var(--dur-state) var(--ease);
+}
+@media (hover: hover) {
+  .prose .cg-tabs [aria-selected="false"]:hover {
+    color: var(--c-text);
+    background: var(--c-raised);
+  }
+}
+.prose .cg-tabs [role="tab"]:focus-visible { outline-offset: -2px; }

@@ -80,8 +80,10 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#FDFCF9" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#14130F" media="(prefers-color-scheme: dark)" />
+    <!-- --c-chrome, so the browser's toolbar runs on into the titlebar.
+         scripts/theme.ts pins both to the chosen theme when there is one. -->
+    <meta name="theme-color" content="#F6F3ED" media="(prefers-color-scheme: light)" data-system="#F6F3ED" />
+    <meta name="theme-color" content="#1C1A16" media="(prefers-color-scheme: dark)" data-system="#1C1A16" />
     <link rel="alternate" type="application/rss+xml" title={`${SITE.name} — Writing`} href="/rss.xml" />
     <link rel="preload" href="/fonts/atkinson-hyperlegible-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/atkinson-hyperlegible-next-latin.woff2" as="font" type="font/woff2" crossorigin />
@@ -92,8 +94,11 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
       // replaces <html>'s attributes, so they're restored after every one.
       (function () {
         var r = document.documentElement;
-        r.classList.add("js");
         function restore() {
+          // `js` too: a swap replaces <html>'s class along with the rest,
+          // and everything gated on it — the minimap, the archive's
+          // "show more" — fell back to its no-script layout.
+          r.classList.add("js");
           try {
             var t = localStorage.getItem("theme");
             if (t === "light" || t === "dark") r.setAttribute("data-theme", t);
@@ -136,6 +141,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
       import "@/scripts/tabs";
       import "@/scripts/window";
       import "@/scripts/clock";
+      import "@/scripts/peek";
     </script>
   </body>
 </html>

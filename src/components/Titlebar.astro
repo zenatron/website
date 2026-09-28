@@ -111,7 +111,7 @@ import ThemeToggle from "@/components/ThemeToggle.astro";
     gap: 7px;
     font-size: var(--t-sans-xs);
     font-weight: 600;
-    letter-spacing: -0.005em;
+    letter-spacing: var(--track-snug);
     color: var(--c-text);
   }
   .name {
@@ -127,14 +127,14 @@ import ThemeToggle from "@/components/ThemeToggle.astro";
     width: 16px;
     height: 16px;
   }
-  .proxy img { width: 16px; height: 16px; border-radius: 4px; }
+  .proxy img { width: 16px; height: 16px; border-radius: var(--radius-tile); }
   /* A page's tile from the explorer, shrunk to proxy size. */
   .proxy :global(.ptile) {
     display: grid;
     place-items: center;
     width: 16px;
     height: 16px;
-    border-radius: 4.5px;
+    border-radius: var(--radius-tile);
     color: var(--h);
     background: var(--t);
   }

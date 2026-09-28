@@ -12,6 +12,8 @@ const blog = defineCollection({
     tags: z.array(z.string()).optional(),
     series: z.string().optional(),
     seriesOrder: z.number().optional(),
+    /** The diagram a card leads with, by filename in public/images/blog/<slug>/. */
+    cover: z.string().optional(),
   }),
 });
 

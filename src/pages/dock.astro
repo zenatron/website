@@ -1,5 +1,6 @@
 ---
 import Shell from "@/layouts/Shell.astro";
+import PageHead from "@/components/PageHead.astro";
 import AppIcon from "@/components/AppIcon.astro";
 import FileIcon from "@/components/FileIcon.astro";
 import Neofetch from "@/components/Neofetch.astro";
@@ -59,14 +60,11 @@ const items: Item[] = [
 ---
 
 <Shell title="Dock | Phil Vishnevsky" description="The apps I actually use, and the things worth opening." ogSlug="dock">
-  <header class="pagehead">
-    <h1>Dock</h1>
-    <p>
-      {apps.length} apps I actually use, and a few things worth opening.
-      <span class="hint-hover">Hover</span><span class="hint-tap">Tap</span> for what they are.
-      The hardware they run on is on <a href="/about/#setup">the desk</a>.
-    </p>
-  </header>
+  <PageHead title="Dock">
+    {apps.length} apps I actually use, and a few things worth opening.
+    <span class="hint-hover">Hover</span><span class="hint-tap">Tap</span> for what they are.
+    The hardware they run on is on <a href="/about/#setup">the desk</a>.
+  </PageHead>
 
   <div class="surface">
     <ul class="objects">
@@ -161,17 +159,6 @@ const items: Item[] = [
     .hint-tap { display: inline; }
   }
 
-  .pagehead { margin-bottom: var(--s-5); }
-  h1 {
-    font-size: var(--t-sans-2xl);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-  }
-  .pagehead p {
-    margin-top: var(--s-3);
-    max-width: 56ch;
-    color: var(--c-muted);
-  }
 
   /*
    * The desk surface: a dot grid, like graph paper under the objects.
@@ -255,13 +242,13 @@ const items: Item[] = [
   .lname {
     font-size: var(--t-sans-xs);
     font-weight: 600;
-    line-height: 1.25;
+    line-height: var(--lh-head);
   }
   .lnote {
     font-size: var(--t-mono-xs);
     font-family: var(--font-mono);
     color: var(--c-muted);
-    line-height: 1.3;
+    line-height: var(--lh-snug);
   }
 
   .obj:focus-visible .label { opacity: 1; }
@@ -334,8 +321,8 @@ const items: Item[] = [
     color: var(--c-dim);
     flex: 0 0 auto;
   }
-  .win-body :global(.line) { font-size: var(--t-sans-lg); line-height: 1.6; }
-  .win-body :global(.quote) { font-size: var(--t-sans-md); line-height: 1.6; }
+  .win-body :global(.line) { font-size: var(--t-sans-lg); line-height: var(--lh-body); }
+  .win-body :global(.quote) { font-size: var(--t-sans-md); line-height: var(--lh-body); }
   /* Whoever said it, on their own line, as colophon. */
   .win-body :global(.quote .by) {
     display: block;

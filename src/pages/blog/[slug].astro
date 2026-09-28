@@ -65,12 +65,12 @@ if (seriesKey) {
 const suggested = seriesKey
   ? []
   : await Promise.all(
-      (await getSuggestedPosts(post.slug, 3)).map(async (p) => ({
+      (await getSuggestedPosts(post.slug, 2)).map(async (p) => ({
         title: p.data.title,
         href: `/blog/${p.slug}`,
         slug: p.slug,
         description: p.data.excerpt || undefined,
-        art: await cardArt({ slug: p.slug, title: p.data.title, collection: "blog" }),
+        art: await cardArt({ slug: p.slug, title: p.data.title, cover: p.data.cover, collection: "blog" }),
       }))
     );
 ---
@@ -100,7 +100,8 @@ const suggested = seriesKey
   <div class="layout">
     <article>
       <div class="hero"><CardArt art={heroArt} slug={post.slug} crop /></div>
-      <header>
+      {/* What the site search indexes: the post, not the page around it. */}
+      <header data-pagefind-body>
         <h1>{post.data.title}</h1>
         <PostMeta date={post.data.date} readingTime={post.data.readingTime} />
         {post.data.tags && post.data.tags.length > 0 && (
@@ -108,7 +109,7 @@ const suggested = seriesKey
         )}
       </header>
 
-      <div class="prose"><Content /></div>
+      <div class="prose" data-pagefind-body><Content /></div>
 
       {/* A tip jar, after the guides — not after coursework notes. */}
       {seriesKey !== "data-mining" && (
@@ -124,7 +125,7 @@ const suggested = seriesKey
       {suggested.length > 0 && (
         <section class="more">
           <h2>More writing</h2>
-          <Cells cells={suggested} />
+          <Cells cells={suggested} layout="pairs" />
         </section>
       )}
     </article>
@@ -154,11 +155,14 @@ const suggested = seriesKey
 
   .layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 210px;
+    /* The rail holds the minimap and the outline beside it. */
+    grid-template-columns: minmax(0, 1fr) 244px;
     gap: var(--s-6);
     padding-top: var(--s-5);
   }
-  @media (max-width: 1080px) {
+  /* Below this the rail would squeeze the post under 500px; it goes, and
+     the reading-progress rule is the map. */
+  @media (max-width: 1200px) {
     .layout { grid-template-columns: minmax(0, 1fr); }
   }
 
@@ -178,7 +182,7 @@ const suggested = seriesKey
   h1 {
     font-size: var(--t-sans-2xl);
     font-weight: 700;
-    letter-spacing: -0.03em;
+    letter-spacing: var(--track-display);
     max-width: 26ch;
   }
   .tagrow { margin-top: var(--s-4); }
@@ -226,6 +230,9 @@ const suggested = seriesKey
 
   @media (max-width: 640px) {
     .progress { margin-inline: calc(var(--s-4) * -1); }
+    /* The same step down PageHead takes on a phone, and a step under it. */
+    h1 { font-size: var(--t-sans-xl); }
+    .more h2 { font-size: var(--t-sans-lg); }
   }
   /* Where the pane is the scroller, sticky offsets start inside its
      padding; this puts the rule back on the window's edge, under the tabs. */
@@ -237,4 +244,5 @@ const suggested = seriesKey
 <script>
   import "@/scripts/toc";
   import "@/scripts/code";
+  import "@/scripts/minimap";
 </script>

@@ -8,6 +8,7 @@
  * the way System Settings groups rows, with the same icons as the dock.
  */
 import Shell from "@/layouts/Shell.astro";
+import PageHead from "@/components/PageHead.astro";
 import AppIcon from "@/components/AppIcon.astro";
 import ReachCards from "@/components/ReachCards.astro";
 import { links } from "@/lib/links";
@@ -18,13 +19,10 @@ const rel = (url: string) => (url.startsWith("http") ? "me noopener noreferrer" 
 ---
 
 <Shell title="Say hi | Phil Vishnevsky" description="Email, book a call, or find me on the rest of the internet." ogSlug="say-hi">
-  <header class="pagehead">
-    <h1>Say hi</h1>
-    <p>
-      Where to find me. For what I <em>use</em> rather than where I am, see
-      <a href="/dock/">the dock</a>.
-    </p>
-  </header>
+  <PageHead title="Say hi">
+    Where to find me. For what I <em>use</em> rather than where I am, see
+    <a href="/dock/">the dock</a>.
+  </PageHead>
 
   <p class="label">get in touch</p>
   <div class="reach"><ReachCards /></div>
@@ -50,30 +48,12 @@ const rel = (url: string) => (url.startsWith("http") ? "me noopener noreferrer" 
 </Shell>
 
 <style>
-  .pagehead { margin-bottom: var(--s-6); }
-  h1 {
-    font-size: var(--t-sans-2xl);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-  }
-  .pagehead p {
-    margin-top: var(--s-3);
-    max-width: 56ch;
-    color: var(--c-muted);
-  }
-  .pagehead em { font-style: italic; }
-  .pagehead a {
-    color: var(--c-link);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
   /* The homepage's "currently" label, for the same job. */
   .label {
     margin-bottom: var(--s-3);
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
-    letter-spacing: 0.08em;
+    letter-spacing: var(--track-label);
     color: var(--c-dim);
   }
 
@@ -124,12 +104,12 @@ const rel = (url: string) => (url.startsWith("http") ? "me noopener noreferrer" 
   .title {
     font-size: var(--t-sans-md);
     font-weight: 600;
-    line-height: 1.35;
+    line-height: var(--lh-snug);
   }
   .desc {
     font-size: var(--t-sans-sm);
     color: var(--c-muted);
-    line-height: 1.4;
+    line-height: var(--lh-snug);
   }
   .handle {
     grid-area: handle;

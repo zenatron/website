@@ -39,7 +39,7 @@ const { prev, next, seriesTitle } = Astro.props;
   .series-label {
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
-    letter-spacing: 0.08em;
+    letter-spacing: var(--track-label);
     color: var(--c-accent);
     margin-bottom: var(--s-3);
   }
@@ -61,8 +61,8 @@ const { prev, next, seriesTitle } = Astro.props;
   }
   @media (hover: hover) {
     a.side:hover {
-    background: var(--c-chrome);
-    border-color: var(--c-hairline-strong);
+      background: var(--c-raised);
+      border-color: var(--c-hairline-strong);
     }
   }
   .empty { border: 0; }
@@ -76,11 +76,11 @@ const { prev, next, seriesTitle } = Astro.props;
   .t {
     font-size: var(--t-sans-md);
     font-weight: 600;
-    line-height: 1.3;
+    line-height: var(--lh-snug);
   }
   @media (hover: hover) {
     a.side:hover .t {
-    color: var(--c-link);
+      color: var(--c-link);
     }
   }
   .t em {

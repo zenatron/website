@@ -1,0 +1,81 @@
+/*
+   The card scripts/peek.ts shows over a link to another post or project.
+   Built by script, so it's styled here rather than in a component. No
+   shadow — depth on this site is surface and hairline — so it lifts off
+   the page as the chrome surface, with the stronger edge.
+*/
+.peek {
+  position: fixed;
+  z-index: 20;
+  width: min(340px, calc(100vw - var(--s-4) * 2));
+  padding: var(--s-3) var(--s-4) var(--s-4);
+  background: var(--c-chrome);
+  border: 1px solid var(--c-hairline-strong);
+  border-radius: var(--radius-card);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-3px);
+  transition:
+    opacity var(--dur-state) var(--ease),
+    transform var(--dur-state) var(--ease),
+    visibility 0s linear var(--dur-state);
+}
+.peek[data-side="above"] { transform: translateY(3px); }
+.peek[data-open] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity var(--dur-state) var(--ease),
+    transform var(--dur-state) var(--ease);
+}
+
+.peek-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding-bottom: var(--s-2);
+  margin-bottom: var(--s-3);
+  border-bottom: 1px solid var(--c-hairline);
+  font-family: var(--font-mono);
+  font-size: var(--t-mono-xs);
+}
+.peek-dot {
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--h);
+}
+.peek-dot[data-plain] { background: transparent; border: 1px solid var(--c-hairline-strong); }
+.peek-file {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--c-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.peek-ext { color: var(--c-dim); }
+.peek-aside { flex: 0 0 auto; color: var(--c-dim); }
+
+.peek-title {
+  font-size: var(--t-sans-sm);
+  font-weight: 600;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--track-snug);
+  color: var(--c-text);
+}
+.peek-summary {
+  margin-top: var(--s-1);
+  font-size: var(--t-sans-xs);
+  line-height: var(--lh-ui);
+  color: var(--c-muted);
+}
+.peek-context {
+  margin-top: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--t-mono-xs);
+  color: var(--c-dim);
+}

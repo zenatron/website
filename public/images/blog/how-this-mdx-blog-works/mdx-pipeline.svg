@@ -1,34 +1,36 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
   <title id="title">MDX pipeline</title>
-  <desc id="desc">A diagram showing the pipeline from MDX files to compiled React content.</desc>
-  <rect width="1200" height="600" fill="var(--c-sunken, #100f0c)" />
-  <g font-family="Arial, sans-serif" fill="var(--c-hairline, #e4dfd4)">
-    <text x="40" y="60" font-size="32" font-weight="700">MDX pipeline</text>
+  <desc id="desc">The pipeline from MDX files, through a content collection and the remark and rehype plugins, to static HTML written at build time.</desc>
+  <rect width="1200" height="360" fill="var(--c-sunken, #100f0c)" />
+  <text x="40" y="60" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="700" fill="var(--c-text, #ede7da)">MDX pipeline</text>
+
+  <g fill="var(--c-raised, #26231d)" stroke="var(--c-hue-violet, #bca4ff)" stroke-width="3">
+    <rect x="80" y="150" width="220" height="140" rx="16" />
+    <rect x="360" y="150" width="220" height="140" rx="16" />
+    <rect x="640" y="150" width="220" height="140" rx="16" />
+    <rect x="920" y="150" width="220" height="140" rx="16" />
   </g>
 
-  <g stroke="var(--c-hue-violet, #bca4ff)" stroke-width="3" fill="none">
-    <rect x="80" y="200" width="220" height="140" rx="16" />
-    <rect x="360" y="200" width="220" height="140" rx="16" />
-    <rect x="640" y="200" width="220" height="140" rx="16" />
-    <rect x="920" y="200" width="220" height="140" rx="16" />
-  </g>
-
-  <g font-family="Arial, sans-serif" fill="var(--c-hairline, #e4dfd4)" font-size="18" text-anchor="middle">
-    <text x="190" y="270">MDX files</text>
-    <text x="470" y="270">gray-matter</text>
-    <text x="750" y="270">compileMDX</text>
-    <text x="1030" y="270">React</text>
+  <g font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">
+    <text x="190" y="216" font-size="22" font-weight="600" fill="var(--c-text, #ede7da)">.mdx files</text>
+    <text x="190" y="246" font-size="16" fill="var(--c-muted, #a69e8d)">src/content/blog</text>
+    <text x="470" y="216" font-size="22" font-weight="600" fill="var(--c-text, #ede7da)">Collection</text>
+    <text x="470" y="246" font-size="16" fill="var(--c-muted, #a69e8d)">Zod-checked frontmatter</text>
+    <text x="750" y="216" font-size="22" font-weight="600" fill="var(--c-text, #ede7da)">remark · rehype</text>
+    <text x="750" y="246" font-size="16" fill="var(--c-muted, #a69e8d)">the plugin stack</text>
+    <text x="1030" y="216" font-size="22" font-weight="600" fill="var(--c-text, #ede7da)">Static HTML</text>
+    <text x="1030" y="246" font-size="16" fill="var(--c-muted, #a69e8d)">one page per post</text>
   </g>
 
   <g stroke="var(--c-hue-green, #9bd68a)" stroke-width="4" fill="none">
-    <path d="M300 270 L360 270" />
-    <path d="M580 270 L640 270" />
-    <path d="M860 270 L920 270" />
+    <path d="M300 220 L360 220" />
+    <path d="M580 220 L640 220" />
+    <path d="M860 220 L920 220" />
   </g>
 
-  <g fill="var(--c-hue-green, #9bd68a)" font-family="Arial, sans-serif" font-size="16">
-    <text x="310" y="250">frontmatter</text>
-    <text x="585" y="250">MDX + plugins</text>
-    <text x="865" y="250">rendered</text>
+  <g fill="var(--c-hue-green, #9bd68a)" font-family="system-ui, -apple-system, sans-serif" font-size="16" text-anchor="middle">
+    <text x="330" y="130">frontmatter</text>
+    <text x="610" y="130">body</text>
+    <text x="890" y="130">build</text>
   </g>
 </svg>

@@ -24,7 +24,9 @@ const { shots } = Astro.props;
     /* Wider than the prose measure: these want room. */
     width: min(100%, 1000px);
   }
-  ul {
+  /* .screens-qualified: prose's list rules (markers, li + li spacing)
+     would otherwise outrank these and stagger the phones. */
+  .screens ul {
     list-style: none;
     display: flex;
     gap: var(--s-4);
@@ -35,7 +37,8 @@ const { shots } = Astro.props;
   }
   /* Sized by the column, not the viewport: the phones share whatever width
      the writing has, and only scroll once each would drop below 150px. */
-  li {
+  .screens li {
+    margin: 0;
     flex: 1 1 0;
     min-width: 150px;
     max-width: 236px;

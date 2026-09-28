@@ -99,6 +99,8 @@ export interface Photo {
   shutter?: number;
   iso?: number;
   ev?: number;
+  /** The photo's average color, shown in its tile until the image arrives. */
+  tone?: string;
 }
 
 /** Oldest first, the way a library scrolls. */

@@ -258,6 +258,23 @@
   --t-sans-xl:  30px;
   --t-sans-2xl: 40px;
   --t-sans-3xl: 56px;
+
+  /*
+     Tracking tightens as type grows, and opens up only for the small mono
+     labels that head a group. Leading is the same idea in reverse.
+     Drawings — a cover's big lead, a sticker — set their own inline.
+  */
+  --track-display: -0.03em;  /* page titles */
+  --track-head:    -0.02em;  /* section heads, card titles */
+  --track-snug:    -0.01em;  /* titles at body size */
+  --track-label:    0.08em;  /* small mono labels */
+
+  --lh-display: 1.1;   /* page titles */
+  --lh-head:    1.2;   /* headings, card titles */
+  --lh-snug:    1.35;  /* list titles, short UI lines */
+  --lh-ui:      1.5;   /* descriptions, secondary text */
+  --lh-body:    1.6;   /* body */
+  --lh-prose:   1.7;   /* long-form */
 }
 
 /* Space and structure */
@@ -276,6 +293,10 @@
   --radius-card:   12px;
   --radius-sm:      8px;
   --radius-chip:    5px;
+  /* A page's tile — about, dock, photos, say hi — at whatever size it's
+     drawn: 16px in a tab, 22px in the explorer, 32px at a page's foot.
+     A percentage, so the corner scales with the tile like an app icon's. */
+  --radius-tile:    27%;
 
   --h-titlebar:  40px;
   --h-statusbar: 28px;

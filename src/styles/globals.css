@@ -1,6 +1,7 @@
 @import "./tokens.css";
 @import "./fonts.css";
 @import "./prose.css";
+@import "./peek.css";
 
 @tailwind base;
 @tailwind components;
@@ -25,7 +26,7 @@
     font-family: var(--font-sans);
     font-size: var(--t-sans-md);
     font-weight: 400;
-    line-height: 1.6;
+    line-height: var(--lh-body);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
@@ -42,8 +43,8 @@
   h1, h2, h3, h4, h5, h6 {
     margin: 0;
     font-weight: 600;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
+    line-height: var(--lh-head);
+    letter-spacing: var(--track-head);
   }
 
   p, ul, ol, figure, blockquote, pre {
@@ -89,6 +90,40 @@
 
   ::placeholder {
     color: var(--c-dim);
+  }
+}
+
+@layer components {
+  /*
+   * The site's one button: a control, not a file (about's resume chip is a
+   * file, set like the explorer sets one). Primary is the one thing a page
+   * most wants done; there's at most one per page.
+   */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: 9px 18px;
+    font-size: var(--t-sans-sm);
+    font-weight: 600;
+    color: var(--c-text);
+    background: var(--c-chrome);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition:
+      background var(--dur-state) var(--ease),
+      border-color var(--dur-state) var(--ease),
+      filter var(--dur-state) var(--ease);
+  }
+  .btn.primary {
+    color: var(--c-bg);
+    background: var(--c-link);
+    border-color: transparent;
+  }
+  @media (hover: hover) {
+    .btn:hover { background: var(--c-raised); border-color: var(--c-hairline-strong); }
+    .btn.primary:hover { background: var(--c-link); filter: brightness(1.08); }
   }
 }
 

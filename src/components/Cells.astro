@@ -20,13 +20,25 @@ interface Cell {
   slug?: string;
   art?: Art;
 }
-interface Props { cells: Cell[]; }
-const { cells } = Astro.props;
+interface Props {
+  cells: Cell[];
+  /**
+   * `grid` fills columns as they fit, and a short list in an auto-filled
+   * grid leaves a hole: three cards in two columns. `pairs` never does —
+   * two columns, and when the count is odd the first card, the one you'd
+   * open first, is set across the whole row with the rest paired under it.
+   */
+  layout?: "grid" | "pairs";
+}
+const { cells, layout = "grid" } = Astro.props;
+const pairs = layout === "pairs";
+const lead = pairs && cells.length % 2 === 1;
 ---
 
-<ul class="cells">
-  {cells.map((cell) => (
-    <li class="cell">
+<div class="cellwrap">
+<ul class:list={["cells", { pairs }]}>
+  {cells.map((cell, i) => (
+    <li class:list={["cell", lead && i === 0 && "first"]}>
       <a href={cell.href}>
         {cell.art && <span class="art"><CardArt art={cell.art} slug={cell.slug ?? cell.href} /></span>}
         <span class="body">
@@ -40,8 +52,11 @@ const { cells } = Astro.props;
     </li>
   ))}
 </ul>
+</div>
 
 <style>
+  .cellwrap { container-type: inline-size; }
+
   .cells {
     list-style: none;
     margin: 0;
@@ -80,7 +95,7 @@ const { cells } = Astro.props;
   }
   @media (hover: hover) {
     .cell:hover .art {
-    border-color: var(--c-hairline-strong);
+      border-color: var(--c-hairline-strong);
     }
   }
 
@@ -93,13 +108,13 @@ const { cells } = Astro.props;
   .title {
     font-size: var(--t-sans-lg);
     font-weight: 600;
-    line-height: 1.25;
-    letter-spacing: -0.02em;
+    line-height: var(--lh-head);
+    letter-spacing: var(--track-head);
     min-width: 0;
   }
   @media (hover: hover) {
     .cell:hover .title {
-    color: var(--c-link);
+      color: var(--c-link);
     }
   }
   .title { transition: color var(--dur-state) var(--ease); }
@@ -116,6 +131,37 @@ const { cells } = Astro.props;
     margin-top: var(--s-2);
     font-size: var(--t-sans-sm);
     color: var(--c-muted);
-    line-height: 1.5;
+    line-height: var(--lh-ui);
+  }
+
+  /* Fixed layouts: two columns, one on a narrow pane. */
+  .cells.pairs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .first { grid-column: 1 / -1; }
+
+  /* The lead card: art and words side by side, the title a size up. */
+  @container (min-width: 624px) {
+    .first a {
+      display: grid;
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      align-items: center;
+      gap: var(--s-6);
+    }
+    .first .head {
+      flex-direction: column-reverse;
+      align-items: flex-start;
+      gap: var(--s-2);
+    }
+    .first .title {
+      font-size: var(--t-sans-xl);
+      letter-spacing: var(--track-display);
+      line-height: var(--lh-head);
+    }
+    .first .desc {
+      margin-top: var(--s-3);
+      font-size: var(--t-sans-md);
+    }
+  }
+  @container (max-width: 623px) {
+    .cells.pairs { grid-template-columns: minmax(0, 1fr); }
   }
 </style>

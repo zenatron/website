@@ -123,7 +123,7 @@ After starting, visit the URL and create your first user. Pocket ID will guide y
 
 In Grafana's config:
 
-```ini
+```ini title="grafana.ini"
 [auth.generic_oauth]
 enabled = true
 name = Pocket ID
@@ -172,7 +172,7 @@ services:
 
 In your Caddyfile, add forward auth to any site:
 
-```caddyfile
+```caddyfile title="Caddyfile"
 # The auth endpoint
 auth.yourdomain.com {
     reverse_proxy tinyauth:3000

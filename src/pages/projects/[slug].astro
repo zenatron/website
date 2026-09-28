@@ -45,7 +45,7 @@ const hasMath = /\$\$|\\\(|\\\[|\$[^$\n]+\$/.test(entry.body ?? "");
 
 const kind = PROJECT_KIND[entry.data.type];
 const made = entry.data.date
-  ? new Date(entry.data.date).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+  ? new Date(entry.data.date).toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" })
   : undefined;
 
 /** `https://github.com/zenatron/ledger/` → `github.com/zenatron/ledger` */
@@ -68,7 +68,7 @@ const describe = (name: string) => {
   return { what: FILE_KIND[ext] ?? name.replace(/\.[^.]+$/, ""), ext: ext ? `.${ext}` : "" };
 };
 
-const suggested = await Promise.all((await getSuggestedProjects(slug, 3)).map(async (p) => ({
+const suggested = await Promise.all((await getSuggestedProjects(slug, 2)).map(async (p) => ({
   title: p.data.title,
   href: `/projects/${projectSlug(p)}/`,
   slug: projectSlug(p),
@@ -98,7 +98,7 @@ const suggested = await Promise.all((await getSuggestedProjects(slug, 3)).map(as
     live,
   })}
 >
-  <article class="project">
+  <article class="project" data-pagefind-body>
     <header class="head">
       <span class="icon"><ProjectIcon title={entry.data.title} type={entry.data.type} /></span>
       <div class="headtext">
@@ -187,7 +187,7 @@ const suggested = await Promise.all((await getSuggestedProjects(slug, 3)).map(as
   {suggested.length > 0 && (
     <section class="more">
       <SectionHead title="More projects" meta={`${suggested.length}`} />
-      <Cells cells={suggested} />
+      <Cells cells={suggested} layout="pairs" />
     </section>
   )}
 </Shell>
@@ -208,7 +208,7 @@ const suggested = await Promise.all((await getSuggestedProjects(slug, 3)).map(as
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
     color: var(--c-dim);
-    letter-spacing: 0.04em;
+    letter-spacing: var(--track-label);
   }
   .kind {
     display: inline-flex;
@@ -229,14 +229,14 @@ const suggested = await Promise.all((await getSuggestedProjects(slug, 3)).map(as
     margin-top: var(--s-1);
     font-size: var(--t-sans-2xl);
     font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
+    letter-spacing: var(--track-display);
+    line-height: var(--lh-display);
   }
   .lede {
     margin-top: var(--s-3);
     max-width: 58ch;
     font-size: var(--t-sans-md);
-    line-height: 1.55;
+    line-height: var(--lh-ui);
     color: var(--c-muted);
   }
 
@@ -246,34 +246,12 @@ const suggested = await Promise.all((await getSuggestedProjects(slug, 3)).map(as
     flex-wrap: wrap;
     gap: var(--s-2);
   }
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--s-2);
-    padding: 9px 18px;
-    font-size: var(--t-sans-sm);
-    font-weight: 600;
-    color: var(--c-text);
-    background: var(--c-chrome);
-    border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-sm);
-    transition: background var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease), filter var(--dur-state) var(--ease);
-  }
-  .btn.primary {
-    color: var(--c-bg);
-    background: var(--c-link);
-    border-color: transparent;
-  }
   .gh {
     width: 15px;
     height: 15px;
     background: currentColor;
     -webkit-mask: url(/logos/github.svg) center / contain no-repeat;
     mask: url(/logos/github.svg) center / contain no-repeat;
-  }
-  @media (hover: hover) {
-    .btn:hover { background: var(--c-raised); border-color: var(--c-hairline-strong); }
-    .btn.primary:hover { background: var(--c-link); filter: brightness(1.08); }
   }
 
   /* A real landscape image, inset on its tint like the cards do. */
@@ -307,7 +285,7 @@ const suggested = await Promise.all((await getSuggestedProjects(slug, 3)).map(as
     margin-bottom: var(--s-3);
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
-    letter-spacing: 0.08em;
+    letter-spacing: var(--track-label);
     color: var(--c-dim);
   }
   .info dl {

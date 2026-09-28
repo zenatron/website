@@ -2,8 +2,12 @@
  * What a card should show, in order of preference:
  *
  *   1. a real thumbnail declared in frontmatter
- *   2. the post's own first diagram
+ *   2. the post's own diagram — the one frontmatter names as `cover`,
+ *      else the first one it ships
  *   3. a typographic cover built from the title
+ *
+ * A hero band never shows a diagram: the post body shows the same one
+ * whole a screen later, and cropped to 21:7 it loses its labels.
  *
  * Generated art is the fallback, not the default. The previous version had
  * this backwards and drew a dot field over content that already had
@@ -18,10 +22,11 @@ export type CardArt =
   | { kind: "diagram"; src: string }
   | { kind: "type"; lead: string; rest: string };
 
-/** The first diagram a post ships, if it has one. */
-function firstDiagram(slug: string): string | null {
+/** The diagram a post leads with: the named cover, else the first it ships. */
+function coverDiagram(slug: string, cover?: string): string | null {
   const dir = join(process.cwd(), "public", "images", "blog", slug);
   if (!existsSync(dir)) return null;
+  if (cover && existsSync(join(dir, cover))) return `/images/blog/${slug}/${cover}`;
   const svg = readdirSync(dir).filter((f) => f.endsWith(".svg")).sort();
   return svg.length ? `/images/blog/${slug}/${svg[0]}` : null;
 }
@@ -59,6 +64,8 @@ export async function cardArt(opts: {
   slug: string;
   title: string;
   thumbnail?: string;
+  /** A blog post's chosen diagram; see coverDiagram. */
+  cover?: string;
   collection: "blog" | "projects";
   /** A hero band is wide; a card is not. */
   context?: "card" | "hero";
@@ -71,8 +78,8 @@ export async function cardArt(opts: {
     }
     return { kind: "type", ...typographic(opts.title) };
   }
-  if (opts.collection === "blog") {
-    const diagram = firstDiagram(opts.slug);
+  if (opts.collection === "blog" && context === "card") {
+    const diagram = coverDiagram(opts.slug, opts.cover);
     if (diagram) return { kind: "diagram", src: diagram };
   }
   return { kind: "type", ...typographic(opts.title) };

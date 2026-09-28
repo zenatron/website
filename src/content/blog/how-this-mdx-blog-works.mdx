@@ -1,22 +1,24 @@
 ---
 title: "How This Blog Renders MDX"
 date: "2025-02-21"
+updated: "2026-09-27"
 readingTime: "22min"
 excerpt: "The Astro and MDX pipeline behind this site: what runs at build time, what ships to the browser, and why that is almost nothing."
 tags: ["mdx", "astro", "performance", "web-dev"]
+cover: "mdx-pipeline.svg"
 ---
 
 import Diagram from '@/components/mdx/Diagram.astro';
 import Callout from '@/components/mdx/Callout.astro';
 
-I wanted a blog that felt like [Markdown](https://en.wikipedia.org/wiki/Markdown), but could still render React components, callouts, and embeds without turning into a templating mess. [MDX](https://mdxjs.com/) hit the sweet spot — and [Astro](https://astro.build/) makes it fly.
+I wanted a blog that felt like [Markdown](https://en.wikipedia.org/wiki/Markdown), but could still render components, callouts, and embeds without turning into a templating mess. [MDX](https://mdxjs.com/) hit the sweet spot — and [Astro](https://astro.build/) makes it fly.
 
 <Diagram src="/images/blog/how-this-mdx-blog-works/mdx-pipeline.svg" alt="MDX pipeline diagram" />
 <Diagram src="/images/blog/how-this-mdx-blog-works/compile-flow.svg" alt="MDX compilation flow diagram" />
 
 ## Why MDX (not just Markdown)
 
-Markdown is simple and portable. The downside: you're stuck with plain content. MDX gives you the ability to import React components right inside a post, which means you can drop in things like callouts, counters, or custom embeds. Under the hood, MDX turns your content into a structured syntax tree (think [AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree)) before it becomes HTML.
+Markdown is simple and portable. The downside: you're stuck with plain content. MDX lets you import components right inside a post — here, plain Astro components, which means you can drop in things like callouts, counters, or custom embeds. Under the hood, MDX turns your content into a structured syntax tree (think [AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree)) before it becomes HTML.
 
 If you've used a static site generator before, MDX feels like "Markdown with superpowers" — but it's still readable in plain text, which keeps the writing workflow fast.
 
@@ -77,7 +79,7 @@ const headings = rendered.headings ?? [];
 ---
 
 <article>
-  <div class="mdx-content">
+  <div class="prose">
     <Content />
   </div>
 </article>
@@ -112,18 +114,16 @@ Stringify to HTML + component islands
 
 The plugins are configured once in `astro.config.mjs` and apply to all Markdown and MDX content:
 
-```javascript
+```javascript title="astro.config.mjs"
 export default defineConfig({
+  integrations: [tailwind({ applyBaseStyles: false }), mdx(), sitemap()],
   markdown: {
     remarkPlugins: [remarkMath, remarkGfm],
-    rehypePlugins: [rehypeSlug, rehypeKatex],
+    rehypePlugins: [rehypeSlug, rehypeKatex, rehypeWrapTables],
+    shikiConfig: {
+      themes: { light: pvishLight, dark: pvishDark },
+    },
   },
-  integrations: [
-    react(),
-    tailwind({ applyBaseStyles: false }),
-    mdx(),
-    sitemap(),
-  ],
 });
 ```
 
@@ -133,12 +133,35 @@ export default defineConfig({
 | [remark-gfm](https://github.com/remarkjs/remark-gfm) | Remark | Enables GitHub Flavored Markdown (tables, strikethrough, autolinks) |
 | [rehype-slug](https://github.com/rehypejs/rehype-slug) | Rehype | Auto-generates `id` attributes on headings for anchor links |
 | [rehype-katex](https://github.com/remarkjs/remark-math/tree/main/packages/rehype-katex) | Rehype | Renders math expressions using [KaTeX](https://katex.org/) |
+| `rehypeWrapTables` | Rehype | My own, about fifteen lines: wraps each table in a scroll container so a wide one scrolls on a phone instead of being clipped |
 
 <Callout type="tip" title="Plugin order matters" showEmoji={true}>
 Remark plugins run first (on Markdown), then Rehype plugins run on the resulting HTML. Within each stage, plugins run in array order. Put `rehypeSlug` before anything that depends on heading IDs.
 </Callout>
 
-Astro handles syntax highlighting out of the box with [Shiki](https://shiki.matsu.io/), so there's no need for a separate rehype-highlight plugin. Code blocks get beautiful, theme-aware highlighting with zero configuration.
+Astro handles syntax highlighting out of the box with [Shiki](https://shiki.matsu.io/), so there's no need for a separate rehype-highlight plugin. The one thing I changed is the theme: a stock theme like github-dark drops a dozen colors the rest of the site never uses into its most prominent element, so `src/lib/shiki-theme.js` maps Shiki's scopes onto the site's own palette, once for light and once for dark.
+
+Shiki also takes transformers, which rewrite a block's HTML as it's highlighted. Three from [`@shikijs/transformers`](https://shiki.style/packages/transformers) and one of my own let a block say more than its code: which file it belongs to, which lines matter, and what changed. It's all written in the fence and in comments, and the comments are stripped on the way out, so the copy button still copies the file as it should be:
+
+```caddyfile title="Caddyfile" {2}
+jellyfin.example.com {
+    encode zstd gzip
+    reverse_proxy 192.168.1.10:8096  # [!code --]
+    reverse_proxy jellyfin:8096  # [!code ++]
+}
+```
+
+That block is written as:
+
+````md
+```caddyfile title="Caddyfile" {2}
+jellyfin.example.com {
+    encode zstd gzip
+    reverse_proxy 192.168.1.10:8096  # [!code --]
+    reverse_proxy jellyfin:8096  # [!code ++]
+}
+```
+````
 
 ## Table of contents + heading extraction
 
@@ -150,9 +173,7 @@ const headings = rendered.headings ?? [];
 // Each heading: { slug: string, text: string, depth: number }
 ```
 
-These headings are extracted by `rehype-slug` during compilation, so the IDs are stable across builds. The TOC component receives them and renders an interactive sidebar with scroll tracking via `IntersectionObserver`.
-
-I also have a utility in `src/utils/extractHeadings.ts` that builds a nested hierarchy from the flat headings array — turning a flat list of h2s and h3s into a proper tree structure for indented rendering.
+These headings are extracted by `rehype-slug` during compilation, so the IDs are stable across builds. The outline component receives them, indents each h3 under its h2, and a small script highlights the section you're in. It tracks scroll position rather than using `IntersectionObserver`, so the current heading is the last one you've passed — an observer fires from the middle of the viewport and jumps around.
 
 <Callout type="note" title="Tiny performance win" showEmoji={true}>
 Heading extraction happens once at build time. The client-side TOC just receives the pre-built list and handles scroll tracking — no parsing needed in the browser.
@@ -164,43 +185,40 @@ Want to add a new component? Here's the pattern I use:
 
 ### Step 1: Create the component
 
-```tsx
-// src/components/mdx/MyComponent.tsx
-import React from "react";
+```astro title="src/components/mdx/MyComponent.astro"
+---
+interface Props { title: string }
+const { title } = Astro.props;
+---
+<div class="box">
+  <p class="title">{title}</p>
+  <slot />
+</div>
 
-interface MyComponentProps {
-  title: string;
-  children: React.ReactNode;
-}
-
-export default function MyComponent({ title, children }: MyComponentProps) {
-  return (
-    <div className="my-4 p-4 border border-accent/30 rounded-lg">
-      <h4 className="font-bold mb-2">{title}</h4>
-      <div>{children}</div>
-    </div>
-  );
-}
+<style>
+  .box {
+    padding: var(--s-4);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
+  }
+  .title { font-weight: 600; }
+</style>
 ```
 
 ### Step 2: Import and use it in your MDX
 
 ```mdx
-import MyComponent from '@/components/mdx/MyComponent';
+import MyComponent from '@/components/mdx/MyComponent.astro';
 
 <MyComponent title="Hello">
   This content renders inside the component.
 </MyComponent>
 ```
 
-With Astro's MDX integration, imports work directly in `.mdx` files — no component registry needed. If your component needs client-side interactivity (hooks, state), add the `client:load` directive:
-
-```mdx
-<Counter client:load />
-```
+With Astro's MDX integration, imports work directly in `.mdx` files — no component registry needed. If a component needs to do something in the browser, it gets a `<script>` of its own, which Vite bundles and ships only on pages that use it. The counter below is about ten lines of that.
 
 <Callout type="warning" title="Islands architecture" showEmoji={true}>
-Astro uses an [islands architecture](https://docs.astro.build/en/concepts/islands/). Static components render to HTML with zero JavaScript. Only components with a `client:*` directive ship JS to the browser. Use `client:load` for immediately interactive components, or `client:visible` to defer hydration until the component scrolls into view.
+Astro uses an [islands architecture](https://docs.astro.build/en/concepts/islands/). Static components render to HTML with zero JavaScript. If you do bring in React or Svelte, only components with a `client:*` directive ship JS to the browser. This site doesn't use a framework at all, so there's nothing to hydrate: every component is plain HTML, plus a small script where one is needed.
 </Callout>
 
 ### Current component inventory
@@ -209,16 +227,18 @@ Here's what I've got available:
 
 | Component | Type | Purpose |
 |-----------|------|---------|
-| `Callout` | Static | Tips, warnings, notes with styled boxes |
-| `Counter` | Interactive | Counter demo (uses useState, needs `client:load`) |
-| `NerdCorner` | Interactive | Collapsible advanced-info section |
-| `NotebookEmbed` | Interactive | Lazy-loads Jupyter notebook HTML with collapsible UI |
+| `Callout` | Static | Tips, warnings, and notes, marked by a hairline and a label |
+| `Diagram` | Static | Inlines an SVG diagram so it picks up the site's theme |
+| `NerdCorner` | Static | A collapsible deep dive — a `<details>`, so it works without JS |
+| `Screens` | Static | A row of phone screenshots at device proportions |
+| `TerminalFrame` | Static | A window frame around terminal output |
+| `Counter` | Interactive | Counter demo, with a few lines of inline script |
 
 The constraint is intentional: fewer components means fewer ways for content to break over time.
 
 ## Styling: a focused MDX layer
 
-All post content is wrapped in `.mdx-content`, with typography and media styles in `src/styles/markdown.css`. That means:
+All post content is wrapped in `.prose`, with typography and media styles in `src/styles/prose.css`. That means:
 
 - Code blocks look good without extra wrappers
 - Tables are readable
@@ -226,25 +246,27 @@ All post content is wrapped in `.mdx-content`, with typography and media styles 
 
 Because the styles are centralized in a single file, I can tweak typography without editing every post. That's a small thing that pays off over time.
 
-The CSS uses custom properties for theming — including a terminal-themed palette that powers the entire site's look:
+Every value in it is a custom property from `src/styles/tokens.css`, where the whole palette lives. Each token is defined twice, once for light and once for dark, so the posts switch themes without a single theme-specific rule:
 
 ```css
-.mdx-content {
-  color: var(--primary-text);
-  font-family: "Atkinson Hyperlegible", system-ui, sans-serif;
+.prose {
+  max-width: 68ch;
+  font-size: var(--t-sans-md);
+  line-height: var(--lh-prose);
+  color: var(--c-text);
 }
 
-.mdx-content code:not(pre code) {
-  background-color: var(--code-bg);
-  color: var(--code-text);
-  padding: 0.125rem 0.375rem;
-  border-radius: 0.25rem;
+.prose :not(pre) > code {
+  font-family: var(--font-mono);
+  color: var(--c-link);
+  background: var(--c-tint-link);
+  border-radius: var(--radius-sm);
 }
 
-.mdx-content pre {
-  background-color: var(--code-bg);
-  padding: 1rem;
-  border-radius: 0.5rem;
+.prose pre {
+  background: var(--c-sunken);
+  border: 1px solid var(--c-hairline);
+  border-radius: var(--radius-card);
   overflow-x: auto;
 }
 ```
@@ -257,9 +279,9 @@ When you run `astro build`, here's the flow:
 2. **`getStaticPaths()`** generates a route for each post
 3. **`post.render()`** compiles each MDX file through the remark/rehype pipeline
 4. **Astro outputs static HTML** — every page is pre-rendered with zero client-side compilation
-5. **Vite bundles** only the JavaScript needed for interactive islands
+5. **Vite bundles** the handful of small scripts the pages use
 
-This is [Static Site Generation (SSG)](https://en.wikipedia.org/wiki/Static_site_generator) — pages are built once and served as static HTML. Astro's build is fast because it ships zero JavaScript by default and only hydrates the interactive islands you explicitly opt into.
+This is [Static Site Generation (SSG)](https://en.wikipedia.org/wiki/Static_site_generator) — pages are built once and served as static HTML. Astro ships zero JavaScript by default; everything that runs in the browser here is a script I wrote on purpose.
 
 ## SEO considerations
 
@@ -274,11 +296,10 @@ MDX plays nicely with SEO because the output is clean HTML. Here's what I'm doin
 
 ### Meta tags and Open Graph
 
-Astro's `<BaseLayout>` handles meta tags, and I generate dynamic OG images with [Satori](https://github.com/vercel/satori) at `/src/pages/og/[...slug].png.ts`:
+The site's one layout, `Shell.astro`, handles meta tags, and I generate OG images with [Satori](https://github.com/vercel/satori) at `/src/pages/og/[...slug].png.ts`:
 
-```astro
+```astro title="src/layouts/Shell.astro"
 ---
-// In BaseLayout.astro
 const { title, ogSlug } = Astro.props;
 ---
 <head>
@@ -302,59 +323,29 @@ Clean URLs like `/blog/my-post-slug` are handled automatically by Astro's file-b
 
 Astro's architecture means most performance concerns are already handled:
 
-1. **Zero JS by default** — blog content ships as pure HTML, no React runtime needed
-2. **Islands for interactivity** — only the TOC, theme switcher, and interactive MDX components ship JavaScript
+1. **Zero JS by default** — blog content ships as pure HTML, with no framework runtime at all
+2. **Small scripts for interactivity** — the outline, the theme toggle, the explorer, and the odd interactive MDX component
 3. **Build-time compilation** — MDX is compiled once, not on every request
 
 ### Performance optimizations I've made
 
-**Vite manual chunking** keeps the bundle lean by splitting heavy dependencies:
+**Math styles only where there's math** — KaTeX's stylesheet is the heaviest CSS the site has, so the post page checks the source for `$…$` and `$$…$$` and only links it when a post actually uses them:
 
-```javascript
-vite: {
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes("framer-motion")) return "framer-motion";
-          if (id.includes("react-icons")) return "react-icons";
-          if (id.includes("katex")) return "katex";
-        },
-      },
-    },
-  },
-},
+```astro
+const hasMath = /\$\$|\\\(|\\\[|\$[^$\n]+\$/.test(post.body ?? "");
+---
+<Shell math={hasMath}>
 ```
 
-**Lazy loading heavy components** — the `NotebookEmbed` only fetches HTML when expanded:
+**Diagrams are inlined** — an SVG loaded through `<img>` is its own document and can't see the page's CSS, so it would be stuck in whatever colors it was drawn in. The `Diagram` component reads the file at build time and inlines it, which makes every diagram follow the theme and saves a request each.
 
-```tsx
-useEffect(() => {
-  if (isOpen && !htmlContent) {
-    setLoading(true);
-    fetch(`/downloads/${notebookHtml}.html`)
-      .then((res) => res.text())
-      .then((content) => {
-        setHtmlContent(content);
-        setLoading(false);
-      });
-  }
-}, [isOpen, notebookHtml, htmlContent]);
-```
-
-**Mobile GPU savings** — backdrop-filter (blur) is disabled on mobile via CSS to save battery:
-
-```css
-@media (pointer: coarse), (max-width: 768px) {
-  * { backdrop-filter: none !important; }
-}
-```
+**Two self-hosted fonts, preloaded** — one variable file for the sans and one for the mono, subset to Latin, so text renders in the right face on the first paint.
 
 ## Rendering model (why the page still feels snappy)
 
-Astro's **[islands architecture](https://docs.astro.build/en/concepts/islands/)** is the key insight. Unlike a traditional React SPA where the entire page is a JavaScript application, Astro renders everything to static HTML first. Only the pieces that need interactivity — like the table of contents scroll tracker or the theme switcher — get hydrated as isolated React components.
+Astro renders everything to static HTML first. Unlike a traditional SPA, where the whole page is a JavaScript application, the page here is finished before any script runs; the scripts only add behavior to HTML that already works.
 
-The result: most of the page loads instantly as static HTML, and the few interactive pieces hydrate independently without blocking each other. A blog post with a TOC and a counter component ships maybe 40KB of JavaScript total, compared to 200KB+ for an equivalent React SPA.
+Moving between pages uses Astro's [view transitions](https://docs.astro.build/en/guides/view-transitions/): the titlebar, tabs, explorer and status bar stay where they are, and only the content pane swaps, the way an app window changes documents. With JavaScript off, the same links are ordinary page loads.
 
 ## The parts I don't want to compromise on
 
@@ -382,14 +373,14 @@ For my current post volume, build-time compilation is a trade-off I'm happy with
 
 ## What I'd improve next
 
-- **View Transitions** — Astro supports the [View Transitions API](https://docs.astro.build/en/guides/view-transitions/) for smooth page navigation (already partially implemented)
-- **Prebuilt search index** for faster client filtering — consider [Fuse.js](https://fusejs.io/) or [Pagefind](https://pagefind.app/)
-- **Image optimization** with Astro's `<Image>` component for automatic format conversion and responsive sizing
-- **RSS feed generation** from the content collection metadata
+- **Prebuilt search index** for faster filtering in the explorer — consider [Fuse.js](https://fusejs.io/) or [Pagefind](https://pagefind.app/)
+- **Image optimization** with Astro's `<Image>` component for automatic format conversion and responsive sizing in posts (the photos page already does this, with its own script)
+
+View transitions and an RSS feed were on this list once; both have shipped.
 
 ## A note on images and embeds
 
-Images live in `public/images/blog/...`, which keeps paths stable and makes them easy to reference from MDX. For videos, I use responsive `<iframe>` embeds that inherit the `.mdx-content` styling so they don't overflow the layout on small screens.
+Images live in `public/images/blog/...`, which keeps paths stable and makes them easy to reference from MDX. For videos, I use responsive `<iframe>` embeds that inherit the `.prose` styling so they don't overflow the layout on small screens.
 
 ## Further reading
 

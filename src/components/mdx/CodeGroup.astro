@@ -1,0 +1,152 @@
+---
+/**
+ * Several code blocks behind one row of tabs, the way an editor keeps a
+ * project's files open side by side: the compose file and the Caddyfile
+ * it mounts, or the same step for iptables and firewalld.
+ *
+ *   <CodeGroup>
+ *
+ *   ```yaml title="docker-compose.yml"
+ *   ...
+ *   ```
+ *
+ *   ```caddyfile title="Caddyfile"
+ *   ...
+ *   ```
+ *
+ *   </CodeGroup>
+ *
+ * Each block already carries its own tab (src/lib/shiki-transformers.js);
+ * this lifts their names into one real tablist at build time, so the
+ * first paint is the finished group and nothing shifts. Without script
+ * the blocks simply stack, each under its own tab.
+ *
+ * Choosing a tab picks the same name in every other group on the page —
+ * choose firewalld once and it stays chosen.
+ */
+const html = await Astro.slots.render("default");
+const id = `cg-${Math.random().toString(36).slice(2, 8)}`;
+
+// The tabs the transformer wrote: <div class="codetab" data-kind="…">name</div>.
+// This is the build's own markup, already escaped, so it's reused as is.
+const tabs = [...html.matchAll(/<div class="codetab" data-kind="(file|lang)">([^<]*)<\/div>/g)].map(
+  (m, i) => ({ kind: m[1], name: m[2], tab: `${id}-t${i}`, panel: `${id}-p${i}` })
+);
+
+// Each block becomes a panel, labelled by its tab; the first is open.
+let n = 0;
+const panels = html.replace(/<div class="codefile">/g, () => {
+  const t = tabs[n];
+  const open = n === 0 ? " data-active" : "";
+  n += 1;
+  return t
+    ? `<div class="codefile" id="${t.panel}" role="tabpanel" aria-labelledby="${t.tab}"${open}>`
+    : `<div class="codefile">`;
+});
+---
+
+<div class="codegroup" data-codegroup>
+  <div class="cg-tabs" role="tablist" aria-label="Files">
+    {tabs.map((t, i) => (
+      <button
+        type="button"
+        role="tab"
+        id={t.tab}
+        aria-controls={t.panel}
+        aria-selected={i === 0 ? "true" : "false"}
+        tabindex={i === 0 ? 0 : -1}
+        data-kind={t.kind}
+        set:html={t.name}
+      />
+    ))}
+  </div>
+  <Fragment set:html={panels} />
+</div>
+
+<script>
+  const KEY = "code-tab";
+
+  function select(group: HTMLElement, tab: HTMLElement, focus = false) {
+    for (const t of group.querySelectorAll<HTMLElement>('[role="tab"]')) {
+      const on = t === tab;
+      t.setAttribute("aria-selected", String(on));
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute("aria-controls")!)?.toggleAttribute("data-active", on);
+    }
+    if (focus) tab.focus();
+  }
+
+  /**
+   * Swap panels without moving the tab you pressed. Panels differ in
+   * height, and the browser re-anchors the scroll when one shrinks, so the
+   * row jumped out from under the pointer; it's put back where it was.
+   */
+  function steady(tab: HTMLElement, swap: () => void) {
+    const before = tab.getBoundingClientRect().top;
+    swap();
+    const drift = tab.getBoundingClientRect().top - before;
+    if (!drift) return;
+    const pane = document.querySelector<HTMLElement>(".pane");
+    if (pane && getComputedStyle(pane).overflowY === "auto") pane.scrollBy(0, drift);
+    else window.scrollBy(0, drift);
+  }
+
+  /** Every group on the page with a tab of this name opens it. */
+  function selectEverywhere(name: string, except?: HTMLElement) {
+    for (const g of document.querySelectorAll<HTMLElement>("[data-codegroup]")) {
+      if (g === except) continue;
+      const t = [...g.querySelectorAll<HTMLElement>('[role="tab"]')].find((x) => x.textContent === name);
+      if (t) select(g, t);
+    }
+  }
+
+  function init() {
+    for (const group of document.querySelectorAll<HTMLElement>("[data-codegroup]")) {
+      if (group.dataset.wired) continue;
+      group.dataset.wired = "1";
+      const tabs = () => [...group.querySelectorAll<HTMLElement>('[role="tab"]')];
+
+      group.querySelector(".cg-tabs")?.addEventListener("click", (e) => {
+        const tab = (e.target as Element).closest<HTMLElement>('[role="tab"]');
+        if (!tab) return;
+        steady(tab, () => {
+          select(group, tab);
+          selectEverywhere(tab.textContent ?? "", group);
+        });
+        try {
+          localStorage.setItem(KEY, tab.textContent ?? "");
+        } catch {
+          /* private browsing: the choice just isn't remembered */
+        }
+      });
+
+      // Arrows move along the row, as a tablist's should.
+      group.querySelector(".cg-tabs")?.addEventListener("keydown", (e) => {
+        const ev = e as KeyboardEvent;
+        const all = tabs();
+        const i = all.indexOf(document.activeElement as HTMLElement);
+        if (i < 0) return;
+        const next =
+          ev.key === "ArrowRight" ? all[(i + 1) % all.length]
+          : ev.key === "ArrowLeft" ? all[(i - 1 + all.length) % all.length]
+          : ev.key === "Home" ? all[0]
+          : ev.key === "End" ? all[all.length - 1]
+          : null;
+        if (!next) return;
+        ev.preventDefault();
+        steady(next, () => select(group, next, true));
+      });
+    }
+
+    // The last choice, where the page offers it.
+    try {
+      const saved = localStorage.getItem(KEY);
+      if (saved) selectEverywhere(saved);
+    } catch {
+      /* no storage, no memory */
+    }
+  }
+
+  document.addEventListener("astro:page-load", init);
+  init();
+</script>

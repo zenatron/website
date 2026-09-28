@@ -14,6 +14,7 @@
  * the few fields shown here come through src/data/photos.ts.
  */
 import Shell from "@/layouts/Shell.astro";
+import PageHead from "@/components/PageHead.astro";
 import { PHOTOS, PHOTO_WIDTHS, type Photo } from "@/data/photos";
 
 const src = (id: string, w: number, ext: "avif" | "webp") => `/images/photos/${id}-${w}.${ext}`;
@@ -54,13 +55,10 @@ const range = [monthYear(PHOTOS[0]?.taken), monthYear(PHOTOS.at(-1)?.taken)]
   description={`${PHOTOS.length} photos, shot on an iPhone and edited on iPhone & Mac.`}
   ogSlug="photos"
 >
-  <header class="pagehead">
-    <h1>Photos</h1>
-    <p>
-      {PHOTOS.length} photos, all shot on an iPhone and
-      edited on iPhone &amp; Mac. Open one for how it was taken.
-    </p>
-  </header>
+  <PageHead title="Photos">
+    {PHOTOS.length} photos, all shot on an iPhone and
+    edited on iPhone &amp; Mac. Open one for how it was taken.
+  </PageHead>
 
   <section class="library" aria-labelledby="library-title">
     <div class="libbar">
@@ -70,7 +68,7 @@ const range = [monthYear(PHOTOS[0]?.taken), monthYear(PHOTOS.at(-1)?.taken)]
     <ul class="grid">
       {PHOTOS.map((p, i) => (
         <li id={p.id}>
-          <a href={src(p.id, largest, "webp")} data-photo={p.id}>
+          <a href={src(p.id, largest, "webp")} data-photo={p.id} style={p.tone && `--tone: ${p.tone}`}>
             <picture>
               <source type="image/avif" srcset={srcset(p.id, "avif")} sizes="(max-width: 640px) 34vw, 320px" />
               <img
@@ -160,18 +158,6 @@ const range = [monthYear(PHOTOS[0]?.taken), monthYear(PHOTOS.at(-1)?.taken)]
 </Shell>
 
 <style>
-  .pagehead { margin-bottom: var(--s-5); }
-  h1 {
-    font-size: var(--t-sans-2xl);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-  }
-  .pagehead p {
-    margin-top: var(--s-3);
-    max-width: 56ch;
-    color: var(--c-muted);
-  }
-
   /*
    * The library: a pane of its own, with Photos' own chrome strip on top
    * and the grid running to its edges. Thumbnails are cropped to one shape
@@ -196,7 +182,7 @@ const range = [monthYear(PHOTOS[0]?.taken), monthYear(PHOTOS.at(-1)?.taken)]
   .libbar h2 {
     font-size: var(--t-sans-sm);
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: var(--track-snug);
   }
   .libmeta {
     font-family: var(--font-mono);
@@ -219,7 +205,8 @@ const range = [monthYear(PHOTOS[0]?.taken), monthYear(PHOTOS.at(-1)?.taken)]
     display: block;
     aspect-ratio: 3 / 4;
     overflow: hidden;
-    background: var(--c-sunken);
+    /* The photo's own average color while it loads, not a grey slab. */
+    background: var(--tone, var(--c-sunken));
   }
   .grid img {
     width: 100%;
@@ -393,8 +380,8 @@ const range = [monthYear(PHOTOS[0]?.taken), monthYear(PHOTOS.at(-1)?.taken)]
   .title {
     font-size: var(--t-sans-lg);
     font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
+    letter-spacing: var(--track-head);
+    line-height: var(--lh-head);
   }
   .where {
     font-size: var(--t-sans-sm);

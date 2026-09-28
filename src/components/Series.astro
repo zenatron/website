@@ -8,14 +8,14 @@ import CardArt from "@/components/CardArt.astro";
 import SectionHead from "@/components/SectionHead.astro";
 import { cardArt } from "@/lib/cardart";
 
-interface Entry { slug: string; title: string; excerpt?: string; order: number; readingTime?: string; }
+interface Entry { slug: string; title: string; excerpt?: string; order: number; readingTime?: string; cover?: string; }
 interface Props { title: string; blurb: string; entries: Entry[]; }
 const { title, blurb, entries } = Astro.props;
 // Resolved up front: cardArt is async and the template can't await per row.
 const withArt = await Promise.all(
   entries.map(async (e) => ({
     ...e,
-    art: await cardArt({ slug: e.slug, title: e.title, collection: "blog" }),
+    art: await cardArt({ slug: e.slug, title: e.title, cover: e.cover, collection: "blog" }),
   }))
 );
 ---
@@ -66,7 +66,7 @@ const withArt = await Promise.all(
   }
   @media (hover: hover) {
     .part a:hover {
-    background: var(--c-raised);
+      background: var(--c-raised);
     }
   }
 
@@ -79,7 +79,7 @@ const withArt = await Promise.all(
   }
   @media (hover: hover) {
     .part a:hover .n {
-    color: var(--c-accent);
+      color: var(--c-accent);
     }
   }
 
@@ -97,11 +97,11 @@ const withArt = await Promise.all(
     display: block;
     font-size: var(--t-sans-md);
     font-weight: 600;
-    line-height: 1.3;
+    line-height: var(--lh-snug);
   }
   @media (hover: hover) {
     .part a:hover .t {
-    color: var(--c-link);
+      color: var(--c-link);
     }
   }
   .x {
@@ -109,7 +109,7 @@ const withArt = await Promise.all(
     margin-top: 2px;
     font-size: var(--t-sans-sm);
     color: var(--c-muted);
-    line-height: 1.45;
+    line-height: var(--lh-ui);
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -123,13 +123,13 @@ const withArt = await Promise.all(
     color: var(--c-dim);
   }
 
-  /* The first part gets a bigger preview — it's where you start. */
-  .part.first a { grid-template-columns: 3.2ch 210px minmax(0, 1fr); }
+  /* The first part is where you start. It used to get a wider preview,
+     which staggered the titles; now every row shares one column and the
+     start is marked the way the site marks "here": in the accent. */
+  .part.first .n { color: var(--c-accent); }
 
   @media (max-width: 640px) {
-    .series { padding: var(--s-4); }
-    .part a,
-    .part.first a {
+    .part a {
       grid-template-columns: 3.2ch minmax(0, 1fr);
       gap: var(--s-3);
     }

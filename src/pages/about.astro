@@ -281,12 +281,12 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
   h1 {
     font-size: var(--t-sans-2xl);
     font-weight: 700;
-    letter-spacing: -0.03em;
+    letter-spacing: var(--track-display);
   }
   .statement {
     margin-top: var(--s-3);
     font-size: var(--t-sans-lg);
-    line-height: 1.6;
+    line-height: var(--lh-body);
     max-width: 44ch;
     text-wrap: pretty;
   }
@@ -297,7 +297,7 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
     font-size: 0.92em;
     font-variant-numeric: tabular-nums;
     color: var(--c-text);
-    letter-spacing: -0.01em;
+    letter-spacing: var(--track-snug);
   }
 
   .facts {
@@ -315,7 +315,7 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
     padding: 3px 10px;
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
-    line-height: 1.5;
+    line-height: var(--lh-ui);
     color: var(--c-muted);
     border: 1px solid var(--c-hairline);
     border-radius: var(--radius-chip);
@@ -409,8 +409,8 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
   .manifesto .say {
     font-size: var(--t-sans-xl);
     font-weight: 600;
-    letter-spacing: -0.025em;
-    line-height: 1.15;
+    letter-spacing: var(--track-display);
+    line-height: var(--lh-head);
   }
 
   /* Now: three columns, each headed by the homepage's state chip. */
@@ -425,7 +425,7 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
     padding: 3px 10px;
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
-    line-height: 1.4;
+    line-height: var(--lh-snug);
     color: var(--h);
     background: var(--t);
     border-radius: var(--radius-chip);
@@ -437,7 +437,7 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
     padding-block: var(--s-3);
   }
   .col li + li { border-top: 1px solid var(--c-hairline); }
-  .what { font-size: var(--t-sans-sm); line-height: 1.4; }
+  .what { font-size: var(--t-sans-sm); line-height: var(--lh-snug); }
   .state {
     display: inline-flex;
     align-items: center;
@@ -505,7 +505,7 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
     gap: var(--s-2);
     font-size: var(--t-sans-md);
     font-weight: 600;
-    line-height: 1.35;
+    line-height: var(--lh-snug);
   }
   .kind {
     font-family: var(--font-mono);
@@ -520,7 +520,7 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
     color: var(--c-dim);
-    letter-spacing: 0.02em;
+    letter-spacing: var(--track-label);
   }
   .detail { margin-top: 2px; font-size: var(--t-sans-sm); color: var(--c-muted); max-width: 62ch; }
   .entrylinks { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-4); margin-top: var(--s-1); }
@@ -546,6 +546,11 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
     }
     .portrait { width: 180px; }
     .manifesto .say { font-size: var(--t-sans-lg); }
+  }
+
+  /* The same step down PageHead takes on a phone. */
+  @media (max-width: 640px) {
+    h1 { font-size: var(--t-sans-xl); }
   }
 
   /* Narrow: the year moves above its entry and the line keeps its column. */

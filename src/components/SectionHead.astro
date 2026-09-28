@@ -30,13 +30,13 @@ const { title, meta, blurb } = Astro.props;
   h2 {
     font-size: var(--t-sans-xl);
     font-weight: 600;
-    letter-spacing: -0.02em;
+    letter-spacing: var(--track-head);
   }
   .meta {
     flex: 0 0 auto;
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
-    letter-spacing: 0.06em;
+    letter-spacing: var(--track-label);
     color: var(--c-dim);
   }
   .blurb {
@@ -44,5 +44,10 @@ const { title, meta, blurb } = Astro.props;
     max-width: 62ch;
     font-size: var(--t-sans-sm);
     color: var(--c-muted);
+  }
+
+  /* A step under the page title, which is itself a step down on a phone. */
+  @media (max-width: 640px) {
+    h2 { font-size: var(--t-sans-lg); }
   }
 </style>

@@ -79,8 +79,8 @@ const rel = (url: string) => (url.startsWith("http") ? "noopener noreferrer" : u
   .lead {
     font-size: var(--t-sans-lg);
     font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.25;
+    letter-spacing: var(--track-head);
+    line-height: var(--lh-head);
     color: var(--c-text);
     overflow-wrap: anywhere;
     transition: color var(--dur-state) var(--ease);
@@ -90,7 +90,7 @@ const rel = (url: string) => (url.startsWith("http") ? "noopener noreferrer" : u
   .lead.addr {
     font-family: var(--font-mono);
     font-size: var(--t-sans-md);
-    letter-spacing: -0.01em;
+    letter-spacing: var(--track-snug);
   }
   /* The lead link covers the card; the copy button sits above it. */
   .lead::after {

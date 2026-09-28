@@ -48,7 +48,7 @@ const picks = FAVORITES.filter((f) => f.logo).slice(0, 16);
   }
   @media (hover: hover) {
     .heroart:hover .logogrid {
-    border-color: var(--c-hairline-strong);
+      border-color: var(--c-hairline-strong);
     }
   }
 
@@ -74,7 +74,7 @@ const picks = FAVORITES.filter((f) => f.logo).slice(0, 16);
     padding: 2px 8px;
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
-    line-height: 1.5;
+    line-height: var(--lh-ui);
     white-space: nowrap;
     color: var(--c-bg);
     background: var(--c-text);
@@ -93,7 +93,7 @@ const picks = FAVORITES.filter((f) => f.logo).slice(0, 16);
   }
   @media (hover: hover) {
     .heroart:hover .caption {
-    text-decoration: underline; text-underline-offset: 3px;
+      text-decoration: underline; text-underline-offset: 3px;
     }
   }
 

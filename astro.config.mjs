@@ -112,6 +112,8 @@ export default defineConfig({
       // Shiki has no Caddyfile grammar and 15 blocks were falling back to
       // plaintext. nginx is close enough to color directives and braces.
       langAlias: { caddyfile: "nginx", Caddyfile: "nginx" },
+      // File tabs, highlighted lines, and diff lines — see the file.
+      transformers: (await import("./src/lib/shiki-transformers.js")).transformers,
     },
   },
   vite: {

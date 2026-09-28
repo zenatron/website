@@ -32,6 +32,7 @@ function init() {
   };
 
   let ticking = false;
+  let shown: (typeof targets)[number] | null = null;
   const update = () => {
     ticking = false;
     const v = view();
@@ -50,6 +51,18 @@ function init() {
       for (const t of targets) {
         if (t === current) t.link.setAttribute("data-current", "");
         else t.link.removeAttribute("data-current");
+      }
+      // A long outline scrolls on its own; keep the current section in it.
+      if (current !== shown) {
+        shown = current;
+        const list = current.link.closest<HTMLElement>(".toc-list");
+        if (list && list.scrollHeight > list.clientHeight) {
+          const l = list.getBoundingClientRect();
+          const c = current.link.getBoundingClientRect();
+          if (c.top < l.top || c.bottom > l.bottom) {
+            list.scrollTop += c.top - l.top - (l.height - c.height) / 2;
+          }
+        }
       }
     }
   };

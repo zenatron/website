@@ -6,7 +6,9 @@
  * deployed. For each one this writes:
  *
  *   public/images/photos/<id>-<w>.avif|webp   three widths, no metadata
- *   src/data/photos.generated.json            the few fields /photos shows
+ *   src/data/photos.generated.json            the few fields /photos shows,
+ *                                             and each photo's average color,
+ *                                             painted behind it while it loads
  *
  * Only the fields named in `pick` are read, so a location can't leak into
  * the JSON by accident; sharp writes nothing but pixels and an sRGB
@@ -51,7 +53,14 @@ function app(software) {
 
 mkdirSync(OUT, { recursive: true });
 
-const files = readdirSync(SRC).filter((f) => /\.jpe?g$/i.test(f)).sort();
+/** The whole picture averaged to one pixel: its color, from across the room. */
+async function tone(img) {
+  const { data } = await img.resize(1, 1, { fit: "fill" }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  return "#" + [...data.subarray(0, 3)].map((v) => v.toString(16).padStart(2, "0")).join("");
+}
+
+// No drop folder is fine: the run just backfills tones for what's published.
+const files = (existsSync(SRC) ? readdirSync(SRC) : []).filter((f) => /\.jpe?g$/i.test(f)).sort();
 const ids = new Set(files.map((f) => f.replace(/\.jpe?g$/i, "")));
 const photos = existsSync(DATA)
   ? JSON.parse(readFileSync(DATA, "utf8")).filter((p) => !ids.has(p.id))
@@ -100,7 +109,14 @@ for (const file of files) {
     shutter: exif?.ExposureTime,
     iso: exif?.ISO,
     ev: exif?.ExposureCompensation != null ? Math.round(exif.ExposureCompensation * 10) / 10 : undefined,
+    tone: await tone(base.clone()),
   });
+}
+
+// Photos published before tones existed take theirs from the smallest encode.
+for (const p of photos) {
+  const small = `${OUT}/${p.id}-${WIDTHS[0]}.webp`;
+  if (!p.tone && existsSync(small)) p.tone = await tone(sharp(small));
 }
 
 photos.sort((a, b) => a.id.localeCompare(b.id));
