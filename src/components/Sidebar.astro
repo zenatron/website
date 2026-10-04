@@ -31,24 +31,6 @@ const COURSEWORK = SERIES[1];
 
 const time = (v?: string) => (v ? new Date(v).getTime() || 0 : 0);
 
-/*
- * Source control's letters, from the frontmatter: A for a file added in
- * the last month, M for one revised in it. Measured from the build, the
- * way git status is measured from the last commit — the status bar
- * already says when that was — and the tooltip carries the real date,
- * which stays true however long the build stands.
- */
-const RECENT = 30 * 24 * 60 * 60 * 1000;
-const built = new Date(__BUILD_TIME__).getTime();
-const short = (v: string) =>
-  new Date(v).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
-type Change = { letter: "A" | "M"; note: string };
-function change(date?: string, updated?: string): Change | undefined {
-  const recent = (v?: string) => v && built - time(v) >= 0 && built - time(v) < RECENT;
-  if (recent(date)) return { letter: "A", note: `Added ${short(date!)}` };
-  if (updated && updated !== date && recent(updated)) return { letter: "M", note: `Revised ${short(updated)}` };
-  return undefined;
-}
 
 interface Row {
   stem: string;
@@ -58,7 +40,6 @@ interface Row {
   hue?: Hue;
   /** The meta is a category word, set in the category's color. */
   typed?: boolean;
-  change?: Change;
 }
 interface Group { run?: { label: string; hue: Hue }; rows: Row[] }
 
@@ -74,7 +55,6 @@ const projectRow = (p: ProjectEntry): Row => {
     meta: type && type.hue !== COURSEWORK.hue ? type.label : "",
     hue: type?.hue,
     typed: true,
-    change: change(p.data.date),
   };
 };
 const postRow = (p: PostEntry, hue?: Hue): Row => ({
@@ -83,7 +63,6 @@ const postRow = (p: PostEntry, hue?: Hue): Row => ({
   title: p.data.title,
   meta: readingMinutes(p.data.readingTime),
   hue,
-  change: change(p.data.date, p.data.updated),
 });
 
 // Coursework is a syllabus, so it reads oldest first, like the series do.
@@ -195,8 +174,7 @@ const socials = [
                     data-run={group.run?.label}
                   >
                     <span class="dot" aria-hidden="true"></span>
-                    <a href={r.href} data-nav>{r.stem}<span class="ext">.mdx</span><span class="sr-only"> — {r.title}{r.change && `, ${r.change.note.toLowerCase()}`}</span></a>
-                    {r.change && <span class="scm" data-change={r.change.letter} title={r.change.note} aria-hidden="true">{r.change.letter}</span>}
+                    <a href={r.href} data-nav>{r.stem}<span class="ext">.mdx</span><span class="sr-only"> — {r.title}</span></a>
                     {r.meta && <span class:list={["rowmeta", { typed: r.typed }]} aria-hidden="true">{r.meta}</span>}
                   </li>
                 ))}
@@ -527,18 +505,6 @@ const socials = [
     font-variant-numeric: tabular-nums;
   }
   .rowmeta.typed { color: var(--h); }
-
-  /* A and M, colored the way an editor's source control colors them:
-     green for new, the accent for changed. */
-  .scm {
-    flex: 0 0 auto;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    font-weight: 500;
-    cursor: default;
-  }
-  .scm[data-change="A"] { color: var(--c-hue-green); }
-  .scm[data-change="M"] { color: var(--c-accent); }
 
   @media (hover: hover) {
     .row:hover { background: var(--c-raised); }
