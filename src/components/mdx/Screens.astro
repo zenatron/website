@@ -8,7 +8,8 @@ interface Props { shots: Shot[]; }
 const { shots } = Astro.props;
 ---
 <div class="screens">
-  <ul>
+  {/* Focusable, so a keyboard can scroll the row when it overflows. */}
+  <ul tabindex="0" aria-label="Screenshots">
     {shots.map((s) => (
       <li>
         <img src={s.src} alt={s.alt} width="786" height="1704" loading="lazy" decoding="async" />

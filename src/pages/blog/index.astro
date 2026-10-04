@@ -6,7 +6,7 @@ import Series from "@/components/Series.astro";
 import Archive from "@/components/Archive.astro";
 import SectionHead from "@/components/SectionHead.astro";
 import { cardArt } from "@/lib/cardart";
-import { getAllBlogPosts } from "@/lib/blog";
+import { getAllBlogPosts, POST_SERIES } from "@/lib/blog";
 
 const posts = await getAllBlogPosts();
 
@@ -23,14 +23,15 @@ const monthYear = (v: string | Date | undefined) => {
  * structurally identical entries; rendering those as cards buried the
  * five posts worth reading under thirteen that aren't.
  */
+const seriesTitle = (key: string) => POST_SERIES.find((s) => s.key === key)?.title ?? key;
 const SERIES = {
   "homelab-networking": {
-    title: "Homelab & networking",
+    title: seriesTitle("homelab-networking"),
     blurb:
       "Five posts that build on each other, from what a VPN actually is up to a reverse proxy fronting the whole rack. Start at the top.",
   },
   "data-mining": {
-    title: "Data mining coursework",
+    title: seriesTitle("data-mining"),
     blurb:
       "Weekly write-ups from an intro data mining course — the pipeline, classification, regression, clustering, and a midterm study guide.",
   },
@@ -77,6 +78,7 @@ const cells = await Promise.all(
       title={SERIES["homelab-networking"].title}
       blurb={SERIES["homelab-networking"].blurb}
       entries={homelab}
+      hue={POST_SERIES.find((s) => s.key === "homelab-networking")?.hue}
     />
   )}
 

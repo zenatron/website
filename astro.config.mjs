@@ -73,7 +73,8 @@ function rehypeWrapTables() {
         return {
           type: "element",
           tagName: "div",
-          properties: { className: ["table-wrap"] },
+          // Focusable, so a keyboard can scroll a table wider than the column.
+          properties: { className: ["table-wrap"], tabIndex: 0 },
           children: [child],
         };
       }

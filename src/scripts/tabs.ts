@@ -34,7 +34,8 @@ function labelFor(pathname: string): string {
   if (path === "") return "home";
   const parts = path.split("/").filter(Boolean);
   if (parts.length === 1) {
-    return parts[0] === "say-hi" ? "say hi" : parts[0];
+    const names: Record<string, string> = { "say-hi": "say hi", blog: "writing" };
+    return names[parts[0]] ?? parts[0];
   }
   return `${parts[parts.length - 1]}.mdx`;
 }
@@ -49,7 +50,12 @@ function currentHref(): string {
  * tab can't disagree with its row.
  */
 function iconFor(href: string): HTMLElement {
-  const row = document.querySelector<HTMLElement>(`#sidebar a[data-nav][href="${CSS.escape(href)}"]`)?.closest<HTMLElement>(".row");
+  // Matched by path, as the titlebar matches: the explorer's links end in
+  // a slash and a tab's href doesn't, so an exact attribute match found
+  // no row and every tab fell back to the site's mark.
+  const row = [...document.querySelectorAll<HTMLAnchorElement>("#sidebar .row a[data-nav]")]
+    .find((a) => (new URL(a.href).pathname.replace(/\/+$/, "") || "/") === href)
+    ?.closest<HTMLElement>(".row");
   const tile = row?.querySelector<HTMLElement>(".tile");
   let icon: HTMLElement;
   if (tile) {
@@ -92,7 +98,8 @@ function render() {
     if (tab.href === here) li.setAttribute("data-active", "");
 
     const a = document.createElement("a");
-    a.href = tab.href;
+    // Every page is served at its trailing-slash URL; link there directly.
+    a.href = tab.href === "/" ? "/" : `${tab.href}/`;
     a.title = tab.label;
     a.append(iconFor(tab.href));
     const label = document.createElement("span");
@@ -134,7 +141,7 @@ function closeTab(href: string) {
   // Closing the file you're in moves you to its neighbor, like an editor.
   const next = remaining[index] ?? remaining[index - 1];
   render();
-  navigate(next ? next.href : "/");
+  navigate(next && next.href !== "/" ? `${next.href}/` : "/");
 }
 
 function open() {

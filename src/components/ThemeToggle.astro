@@ -43,6 +43,16 @@
       color: var(--c-text);
     }
   }
+  /* Where the drawer is, the titlebar is touched rather than clicked:
+     the toggle takes its full height, as the menu button opposite does. */
+  @media (max-width: 900px) {
+    .theme {
+      width: var(--h-titlebar);
+      height: var(--h-titlebar);
+      margin-inline-end: calc(var(--s-3) * -1);
+    }
+  }
+
   /* Explicit choice reads as "you are here"; following the system doesn't. */
   .theme[data-mode="light"],
   .theme[data-mode="dark"] { color: var(--c-accent); }

@@ -97,6 +97,9 @@ const hidden = Math.max(0, entries.length - initial);
     white-space: nowrap;
   }
 
+  /* It only reveals what script hid; without script there's nothing to show. */
+  .more { display: none; }
+  :global(.js) .more { display: inline-block; }
   .more {
     margin-top: var(--s-3);
     font-family: var(--font-mono);

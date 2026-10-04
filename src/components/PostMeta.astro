@@ -47,8 +47,10 @@ const when = date ? { iso: iso(date), label: monthYear(date) } : null;
     text-decoration: none;
     border-bottom: 1px solid var(--c-hairline);
   }
-  .meta a:hover {
-    color: var(--c-link);
-    border-bottom-color: currentColor;
+  @media (hover: hover) {
+    .meta a:hover {
+      color: var(--c-link);
+      border-bottom-color: currentColor;
+    }
   }
 </style>

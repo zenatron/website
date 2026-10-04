@@ -61,6 +61,11 @@ const buildLabel = new Date(buildTime).toLocaleString("en-US", {
   .branch {
     color: var(--c-accent);
     user-select: text;
+    /* A preview branch's name can be long; it gives way, so the deploy
+       status at the other end is never the thing that's cut off. */
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   /*

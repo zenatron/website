@@ -169,8 +169,17 @@ import ThemeToggle from "@/components/ThemeToggle.astro";
     margin-top: 3px;
   }
 
+  /* The whole titlebar's height, so the menu is a thumb-sized target
+     rather than the 30x25 the bars alone gave it. */
   @media (max-width: 900px) {
-    .drawer-toggle { display: block; }
+    .drawer-toggle {
+      display: grid;
+      place-items: center;
+      width: var(--h-titlebar);
+      height: var(--h-titlebar);
+      padding: 0;
+      margin-inline-start: calc(var(--s-3) * -1);
+    }
   }
 
   @media (max-width: 640px) {

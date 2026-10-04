@@ -6,8 +6,8 @@ import ReachCards from "@/components/ReachCards.astro";
 import Mark from "@/components/Mark.astro";
 import HeroArt from "@/components/HeroArt.astro";
 import { SITE } from "@/data/site";
-import { getAllBlogPosts } from "@/lib/blog";
-import { getAllProjects, projectSlug } from "@/lib/projects";
+import { getAllBlogPosts, seriesHue } from "@/lib/blog";
+import { getAllProjects, projectHue, projectSlug } from "@/lib/projects";
 import { personSchema, websiteSchema } from "@/lib/schema";
 
 const [posts, projects] = await Promise.all([getAllBlogPosts(), getAllProjects()]);
@@ -26,6 +26,7 @@ const latestProjects = await Promise.all(projects.slice(0, 3).map(async (p) => (
   slug: projectSlug(p),
   description: p.data.description || undefined,
   meta: monthYear(p.data.date),
+  hue: projectHue(p),
   art: await cardArt({
     slug: projectSlug(p),
     title: p.data.title,
@@ -40,6 +41,7 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
   slug: p.slug,
   description: p.data.excerpt || undefined,
   meta: monthYear(p.data.date),
+  hue: seriesHue(p.data.series),
   art: await cardArt({ slug: p.slug, title: p.data.title, cover: p.data.cover, collection: "blog" }),
 })));
 ---
@@ -50,8 +52,8 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
       <h1>{SITE.name}</h1>
       <p class="statement">
         a full-stack engineer in <Mark hue="violet">Hartford</Mark>
-        building <Mark hue="blue">servers,</Mark>
-        <Mark hue="green">web apps,</Mark> and
+        building <Mark hue="blue">servers</Mark>,
+        <Mark hue="green">web apps</Mark>, and
         <Mark hue="orange">games</Mark> that don't break in production.
       </p>
 
@@ -63,7 +65,7 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
         </div>
         <div class="row">
           <dt style="--fg: var(--c-hue-green); --bg: var(--c-tint-green)">building</dt>
-          <dd>a <Mark hue="link">FLAC organizer</Mark>, and tools for card games</dd>
+          <dd>a <Mark hue="green">FLAC organizer</Mark>, and tools for card games</dd>
         </div>
         <div class="row">
           <dt style="--fg: var(--c-hue-blue); --bg: var(--c-tint-blue)">running</dt>
@@ -94,7 +96,7 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
   <section class="band">
     <div class="bandhead">
       <h2>Get in touch</h2>
-      <a href="/say-hi/">Everywhere else</a>
+      <a href="/say-hi/">Everywhere else <span aria-hidden="true">&rarr;</span></a>
     </div>
     <ReachCards />
   </section>

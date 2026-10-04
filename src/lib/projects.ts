@@ -57,3 +57,8 @@ export async function getSuggestedProjects(currentSlug: string, count = 3) {
     .slice(0, count)
     .map((s) => s.project);
 }
+
+/** A project's color, from its kind — the explorer's dot, the card's tint. */
+export function projectHue(entry: ProjectEntry): KindHue | undefined {
+  return PROJECT_KIND[entry.data.type]?.hue;
+}

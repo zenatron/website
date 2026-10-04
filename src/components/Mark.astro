@@ -10,10 +10,18 @@ interface Props { hue?: "violet" | "orange" | "blue" | "green" | "accent" | "lin
 const { hue = "accent" } = Astro.props;
 ---
 <style>
+  /*
+   * An inline background covers the font's whole content box, and
+   * Atkinson's runs 0.984em above the baseline but only 0.316em below
+   * it. Lowercase ink stops at the x-height (0.496em), so equal padding
+   * left nearly half again as much tint above a word as below it. All of
+   * the padding goes underneath instead: the same 1.42em box, moved down
+   * 0.06em, centered between the x-height and the cap height.
+   */
   .mark {
     color: var(--fg);
     background: var(--bg);
-    padding: 0.06em 0.3em;
+    padding: 0 0.3em 0.12em;
     border-radius: var(--radius-sm);
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;

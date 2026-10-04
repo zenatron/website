@@ -75,6 +75,6 @@
   <line x1="920" y1="230" x2="830" y2="420" stroke="var(--c-hue-green, #9bd68a)" stroke-width="2.5" stroke-dasharray="6 4"/>
 
   <!-- Legend -->
-  <line x1="940" y1="560" x2="1000" y2="560" stroke="var(--c-hue-green, #9bd68a)" stroke-width="2.5" stroke-dasharray="6 4"/>
-  <text x="1010" y="565" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="var(--c-hue-green, #9bd68a)">Encrypted peer-to-peer WireGuard tunnels</text>
+  <line x1="820" y1="560" x2="880" y2="560" stroke="var(--c-hue-green, #9bd68a)" stroke-width="2.5" stroke-dasharray="6 4"/>
+  <text x="1176" y="565" text-anchor="end" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="var(--c-hue-green, #9bd68a)">Encrypted peer-to-peer WireGuard tunnels</text>
 </svg>

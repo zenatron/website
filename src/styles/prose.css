@@ -58,7 +58,9 @@
   font-size: var(--t-mono-md);
   color: var(--c-link);
   background: var(--c-tint-link);
-  padding: 1px 6px;
+  /* All of it below, for the same reason as Mark: the mono face's
+     content box rides high over lowercase. */
+  padding: 0 6px 2px;
   border-radius: var(--radius-sm);
   font-variant-ligatures: none;
 }

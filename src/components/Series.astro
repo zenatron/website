@@ -9,8 +9,8 @@ import SectionHead from "@/components/SectionHead.astro";
 import { cardArt } from "@/lib/cardart";
 
 interface Entry { slug: string; title: string; excerpt?: string; order: number; readingTime?: string; cover?: string; }
-interface Props { title: string; blurb: string; entries: Entry[]; }
-const { title, blurb, entries } = Astro.props;
+interface Props { title: string; blurb: string; entries: Entry[]; hue?: "violet" | "orange" | "blue" | "green"; }
+const { title, blurb, entries, hue } = Astro.props;
 // Resolved up front: cardArt is async and the template can't await per row.
 const withArt = await Promise.all(
   entries.map(async (e) => ({
@@ -29,7 +29,7 @@ const withArt = await Promise.all(
         <a href={`/blog/${e.slug}/`}>
           <span class="n">{String(e.order).padStart(2, "0")}</span>
           <span class="art">
-            <CardArt art={e.art} slug={e.slug} crop />
+            <CardArt art={e.art} slug={e.slug} hue={hue} crop />
           </span>
           <span class="text">
             <span class="t">{e.title}</span>
