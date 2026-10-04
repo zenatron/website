@@ -23,7 +23,7 @@ One front door for the whole rack: Caddy listens on 443, gets a real Let's Encry
 </Callout>
 
 
-<Diagram src="/images/blog/reverse-proxy-homelab/proxy-architecture.svg" alt="Reverse proxy architecture: internet users connect over HTTPS on port 443 to Caddy, which terminates TLS and obtains and renews certificates automatically from Let's Encrypt via ACME. Caddy then routes clean hostnames like jellyfin.domain and grafana.domain to internal services (Jellyfin on 8096, Grafana on 3000, Nextcloud on 80, NAS on 5000), which never expose their own ports.">
+<Diagram src="/images/blog/reverse-proxy-homelab/proxy-architecture.svg" alt="Reverse proxy architecture: internet users connect over HTTPS on port 443 to Caddy, which terminates TLS and obtains and renews certificates automatically from Let’s Encrypt via ACME. Caddy then routes clean hostnames like jellyfin.domain and grafana.domain to internal services (Jellyfin on 8096, Grafana on 3000, Nextcloud on 80, NAS on 5000), which never expose their own ports.">
   One public entry point: Caddy terminates TLS on <code>:443</code>, auto-manages Let's Encrypt certificates, and routes clean hostnames to backend services that never expose their ports. <a href="/images/blog/reverse-proxy-homelab/proxy-architecture.excalidraw">Open the editable Excalidraw source</a>.
 </Diagram>
 

@@ -6,6 +6,8 @@
  * The date is a <time> and the author a link, so both are facts a
  * machine can check, not just display strings.
  */
+import { readingMinutes } from "@/lib/blog";
+
 interface Props { date?: string | Date; readingTime?: string; }
 const { date, readingTime } = Astro.props;
 
@@ -21,11 +23,6 @@ function monthYear(value: string | Date): string | null {
     : d.toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
 }
 
-/** Frontmatter stores "7min"; the pane reads "7 min read". */
-function minutes(value: string): string {
-  const n = value.match(/\d+/)?.[0];
-  return n ? `${n} min read` : value;
-}
 
 const when = date ? { iso: iso(date), label: monthYear(date) } : null;
 ---
@@ -33,7 +30,7 @@ const when = date ? { iso: iso(date), label: monthYear(date) } : null;
 <p class="meta">
   by <a href="/about/">Phil Vishnevsky</a>
   {when && <> · <time datetime={when.iso ?? undefined}>{when.label}</time></>}
-  {readingTime && <> · {minutes(readingTime)}</>}
+  {readingTime && <> · {readingMinutes(readingTime)}</>}
 </p>
 
 <style>
@@ -47,8 +44,10 @@ const when = date ? { iso: iso(date), label: monthYear(date) } : null;
     text-decoration: none;
     border-bottom: 1px solid var(--c-hairline);
   }
-  .meta a:hover {
-    color: var(--c-link);
-    border-bottom-color: currentColor;
+  @media (hover: hover) {
+    .meta a:hover {
+      color: var(--c-link);
+      border-bottom-color: currentColor;
+    }
   }
 </style>

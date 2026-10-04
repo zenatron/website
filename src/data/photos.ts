@@ -61,7 +61,7 @@ const WRITTEN: Record<string, Written> = {
   IMG_1916: {
     title: "The Pirelli Building",
     place: "New Haven, CT",
-    alt: "The corner of Marcel Breuer's concrete Pirelli Building against a deep blue sky, its sculpted panels and recessed windows raked by low sun.",
+    alt: "The corner of Marcel Breuer’s concrete Pirelli Building against a deep blue sky, its sculpted panels and recessed windows raked by low sun.",
   },
   IMG_1978: {
     title: "111 Founders Plaza",

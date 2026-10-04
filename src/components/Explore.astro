@@ -24,7 +24,7 @@ const places: { href: string; name: string; blurb: string; glyph: Glyph; hue?: s
   { href: "/", name: "home", blurb: "Back to the start", glyph: "home" },
   { href: "/about/", name: "about", blurb: "The story, the desk, and the lid", glyph: "person", hue: page("/about/")?.hue },
   { href: "/dock/", name: "dock", blurb: `${apps} apps I use, and a few files`, glyph: "dock", hue: page("/dock/")?.hue },
-  { href: "/projects/", name: "projects", blurb: `${projects.length} things I've built`, glyph: "folder" },
+  { href: "/projects/", name: "projects", blurb: `${projects.length} things I’ve built`, glyph: "folder" },
   { href: "/blog/", name: "writing", blurb: `${posts.length} posts on homelabs and more`, glyph: "pen" },
   { href: "/photos/", name: "photos", blurb: `${PHOTOS.length} shot on iPhone, edited on iPhone & Mac`, glyph: "camera", hue: page("/photos/")?.hue },
   { href: "/say-hi/", name: "say hi", blurb: page("/say-hi/")?.blurb ?? "", glyph: "bubble", hue: page("/say-hi/")?.hue },

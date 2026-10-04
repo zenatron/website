@@ -18,7 +18,7 @@ import CardArt from "@/components/CardArt.astro";
 import Cells from "@/components/Cells.astro";
 import SectionHead from "@/components/SectionHead.astro";
 import ProjectIcon from "@/components/ProjectIcon.astro";
-import { getAllProjects, getSuggestedProjects, projectSlug, PROJECT_KIND } from "@/lib/projects";
+import { getAllProjects, getSuggestedProjects, projectHue, projectSlug, PROJECT_KIND } from "@/lib/projects";
 import { creativeWorkSchema, isoDate } from "@/lib/schema";
 
 export async function getStaticPaths() {
@@ -73,6 +73,7 @@ const suggested = await Promise.all((await getSuggestedProjects(slug, 2)).map(as
   href: `/projects/${projectSlug(p)}/`,
   slug: projectSlug(p),
   description: p.data.description || undefined,
+  hue: projectHue(p),
   art: await cardArt({
     slug: projectSlug(p),
     title: p.data.title,

@@ -20,6 +20,7 @@ import LaptopLid from "@/components/LaptopLid.astro";
 import DeskScene from "@/components/DeskScene.astro";
 import { SITE, STATUS } from "@/data/site";
 import { profilePageSchema } from "@/lib/schema";
+import { readingMinutes } from "@/lib/blog";
 import { NOW, PRINCIPLES, TIMELINE } from "@/data/about";
 import { FAVORITES } from "@/data/favorites";
 
@@ -30,7 +31,7 @@ const HOBBIES = FAVORITES.filter((f) => f.category === "hobbies");
 const toolCount = FAVORITES.filter((f) => f.logo).length;
 
 const essay = await getEntry("blog", "principles");
-const essayMinutes = essay?.data.readingTime?.match(/\d+/)?.[0];
+const essayMinutes = readingMinutes(essay?.data.readingTime);
 
 const education = TIMELINE.find((t) => t.kind === "education");
 const start = TIMELINE.find((t) => t.kind === "milestone");
@@ -86,7 +87,7 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
       <h1>About</h1>
       <p class="statement">
         I write code, break things, and occasionally ship something useful.
-        By day, I'm a <Mark hue="green">full-time SWE</Mark>.
+        By day, I’m a <Mark hue="green">full-time SWE</Mark>.
         By night it’s a <Mark hue="blue">homelab</Mark> at <span class="nines" title="four nines">99.99%</span> uptime
         and <Mark hue="orange">card&nbsp;games</Mark> with the studio I <span class="whole">co-founded</span>, all
         from a desk in <Mark hue="violet">Hartford, CT</Mark>.
@@ -126,7 +127,7 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
     {essay && (
       <a class="file essay" href={`/blog/${essay.slug}/`}>
         <span>{essay.slug}<span class="ext">.mdx</span></span>
-        <span class="aside">the long version{essayMinutes && ` · ${essayMinutes}m`}</span>
+        <span class="aside">the long version{essayMinutes && ` · ${essayMinutes}`}</span>
         <span aria-hidden="true">&rarr;</span>
       </a>
     )}

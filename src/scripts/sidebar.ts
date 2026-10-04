@@ -168,11 +168,16 @@ function wireSearch() {
     const runs = [...document.querySelectorAll<HTMLElement>("#sidebar .runlabel")];
     const sections = [...document.querySelectorAll<HTMLElement>("#sidebar .sect:not(.hits)")];
     tree?.toggleAttribute("data-searching", q !== "");
+    // A section's count says how many of its files are showing, as the
+    // "in files" count does for hits; the full count comes back on clear.
+    const counts = sections.map((s) => s.querySelector<HTMLElement>(".count"));
+    for (const c of counts) if (c && !c.dataset.total) c.dataset.total = c.textContent ?? "";
 
     if (!q) {
       for (const r of rows) r.hidden = false;
       for (const r of runs) r.hidden = false;
       for (const s of sections) s.hidden = false;
+      for (const c of counts) if (c) c.textContent = c.dataset.total ?? "";
       if (empty) empty.hidden = true;
       clearHits();
       return;
@@ -193,9 +198,11 @@ function wireSearch() {
       run.hidden = !rows.some((r) => !r.hidden && r.dataset.run === run.dataset.run);
     }
     // And a section with nothing left in it is just a stray heading.
-    for (const s of sections) {
-      s.hidden = ![...s.querySelectorAll<HTMLElement>(".row")].some((r) => !r.hidden);
-    }
+    sections.forEach((s, i) => {
+      const shown = [...s.querySelectorAll<HTMLElement>(".row")].filter((r) => !r.hidden).length;
+      s.hidden = shown === 0;
+      if (counts[i]) counts[i]!.textContent = String(shown);
+    });
     if (empty) empty.hidden = hits > 0;
     void searchText(q, hits);
   };
@@ -254,6 +261,8 @@ function sync() {
   if (input) input.value = "";
   document.querySelectorAll<HTMLElement>("#sidebar .row, #sidebar .runlabel, #sidebar .sect:not(.hits)")
     .forEach((r) => (r.hidden = false));
+  document.querySelectorAll<HTMLElement>("#sidebar .sect:not(.hits) .count[data-total]")
+    .forEach((c) => (c.textContent = c.dataset.total ?? ""));
   document.querySelector("[data-tree]")?.removeAttribute("data-searching");
   const empty = document.querySelector<HTMLElement>("[data-empty]");
   if (empty) empty.hidden = true;

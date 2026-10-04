@@ -4,13 +4,12 @@ import Shell from "@/layouts/Shell.astro";
 import PostMeta from "@/components/PostMeta.astro";
 import Tags from "@/components/Tags.astro";
 import Cells from "@/components/Cells.astro";
-import CardArt from "@/components/CardArt.astro";
 import Toc from "@/components/Toc.astro";
 import PostNav from "@/components/PostNav.astro";
 import AppIcon from "@/components/AppIcon.astro";
 import { SITE } from "@/data/site";
 import { cardArt } from "@/lib/cardart";
-import { getAllBlogPosts, getSuggestedPosts } from "@/lib/blog";
+import { getAllBlogPosts, getSuggestedPosts, POST_SERIES, seriesHue } from "@/lib/blog";
 import { blogPostingSchema, isoDate } from "@/lib/schema";
 
 export async function getStaticPaths() {
@@ -22,13 +21,6 @@ const { post } = Astro.props;
 const rendered = await post.render();
 const { Content } = rendered;
 const headings = rendered.headings ?? [];
-
-const heroArt = await cardArt({
-  slug: post.slug,
-  title: post.data.title,
-  collection: "blog",
-  context: "hero",
-});
 
 // Only pages that actually render math pay for the KaTeX stylesheet.
 const hasMath = /\$\$|\\\(|\\\[|\$[^$\n]+\$/.test(post.body ?? "");
@@ -53,7 +45,7 @@ if (seriesKey) {
     parts[n] ? { slug: parts[n].slug, title: parts[n].data.title, order: parts[n].data.seriesOrder } : null;
   prev = at(i - 1);
   next = at(i + 1);
-  seriesTitle = "Homelab & networking";
+  seriesTitle = POST_SERIES.find((s) => s.key === seriesKey)?.title;
 } else {
   // Chronological, and `all` is already newest-first.
   const i = all.findIndex((p) => p.slug === post.slug);
@@ -67,9 +59,10 @@ const suggested = seriesKey
   : await Promise.all(
       (await getSuggestedPosts(post.slug, 2)).map(async (p) => ({
         title: p.data.title,
-        href: `/blog/${p.slug}`,
+        href: `/blog/${p.slug}/`,
         slug: p.slug,
         description: p.data.excerpt || undefined,
+        hue: seriesHue(p.data.series),
         art: await cardArt({ slug: p.slug, title: p.data.title, cover: p.data.cover, collection: "blog" }),
       }))
     );
@@ -99,7 +92,9 @@ const suggested = seriesKey
 
   <div class="layout">
     <article>
-      <div class="hero"><CardArt art={heroArt} slug={post.slug} crop /></div>
+      {/* No banner, as on a project page: a hero never shows a diagram, so
+          the only art a post had for one was its own title set large, right
+          above its title. */}
       {/* What the site search indexes: the post, not the page around it. */}
       <header data-pagefind-body>
         <h1>{post.data.title}</h1>
@@ -166,14 +161,6 @@ const suggested = seriesKey
     .layout { grid-template-columns: minmax(0, 1fr); }
   }
 
-  .hero {
-    container-type: inline-size;
-    aspect-ratio: 21 / 7;
-    overflow: hidden;
-    border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-card);
-    margin-bottom: var(--s-5);
-  }
   header {
     padding-bottom: var(--s-5);
     margin-bottom: var(--s-6);

@@ -32,7 +32,7 @@ const buildLabel = new Date(buildTime).toLocaleString("en-US", {
   <span class="spacer"></span>
 
   <span class="clock tabular" data-clock></span>
-  <span class="version tabular" title="The version that's deployed">v{version}</span>
+  <span class="version tabular" title="The version that’s deployed">v{version}</span>
   <span class="deploy" title={`Built ${buildLabel}`}>
     <i aria-hidden="true"></i>deployed
   </span>
@@ -61,6 +61,11 @@ const buildLabel = new Date(buildTime).toLocaleString("en-US", {
   .branch {
     color: var(--c-accent);
     user-select: text;
+    /* A preview branch's name can be long; it gives way, so the deploy
+       status at the other end is never the thing that's cut off. */
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   /*

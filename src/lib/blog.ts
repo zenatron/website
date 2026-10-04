@@ -5,11 +5,13 @@ export type BlogPostEntry = CollectionEntry<"blog">;
 
 /**
  * The series posts belong to, with the color each is drawn in wherever a
- * post shows its kind — the explorer, the 404's suggestions.
+ * post shows its kind — the explorer, the 404's suggestions. `label` is
+ * the explorer's lowercase run name; `title` heads the series on /blog
+ * and in a post's next/previous links.
  */
-export const POST_SERIES: { key: string; label: string; hue: "violet" | "orange" | "blue" | "green" }[] = [
-  { key: "homelab-networking", label: "homelab & networking", hue: "blue" },
-  { key: "data-mining", label: "data mining coursework", hue: "violet" },
+export const POST_SERIES: { key: string; label: string; title: string; hue: "violet" | "orange" | "blue" | "green" }[] = [
+  { key: "homelab-networking", label: "homelab & networking", title: "Homelab & networking", hue: "blue" },
+  { key: "data-mining", label: "data mining coursework", title: "Data mining coursework", hue: "violet" },
 ];
 
 // Extract plain text from MDX content for searching
@@ -87,4 +89,19 @@ export async function getSuggestedPosts(
   });
 
   return scoredPosts.slice(0, count).map((item) => item.post);
+}
+
+/** A post's color, from its series; undefined for a standalone post. */
+export function seriesHue(key?: string) {
+  return POST_SERIES.find((s) => s.key === key)?.hue;
+}
+
+/**
+ * Reading time, said one way everywhere it appears — the byline, the
+ * explorer, the series list, the archive, a link's preview: "24 min".
+ * Frontmatter stores "24min".
+ */
+export function readingMinutes(value?: string): string {
+  const n = value?.match(/\d+/)?.[0];
+  return n ? `${n} min` : "";
 }

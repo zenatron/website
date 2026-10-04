@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { getAllBlogPosts, POST_SERIES } from "@/lib/blog";
+import { getAllBlogPosts, POST_SERIES, readingMinutes } from "@/lib/blog";
 import { getAllProjects, projectSlug, PROJECT_KIND } from "@/lib/projects";
 import type { Preview } from "@/lib/previews";
 
@@ -16,12 +16,11 @@ export const GET: APIRoute = async () => {
 
   for (const p of posts) {
     const series = POST_SERIES.find((s) => s.key === p.data.series);
-    const mins = p.data.readingTime?.match(/\d+/)?.[0];
     out[`/blog/${p.slug}/`] = {
       file: p.slug,
       title: p.data.title,
       summary: p.data.excerpt,
-      aside: mins ? `${mins} min` : undefined,
+      aside: readingMinutes(p.data.readingTime) || undefined,
       context: series
         ? `${series.label} · part ${p.data.seriesOrder ?? "?"}`
         : new Date(p.data.date).toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" }),

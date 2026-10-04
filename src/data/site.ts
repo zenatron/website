@@ -28,9 +28,9 @@ export const STATUS = "open to interesting projects";
 
 /** Quips the dock's fortune window deals out. This is where the deleted ~/fortune block went. */
 export const FORTUNES: { text: string; by: string }[] = [
-  { text: "The best code is the code you don't have to think about at 2am.", by: "me, mass apply reject era" },
-  { text: "Ship it. Fix it later. Unless it's auth. Don't ship broken auth.", by: "me, learning from others' mistakes" },
-  { text: "The goal isn't to write clever code. It's to write code the next person can delete.", by: "me, after inheriting spaghetti" },
+  { text: "The best code is the code you don’t have to think about at 2am.", by: "me, mass apply reject era" },
+  { text: "Ship it. Fix it later. Unless it’s auth. Don’t ship broken auth.", by: "me, learning from others’ mistakes" },
+  { text: "The goal isn’t to write clever code. It’s to write code the next person can delete.", by: "me, after inheriting spaghetti" },
   { text: "Good tools disappear. You only notice the bad ones.", by: "me, after switching IDEs" },
   { text: "Keep your friends rich and your enemies rich, and wait to find out which is which.", by: "Ultron" },
   { text: "Every expert was once a beginner who refused to quit.", by: "probably a poster somewhere" },

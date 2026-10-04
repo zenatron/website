@@ -13,7 +13,13 @@ interface Props {
 }
 const { art, slug, crop = false, hue: fixedHue } = Astro.props;
 
-const HUES = ["violet", "orange", "blue", "green", "accent", "link"] as const;
+/*
+ * Art with no category of its own — a standalone post — still wants a
+ * tint, but not one of the four hues: those say "app", "tool", "homelab
+ * series", "coursework" in the explorer, and a hashed one claimed a
+ * category the thing didn't have.
+ */
+const HUES = ["accent", "link"] as const;
 function hueFor(s: string) {
   let h = 0x811c9dc5;
   for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
@@ -116,6 +122,5 @@ if (art.kind === "diagram") {
     font-family: var(--font-mono);
     font-size: var(--t-mono-sm);
     color: var(--fg);
-    opacity: 0.75;
   }
 </style>

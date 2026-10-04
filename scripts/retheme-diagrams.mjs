@@ -8,7 +8,9 @@
  * an inlined diagram follows the site theme and a standalone one still
  * renders on its own.
  *
- * Idempotent: colours already wrapped in var() are left alone.
+ * Fonts are pointed at the site's sans the same way.
+ *
+ * Idempotent: colours and fonts already wrapped in var() are left alone.
  * Run with `bun run diagrams:retheme`.
  */
 import { readFileSync, writeFileSync } from "node:fs";
@@ -47,6 +49,8 @@ const MAP = {
   "#ef4444": ["--c-danger", "#f2695e"],
 };
 
+const FONT = "var(--font-sans, system-ui, -apple-system, sans-serif)";
+
 const files = globSync("public/images/blog/**/*.svg");
 let touched = 0;
 for (const file of files) {
@@ -67,6 +71,16 @@ for (const file of files) {
     const entry = MAP[hex.toLowerCase()];
     return entry ? `${prop}="var(${entry[0]}, ${entry[1]})"` : m;
   });
+
+  // White was the ground in the light drawings but the ink in the dark
+  // ones, so a <text> mapped to the ground was drawn in the background
+  // color: five diagrams lost their titles to it. Text is always ink.
+  svg = svg.replace(/(<text\b[^>]*\sfill=")var\(--c-(?:sunken|raised|bg|chrome), [^)]*\)(")/g, "$1var(--c-text, #ede7da)$2");
+
+  // Type, too: the diagrams were set in two unrelated system stacks
+  // (system-ui, and Segoe UI/Helvetica), never the site's own face. Inlined,
+  // they take the author's voice; standalone, they fall back as before.
+  svg = svg.replace(/font-family="(?!var\()[^"]*"/g, `font-family="${FONT}"`);
 
   if (svg !== before) {
     writeFileSync(file, svg);

@@ -21,7 +21,11 @@ function syncTitlebar() {
   const proxy = document.querySelector<HTMLElement>("[data-titlebar-proxy]");
   if (!title || !name || !proxy) return;
 
-  name.textContent = document.title.split(" | ")[0].trim();
+  // "Post | Phil Vishnevsky" → "Post". The home page's title has no
+  // " | ", it's "Phil Vishnevsky — Full-Stack Engineer…", so it's cut at
+  // the dash instead: the window is called what the server rendered.
+  const full = document.title;
+  name.textContent = (full.includes(" | ") ? full.split(" | ")[0] : full.split(" — ")[0]).trim();
   title.title = tildePath(location.pathname);
 
   // Matched by URL rather than [data-active]: the explorer marks its
@@ -63,6 +67,10 @@ function setDrawer(open: boolean) {
   const toggle = document.querySelector<HTMLButtonElement>(".drawer-toggle");
   const scrim = document.querySelector<HTMLElement>("[data-scrim]");
   if (!sidebar || !toggle || !scrim) return;
+  const wasOpen = sidebar.dataset.open === "true";
+  // Closing hides the drawer with the focus still inside it, which drops
+  // focus to <body>. Hand it back to the button that opened it.
+  if (!open && wasOpen && sidebar.contains(document.activeElement)) toggle.focus();
   sidebar.dataset.open = String(open);
   toggle.setAttribute("aria-expanded", String(open));
   scrim.hidden = !open;
@@ -94,10 +102,12 @@ function wireDrawer() {
     scrim.dataset.wired = "1";
     scrim.addEventListener("click", () => setDrawer(false));
   }
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") setDrawer(false);
-  });
 }
+
+// Once, not per page load: wireDrawer runs on every navigation.
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") setDrawer(false);
+});
 
 /*  The pane
  *

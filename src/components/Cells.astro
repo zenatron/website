@@ -19,6 +19,8 @@ interface Cell {
   meta?: string;
   slug?: string;
   art?: Art;
+  /** The thing's category color, as the explorer shows it. */
+  hue?: "violet" | "orange" | "blue" | "green";
 }
 interface Props {
   cells: Cell[];
@@ -40,7 +42,7 @@ const lead = pairs && cells.length % 2 === 1;
   {cells.map((cell, i) => (
     <li class:list={["cell", lead && i === 0 && "first"]}>
       <a href={cell.href}>
-        {cell.art && <span class="art"><CardArt art={cell.art} slug={cell.slug ?? cell.href} /></span>}
+        {cell.art && <span class="art"><CardArt art={cell.art} slug={cell.slug ?? cell.href} hue={cell.hue} /></span>}
         <span class="body">
           <span class="head">
             <span class="title">{cell.title}</span>

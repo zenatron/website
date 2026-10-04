@@ -36,7 +36,7 @@ If you're new to VPNs entirely, start here: [What Is a VPN?](/blog/what-is-a-vpn
 1. **You install the app** on devices you own.
 2. **You log in** with an identity provider (Google, GitHub, etc.).
 3. **Tailscale brokers the connection** so your devices can find each other.
-4. **Devices connect directly** ([peer‑to‑peer](https://en.wikipedia.org/wiki/Peer-to-peer)) whenever possible.
+4. **Devices connect directly** ([peer-to-peer](https://en.wikipedia.org/wiki/Peer-to-peer)) whenever possible.
 
 Under the hood, it uses a mix of [STUN](https://en.wikipedia.org/wiki/STUN) and NAT traversal to discover how each device can be reached. If the network won't allow it, Tailscale falls back to relays (DERP).
 
@@ -51,7 +51,7 @@ Tailscale uses WireGuard, which is fast, minimal, and audited. WireGuard gives y
 
 Here's WireGuard's official paper for the curious: [WireGuard: Next Generation Kernel Network Tunnel](https://www.wireguard.com/papers/wireguard.pdf)
 
-<NerdCorner title="How WireGuard's cryptography works" subtitle="The Noise protocol handshake, step by step">
+<NerdCorner title="How WireGuard’s cryptography works" subtitle="The Noise protocol handshake, step by step">
 
 ### How WireGuard key exchange actually works
 
@@ -88,9 +88,9 @@ For the full cryptographic details, see the [WireGuard protocol documentation](h
 
 ## Control plane vs data plane (why it's still fast)
 
-Tailscale has a **control plane** that helps devices discover each other and exchange keys, but the **data plane** (the actual traffic) goes directly between your devices when possible. That's why it feels fast — you're not hair‑pinning through a central server unless you have to.
+Tailscale has a **control plane** that helps devices discover each other and exchange keys, but the **data plane** (the actual traffic) goes directly between your devices when possible. That's why it feels fast — you're not hair-pinning through a central server unless you have to.
 
-Because only metadata flows through the control plane, the coordination service never sees your actual encrypted traffic. If you self‑host with [Headscale](https://github.com/juanfont/headscale), you take over that coordination role.
+Because only metadata flows through the control plane, the coordination service never sees your actual encrypted traffic. If you self-host with [Headscale](https://github.com/juanfont/headscale), you take over that coordination role.
 
 <Diagram src="/images/blog/tailscale-explained/control-plane-data-plane.svg" alt="Control plane vs data plane: the coordination server exchanges keys, ACLs, and peer discovery metadata with devices A, B, and C over dashed control-plane links, while the devices exchange actual encrypted WireGuard traffic directly peer-to-peer over solid data-plane links.">
   The coordination server only brokers metadata (keys, ACLs, peer discovery). Your actual traffic flows directly device-to-device over the data plane. <a href="/images/blog/tailscale-explained/control-plane-data-plane.excalidraw">Open the editable Excalidraw source</a>.
@@ -99,9 +99,9 @@ Because only metadata flows through the control plane, the coordination service 
 ### Tailscale vs Headscale
 
 - **Tailscale**: hosted control plane, easiest setup, polished admin UI.
-- **Headscale**: open‑source control plane you host yourself, more work, more control.
+- **Headscale**: open-source control plane you host yourself, more work, more control.
 
-If you already run a homelab and want to minimize third‑party trust, Headscale is worth a look.
+If you already run a homelab and want to minimize third-party trust, Headscale is worth a look.
 
 ## How Tailscale compares to traditional VPN architectures
 
@@ -155,9 +155,9 @@ If you need a contractor to access one internal service without touching the res
 
 ## Identity + keys (the real security story)
 
-Every device gets a unique key pair, and access is tied to your identity provider. That's the [zero‑trust](https://en.wikipedia.org/wiki/Zero_trust_security_model) feel: instead of trusting a network, you trust **who** (and **which device**) is connecting. Under the hood it's standard [public‑key cryptography](https://en.wikipedia.org/wiki/Public-key_cryptography), but with sane defaults.
+Every device gets a unique key pair, and access is tied to your identity provider. That's the [zero-trust](https://en.wikipedia.org/wiki/Zero_trust_security_model) feel: instead of trusting a network, you trust **who** (and **which device**) is connecting. Under the hood it's standard [public-key cryptography](https://en.wikipedia.org/wiki/Public-key_cryptography), but with sane defaults.
 
-Tailscale also [rotates keys](https://tailscale.com/kb/1028/key-expiry) over time, which limits the impact of a long‑lost laptop or a compromised device.
+Tailscale also [rotates keys](https://tailscale.com/kb/1028/key-expiry) over time, which limits the impact of a long-lost laptop or a compromised device.
 
 ### A note on identity provider trust
 
@@ -179,7 +179,7 @@ Most home networks sit behind [NAT](https://en.wikipedia.org/wiki/Network_addres
 Relays are a fallback — not the default. You can check in the Tailscale admin panel whether a connection is direct or relayed.
 
 <Callout type="info" title="Why this matters" showEmoji={true}>
-Direct connections are faster and more private, but relays make sure it still works in tricky networks (office Wi‑Fi, hotels, strict firewalls).
+Direct connections are faster and more private, but relays make sure it still works in tricky networks (office Wi-Fi, hotels, strict firewalls).
 </Callout>
 
 ### How NAT hole-punching actually works (step by step)
@@ -335,7 +335,7 @@ These three get confused constantly. Here's the decision tree:
 - **Anything "production" with custom domains** → Cloudflare Tunnel
 - **Internal services for your own devices** → Neither, just Tailscale
 
-<Callout type="info" title="They're not mutually exclusive" showEmoji={true}>
+<Callout type="info" title="They’re not mutually exclusive" showEmoji={true}>
 You can run both. I use Tailscale for private access to everything, and Cloudflare Tunnel for the handful of services I expose publicly. Different tools, different jobs.
 </Callout>
 
@@ -408,7 +408,7 @@ Here's a real-world ACL structure I use for my homelab. It's not minimal, but it
 Use `tailscale status` and `tailscale ping <device>` to verify connectivity. The admin console also has an ACL preview tool that shows what each user/device can access.
 </Callout>
 
-## Real‑world use cases
+## Real-world use cases
 
 - **Remote [SSH](https://en.wikipedia.org/wiki/Secure_Shell) access** to your server without port forwarding
 - **Private media servers** (Jellyfin, Plex, Audiobookshelf)
@@ -419,14 +419,14 @@ Use `tailscale status` and `tailscale ping <device>` to verify connectivity. The
 
 ## Two power features worth knowing
 
-- **[Subnet routers](https://tailscale.com/kb/1019/subnets)** let you reach non‑Tailscale devices on a LAN (like a printer or a smart TV) through a tagged router.
+- **[Subnet routers](https://tailscale.com/kb/1019/subnets)** let you reach non-Tailscale devices on a LAN (like a printer or a smart TV) through a tagged router.
 - **[Exit nodes](https://tailscale.com/kb/1103/exit-nodes)** let you route *all* your internet traffic through a trusted device, similar to a traditional VPN but still within your tailnet.
 
 ## Performance tips
 
 - Prefer **direct connections** when possible; relays add latency.
 - Put the exit node close to the users who need it.
-- If you're self‑hosting, keep the coordination server in a low‑latency region.
+- If you're self-hosting, keep the coordination server in a low-latency region.
 - Run `tailscale netcheck` to diagnose connectivity issues.
 - Check `tailscale status` to see which connections are direct vs relayed.
 
@@ -440,7 +440,7 @@ See [Tailscale SSH documentation](https://tailscale.com/kb/1193/tailscale-ssh) f
 
 Tailscale includes [Taildrop](https://tailscale.com/kb/1106/taildrop), a simple file transfer feature that works inside your tailnet. It's not Dropbox, but it's excellent for "get this file to my other device right now."
 
-If you want the practical walkthrough, here's the full guide: [Self‑Hosting With Tailscale](/blog/self-hosting-with-tailscale/)
+If you want the practical walkthrough, here's the full guide: [Self-Hosting With Tailscale](/blog/self-hosting-with-tailscale/)
 
 ## Troubleshooting common Tailscale issues
 
@@ -559,8 +559,8 @@ For more debugging, check the [Tailscale troubleshooting guide](https://tailscal
 
 Ask yourself:
 
-- Do I trust an identity‑based model more than IP‑based firewalls?
-- Do I want device‑to‑device access rather than a single VPN gateway?
+- Do I trust an identity-based model more than IP-based firewalls?
+- Do I want device-to-device access rather than a single VPN gateway?
 - Is my primary goal remote access, not anonymity?
 
 If you answer "yes" to most of these, Tailscale is a strong fit.
@@ -596,4 +596,4 @@ No. Outbound connections from each device are enough, because the coordination s
 
 Tailscale is a VPN in the most practical sense — it makes your devices feel like they're on the same private network, without the pain of legacy VPN setups. If your goal is *private remote access* rather than "hide my browsing," it's one of the cleanest solutions available.
 
-Next up: [Self‑Hosting With Tailscale](/blog/self-hosting-with-tailscale/)
+Next up: [Self-Hosting With Tailscale](/blog/self-hosting-with-tailscale/)
