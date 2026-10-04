@@ -300,7 +300,7 @@
 
   --h-titlebar:  40px;
   --h-statusbar: 28px;
-  --w-sidebar:   312px;  /* fits the longest real filename: projects-system-documentation.mdx */
+  --w-sidebar:   332px;  /* fits a long filename beside its reading time ("M 22 min") */
   --w-content:  1280px;
 }
 

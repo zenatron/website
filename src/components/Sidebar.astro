@@ -15,7 +15,7 @@
  * the bottom, and the files scroll between them, so on a long post the
  * navigation is still where you left it.
  */
-import { getAllBlogPosts, POST_SERIES } from "@/lib/blog";
+import { getAllBlogPosts, POST_SERIES, readingMinutes } from "@/lib/blog";
 import { getAllProjects, projectSlug, PROJECT_KIND } from "@/lib/projects";
 import { links } from "@/lib/links";
 import { PAGES, SITE, STATUS } from "@/data/site";
@@ -29,7 +29,6 @@ const vars = (hue: Hue) => `--h: var(--c-hue-${hue}); --t: var(--c-tint-${hue})`
 const SERIES = POST_SERIES;
 const COURSEWORK = SERIES[1];
 
-const minutes = (v?: string) => (v ? `${v.match(/\d+/)?.[0] ?? ""}m` : "");
 const time = (v?: string) => (v ? new Date(v).getTime() || 0 : 0);
 
 /*
@@ -82,7 +81,7 @@ const postRow = (p: PostEntry, hue?: Hue): Row => ({
   stem: p.slug,
   href: `/blog/${p.slug}/`,
   title: p.data.title,
-  meta: minutes(p.data.readingTime),
+  meta: readingMinutes(p.data.readingTime),
   hue,
   change: change(p.data.date, p.data.updated),
 });
@@ -665,7 +664,7 @@ const socials = [
       inset-block: 0;
       inset-inline-start: 0;
       z-index: 3;
-      width: min(86vw, 320px);
+      width: min(86vw, var(--w-sidebar));
       height: 100dvh;
       contain: none;
       transform: translateX(-100%);

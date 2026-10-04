@@ -59,7 +59,7 @@ export const links: LinkItem[] = [
     title: "Bluesky",
     url: "https://bsky.app/profile/zenatron.bsky.social",
     handle: "@zenatron.bsky.social",
-    description: "I don't actually post anything",
+    description: "I don’t actually post anything",
     logo: "bluesky.svg",
   },
   {

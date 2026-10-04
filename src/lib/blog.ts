@@ -95,3 +95,13 @@ export async function getSuggestedPosts(
 export function seriesHue(key?: string) {
   return POST_SERIES.find((s) => s.key === key)?.hue;
 }
+
+/**
+ * Reading time, said one way everywhere it appears — the byline, the
+ * explorer, the series list, the archive, a link's preview: "24 min".
+ * Frontmatter stores "24min".
+ */
+export function readingMinutes(value?: string): string {
+  const n = value?.match(/\d+/)?.[0];
+  return n ? `${n} min` : "";
+}

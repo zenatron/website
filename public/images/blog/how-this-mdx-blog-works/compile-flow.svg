@@ -2,7 +2,7 @@
   <title id="title">MDX compile flow</title>
   <desc id="desc">MDX source parsed to a Markdown AST, transformed by remark plugins, converted to an HTML AST, transformed by rehype plugins, and stringified to HTML.</desc>
   <rect width="1200" height="360" fill="var(--c-sunken, #100f0c)" />
-  <text x="40" y="60" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="700" fill="var(--c-text, #ede7da)">MDX compilation flow</text>
+  <text x="40" y="60" font-family="var(--font-sans, system-ui, -apple-system, sans-serif)" font-size="32" font-weight="700" fill="var(--c-text, #ede7da)">MDX compilation flow</text>
 
   <g fill="var(--c-raised, #26231d)" stroke="var(--c-hue-violet, #bca4ff)" stroke-width="3">
     <rect x="80" y="150" width="220" height="140" rx="16" />
@@ -11,7 +11,7 @@
     <rect x="920" y="150" width="220" height="140" rx="16" />
   </g>
 
-  <g font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">
+  <g font-family="var(--font-sans, system-ui, -apple-system, sans-serif)" text-anchor="middle">
     <text x="190" y="216" font-size="22" font-weight="600" fill="var(--c-text, #ede7da)">MDX</text>
     <text x="190" y="246" font-size="16" fill="var(--c-muted, #a69e8d)">the source</text>
     <text x="470" y="216" font-size="22" font-weight="600" fill="var(--c-text, #ede7da)">mdast</text>
@@ -28,7 +28,7 @@
     <path d="M860 220 L920 220" />
   </g>
 
-  <g fill="var(--c-hue-green, #9bd68a)" font-family="system-ui, -apple-system, sans-serif" font-size="16" text-anchor="middle">
+  <g fill="var(--c-hue-green, #9bd68a)" font-family="var(--font-sans, system-ui, -apple-system, sans-serif)" font-size="16" text-anchor="middle">
     <text x="330" y="130">remark</text>
     <text x="610" y="130">rehype</text>
     <text x="890" y="130">stringify</text>
