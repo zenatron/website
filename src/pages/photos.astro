@@ -9,6 +9,7 @@
  * Every photo's window ships rendered and hidden, as the dock's do, so
  * what the windows say is in the static HTML; the script only switches
  * between them. With JS off each thumbnail links to the full-size image.
+ * The script is loaded site-wide, by the Shell; see scripts/photos.ts.
  *
  * The images are made by scripts/photos.mjs, which strips their metadata;
  * the few fields shown here come through src/data/photos.ts.
@@ -43,6 +44,9 @@ const strip = (p: Photo) =>
 
 /** 48.8 million pixels is what Apple sells as 48MP. */
 const megapixels = (p: Photo) => Math.floor((p.width * p.height) / 1e6);
+
+/** Blanks that square off the last row, so the grid ends like a pane, not a hole. */
+const fillers = (3 - (PHOTOS.length % 3)) % 3;
 
 const cameras = [...new Set(PHOTOS.map((p) => p.camera).filter(Boolean))];
 const range = [monthYear(PHOTOS[0]?.taken), monthYear(PHOTOS.at(-1)?.taken)]
@@ -85,6 +89,7 @@ const range = [monthYear(PHOTOS[0]?.taken), monthYear(PHOTOS.at(-1)?.taken)]
           </a>
         </li>
       ))}
+      {Array.from({ length: fillers }, () => <li class="filler" aria-hidden="true"></li>)}
     </ul>
   </section>
 
@@ -132,6 +137,7 @@ const range = [monthYear(PHOTOS[0]?.taken), monthYear(PHOTOS.at(-1)?.taken)]
               <p class="title">{p.title}</p>
               {p.place && <p class="where">{p.place}</p>}
               {p.taken && <p class="when">{longDate(p.taken)}</p>}
+              {p.note && <p class="note">{p.note}</p>}
 
               <div class="device">
                 {p.camera && <p class="model">{p.camera}</p>}
@@ -213,6 +219,12 @@ const range = [monthYear(PHOTOS[0]?.taken), monthYear(PHOTOS.at(-1)?.taken)]
     height: 100%;
     object-fit: cover;
     transition: transform var(--dur-pane) var(--ease);
+  }
+  /* The pane's own ground, pulled over the gaps above and beside it so no
+     hairline outlines the space where a photo would be. */
+  .filler {
+    margin: -2px 0 0 -2px;
+    background: var(--c-chrome);
   }
   .grid a:focus-visible { outline-offset: -3px; }
   @media (hover: hover) {
@@ -391,6 +403,13 @@ const range = [monthYear(PHOTOS[0]?.taken), monthYear(PHOTOS.at(-1)?.taken)]
     color: var(--c-muted);
   }
 
+  .note {
+    margin-top: var(--s-3);
+    font-size: var(--t-sans-xs);
+    line-height: var(--lh-body);
+    color: var(--c-muted);
+  }
+
   /* Photos' device card: the camera, the lens, the size, then the strip. */
   .device {
     margin-top: var(--s-4);
@@ -476,7 +495,3 @@ const range = [monthYear(PHOTOS[0]?.taken), monthYear(PHOTOS.at(-1)?.taken)]
     .title { font-size: var(--t-sans-md); }
   }
 </style>
-
-<script>
-  import "@/scripts/photos";
-</script>

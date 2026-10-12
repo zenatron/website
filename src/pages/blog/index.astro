@@ -69,8 +69,8 @@ const cells = await Promise.all(
 
 <Shell title="Writing | Phil Vishnevsky" description="Thoughts on code, tools, and building things." ogSlug="blog">
   <PageHead title="Writing">
-    {posts.length} posts on homelabs, networking, tooling, and whatever I broke
-    recently.
+    {posts.length - coursework.length} posts on homelabs, networking, tooling, and
+    whatever I broke recently{coursework.length > 0 && `, plus ${coursework.length} pages of coursework notes`}.
   </PageHead>
 
   {homelab.length > 0 && (

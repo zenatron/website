@@ -6,6 +6,7 @@ import ReachCards from "@/components/ReachCards.astro";
 import Mark from "@/components/Mark.astro";
 import HeroArt from "@/components/HeroArt.astro";
 import { SITE } from "@/data/site";
+import { PHOTOS } from "@/data/photos";
 import { getAllBlogPosts, seriesHue } from "@/lib/blog";
 import { getAllProjects, projectHue, projectSlug } from "@/lib/projects";
 import { personSchema, websiteSchema } from "@/lib/schema";
@@ -44,6 +45,9 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
   hue: seriesHue(p.data.series),
   art: await cardArt({ slug: p.slug, title: p.data.title, cover: p.data.cover, collection: "blog" }),
 })));
+
+/** The newest three, newest first; each opens in the viewer on /photos. */
+const latestPhotos = PHOTOS.slice(-3).reverse();
 ---
 
 <Shell schema={[personSchema(), websiteSchema()]}>
@@ -65,7 +69,7 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
         </div>
         <div class="row">
           <dt style="--fg: var(--c-hue-green); --bg: var(--c-tint-green)">building</dt>
-          <dd>a <Mark hue="green">FLAC organizer</Mark>, and tools for card games</dd>
+          <dd><a class="ref" href="/projects/preamble/"><Mark hue="green">preamble</Mark></a>, a FLAC organizer, and tools for card games</dd>
         </div>
         <div class="row">
           <dt style="--fg: var(--c-hue-blue); --bg: var(--c-tint-blue)">running</dt>
@@ -92,6 +96,40 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
     </div>
     <Cells cells={latestPosts} layout="pairs" />
   </section>
+
+  {latestPhotos.length > 0 && (
+    <section class="band">
+      <div class="bandhead">
+        <h2>Photos</h2>
+        <a href="/photos/">All photos <span aria-hidden="true">&rarr;</span></a>
+      </div>
+      <ul class="shots">
+        {latestPhotos.map((p) => (
+          <li>
+            <a href={`/photos/#${p.id}`} data-photo-link={p.id}>
+              <span class="shot" style={p.tone && `--tone: ${p.tone}`}>
+                <picture>
+                  <source type="image/avif" srcset={`/images/photos/${p.id}-480.avif 480w, /images/photos/${p.id}-960.avif 960w`} sizes="(max-width: 640px) 33vw, 300px" />
+                  <img
+                    src={`/images/photos/${p.id}-480.webp`}
+                    srcset={`/images/photos/${p.id}-480.webp 480w, /images/photos/${p.id}-960.webp 960w`}
+                    sizes="(max-width: 640px) 33vw, 300px"
+                    alt={p.alt}
+                    width={p.width}
+                    height={p.height}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
+              </span>
+              <span class="caption">{p.title}</span>
+              {p.place && <span class="place">{p.place}</span>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
 
   <section class="band">
     <div class="bandhead">
@@ -170,6 +208,11 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
     color: var(--c-muted);
   }
 
+  .ref { color: inherit; }
+  @media (hover: hover) {
+    .ref:hover { text-decoration: underline; text-underline-offset: 3px; }
+  }
+
   /* The figure is the claim, so it's set like one: the machine's voice,
      in the text color, with figures that don't jiggle. */
   .nines {
@@ -218,6 +261,55 @@ const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
     .bandhead a:hover {
       text-decoration: underline; text-underline-offset: 3px;
     }
+  }
+
+  /* Three across, cropped to the library's 3:4, so the strip reads as a
+     corner of /photos rather than three more cards. */
+  .shots {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-4);
+  }
+  .shots a { display: block; color: inherit; }
+  .shot {
+    display: block;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    background: var(--tone, var(--c-sunken));
+  }
+  .shot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--dur-pane) var(--ease);
+  }
+  .caption {
+    display: block;
+    margin-top: var(--s-3);
+    font-size: var(--t-sans-sm);
+    font-weight: 600;
+    line-height: var(--lh-snug);
+  }
+  .place {
+    display: block;
+    margin-top: 2px;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-dim);
+  }
+  @media (hover: hover) {
+    .shots a:hover img { transform: scale(1.03); }
+    .shots a:hover .caption { color: var(--c-link); }
+  }
+  @media (max-width: 560px) {
+    .shots { gap: var(--s-2); }
+    .shot { border-radius: var(--radius-sm); }
+    .caption { font-size: var(--t-sans-xs); }
+    .place { display: none; }
   }
 
   @media (max-width: 860px) {

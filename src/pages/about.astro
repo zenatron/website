@@ -21,7 +21,7 @@ import DeskScene from "@/components/DeskScene.astro";
 import { SITE, STATUS } from "@/data/site";
 import { profilePageSchema } from "@/lib/schema";
 import { readingMinutes } from "@/lib/blog";
-import { NOW, PRINCIPLES, TIMELINE } from "@/data/about";
+import { NOW, NOW_UPDATED, PRINCIPLES, TIMELINE } from "@/data/about";
 import { FAVORITES } from "@/data/favorites";
 
 type Hue = "violet" | "orange" | "blue" | "green" | "accent" | "link";
@@ -48,6 +48,8 @@ const facts = [
   education && { text: `${education.description} · ${education.title}`, hue: "violet" as Hue },
   start && { text: `coding since ${start.year}` },
 ].filter(Boolean) as { text: string; hue?: Hue }[];
+
+const nowUpdated = new Date(NOW_UPDATED).toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
 
 const PRINCIPLE_HUES: Hue[] = ["violet", "blue", "green", "orange"];
 
@@ -134,7 +136,7 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
   </section>
 
   <section id="now" class="band">
-    <SectionHead title="Now" meta="building · learning · reading" />
+    <SectionHead title="Now" meta={`updated ${nowUpdated.toLowerCase()}`} />
     <div class="now">
       {NOW.map((group) => (
         <div class="col" style={vars(NOW_HUE[group.heading] ?? "accent")}>
@@ -144,7 +146,9 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
               const hue = STATUS_HUE[item.status];
               return (
                 <li>
-                  <span class="what">{item.name}</span>
+                  {item.href
+                    ? <a class="what" href={item.href}>{item.name}</a>
+                    : <span class="what">{item.name}</span>}
                   <span class:list={["state", { hollow: !hue }]} style={hue ? vars(hue) : undefined}>
                     <i aria-hidden="true"></i>{item.status}
                   </span>
@@ -439,6 +443,15 @@ const KIND: Record<string, { label: string; hue: Hue }> = {
   }
   .col li + li { border-top: 1px solid var(--c-hairline); }
   .what { font-size: var(--t-sans-sm); line-height: var(--lh-snug); }
+  a.what {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--c-hairline);
+    text-underline-offset: 3px;
+  }
+  @media (hover: hover) {
+    a.what:hover { color: var(--c-link); text-decoration-color: currentColor; }
+  }
   .state {
     display: inline-flex;
     align-items: center;

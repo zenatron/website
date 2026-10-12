@@ -11,6 +11,8 @@ interface Written {
   title: string;
   place?: string;
   alt: string;
+  /** A line about it, in the viewer under the date, for the ones that have a story. */
+  note?: string;
 }
 
 const WRITTEN: Record<string, Written> = {
@@ -43,6 +45,12 @@ const WRITTEN: Record<string, Written> = {
     title: "The Headland",
     place: "Pa‘iloa Beach, Maui",
     alt: "A tree in silhouette arching over a green headland, where the cliffs meet a deep blue ocean and a line of white surf.",
+  },
+  IMG_0167: {
+    title: "The Oldest House",
+    place: "New York, NY",
+    note: "Yes, the one from Control. The real one is a windowless telephone exchange, built in the 1970s to ride out a nuclear war.",
+    alt: "Looking up at 33 Thomas Street, a windowless brown granite tower against a pale grey sky, ribbed with vertical piers and broken only by two rows of square ventilation openings.",
   },
   IMG_0682: {
     title: "The Clock Tower",
@@ -85,6 +93,7 @@ export interface Photo {
   title: string;
   place?: string;
   alt: string;
+  note?: string;
   width: number;
   height: number;
   /** YYYY-MM-DD, the camera's local date. */

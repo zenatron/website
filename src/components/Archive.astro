@@ -4,6 +4,9 @@ import { readingMinutes } from "@/lib/blog";
 /**
  * A dense index for a long series.
  *
+ * Used for both kinds of coursework: the posts on /blog and the
+ * exercises on /projects. Entries link to /blog unless they say where.
+ *
  * The coursework is twelve posts that are structurally identical — same
  * shape, same three tags, one line of description each. As cards they
  * buried the writing that matters; as a numbered index they stay findable
@@ -11,6 +14,9 @@ import { readingMinutes } from "@/lib/blog";
  */
 interface Entry {
   slug: string;
+  href?: string;
+  /** A line under the title, for entries whose titles alone say little. */
+  note?: string;
   title: string;
   order: number;
   date?: string | Date;
@@ -35,9 +41,12 @@ const hidden = Math.max(0, entries.length - initial);
   <ol class="index" data-archive>
     {entries.map((e, i) => (
       <li data-over={i >= initial ? "" : undefined}>
-        <a href={`/blog/${e.slug}/`}>
+        <a href={e.href ?? `/blog/${e.slug}/`}>
           <span class="n">{String(e.order).padStart(2, "0")}</span>
-          <span class="t">{e.title}</span>
+          <span class="t">
+            {e.title}
+            {e.note && <span class="note">{e.note}</span>}
+          </span>
           <span class="rt">{readingMinutes(e.readingTime)}</span>
           <span class="d">{when(e.date)}</span>
         </a>
@@ -88,6 +97,16 @@ const hidden = Math.max(0, entries.length - initial);
     font-weight: 600;
     line-height: var(--lh-snug);
     min-width: 0;
+  }
+  .note {
+    display: block;
+    margin-top: 2px;
+    font-weight: 400;
+    color: var(--c-muted);
+    line-height: var(--lh-ui);
+  }
+  @media (hover: hover) {
+    .index a:hover .note { color: var(--c-muted); }
   }
   .rt,
   .d {

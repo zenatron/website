@@ -1,0 +1,45 @@
+---
+title: "πCompress: A Compressor That Makes Everything Bigger"
+date: "2026-10-11"
+excerpt: "Looking your bytes up in a million digits of π, and every way that idea loses."
+tags: ["rust", "compression", "april fools"]
+---
+
+{/*
+  DRAFT. Moves to src/content/blog/ when it's done. The facts here are
+  lifted from /projects/pi-compress; the TODOs are the parts only you know.
+*/}
+
+The idea is older than me: if π is a normal number, every finite sequence of
+digits is in it somewhere. So instead of storing a file, store where to find it
+in π. I built it in Rust and shipped it on the first of April, and it works.
+Every file it touches comes out larger.
+
+## The pitch
+
+{/* TODO: where you first ran into the idea, and the moment you decided to actually build it. */}
+
+## How it works
+
+Each byte becomes two hex digits, the tool searches the first million digits of
+π for the longest run of input it can find, and it writes out instructions
+rather than data: `Pi[index] (N bytes)` for a hit, `Raw[0xHH]` for a miss.
+
+## Why it can never win
+
+π only has the digits 0–9. A hex pair with a letter in it, `4a` or `8b`, can't
+be found, and that's about a third of all possible bytes. The rest are found
+at an index that is usually longer than what it replaces.
+
+{/* TODO: a real before/after: a small file, its size in, its size out. */}
+
+## The bug that made it briefly look good
+
+The verification step exists because skipping it "produced hilarious but
+incorrect results."
+
+{/* TODO: what were they? This is the best story in the post. */}
+
+## What I actually got out of it
+
+{/* TODO: the Rust part — the hot loop, what you'd do differently, what normality being unproven means now that you've leaned on it. */}

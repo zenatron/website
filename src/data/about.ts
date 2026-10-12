@@ -77,11 +77,21 @@ export const TIMELINE: TimelineEntry[] = [
   },
 ];
 
-export const NOW = [
+/** When NOW was last true. Bump it whenever the lists below change. */
+export const NOW_UPDATED = "2026-10-11";
+
+export interface NowItem {
+  name: string;
+  status: string;
+  /** Where the thing lives on this site, when it does. */
+  href?: string;
+}
+
+export const NOW: { heading: string; items: NowItem[] }[] = [
   {
     heading: "Building",
     items: [
-      { name: "Performant FLAC library organizer", status: "in progress" },
+      { name: "preamble, a FLAC library organizer", status: "in progress", href: "/projects/preamble/" },
       { name: "Tools for card games", status: "planning" },
       { name: "This portfolio (always)", status: "deployed" },
     ],
@@ -101,7 +111,7 @@ export const NOW = [
       { name: "Game Programming Patterns", status: "reference" },
     ],
   },
-] as const;
+];
 
 /** The whole essay in four lines. Full version at /blog/principles. */
 export const PRINCIPLES = [

@@ -1,0 +1,35 @@
+---
+title: "Ledger: Ask Before You Buy"
+date: "2026-10-11"
+excerpt: "A household budget app built around one question, whether a purchase needs a yes first, and why it runs on my own server."
+tags: ["sveltekit", "self-hosted", "postgres"]
+---
+
+{/*
+  DRAFT. Moves to src/content/blog/ when it's done. The facts here are
+  lifted from /projects/ledger; the TODOs are the parts only you know.
+*/}
+
+Every purchase in Ledger is either a request or a record, and each member's
+policy decides which, so one person checks in before anything over fifty
+dollars while another just logs things afterwards. It's SvelteKit, Bun and
+Postgres, signs in with passkeys through Pocket ID, and runs on my own server.
+
+## Why not a spreadsheet, or an app store app
+
+{/* TODO: what you used before and what broke. */}
+
+## Requests and records
+
+{/* TODO: how the policy idea came about, and what it changed at home. */}
+
+## Login without passwords
+
+Authentication is Pocket ID over OIDC, passkeys only, the same setup as the
+[SSO post](/blog/sso-for-self-hosted-apps/).
+
+{/* TODO: anything that went wrong wiring it up. */}
+
+## Why self-hosted
+
+{/* TODO: the project page has a section on this; the post can tell the story behind it. */}

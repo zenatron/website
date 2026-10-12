@@ -3,6 +3,7 @@ import Shell from "@/layouts/Shell.astro";
 import PageHead from "@/components/PageHead.astro";
 import { cardArt } from "@/lib/cardart";
 import Cells from "@/components/Cells.astro";
+import Archive from "@/components/Archive.astro";
 import { getAllProjects, projectHue, projectSlug } from "@/lib/projects";
 
 const projects = await getAllProjects();
@@ -15,7 +16,26 @@ const monthYear = (v: string | Date | undefined) => {
     : d.toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
 };
 
-const cells = await Promise.all(projects.map(async (p) => ({
+/**
+ * The things I built get cards; the data mining coursework gets the same
+ * numbered index it has on /blog. As cards, seven exercises outnumbered
+ * the four projects people actually come here for.
+ */
+const isCoursework = (p: (typeof projects)[number]) => p.data.type === "data";
+const built = projects.filter((p) => !isCoursework(p));
+const coursework = projects
+  .filter(isCoursework)
+  .reverse()
+  .map((p, i) => ({
+    slug: projectSlug(p),
+    href: `/projects/${projectSlug(p)}/`,
+    title: p.data.title.replace(/^Intro to Data Mining:\s*/, ""),
+    note: p.data.description || undefined,
+    order: i + 1,
+    date: p.data.date,
+  }));
+
+const cells = await Promise.all(built.map(async (p) => ({
   title: p.data.title,
   href: `/projects/${projectSlug(p)}/`,
   slug: projectSlug(p),
@@ -35,5 +55,14 @@ const cells = await Promise.all(projects.map(async (p) => ({
     Experiments, coursework, and things I built because they didn’t exist yet.
   </PageHead>
   <Cells cells={cells} layout="pairs" />
+
+  {coursework.length > 0 && (
+    <Archive
+      title="Data mining coursework"
+      blurb="Exercises and projects from an intro data mining course, in the order they were assigned — from Python basics to clustering wines."
+      entries={coursework}
+      initial={coursework.length}
+    />
+  )}
 </Shell>
 

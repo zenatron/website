@@ -1,0 +1,42 @@
+---
+title: "preamble: Cleaning Up a Decade of FLAC in Rust"
+date: "2026-10-11"
+excerpt: "A music library full of duplicates and files that decode to silence, and the terminal tool I wrote to sort it out."
+tags: ["rust", "tui", "audio"]
+---
+
+{/*
+  DRAFT. Moves to src/content/blog/ when it's done. The facts here are
+  lifted from /projects/preamble; the TODOs are the parts only you know.
+*/}
+
+My music library had a decade of duplicates, half-tagged rips, and files that
+decoded to silence in it, and no GUI tool would tell me which was which without
+a lot of clicking. So I wrote preamble: a terminal app that scans the library
+into SQLite and puts a keyboard-driven TUI on top.
+
+## The mess
+
+{/* TODO: how big the library was, what the worst of it looked like, the file that made you start. */}
+
+## Three ways to be a duplicate
+
+preamble finds duplicates by content hash (BLAKE3), by ISRC, and by tags.
+
+{/* TODO: why one layer wasn't enough. What did hashing miss that ISRC caught, and the other way round? */}
+
+## Never delete anything
+
+Deletion is staged: `d` flags a track, purging moves it to quarantine instead
+of unlinking it, and `z` undoes. The database records what happened; the files
+are only ever moved.
+
+{/* TODO: was this a lesson learned the hard way? */}
+
+## Why Rust, and why a terminal
+
+{/* TODO: what ratatui was like, how fast a full scan is, and what you'd do differently. */}
+
+## Where it is now
+
+{/* TODO: how many files are left, what the library looks like after. */}

@@ -6,7 +6,25 @@
  *
  * The thumbnails are real links to the full-size image, so without this
  * nothing is lost but the window.
+ *
+ * It's loaded on every page, not just /photos, so a link from elsewhere
+ * (the strip on the homepage) can open its photo in the swap itself: by
+ * astro:page-load the router has already crossfaded to the bare grid,
+ * scrolled to the thumbnail, and only then would the window pop over it.
  */
+
+/**
+ * The image a link from another page was showing, so the window has a
+ * picture already in cache to stand in while the full-size one loads.
+ * The grid's own thumbnail usually isn't loaded yet — it's lazy, and the
+ * page was only just swapped in.
+ */
+let handoff: { id: string; src: string } | null = null;
+document.addEventListener("click", (e) => {
+  const a = (e.target as Element | null)?.closest<HTMLAnchorElement>("a[data-photo-link]");
+  const src = a?.querySelector("img")?.currentSrc;
+  if (a && src) handoff = { id: a.dataset.photoLink!, src };
+});
 
 function init() {
   const dialog = document.querySelector<HTMLDialogElement>("[data-viewer]");
@@ -43,7 +61,9 @@ function init() {
     }
     // The grid's thumbnail, already in cache, holds the frame while the
     // full-size one loads.
-    const thumb = document.querySelector<HTMLImageElement>(`[data-photo="${ids[i]}"] img`)?.currentSrc;
+    const thumb =
+      document.querySelector<HTMLImageElement>(`[data-photo="${ids[i]}"] img`)?.currentSrc ||
+      (handoff?.id === ids[i] ? handoff.src : undefined);
     const frame = slides[i].querySelector<HTMLElement>(".frame");
     if (thumb && frame) frame.style.setProperty("--thumb", `url("${thumb}")`);
     setHash(ids[i]);
@@ -108,5 +128,25 @@ function init() {
   if (ids.includes(hashed)) open(hashed);
 }
 
+/**
+ * No crossfade into or out of an open photo. The pane is its own named
+ * view-transition group, and named groups paint above the top layer, so
+ * for the length of the fade the grid was drawn over the window. Arriving
+ * from the homepage, a link to a photo just opens it, as a thumbnail does
+ * on /photos.
+ */
+document.addEventListener("astro:before-swap", (e) => {
+  const id = decodeURIComponent(e.to.hash.slice(1));
+  const arriving = id && e.newDocument.querySelector(`[data-slide="${CSS.escape(id)}"]`);
+  const leaving = document.querySelector<HTMLDialogElement>("[data-viewer]")?.open;
+  if (!arriving && !leaving) return;
+  // A skipped transition rejects `ready`, which nothing else awaits.
+  e.viewTransition.ready?.catch(() => {});
+  e.viewTransition.skipTransition();
+});
+
+// Right after the swap, so the first frame of the new page already has
+// the photo open rather than the grid it sits over.
+document.addEventListener("astro:after-swap", init);
 document.addEventListener("astro:page-load", init);
 init();
