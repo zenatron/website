@@ -28,16 +28,28 @@ function write(tabs: Tab[]) {
   }
 }
 
-/** The same name the explorer shows, derived from the route. */
+/** The sidebar's row for a path, if it has one. */
+function rowFor(href: string): HTMLElement | null {
+  // Matched by path: the sidebar's links end in a slash and a tab's href
+  // doesn't, so an exact attribute match found nothing.
+  return [...document.querySelectorAll<HTMLAnchorElement>("#sidebar .row a[data-nav]")]
+    .find((a) => (new URL(a.href).pathname.replace(/\/+$/, "") || "/") === href)
+    ?.closest<HTMLElement>(".row") ?? null;
+}
+
+/**
+ * The same name the sidebar shows: a post's or project's title, a page's
+ * name. Worked out at render rather than stored, so tabs opened before a
+ * rename — or under the old filename labels — come back right.
+ */
 function labelFor(pathname: string): string {
-  const path = pathname.replace(/\/+$/, "");
-  if (path === "") return "home";
-  const parts = path.split("/").filter(Boolean);
-  if (parts.length === 1) {
-    const names: Record<string, string> = { "say-hi": "say hi", blog: "writing" };
-    return names[parts[0]] ?? parts[0];
-  }
-  return `${parts[parts.length - 1]}.mdx`;
+  const path = pathname.replace(/\/+$/, "") || "/";
+  const names: Record<string, string> = { "/": "Home", "/blog": "Writing", "/projects": "Projects" };
+  if (names[path]) return names[path];
+  const row = rowFor(path);
+  const title = row?.dataset.title ?? row?.querySelector("a")?.textContent?.trim();
+  if (title) return title[0].toUpperCase() + title.slice(1);
+  return path.split("/").filter(Boolean).pop() ?? path;
 }
 
 function currentHref(): string {
@@ -50,18 +62,19 @@ function currentHref(): string {
  * tab can't disagree with its row.
  */
 function iconFor(href: string): HTMLElement {
-  // Matched by path, as the titlebar matches: the explorer's links end in
-  // a slash and a tab's href doesn't, so an exact attribute match found
-  // no row and every tab fell back to the site's mark.
-  const row = [...document.querySelectorAll<HTMLAnchorElement>("#sidebar .row a[data-nav]")]
-    .find((a) => (new URL(a.href).pathname.replace(/\/+$/, "") || "/") === href)
-    ?.closest<HTMLElement>(".row");
+  const row = rowFor(href);
   const tile = row?.querySelector<HTMLElement>(".tile");
+  const file = row?.querySelector<HTMLElement>(".ficon");
   let icon: HTMLElement;
   if (tile) {
     icon = document.createElement("span");
     icon.className = "ticon";
     icon.append(...[...tile.childNodes].map((n) => n.cloneNode(true)));
+  } else if (file) {
+    // A project's app icon, or a post's document, as the sidebar shows it.
+    icon = document.createElement("span");
+    icon.className = "ficon";
+    icon.append(...[...file.childNodes].map((n) => n.cloneNode(true)));
   } else if (row) {
     icon = document.createElement("span");
     icon.className = "dot";
@@ -100,18 +113,19 @@ function render() {
     const a = document.createElement("a");
     // Every page is served at its trailing-slash URL; link there directly.
     a.href = tab.href === "/" ? "/" : `${tab.href}/`;
-    a.title = tab.label;
+    const name = labelFor(tab.href);
+    a.title = name;
     a.append(iconFor(tab.href));
     const label = document.createElement("span");
     label.className = "label";
-    label.textContent = tab.label;
+    label.textContent = name;
     a.append(label);
     if (tab.href === here) a.setAttribute("aria-current", "page");
 
     const close = document.createElement("button");
     close.type = "button";
     close.innerHTML = '<svg aria-hidden="true" viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>';
-    close.setAttribute("aria-label", `Close ${tab.label}`);
+    close.setAttribute("aria-label", `Close ${name}`);
     close.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();

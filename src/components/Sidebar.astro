@@ -1,15 +1,16 @@
 ---
 /**
- * The explorer.
+ * The sidebar, as Finder draws one.
  *
- * Two levels, never three: sections, then files. A series is a labelled
- * run inside its section rather than another folder to open.
+ * Favorites, then Projects and Writing, each item by its title with its
+ * icon — a project's own app icon, a post's document. A series is a
+ * folder that discloses its files in order; coursework starts folded,
+ * because it's a syllabus and most of the list.
  *
- * Color is category, never decoration. The hues say the same things the
- * homepage says — servers are blue, web apps are green — so a dot tells
- * you what a file is: an app, a tool, part of the homelab series, or
- * coursework. Files that belong to nothing get a hollow ring. A run is
- * drawn as a line through its files in order, because the order is real.
+ * Color is category, never decoration, and it's drawn the way Finder
+ * draws a tag: a dot at the row's end. The hues say what the homepage
+ * says — servers are blue, web apps are green — so a tag tells you what
+ * an item is. Items that belong to nothing have no tag.
  *
  * The rail is pinned: who this is at the top, where else to find him at
  * the bottom, and the files scroll between them, so on a long post the
@@ -19,6 +20,7 @@ import { getAllBlogPosts, POST_SERIES, readingMinutes } from "@/lib/blog";
 import { getAllProjects, projectSlug, PROJECT_KIND } from "@/lib/projects";
 import { links } from "@/lib/links";
 import { PAGES, SITE, STATUS } from "@/data/site";
+import ProjectIcon from "@/components/ProjectIcon.astro";
 
 const posts = await getAllBlogPosts();
 const projects = await getAllProjects();
@@ -38,10 +40,10 @@ interface Row {
   title: string;
   meta: string;
   hue?: Hue;
-  /** The meta is a category word, set in the category's color. */
-  typed?: boolean;
+  /** A project's app icon; posts get a document. */
+  project?: { title: string; type?: string; icon?: string };
 }
-interface Group { run?: { label: string; hue: Hue }; rows: Row[] }
+interface Group { run?: { label: string; title: string; hue: Hue }; rows: Row[] }
 
 type ProjectEntry = (typeof projects)[number];
 type PostEntry = (typeof posts)[number];
@@ -54,7 +56,7 @@ const projectRow = (p: ProjectEntry): Row => {
     title: p.data.title,
     meta: type && type.hue !== COURSEWORK.hue ? type.label : "",
     hue: type?.hue,
-    typed: true,
+    project: { title: p.data.title, type: p.data.type, icon: p.data.icon },
   };
 };
 const postRow = (p: PostEntry, hue?: Hue): Row => ({
@@ -74,7 +76,7 @@ const coursework = projects
 const sections: { key: string; label: string; href: string; groups: Group[] }[] = [
   {
     key: "projects",
-    label: "projects",
+    label: "Projects",
     href: "/projects/",
     groups: [
       { rows: shipped.map(projectRow) },
@@ -83,7 +85,7 @@ const sections: { key: string; label: string; href: string; groups: Group[] }[] 
   },
   {
     key: "blog",
-    label: "writing",
+    label: "Writing",
     href: "/blog/",
     groups: [
       { rows: posts.filter((p) => !p.data.series).map((p) => postRow(p)) },
@@ -133,6 +135,7 @@ const socials = [
     </div>
 
     <div class="tree" data-tree>
+      <p class="sbhead">Favorites</p>
       <ul class="pages">
         {pages.map((p) => (
           <li class="row page" style={vars(p.hue)}>
@@ -144,7 +147,9 @@ const socials = [
                 {p.glyph === "bubble" && (<><path d="M3.2 3h9.6A1.7 1.7 0 0 1 14.5 4.7v5a1.7 1.7 0 0 1-1.7 1.7H7.4L4.3 13.8v-2.4H3.2A1.7 1.7 0 0 1 1.5 9.7v-5A1.7 1.7 0 0 1 3.2 3z" /></>)}
               </svg>
             </span>
-            <a href={p.href} data-nav>{p.name}</a>
+            {/* Named in lowercase everywhere they're typed; a sidebar
+                capitalizes, as Finder's "Applications" does. */}
+            <a href={p.href} data-nav>{p.name[0].toUpperCase() + p.name.slice(1)}</a>
           </li>
         ))}
       </ul>
@@ -153,33 +158,51 @@ const socials = [
         <section class="sect">
           <div class="sectlabel">
             <a href={section.href} data-nav>{section.label}</a>
-            <span class="rule" aria-hidden="true"></span>
             <span class="count" aria-hidden="true">
               {section.groups.reduce((n, g) => n + g.rows.length, 0)}
             </span>
           </div>
           <ul data-group={section.key}>
-            {section.groups.map((group) => (
+            {section.groups.map((group) => {
+              // A series is a folder. Coursework starts folded: it's a
+              // syllabus, and it's most of the list.
+              const fold = group.run && `${section.key}:${group.run.label}`;
+              const folded = group.run === COURSEWORK;
+              return (
               <>
                 {group.run && group.rows.length > 0 && (
-                  <li class="runlabel" data-run={group.run.label} style={vars(group.run.hue)} aria-hidden="true">
-                    <span>{group.run.label}</span>
+                  <li class="runlabel" data-run={group.run.label} data-fold-key={fold} data-folded={folded || undefined} style={vars(group.run.hue)}>
+                    <button type="button" class="fold" aria-expanded={folded ? "false" : "true"} data-fold-toggle>
+                      <svg class="chev" aria-hidden="true" viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
+                      <svg class="folder" aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M1.8 4.6A1.3 1.3 0 0 1 3.1 3.3h3.1l1.4 1.5h5.3a1.3 1.3 0 0 1 1.3 1.3v5.8a1.3 1.3 0 0 1-1.3 1.3H3.1a1.3 1.3 0 0 1-1.3-1.3z" /></svg>
+                      <span class="runname">{group.run.title}</span>
+                      <span class="runcount" aria-hidden="true">{group.rows.length}</span>
+                    </button>
                   </li>
                 )}
-                {group.rows.map((r, i) => (
+                {group.rows.map((r) => (
                   <li
-                    class:list={["row", "file", { plain: !r.hue, inrun: group.run, last: group.run && i === group.rows.length - 1 }]}
+                    class:list={["row", "file", { plain: !r.hue, inrun: group.run }]}
                     style={r.hue ? vars(r.hue) : undefined}
                     data-title={r.title}
                     data-run={group.run?.label}
+                    data-fold={fold}
+                    data-folded={folded || undefined}
                   >
+                    <span class="ficon" aria-hidden="true">
+                      {r.project ? (
+                        <ProjectIcon {...r.project} />
+                      ) : (
+                        <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"><path d="M4 1.8h5.2L12.5 5v8.2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2.8a1 1 0 0 1 1-1z" /><path d="M9 1.9V5.2h3.4" /><path d="M5.3 8h5.4M5.3 10.4h5.4M5.3 12.6h3.4" stroke-linecap="round" /></svg>
+                      )}
+                    </span>
+                    <a href={r.href} data-nav title={r.meta ? `${r.title} — ${r.meta}` : r.title}>{r.title}</a>
                     <span class="dot" aria-hidden="true"></span>
-                    <a href={r.href} data-nav>{r.stem}<span class="ext">.mdx</span><span class="sr-only"> — {r.title}</span></a>
-                    {r.meta && <span class:list={["rowmeta", { typed: r.typed }]} aria-hidden="true">{r.meta}</span>}
                   </li>
                 ))}
               </>
-            ))}
+              );
+            })}
           </ul>
         </section>
       ))}
@@ -200,7 +223,10 @@ const socials = [
     </div>
 
     <div class="foot">
-      <a class="resume" href={SITE.resume}>resume<span class="ext">.pdf</span></a>
+      <a class="resume" href={SITE.resume}>
+        <svg aria-hidden="true" viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"><path d="M4 1.8h5.2L12.5 5v8.2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2.8a1 1 0 0 1 1-1z" /><path d="M9 1.9V5.2h3.4" /></svg>
+        Résumé
+      </a>
       <ul class="socials">
         {socials.map((s) => (
           <li>
@@ -241,13 +267,6 @@ const socials = [
     display: flex;
     flex-direction: column;
     height: 100%;
-    /*
-     * Where a run's line is drawn: the center of the dot column. A row is
-     * inset --s-1 and padded --s-2, and the dot is 7px wide, so its center
-     * lands 15.5px in. Everything that has to line up with a dot — the
-     * line, its stub, a run's name — is keyed to this one number.
-     */
-    --run-line: 15px;
   }
 
   /* Who this is. The homepage's voice, carried onto every page. */
@@ -288,8 +307,7 @@ const socials = [
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
+    font-size: 11px;
     color: var(--c-accent);
     white-space: nowrap;
   }
@@ -331,10 +349,9 @@ const socials = [
   }
   .searchbar input {
     width: 100%;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
+    font-size: var(--t-sans-xs);
     color: var(--c-text);
-    background: var(--c-bg);
+    background: color-mix(in srgb, var(--c-text) 6%, transparent);
     border: 1px solid var(--c-hairline);
     border-radius: var(--radius-sm);
     padding: 6px 10px 6px 30px;
@@ -359,18 +376,27 @@ const socials = [
 
   ul { list-style: none; margin: 0; padding: 0; }
 
+  /*
+   * Rows, as a Finder sidebar sets them: an icon, the name in the system
+   * face at 13px, and the item's tag as a dot at the far end. The name is
+   * the title now, not a filename; the old meta — reading time, or what
+   * kind of project — is in the tooltip.
+   */
   .row {
     position: relative;
     display: flex;
     align-items: center;
     gap: var(--s-2);
-    margin-inline: var(--s-1);
-    padding-inline: var(--s-2);
+    margin-inline: var(--s-2);
+    padding-inline: 6px var(--s-2);
+    min-height: 28px;
     border-radius: var(--radius-sm);
-    line-height: 2;
     transition: background var(--dur-state) var(--ease);
   }
-  .row[hidden] { display: none; }
+  .row[hidden],
+  .row[data-folded] { display: none; }
+  /* A search looks inside folded folders too. */
+  .tree[data-searching] .row[data-folded]:not([hidden]) { display: flex; }
 
   /* The whole row is the target, not just the letters in it. */
   .row a::after { content: ""; position: absolute; inset: 0; }
@@ -378,144 +404,127 @@ const socials = [
   .row a {
     flex: 1 1 auto;
     min-width: 0;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
+    font-size: var(--t-sans-xs);
+    line-height: var(--lh-snug);
     color: var(--c-text);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    transition: color var(--dur-state) var(--ease);
   }
-  /* Every file is .mdx, so the extension steps back and the name leads. */
-  .ext { color: var(--c-dim); }
 
-  /* Pages: the top level, in sans, each with a tile the way the homepage
-     tints its words. */
-  .pages { margin-top: var(--s-1); }
-  .page { gap: var(--s-3); line-height: 2.2; }
-  .page a {
-    font-family: var(--font-sans);
-    font-size: var(--t-sans-sm);
-  }
+  /* Favorites: the top-level pages, each on its tile. */
+  .page { gap: var(--s-2); }
   .tile {
     flex: 0 0 auto;
     display: grid;
     place-items: center;
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     border-radius: var(--radius-tile);
     color: var(--h);
     background: var(--t);
   }
+  .tile svg { width: 13px; height: 13px; }
 
-  /* Section label: a rule and a count, the same rhythm as SectionHead. */
-  .sect { margin-top: var(--s-5); }
-  .sectlabel {
-    display: flex;
-    align-items: center;
-    gap: var(--s-2);
-    padding-inline: var(--s-3);
-    margin-bottom: var(--s-1);
+  /* A file's icon: the project's own app icon, or a document. */
+  .ficon {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    color: var(--c-muted);
   }
+
+  /* Headers: Finder's — small, bold, quiet, sentence case. */
+  .sbhead,
   .sectlabel a,
   .sectlabel .label {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--track-label);
-    color: var(--c-text);
-    font-weight: 500;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: var(--lh-snug);
+    color: var(--c-dim);
   }
-  .sectlabel .rule {
-    flex: 1 1 auto;
-    height: 1px;
-    background: var(--c-hairline);
+  .sbhead { padding: var(--s-1) var(--s-4) var(--s-1); }
+  .sect { margin-top: var(--s-4); }
+  .sectlabel {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-2);
+    padding: var(--s-1) var(--s-4);
   }
   .sectlabel .count {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
+    font-size: 11px;
     color: var(--c-dim);
     font-variant-numeric: tabular-nums;
+    opacity: 0.8;
   }
 
   /*
-   * The dot. 7px so it can sit on a line; hollow when the file belongs
-   * to nothing. Its center is 11.5px into the row, which is where the
-   * run's line is drawn.
+   * The tag. Color is still category — blue servers, green apps, the
+   * series' own hue — drawn the way Finder draws a tag. Files that
+   * belong to nothing have none.
    */
   .dot {
-    position: relative;
-    z-index: 1;
     flex: 0 0 auto;
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: var(--h);
+  }
+  .plain .dot { display: none; }
+
+  /* A series: a folder that discloses its files. */
+  .runlabel { margin-inline: var(--s-2); }
+  .fold {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    min-height: 28px;
+    padding-inline: 0 var(--s-2);
+    border-radius: var(--radius-sm);
+    font-size: var(--t-sans-xs);
+    color: var(--c-text);
+    text-align: left;
+    cursor: pointer;
+    transition: background var(--dur-state) var(--ease);
+  }
+  .chev {
+    flex: 0 0 auto;
+    width: 10px;
+    margin-inline-start: -4px;
+    color: var(--c-dim);
     transition: transform var(--dur-state) var(--ease);
   }
-  .plain .dot {
-    background: transparent;
-    border: 1px solid var(--c-hairline-strong);
+  .fold[aria-expanded="true"] .chev { transform: rotate(90deg); }
+  .folder { flex: 0 0 auto; color: var(--h); }
+  .runname {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
-
-  /*
-   * A run: its name in its color, and a line through its files in order.
-   *
-   * The name used to sit on a tinted plate, which made it the loudest
-   * thing in a rail of quiet filenames — a label for a group, shouting
-   * over the group. The color is enough to tie it to its line and its
-   * dots, so it's set like the section label one level up, a size down
-   * and in the run's hue rather than the text color.
-   */
-  .runlabel {
-    position: relative;
-    /* The name starts where its line runs, so it captions the line. */
-    padding: var(--s-3) var(--s-3) var(--s-1) var(--run-line);
-  }
-  .runlabel span {
-    display: inline-block;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    line-height: var(--lh-ui);
-    letter-spacing: var(--track-label);
-    color: var(--h);
-  }
-  .runlabel::after,
-  .inrun::before {
-    content: "";
-    position: absolute;
-    width: 1px;
-    background: var(--h);
-    opacity: 0.4;
-  }
-  .runlabel::after { left: var(--run-line); bottom: 0; height: var(--s-1); }
-  /* A file row is inset by --s-1, so the same column is that much nearer. */
-  .inrun::before { left: calc(var(--run-line) - var(--s-1)); top: 0; bottom: 0; }
-  .inrun.last::before { bottom: 50%; }
-  /* With rows filtered out the line would join files that aren't neighbors. */
-  .tree[data-searching] .runlabel::after,
-  .tree[data-searching] .inrun::before { display: none; }
-
-  /* A file browser shows size and date; this shows reading time, or for
-     a project, what kind of thing it is — in that kind's color. */
-  .rowmeta {
-    flex: 0 0 auto;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
+  .runcount {
+    font-size: 11px;
     color: var(--c-dim);
     font-variant-numeric: tabular-nums;
   }
-  .rowmeta.typed { color: var(--h); }
+  .runlabel[hidden] { display: none; }
+  /* Inside a folder, files sit one step in, under the folder's name. */
+  .inrun { padding-inline-start: 26px; }
 
   @media (hover: hover) {
-    .row:hover { background: var(--c-raised); }
+    .row:hover,
+    .fold:hover { background: var(--c-raised); }
     .sectlabel a:hover { color: var(--c-link); }
   }
 
+  /* The selection: Finder's tinted row, the name in the accent. */
   .row[data-active] { background: var(--c-tint-accent); }
-  .row[data-active] a,
-  .row[data-active] .ext { color: var(--c-accent); font-weight: 500; }
-  .row[data-active] .dot { transform: scale(1.4); }
-  .row[data-active] .rowmeta { color: var(--c-accent); }
+  .row[data-active] a { color: var(--c-accent); font-weight: 600; }
 
   /*
    * A hit in a file's text: the file, set like its row above, then the
@@ -544,8 +553,8 @@ const socials = [
   .hits :global(.hit .dot[data-plain]) { background: transparent; border: 1px solid var(--c-hairline-strong); }
   .hits :global(.hit .file) {
     min-width: 0;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
+    font-size: var(--t-sans-xs);
+    font-weight: 600;
     line-height: var(--lh-ui);
     white-space: nowrap;
     overflow: hidden;
@@ -573,8 +582,7 @@ const socials = [
 
   .empty {
     padding: var(--s-3) var(--s-4);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
+    font-size: var(--t-sans-xs);
     color: var(--c-dim);
   }
 
@@ -589,8 +597,10 @@ const socials = [
     border-top: 1px solid var(--c-hairline);
   }
   .resume {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--t-sans-xs);
     color: var(--c-text);
     padding: 4px var(--s-2);
     margin-inline-start: calc(var(--s-2) * -1 + var(--s-1));
@@ -650,6 +660,7 @@ const socials = [
     .searchbar input { font-size: 16px; padding: 10px 12px 10px 32px; }
     .row { line-height: var(--lh-snug); min-height: 46px; }
     .row a { display: flex; align-items: center; min-height: 46px; }
+    .fold { min-height: 46px; }
     .socials a { width: 44px; height: 44px; }
     .resume { padding-block: 12px; }
   }

@@ -8,7 +8,7 @@ import { ClientRouter } from "astro:transitions";
 import Titlebar from "@/components/Titlebar.astro";
 import Tabs from "@/components/Tabs.astro";
 import Sidebar from "@/components/Sidebar.astro";
-import StatusBar from "@/components/StatusBar.astro";
+import MenuBar from "@/components/MenuBar.astro";
 import Explore from "@/components/Explore.astro";
 import JsonLd from "@/components/JsonLd.astro";
 import { SITE } from "@/data/site";
@@ -120,6 +120,8 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
   <body>
     <a href="#main-content" class="skip">Skip to main content</a>
 
+    <MenuBar />
+
     <div class="window">
       <Titlebar />
       <Tabs />
@@ -131,7 +133,6 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
         </main>
         <div class="scrim" hidden data-scrim></div>
       </div>
-      <StatusBar />
     </div>
 
     <script>
@@ -140,6 +141,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
       import "@/scripts/sidebar";
       import "@/scripts/tabs";
       import "@/scripts/window";
+      import "@/scripts/menubar";
       import "@/scripts/clock";
       import "@/scripts/peek";
       import "@/scripts/photos";
@@ -167,7 +169,10 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
    * no side gutter at all until max-width binds, so the window went
    * edge-to-edge everywhere between 640px and 1168px.
    */
-  body { padding: var(--s-5); }
+  body { padding: 0 var(--s-5) var(--s-5); }
+
+  /* The menu bar runs the desktop's full width, over the gutter. */
+  .menubar { margin: 0 calc(var(--s-5) * -1) var(--s-5); }
 
   /*
    * The desktop the window sits on. Without it the window and the page
@@ -193,7 +198,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
    */
   @media screen and (min-width: 641px) {
     html, body { height: 100%; overflow: hidden; }
-    .window { height: calc(100dvh - var(--s-5) * 2); }
+    .window { height: calc(100dvh - var(--h-menubar) - var(--s-5) * 2); }
     .pane {
       overflow-y: auto;
       overscroll-behavior-y: none;
@@ -211,7 +216,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     display: flex;
     flex-direction: column;
     max-width: var(--w-content);
-    min-height: calc(100vh - var(--s-5) * 2);
+    min-height: calc(100vh - var(--h-menubar) - var(--s-5) * 2);
     margin-inline: auto;
     /* Clear, so the chrome's glass shows the wallpaper; the pane brings
        its own paper. */

@@ -35,6 +35,10 @@ function apply(mode: Mode) {
       mode === "system" ? "Theme: follow system" : `Theme: ${mode}`
     );
   }
+  // The menu bar's View › Appearance items, checked like radio items.
+  for (const item of document.querySelectorAll<HTMLElement>("[data-theme-set]")) {
+    item.setAttribute("aria-pressed", String(item.dataset.themeSet === mode));
+  }
   requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove("theming")));
 }
 
@@ -57,6 +61,12 @@ function wire() {
     if (btn.dataset.wired) continue;
     btn.dataset.wired = "1";
     btn.addEventListener("click", () => apply(NEXT[read()]));
+  }
+  for (const item of document.querySelectorAll<HTMLButtonElement>("[data-theme-set]")) {
+    if (item.dataset.wired) continue;
+    item.dataset.wired = "1";
+    const mode = item.dataset.themeSet as Mode;
+    item.addEventListener("click", () => apply(mode));
   }
   apply(read());
 }

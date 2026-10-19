@@ -320,8 +320,8 @@
   --radius-tile:    27%;
 
   --h-titlebar:  40px;
-  --h-statusbar: 28px;
-  --w-sidebar:   340px;  /* fits the longest filename beside its reading time: self-hosting-with-tailscale.mdx  25 min */
+  --h-menubar:   28px;
+  --w-sidebar:   300px;  /* a Finder sidebar: titles past ~36 characters ellipsize, and the tooltip has the rest */
   --w-content:  1280px;
 }
 

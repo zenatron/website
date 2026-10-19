@@ -86,7 +86,7 @@ const config: Config = {
       },
       height: {
         titlebar: "var(--h-titlebar)",
-        statusbar: "var(--h-statusbar)",
+        menubar: "var(--h-menubar)",
       },
       width: { sidebar: "var(--w-sidebar)" },
       lineHeight: {

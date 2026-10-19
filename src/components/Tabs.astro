@@ -98,11 +98,10 @@
     align-items: center;
     gap: 7px;
     min-width: 0;
-    max-width: 24ch;
+    max-width: 28ch;
     height: 100%;
     padding: 0 var(--s-2) 0 var(--s-3);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
+    font-size: var(--t-sans-xs);
     line-height: 1;
     color: var(--c-muted);
     white-space: nowrap;
@@ -128,6 +127,15 @@
     background: var(--t);
   }
   .tabs :global(.ticon svg) { width: 11px; height: 11px; }
+  .tabs :global(.ficon) {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    color: var(--c-muted);
+  }
+  .tabs :global(.ficon svg) { width: 14px; height: 14px; }
   .tabs :global(.dot) {
     flex: 0 0 auto;
     width: 7px;
@@ -142,7 +150,8 @@
   }
   .tabs :global(.mark) { flex: 0 0 auto; border-radius: var(--radius-tile); }
   .tabs :global(li:not([data-active]) .mark),
-  .tabs :global(li:not([data-active]) .ticon) { opacity: 0.85; }
+  .tabs :global(li:not([data-active]) .ticon),
+  .tabs :global(li:not([data-active]) .ficon) { opacity: 0.85; }
 
   /* Close: on the open tab, and on any tab you point at. */
   .tabs :global(li button) {

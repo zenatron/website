@@ -139,6 +139,15 @@ import ThemeToggle from "@/components/ThemeToggle.astro";
     background: var(--t);
   }
   .proxy :global(.ptile svg) { width: 11px; height: 11px; }
+  /* A file's icon from the sidebar: its app icon, or a document. */
+  .proxy :global(.pfile) {
+    display: grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    color: var(--c-muted);
+  }
+  .proxy :global(.pfile svg) { width: 15px; height: 15px; }
   /* A file's dot from the explorer. */
   .proxy :global(.pdot) {
     width: 8px;

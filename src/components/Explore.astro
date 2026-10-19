@@ -8,7 +8,7 @@
  * Wide screens don't get it: the explorer is always there, listing the
  * same places.
  */
-import { PAGES } from "@/data/site";
+import { COPYRIGHT, PAGES } from "@/data/site";
 import { FAVORITES } from "@/data/favorites";
 import { getAllProjects } from "@/lib/projects";
 import { getAllBlogPosts } from "@/lib/blog";
@@ -37,8 +37,8 @@ const vars = (hue?: string) =>
 ---
 
 <nav class="explore" aria-label="Keep exploring">
-  <p class="label">keep exploring</p>
-  <ul>
+  <p class="glabel">Keep exploring</p>
+  <ul class="glist">
     {shown.map((p) => (
       <li>
         <a href={p.href} style={vars(p.hue)}>
@@ -53,13 +53,15 @@ const vars = (hue?: string) =>
               {p.glyph === "pen" && (<><path d="M10.6 2.9a1.5 1.5 0 0 1 2.1 2.1L6 11.7l-2.9.8.8-2.9z" /><path d="M9.4 4.1l2.1 2.1" /></>)}
             </svg>
           </span>
-          <span class="name">{p.name}</span>
+          <span class="name">{p.name[0].toUpperCase() + p.name.slice(1)}</span>
           <span class="blurb">{p.blurb}</span>
-          <svg class="go" aria-hidden="true" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
+          <svg class="go glist-go" aria-hidden="true" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
         </a>
       </li>
     ))}
   </ul>
+  {/* Phones have no menu bar, so the colophon it keeps lands here. */}
+  <p class="colophon">{COPYRIGHT} · v{__APP_VERSION__}</p>
 </nav>
 
 <style>
@@ -72,26 +74,9 @@ const vars = (hue?: string) =>
     }
   }
 
-  .label {
-    margin: 0 0 var(--s-2);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--track-label);
-    color: var(--c-dim);
-  }
-
-  /* Set as the explorer sets its pages: a tinted tile, the name, and here
-     a line on what's there. */
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    background: var(--c-chrome);
-    border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-card);
-    overflow: hidden;
-  }
-  li + li { border-top: 1px solid var(--c-hairline); }
+  /* Set as the sidebar sets its favorites: a tinted tile, the name, and
+     here a line on what's there. */
+  .glist { --glist-inset: calc(var(--s-4) + 32px + var(--s-3)); }
   a {
     display: grid;
     grid-template-columns: 32px minmax(0, 1fr) 14px;
@@ -100,10 +85,7 @@ const vars = (hue?: string) =>
     column-gap: var(--s-3);
     row-gap: 1px;
     min-height: 60px;
-    padding: var(--s-3) var(--s-4);
-    color: inherit;
     text-decoration: none;
-    transition: background var(--dur-state) var(--ease);
   }
   .tile {
     grid-row: 1 / span 2;
@@ -125,8 +107,17 @@ const vars = (hue?: string) =>
   .go {
     grid-column: 3;
     grid-row: 1 / span 2;
-    color: var(--c-dim);
   }
   a:active { background: var(--c-raised); }
-  a:focus-visible { outline-offset: -2px; }
+
+  .colophon {
+    display: none;
+    margin-top: var(--s-5);
+    font-size: var(--t-sans-xs);
+    color: var(--c-dim);
+    text-align: center;
+  }
+  @media (max-width: 640px) {
+    .colophon { display: block; }
+  }
 </style>
