@@ -131,7 +131,7 @@ const suggested = await Promise.all((await getSuggestedProjects(slug, 2)).map(as
     </header>
 
     {banner && (
-      <figure class="banner"><CardArt art={banner} slug={slug} hue={kind?.hue} /></figure>
+      <figure class="banner"><CardArt art={banner} slug={slug} hue={projectHue(entry)} /></figure>
     )}
 
     <div class="layout">

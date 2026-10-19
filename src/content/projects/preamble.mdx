@@ -6,11 +6,14 @@ slug: "preamble"
 date: "2026-07-27"
 tags: ["Rust", "TUI", "ratatui", "SQLite", "audio"]
 featured: true
+hue: "teal"
+thumbnail: "/images/projects/preamble/banner.webp"
 icon: "/images/projects/preamble/icon.png"
 github: "https://github.com/zenatron/preamble"
 ---
 
 import TerminalFrame from '@/components/mdx/TerminalFrame.astro';
+import TermShots from '@/components/mdx/TermShots.astro';
 import Callout from '@/components/mdx/Callout.astro';
 
 A terminal music-library manager written in Rust. It walks a directory tree,
@@ -21,6 +24,14 @@ enriching, editing, and curating a collection.
 This is the one I actually use. My library had accumulated a decade of
 duplicates, half-tagged rips, and files that decoded to silence — and no GUI
 tool would tell me which was which without a lot of clicking.
+
+<TermShots shots={[
+  { src: "/images/projects/preamble/library.webp", alt: "The Library tab: tracks sorted by artist, three selected, one with a decode error", caption: "library" },
+  { src: "/images/projects/preamble/duplicates.webp", alt: "A duplicate group compared tag by tag, with the suggested keeper starred", caption: "duplicates" },
+  { src: "/images/projects/preamble/properties.webp", alt: "The properties panel showing every stored tag for one track", caption: "properties" },
+  { src: "/images/projects/preamble/grouped.webp", alt: "The library grouped by artist with track counts, sizes and runtimes", caption: "grouped by artist" },
+  { src: "/images/projects/preamble/stats.webp", alt: "The statistics screen: totals, formats, decades, top artists and health", caption: "stats" },
+]} />
 
 <TerminalFrame title="preamble --help">
 ```

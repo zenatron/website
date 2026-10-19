@@ -29,6 +29,8 @@ const projects = defineCollection({
     thumbnail: z.string().optional(),
     /** The project's own app icon, a squircle; replaces the lettered one. */
     icon: z.string().optional(),
+    /** Card tint, when the kind's color doesn't suit the project; see projectHue. */
+    hue: z.enum(["violet", "orange", "blue", "green", "ember", "rose", "teal"]).optional(),
     image: z.string().optional(),
     images: z.array(z.string()).optional(),
     video: z.string().optional(),

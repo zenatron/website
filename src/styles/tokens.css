@@ -33,6 +33,12 @@
   --c-hue-blue:   #24688F;
   --c-hue-green:  #397430;
 
+  /* Featured projects' own colors, taken from their icons. Cards use them
+     in place of the kind's hue; the kind label keeps its own. */
+  --c-hue-ember:  #A8452A;
+  --c-hue-rose:   #A93A72;
+  --c-hue-teal:   #1C6F7A;
+
   /* Soft tints behind highlighted words and pills */
   --c-tint-accent: #FBF0D8;
   --c-tint-link:   #DCF0E6;
@@ -40,6 +46,9 @@
   --c-tint-orange: #FCE8DA;
   --c-tint-blue:   #DDECF6;
   --c-tint-green:  #E4F2DE;
+  --c-tint-ember:  #F7E5DA;
+  --c-tint-rose:   #F8E3EE;
+  --c-tint-teal:   #DDEFF1;
 
   --c-tile-dark:    #24211C;
   --c-tile-light:   #FDFCF9;  /* an app icon's plate: the same in both themes */
@@ -79,6 +88,9 @@
   --c-hue-orange: #FFA06B;
   --c-hue-blue:   #7FBDE8;
   --c-hue-green:  #9BD68A;
+  --c-hue-ember:  #F2906D;
+  --c-hue-rose:   #F493C2;
+  --c-hue-teal:   #7AD4DD;
 
   --c-tint-accent: #3A2E19;
   --c-tint-link:   #17352C;
@@ -86,6 +98,9 @@
   --c-tint-orange: #3A2418;
   --c-tint-blue:   #162A38;
   --c-tint-green:  #1E2E18;
+  --c-tint-ember:  #34221A;
+  --c-tint-rose:   #35202F;
+  --c-tint-teal:   #142A2D;
 
   --c-tile-dark:    #24211C;
   --c-tile-light:   #FDFCF9;
@@ -126,6 +141,9 @@
     --c-hue-orange: #FFA06B;
     --c-hue-blue:   #7FBDE8;
     --c-hue-green:  #9BD68A;
+    --c-hue-ember:  #F2906D;
+    --c-hue-rose:   #F493C2;
+    --c-hue-teal:   #7AD4DD;
 
     --c-tint-accent: #3A2E19;
     --c-tint-link:   #17352C;
@@ -133,6 +151,9 @@
     --c-tint-orange: #3A2418;
     --c-tint-blue:   #162A38;
     --c-tint-green:  #1E2E18;
+    --c-tint-ember:  #34221A;
+    --c-tint-rose:   #35202F;
+    --c-tint-teal:   #142A2D;
 
     --c-tile-dark:    #24211C;
     --c-tile-light:   #FDFCF9;

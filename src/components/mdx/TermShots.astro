@@ -1,0 +1,61 @@
+---
+/**
+ * Terminal screenshots: Screens' landscape sibling. A TUI's screens are
+ * wide windows, so the first is shown at full width and the rest pair up
+ * under it, each with the same mono caption Screens uses. On a narrow
+ * column they stack.
+ */
+interface Shot { src: string; alt: string; caption?: string; }
+interface Props { shots: Shot[]; width?: number; height?: number; }
+const { shots, width = 1800, height = 1192 } = Astro.props;
+---
+<div class="termshots">
+  <ul aria-label="Screenshots">
+    {shots.map((s) => (
+      <li>
+        <img src={s.src} alt={s.alt} width={width} height={height} loading="lazy" decoding="async" />
+        {s.caption && <span class="cap">{s.caption}</span>}
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .termshots {
+    margin-block: var(--s-6);
+    width: min(100%, 1000px);
+    container-type: inline-size;
+  }
+  /* .termshots-qualified for the same reason as Screens: prose list rules. */
+  .termshots ul {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-5) var(--s-4);
+    margin: 0;
+    padding: 0;
+  }
+  .termshots li {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+  }
+  .termshots li:first-child { grid-column: 1 / -1; }
+  @container (max-width: 560px) {
+    .termshots ul { grid-template-columns: minmax(0, 1fr); }
+  }
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-card);
+    /* The window frame is in the image; this only keeps it off a dark page. */
+    box-shadow: 0 0 0 1px var(--c-hairline);
+    background: #141113;
+  }
+  .cap {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--c-muted);
+  }
+</style>

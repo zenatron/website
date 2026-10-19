@@ -5,6 +5,9 @@ export type ProjectEntry = CollectionEntry<"projects">;
 
 export type KindHue = "violet" | "orange" | "blue" | "green";
 
+/** A project's own color: a kind hue, or one of the featured projects'. */
+export type ProjectHue = KindHue | "ember" | "rose" | "teal";
+
 /**
  * What a project's `type` means on screen: a word and a color. The
  * colors are the homepage's — web apps are green — and they're the same
@@ -58,7 +61,12 @@ export async function getSuggestedProjects(currentSlug: string, count = 3) {
     .map((s) => s.project);
 }
 
-/** A project's color, from its kind — the explorer's dot, the card's tint. */
-export function projectHue(entry: ProjectEntry): KindHue | undefined {
-  return PROJECT_KIND[entry.data.type]?.hue;
+/**
+ * A project's color — the card's tint and the banner's mat. A project can
+ * name its own (frontmatter `hue`, usually taken from its icon); otherwise
+ * it's its kind's. The kind label and the explorer's dot always use the
+ * kind's color, since there the color means "app" or "tool".
+ */
+export function projectHue(entry: ProjectEntry): ProjectHue | undefined {
+  return entry.data.hue ?? PROJECT_KIND[entry.data.type]?.hue;
 }
