@@ -81,19 +81,19 @@ function syncActive() {
  * is focused, and never under `astro dev`, where there's no index — the
  * filename filter above works the same either way.
  */
-interface PagefindHit {
+export interface PagefindHit {
   url: string;
   excerpt: string;
   meta: { title?: string };
   sub_results?: { title: string; url: string; excerpt: string; locations?: number[] }[];
 }
-interface Pagefind {
+export interface Pagefind {
   options(o: object): Promise<void>;
   init(): Promise<void>;
   debouncedSearch(q: string, o?: object, ms?: number): Promise<{ results: { data(): Promise<PagefindHit> }[] } | null>;
 }
 let pagefind: Promise<Pagefind | null> | null = null;
-function loadPagefind(): Promise<Pagefind | null> {
+export function loadPagefind(): Promise<Pagefind | null> {
   if (import.meta.env.DEV) return Promise.resolve(null);
   pagefind ??= (async () => {
     try {

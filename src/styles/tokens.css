@@ -201,6 +201,7 @@
   --icon-orange-hi:   #FFB15C;  --icon-orange-lo:   #EA6A16;
   --icon-blue-hi:     #5CC2FF;  --icon-blue-lo:     #1F78E0;
   --icon-green-hi:    #6EDC85;  --icon-green-lo:    #229A48;
+  --icon-yellow-hi:   #FFE07A;  --icon-yellow-lo:   #F0A800;
   --icon-graphite-hi: #8E8A84;  --icon-graphite-lo: #4A4741;
   --icon-glyph:        #FFFFFF;
   --icon-glyph-shadow: rgba(0, 0, 0, 0.22);
@@ -213,11 +214,41 @@
 */
 :root {
   --wallpaper:
+    var(--sky),
     radial-gradient(55% 60% at 0% 0%, var(--c-tint-accent), transparent 70%),
     radial-gradient(45% 55% at 100% 12%, var(--c-tint-blue), transparent 70%),
     radial-gradient(60% 60% at 85% 100%, var(--c-tint-violet), transparent 70%),
     radial-gradient(45% 50% at 8% 100%, var(--c-tint-green), transparent 70%),
     var(--c-wallpaper);
+}
+
+/*
+   A dynamic desktop: the light over the wallpaper follows the hour in
+   Hartford, as a macOS dynamic wallpaper follows the sun — a low pink
+   glow at dawn, a pale sun high on the right by day, a burnt-orange
+   horizon under a violet sky at dusk, and a deep blue night settling
+   from the top. Set on <html> before first paint by Shell, and kept
+   current by the menu bar clock. Layered over the tints, so it works in
+   either theme.
+*/
+:root { --sky: linear-gradient(transparent, transparent); }
+html[data-daypart="dawn"] {
+  --sky:
+    radial-gradient(90% 55% at 30% 105%, rgba(255, 150, 125, 0.32), transparent 70%),
+    radial-gradient(70% 50% at 80% 0%, rgba(180, 170, 255, 0.16), transparent 70%);
+}
+html[data-daypart="day"] {
+  --sky: radial-gradient(55% 45% at 88% -5%, rgba(255, 238, 190, 0.38), transparent 70%);
+}
+html[data-daypart="dusk"] {
+  --sky:
+    radial-gradient(110% 55% at 65% 108%, rgba(255, 120, 60, 0.34), transparent 70%),
+    radial-gradient(80% 60% at 10% -5%, rgba(120, 80, 220, 0.22), transparent 70%);
+}
+html[data-daypart="night"] {
+  --sky:
+    radial-gradient(130% 80% at 50% -10%, rgba(25, 35, 95, 0.4), transparent 75%),
+    radial-gradient(40% 30% at 85% 8%, rgba(200, 210, 255, 0.1), transparent 70%);
 }
 
 /*
@@ -338,6 +369,8 @@
 
   --h-titlebar:  40px;
   --h-menubar:   28px;
+  --dock-icon:   44px;
+  --h-dock:      58px;
   --w-sidebar:   300px;  /* a Finder sidebar: titles past ~36 characters ellipsize, and the tooltip has the rest */
   --w-content:  1280px;
 }

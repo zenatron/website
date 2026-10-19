@@ -12,7 +12,7 @@
  * Fills its parent; the parent decides the size.
  */
 export type PageGlyph = "home" | "person" | "dock" | "camera" | "bubble" | "folder" | "pen";
-export type PageHue = "violet" | "orange" | "blue" | "green" | "graphite";
+export type PageHue = "violet" | "orange" | "blue" | "green" | "yellow" | "graphite";
 
 interface Props { glyph: PageGlyph; hue?: PageHue }
 const { glyph, hue = "graphite" } = Astro.props;

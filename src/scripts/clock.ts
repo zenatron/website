@@ -16,6 +16,11 @@ function render() {
   const day = now.toLocaleDateString("en-US", { ...opts, weekday: "short", month: "short", day: "numeric" });
   const time = now.toLocaleTimeString("en-US", { ...opts, hour: "numeric", minute: "2-digit" });
   el.textContent = `${SITE.city} · ${day.replace(",", "")} ${time}`;
+
+  // The dynamic wallpaper turns with the clock.
+  const h = Number(now.toLocaleTimeString("en-US", { ...opts, hour: "numeric", hourCycle: "h23" }));
+  const part = h >= 5 && h < 8 ? "dawn" : h >= 8 && h < 17 ? "day" : h >= 17 && h < 20 ? "dusk" : "night";
+  if (document.documentElement.dataset.daypart !== part) document.documentElement.dataset.daypart = part;
 }
 
 // Hydrate after paint; never block render.

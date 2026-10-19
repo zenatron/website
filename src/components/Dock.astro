@@ -1,0 +1,175 @@
+---
+/**
+ * The Dock, under the window, the way it sits under every window on a Mac.
+ *
+ * The site's places are its apps: each one is the same PageIcon the
+ * sidebar's Favorites wear. After the divider, what macOS keeps on that
+ * side — a document (the résumé) and a link out (GitHub).
+ *
+ * It behaves like the real one: the icons swell as the pointer passes
+ * along the shelf, an app you've opened in a tab has a dot under it, the
+ * one you're in has a brighter dot, and a click bounces the icon as it
+ * "launches". scripts/dock.ts does all three; without JS it's a row of
+ * links. The page called /dock/ is a desk of icons, which this isn't —
+ * this is navigation.
+ *
+ * Shown where there's a mouse and room for it; not on phones, whose
+ * screen is the window.
+ */
+import PageIcon, { type PageGlyph, type PageHue } from "@/components/PageIcon.astro";
+import AppIcon from "@/components/AppIcon.astro";
+import FileIcon from "@/components/FileIcon.astro";
+import { PAGES, SITE } from "@/data/site";
+
+const page = (href: string) => PAGES.find((p) => p.href === href)!;
+const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
+
+const apps: { name: string; href: string; glyph: PageGlyph; hue: PageHue }[] = [
+  { name: "Home", href: "/", glyph: "home", hue: "graphite" },
+  { name: "Projects", href: "/projects/", glyph: "folder", hue: "blue" },
+  { name: "Writing", href: "/blog/", glyph: "pen", hue: "yellow" },
+  ...["/about/", "/photos/", "/dock/", "/say-hi/"].map((href) => {
+    const p = page(href);
+    return { name: cap(p.name), href, glyph: p.glyph, hue: p.hue };
+  }),
+];
+---
+
+<nav class="dock" aria-label="Dock" transition:persist="dock" data-dock>
+  <ul class="shelf" data-dock-shelf>
+    {apps.map((a) => (
+      <li class="item" data-dock-item data-href={a.href}>
+        <a class="glint-host" href={a.href} aria-label={a.name}>
+          <span class="icon"><PageIcon glyph={a.glyph} hue={a.hue} /></span>
+        </a>
+        <span class="tip" aria-hidden="true">{a.name}</span>
+        <span class="run" aria-hidden="true"></span>
+      </li>
+    ))}
+    <li class="sep" aria-hidden="true"></li>
+    <li class="item" data-dock-item>
+      <a class="glint-host" href={SITE.resume} aria-label="Résumé (PDF)">
+        <span class="icon"><FileIcon form="doc" glyph="resume" ext="pdf" ink="red" /></span>
+      </a>
+      <span class="tip" aria-hidden="true">Résumé</span>
+    </li>
+    <li class="item" data-dock-item>
+      <a class="glint-host" href={SITE.github} rel="me noopener noreferrer" aria-label="GitHub">
+        <span class="icon"><AppIcon item={{ logo: "github.svg" }} lazy={false} /></span>
+      </a>
+      <span class="tip" aria-hidden="true">GitHub</span>
+    </li>
+  </ul>
+</nav>
+
+<style>
+  .dock {
+    display: none;
+    position: relative;
+    z-index: 3;
+    justify-content: center;
+    margin-top: var(--s-3);
+    pointer-events: none;
+  }
+
+  /*
+   * The shelf is a fixed height; icons grow up and out of it, which is
+   * what makes the swell read as the real thing rather than a resize.
+   */
+  .shelf {
+    pointer-events: auto;
+    list-style: none;
+    margin: 0;
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: var(--h-dock);
+    padding: 0 7px 6px;
+    background: var(--c-chrome-glass);
+    -webkit-backdrop-filter: blur(24px) saturate(1.8);
+    backdrop-filter: blur(24px) saturate(1.8);
+    border: 1px solid var(--c-hairline-strong);
+    border-radius: 18px;
+    box-shadow: var(--shadow-popover);
+  }
+
+  .item {
+    --m: 1;
+    position: relative;
+    flex: 0 0 auto;
+    width: calc(var(--dock-icon) * var(--m));
+    height: calc(var(--dock-icon) * var(--m));
+    transition: width 160ms var(--ease), height 160ms var(--ease);
+  }
+  /* While the pointer is on the shelf, size follows it frame by frame. */
+  .shelf[data-tracking] .item { transition: none; }
+
+  .item a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 22.5%;
+  }
+  .item a:focus-visible { outline-offset: 3px; }
+  .icon { display: block; width: 100%; height: 100%; }
+  .icon :global(.fileicon) { width: 100%; height: 100%; }
+
+  /* The name, in the dark label macOS floats over a Dock icon. */
+  .tip {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 10px);
+    translate: -50% 4px;
+    padding: 3px 10px;
+    border-radius: var(--radius-chip);
+    background: rgba(30, 28, 25, 0.88);
+    color: #F4F1EA;
+    font-size: var(--t-sans-xs);
+    line-height: 1.4;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-state) var(--ease), translate var(--dur-state) var(--ease);
+  }
+  .item:hover .tip,
+  .item:focus-within .tip { opacity: 1; translate: -50% 0; }
+
+  /* Open in a tab: a dot under it. The one you're in: a brighter dot. */
+  .run {
+    position: absolute;
+    left: 50%;
+    bottom: -5px;
+    width: 4px;
+    height: 4px;
+    margin-left: -2px;
+    border-radius: 50%;
+    background: var(--c-muted);
+    opacity: 0;
+    transition: opacity var(--dur-state) var(--ease);
+  }
+  .item[data-running] .run { opacity: 0.7; }
+  .item[data-current] .run { opacity: 1; background: var(--c-text); }
+
+  .sep {
+    align-self: stretch;
+    width: 1px;
+    margin: 8px 5px 2px;
+    background: var(--c-hairline-strong);
+  }
+
+  /* Launching: two bounces, the second smaller, as the real one does. */
+  @media (prefers-reduced-motion: no-preference) {
+    .item[data-bounce] a { animation: dock-bounce 700ms cubic-bezier(.3, 0, .3, 1); }
+  }
+  @keyframes dock-bounce {
+    0%, 100% { transform: translateY(0); }
+    25%      { transform: translateY(-38%); }
+    50%      { transform: translateY(0); }
+    70%      { transform: translateY(-16%); }
+    85%      { transform: translateY(0); }
+  }
+
+  @media screen and (min-width: 641px) and (min-height: 600px) {
+    .dock { display: flex; }
+  }
+</style>

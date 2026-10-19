@@ -26,6 +26,8 @@ function write(tabs: Tab[]) {
   } catch {
     /* private browsing — tabs just won't persist */
   }
+  // The Dock puts a dot under every app with a tab open.
+  document.dispatchEvent(new CustomEvent("tabs:change"));
 }
 
 /** The sidebar's row for a path, if it has one. */

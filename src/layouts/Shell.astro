@@ -9,6 +9,8 @@ import Titlebar from "@/components/Titlebar.astro";
 import Tabs from "@/components/Tabs.astro";
 import Sidebar from "@/components/Sidebar.astro";
 import MenuBar from "@/components/MenuBar.astro";
+import Dock from "@/components/Dock.astro";
+import Spotlight from "@/components/Spotlight.astro";
 import Explore from "@/components/Explore.astro";
 import JsonLd from "@/components/JsonLd.astro";
 import { SITE } from "@/data/site";
@@ -113,6 +115,19 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
         document.addEventListener("astro:after-swap", restore);
       })();
     </script>
+    <script is:inline define:vars={{ tz: SITE.timezone }}>
+      // The wallpaper's time of day, in the author's time zone, before
+      // first paint and again after every swap (which replaces <html>'s
+      // attributes). scripts/clock.ts keeps it current after that.
+      (function () {
+        function daypart() {
+          var h = Number(new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", hourCycle: "h23" }).format(new Date()));
+          document.documentElement.dataset.daypart = h >= 5 && h < 8 ? "dawn" : h >= 8 && h < 17 ? "day" : h >= 17 && h < 20 ? "dusk" : "night";
+        }
+        daypart();
+        document.addEventListener("astro:after-swap", daypart);
+      })();
+    </script>
     <ClientRouter />
     {schema && <JsonLd schema={schema} />}
   </head>
@@ -135,6 +150,9 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
       </div>
     </div>
 
+    <Dock />
+    <Spotlight />
+
     <script>
       import "@/scripts/theme";
       import "@/scripts/shell";
@@ -142,6 +160,8 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
       import "@/scripts/tabs";
       import "@/scripts/window";
       import "@/scripts/menubar";
+      import "@/scripts/dock";
+      import "@/scripts/spotlight";
       import "@/scripts/clock";
       import "@/scripts/peek";
       import "@/scripts/photos";
@@ -169,7 +189,17 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
    * no side gutter at all until max-width binds, so the window went
    * edge-to-edge everywhere between 640px and 1168px.
    */
-  body { padding: 0 var(--s-5) var(--s-5); }
+  /* What sits under the window: the gutter, or the Dock and its gaps. */
+  body {
+    --below: var(--s-5);
+    padding: 0 var(--s-5) var(--s-5);
+  }
+  @media screen and (min-width: 641px) and (min-height: 600px) {
+    body {
+      --below: calc(var(--s-3) * 2 + var(--h-dock));
+      padding-bottom: var(--s-3);
+    }
+  }
 
   /* The menu bar runs the desktop's full width, over the gutter. */
   .menubar { margin: 0 calc(var(--s-5) * -1) var(--s-5); }
@@ -198,7 +228,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
    */
   @media screen and (min-width: 641px) {
     html, body { height: 100%; overflow: hidden; }
-    .window { height: calc(100dvh - var(--h-menubar) - var(--s-5) * 2); }
+    .window { height: calc(100dvh - var(--h-menubar) - var(--s-5) - var(--below)); }
     .pane {
       overflow-y: auto;
       overscroll-behavior-y: none;
@@ -216,7 +246,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     display: flex;
     flex-direction: column;
     max-width: var(--w-content);
-    min-height: calc(100vh - var(--h-menubar) - var(--s-5) * 2);
+    min-height: calc(100vh - var(--h-menubar) - var(--s-5) - var(--below));
     margin-inline: auto;
     /* Clear, so the chrome's glass shows the wallpaper; the pane brings
        its own paper. */
