@@ -190,6 +190,23 @@
 }
 
 /*
+   A page's app icon: a saturated plate, lighter at the top where the
+   light falls, under a white glyph — the way System Settings, Photos and
+   Messages are drawn. Objects, not page, so the same in both themes; the
+   hues are the palette's, turned up to icon strength. Graphite is for
+   the places that have no hue of their own (home, the indexes).
+*/
+:root {
+  --icon-violet-hi:   #A68CFF;  --icon-violet-lo:   #6142D6;
+  --icon-orange-hi:   #FFB15C;  --icon-orange-lo:   #EA6A16;
+  --icon-blue-hi:     #5CC2FF;  --icon-blue-lo:     #1F78E0;
+  --icon-green-hi:    #6EDC85;  --icon-green-lo:    #229A48;
+  --icon-graphite-hi: #8E8A84;  --icon-graphite-lo: #4A4741;
+  --icon-glyph:        #FFFFFF;
+  --icon-glyph-shadow: rgba(0, 0, 0, 0.22);
+}
+
+/*
    The desktop behind the window: the base, with the palette's tints
    blooming in from the corners. The tints swap with the theme, so the
    wallpaper does too.

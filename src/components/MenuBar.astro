@@ -35,8 +35,8 @@ const go = [
 <header class="menubar" transition:persist="menubar" data-menubar>
   <nav class="menus" aria-label="Menu bar">
     <details class="menu" data-menu>
-      <summary class="logo" aria-label="About this site">
-        <img src="/favicon.svg" alt="" width="15" height="15" />
+      <summary class="logo glint-host" aria-label="About this site">
+        <span class="glass" data-glint-only><img src="/favicon.svg" alt="" width="15" height="15" /></span>
       </summary>
       <div class="drop">
         <a href="/about/" data-nav>About {SITE.name}</a>
@@ -141,7 +141,8 @@ const go = [
   }
   summary::-webkit-details-marker { display: none; }
   .app { font-weight: 700; }
-  .logo img { width: 15px; height: 15px; border-radius: var(--radius-tile); }
+  .logo .glass { width: 15px; height: 15px; }
+  .logo img { width: 100%; height: 100%; }
   .menu[open] > summary,
   summary:focus-visible { background: var(--c-raised); outline: none; }
   @media (hover: hover) {

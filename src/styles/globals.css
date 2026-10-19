@@ -4,6 +4,7 @@
 @import "./peek.css";
 @import "./window.css";
 @import "./list.css";
+@import "./glass.css";
 
 @tailwind base;
 @tailwind components;

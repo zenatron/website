@@ -17,7 +17,7 @@ const chart = type === "data";
 const letter = Array.from(title.trim())[0] ?? "?";
 const style = kind ? `--h: var(--c-hue-${kind.hue}); --t: var(--c-tint-${kind.hue})` : undefined;
 ---
-<span class:list={["picon", { plain: !kind }]} style={style} aria-hidden="true">
+<span class:list={["picon", "glass", { plain: !kind }]} style={style} aria-hidden="true">
   {icon ? (
     <img src={icon} alt="" width="96" height="96" />
   ) : chart ? (
@@ -31,14 +31,11 @@ const style = kind ? `--h: var(--c-hue-${kind.hue}); --t: var(--c-tint-${kind.hu
 
 <style>
   .picon {
-    position: relative;
-    isolation: isolate;
     display: grid;
     place-items: center;
     width: 100%;
     height: 100%;
     border-radius: 22.5%;
-    overflow: hidden;
     color: var(--h);
     background: linear-gradient(160deg, var(--t), color-mix(in srgb, var(--t) 72%, var(--h)));
     container-type: inline-size;
@@ -57,29 +54,5 @@ const style = kind ? `--h: var(--c-hue-${kind.hue}); --t: var(--c-tint-${kind.hu
   .picon img { width: 100%; height: 100%; object-fit: cover; }
   .picon svg { width: 50%; height: 50%; }
 
-  /* The glass, as on AppIcon: gloss and shade, then the rim. */
-  .picon::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    background: linear-gradient(var(--glass-gloss), transparent 45%, transparent 70%, var(--glass-shade));
-  }
-  .picon::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    padding: 1px;
-    border-radius: inherit;
-    pointer-events: none;
-    background:
-      linear-gradient(155deg, var(--glass-rim), var(--glass-rim-soft) 28%, transparent 52%, var(--glass-rim-soft)),
-      linear-gradient(var(--glass-line), var(--glass-line));
-    -webkit-mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
-    mask-composite: exclude;
-  }
+  /* The glass is styles/glass.css, shared with AppIcon. */
 </style>

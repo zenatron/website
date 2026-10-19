@@ -116,17 +116,12 @@
   .tabs :global(li[data-active] a) { color: var(--c-text); }
 
   /* Its icon: the explorer's tile, dot, or the site's mark. */
+  /* A page's app icon, cloned from the sidebar; it fills this box. */
   .tabs :global(.ticon) {
     flex: 0 0 auto;
-    display: grid;
-    place-items: center;
     width: 16px;
     height: 16px;
-    border-radius: var(--radius-tile);
-    color: var(--h);
-    background: var(--t);
   }
-  .tabs :global(.ticon svg) { width: 11px; height: 11px; }
   .tabs :global(.ficon) {
     flex: 0 0 auto;
     display: grid;

@@ -130,15 +130,9 @@ import ThemeToggle from "@/components/ThemeToggle.astro";
   .proxy img { width: 16px; height: 16px; border-radius: var(--radius-tile); }
   /* A page's tile from the explorer, shrunk to proxy size. */
   .proxy :global(.ptile) {
-    display: grid;
-    place-items: center;
     width: 16px;
     height: 16px;
-    border-radius: var(--radius-tile);
-    color: var(--h);
-    background: var(--t);
   }
-  .proxy :global(.ptile svg) { width: 11px; height: 11px; }
   /* A file's icon from the sidebar: its app icon, or a document. */
   .proxy :global(.pfile) {
     display: grid;
