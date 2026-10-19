@@ -61,6 +61,11 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     height: calc(var(--pane-h, 100vh) - var(--s-7));
     display: grid;
     grid-template-columns: 26px minmax(0, 1fr);
+    /* One row, exactly the panel's height. Left to size itself, the row
+       took its height from its contents — and the map sizes its canvas
+       from the row, so the two propped each other up past the panel's
+       bottom, and the outline's own scroll never kicked in. */
+    grid-template-rows: minmax(0, 1fr);
     gap: var(--s-2);
     padding: var(--s-3) var(--s-2) var(--s-3) var(--s-3);
     background: var(--c-chrome);
@@ -80,6 +85,10 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     display: block;
     position: relative;
     height: 100%;
+    min-height: 0;
+    /* Clipped top and bottom only: the lens reaches 3px past each side. */
+    overflow-x: visible;
+    overflow-y: clip;
     cursor: pointer;
     touch-action: none;
     user-select: none;
