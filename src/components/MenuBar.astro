@@ -235,11 +235,13 @@ const go = [
     gap: 6px;
     color: var(--c-muted);
   }
+  /* Green for live, as a status light is — not the accent, which means
+     "selected" and would read as a link. */
   .deploy i {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--c-link);
+    background: var(--c-hue-green);
   }
   .spot {
     display: grid;

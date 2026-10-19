@@ -29,8 +29,8 @@
      item, the button a page most wants pressed — and links wear it too.
      Danger is the only other job-color; the hues are for personality.
   */
-  --c-accent:    #1E7657;  /* SELECTED / CURRENT / PRIMARY */
-  --c-link:      #1E7657;  /* NAVIGABLE */
+  --c-accent:    #1A66CC;  /* SELECTED / CURRENT / PRIMARY */
+  --c-link:      #1A66CC;  /* NAVIGABLE */
   --c-danger:    #B93A28;  /* GENUINE FAILURE */
 
   --c-hue-violet: #6A4BC4;
@@ -45,8 +45,8 @@
   --c-hue-teal:   #1C6F7A;
 
   /* Soft tints behind highlighted words and pills */
-  --c-tint-accent: #DCF0E6;
-  --c-tint-link:   #DCF0E6;
+  --c-tint-accent: #DDEBFB;
+  --c-tint-link:   #DDEBFB;
   --c-tint-violet: #ECE6FB;
   --c-tint-orange: #FCE8DA;
   --c-tint-blue:   #DDECF6;
@@ -90,8 +90,8 @@
   --c-muted:     #A69E8D;
   --c-dim:       #948B7C;
 
-  --c-accent:    #7FD1B9;
-  --c-link:      #7FD1B9;
+  --c-accent:    #6CB4FF;
+  --c-link:      #6CB4FF;
   --c-danger:    #F2695E;
 
   --c-hue-violet: #BCA4FF;
@@ -102,8 +102,8 @@
   --c-hue-rose:   #F493C2;
   --c-hue-teal:   #7AD4DD;
 
-  --c-tint-accent: #17352C;
-  --c-tint-link:   #17352C;
+  --c-tint-accent: #16263A;
+  --c-tint-link:   #16263A;
   --c-tint-violet: #2A2340;
   --c-tint-orange: #3A2418;
   --c-tint-blue:   #162A38;
@@ -119,7 +119,7 @@
      a mid-dark wallpaper, not a void, or the glass and the window's
      shadow have nothing to show against. */
   --c-wallpaper:    #1D1A16;
-  --wp-1: rgba(127, 209, 185, 0.20);
+  --wp-1: rgba(108, 180, 255, 0.22);
   --wp-2: rgba(127, 189, 232, 0.24);
   --wp-3: rgba(188, 164, 255, 0.26);
   --wp-4: rgba(155, 214, 138, 0.16);
@@ -150,8 +150,8 @@
     --c-muted:     #A69E8D;
     --c-dim:       #948B7C;
 
-    --c-accent:    #7FD1B9;
-    --c-link:      #7FD1B9;
+    --c-accent:    #6CB4FF;
+    --c-link:      #6CB4FF;
     --c-danger:    #F2695E;
 
     --c-hue-violet: #BCA4FF;
@@ -162,8 +162,8 @@
     --c-hue-rose:   #F493C2;
     --c-hue-teal:   #7AD4DD;
 
-    --c-tint-accent: #17352C;
-    --c-tint-link:   #17352C;
+    --c-tint-accent: #16263A;
+    --c-tint-link:   #16263A;
     --c-tint-violet: #2A2340;
     --c-tint-orange: #3A2418;
     --c-tint-blue:   #162A38;
@@ -179,7 +179,7 @@
        a mid-dark wallpaper, not a void, or the glass and the window's
        shadow have nothing to show against. */
     --c-wallpaper:    #1D1A16;
-    --wp-1: rgba(127, 209, 185, 0.20);
+    --wp-1: rgba(108, 180, 255, 0.22);
     --wp-2: rgba(127, 189, 232, 0.24);
     --wp-3: rgba(188, 164, 255, 0.26);
     --wp-4: rgba(155, 214, 138, 0.16);
@@ -321,7 +321,7 @@ html[data-daypart="night"] {
   --folder-emboss:   #2F86C9;
   --sticker-violet: #6A4BC4;
   --sticker-blue:   #24688F;
-  --sticker-teal:   #1E7657;
+  --sticker-teal:   #1A66CC;
   --sticker-green:  #397430;
   --sticker-orange: #B6531B;
   --sticker-amber:  #93600F;
