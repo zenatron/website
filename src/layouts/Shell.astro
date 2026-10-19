@@ -213,9 +213,12 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     max-width: var(--w-content);
     min-height: calc(100vh - var(--s-5) * 2);
     margin-inline: auto;
-    background: var(--c-bg);
+    /* Clear, so the chrome's glass shows the wallpaper; the pane brings
+       its own paper. */
+    background: transparent;
     border: 1px solid var(--c-hairline-strong);
     border-radius: var(--radius-window);
+    box-shadow: var(--shadow-window);
     transition: max-width var(--dur-pane) var(--ease);
     /* `clip`, not `hidden`: hidden makes the window a scroll container,
        which silently disables position:sticky for everything inside it —
@@ -244,6 +247,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     flex: 1 1 auto;
     min-width: 0;
     padding: var(--s-5) var(--s-6);
+    background: var(--c-bg);
   }
 
   /* Route changes are a pane swap, not a page fade. */
@@ -276,6 +280,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     .window {
       border: 0;
       border-radius: 0;
+      box-shadow: none;
       min-height: 100vh;
     }
     .pane { padding: var(--s-4); }

@@ -233,7 +233,7 @@ const socials = [
   .sidebar {
     flex: 0 0 var(--w-sidebar);
     width: var(--w-sidebar);
-    background: var(--c-chrome);
+    background: var(--c-chrome-glass);
     border-right: 1px solid var(--c-hairline);
     contain: size;
   }
@@ -633,6 +633,9 @@ const socials = [
       width: min(86vw, var(--w-sidebar));
       height: 100dvh;
       contain: none;
+      /* Over the page now, not the wallpaper, so solid, and lifted. */
+      background: var(--c-chrome);
+      box-shadow: var(--shadow-window);
       transform: translateX(-100%);
       visibility: hidden;
       transition: transform var(--dur-state) var(--ease), visibility 0s linear var(--dur-state);

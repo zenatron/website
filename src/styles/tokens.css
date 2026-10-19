@@ -325,6 +325,53 @@
   --w-content:  1280px;
 }
 
+/*
+   Depth, the way macOS draws it: a window is lifted off the desktop by a
+   wide, soft shadow with a tight contact shadow under it, and a popover
+   or sheet sits a little closer. Shadows only ever mean "this is a
+   window" — cards on a page stay flat, separated by surface and hairline.
+   Darker in the dark theme, where a light shadow would vanish.
+*/
+:root {
+  --shadow-window:
+    0 0 0 0.5px rgba(36, 33, 28, 0.06),
+    0 2px 6px rgba(36, 33, 28, 0.06),
+    0 22px 48px -8px rgba(36, 33, 28, 0.2);
+  --shadow-popover:
+    0 0 0 0.5px rgba(36, 33, 28, 0.05),
+    0 8px 24px -4px rgba(36, 33, 28, 0.16);
+}
+:root[data-theme="dark"] {
+  --shadow-window:
+    0 0 0 0.5px rgba(0, 0, 0, 0.6),
+    0 2px 6px rgba(0, 0, 0, 0.3),
+    0 26px 60px -8px rgba(0, 0, 0, 0.65);
+  --shadow-popover:
+    0 0 0 0.5px rgba(0, 0, 0, 0.5),
+    0 10px 28px -4px rgba(0, 0, 0, 0.55);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --shadow-window:
+      0 0 0 0.5px rgba(0, 0, 0, 0.6),
+      0 2px 6px rgba(0, 0, 0, 0.3),
+      0 26px 60px -8px rgba(0, 0, 0, 0.65);
+    --shadow-popover:
+      0 0 0 0.5px rgba(0, 0, 0, 0.5),
+      0 10px 28px -4px rgba(0, 0, 0, 0.55);
+  }
+}
+
+/*
+   Vibrancy: the window's chrome — titlebar, tabs, sidebar, status bar —
+   lets the wallpaper's tint through, the way a macOS sidebar takes on the
+   color of whatever is behind the window. The content pane stays opaque
+   paper. Derived from --c-chrome, so it follows the theme on its own.
+*/
+:root {
+  --c-chrome-glass: color-mix(in srgb, var(--c-chrome) 76%, transparent);
+}
+
 /* Motion — two durations, total. */
 :root {
   --dur-state: 120ms;

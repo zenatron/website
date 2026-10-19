@@ -20,6 +20,7 @@ import SectionHead from "@/components/SectionHead.astro";
 import ProjectIcon from "@/components/ProjectIcon.astro";
 import { getAllProjects, getSuggestedProjects, projectHue, projectSlug, PROJECT_KIND } from "@/lib/projects";
 import { creativeWorkSchema, isoDate } from "@/lib/schema";
+import Window from "@/components/Window.astro";
 
 export async function getStaticPaths() {
   const projects = await getAllProjects();
@@ -136,8 +137,7 @@ const suggested = await Promise.all((await getSuggestedProjects(slug, 2)).map(as
 
     <div class="layout">
       <aside class="info" aria-label="Project info">
-        <div class="inner">
-          <p class="info-head">info</p>
+        <Window class="inner" title={`${entry.data.title} Info`}>
           <dl>
             <div>
               <dt>kind</dt>
@@ -178,7 +178,7 @@ const suggested = await Promise.all((await getSuggestedProjects(slug, 2)).map(as
               </div>
             )}
           </dl>
-        </div>
+        </Window>
       </aside>
 
       <div class="prose"><Content /></div>
@@ -276,21 +276,10 @@ const suggested = await Promise.all((await getSuggestedProjects(slug, 2)).map(as
     border-top: 1px solid var(--c-hairline);
   }
 
-  .info .inner {
-    padding: var(--s-4);
-    background: var(--c-chrome);
-    border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-card);
-  }
-  .info-head {
-    margin-bottom: var(--s-3);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--track-label);
-    color: var(--c-dim);
-  }
+  /* Get Info: a small window of its own, titled the way Finder titles one. */
   .info dl {
     margin: 0;
+    padding: var(--s-4);
     display: grid;
     grid-template-columns: max-content minmax(0, 1fr);
     gap: var(--s-3) var(--s-4);

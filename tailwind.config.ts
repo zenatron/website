@@ -37,8 +37,12 @@ const config: Config = {
       chip: "var(--radius-chip)",
       tile: "var(--radius-tile)",
     },
-    // Depth comes from surface value and hairlines.
-    boxShadow: { none: "none" },
+    // Depth comes from surface value and hairlines; only windows cast shadows.
+    boxShadow: {
+      none: "none",
+      window: "var(--shadow-window)",
+      popover: "var(--shadow-popover)",
+    },
     fontWeight: { normal: "400", medium: "500", semibold: "600", bold: "700" },
     fontFamily: {
       mono: "var(--font-mono)",

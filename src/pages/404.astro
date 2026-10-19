@@ -64,8 +64,8 @@ const split = (name: string) => {
     <h1 data-nf-title>This page couldn’t be found.</h1>
     <p class="why" data-nf-why>It may have moved, or the link has a typo.</p>
 
-    <p class="label" data-nf-label>start somewhere</p>
-    <ul class="suggest" data-nf-list>
+    <p class="label glabel" data-nf-label>Start somewhere</p>
+    <ul class="suggest glist" data-nf-list>
       {starters.map((c) => {
         const [stem, ext] = split(c.name);
         return (
@@ -74,7 +74,7 @@ const split = (name: string) => {
               <span class:list={["dot", { plain: !c.hue }]} style={c.hue ? `--h: ${c.hue}` : undefined} aria-hidden="true"></span>
               <span class="fname">{stem}<span class="ext">{ext}</span></span>
               <span class="ftitle">{c.title}</span>
-              <svg class="go" aria-hidden="true" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
+              <svg class="go glist-go" aria-hidden="true" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
             </a>
           </li>
         );
@@ -115,36 +115,15 @@ const split = (name: string) => {
     color: var(--c-muted);
   }
 
-  .label {
-    margin-top: var(--s-6);
-    margin-bottom: var(--s-2);
-    text-align: left;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--track-label);
-    color: var(--c-dim);
-  }
+  .label { margin-top: var(--s-6); }
 
   /* Suggestions, set as the explorer sets files, in one grouped list. */
-  .suggest {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    text-align: left;
-    background: var(--c-chrome);
-    border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-card);
-    overflow: hidden;
-  }
-  .suggest :global(li + li) { border-top: 1px solid var(--c-hairline); }
+  .suggest { --glist-inset: calc(var(--s-4) + 8px + var(--s-3)); }
   .suggest :global(a) {
     display: grid;
     grid-template-columns: 8px auto minmax(0, 1fr) 14px;
     align-items: center;
     column-gap: var(--s-3);
-    padding: var(--s-3) var(--s-4);
-    color: inherit;
-    transition: background var(--dur-state) var(--ease);
   }
   .suggest :global(.dot) {
     width: 7px;
@@ -168,12 +147,9 @@ const split = (name: string) => {
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .suggest :global(.go) { color: var(--c-dim); transition: transform var(--dur-state) var(--ease), color var(--dur-state) var(--ease); }
   @media (hover: hover) {
-    .suggest :global(a:hover) { background: var(--c-raised); }
-    .suggest :global(a:hover .go) { color: var(--c-text); transform: translateX(2px); }
+    .suggest :global(a:hover .go) { transform: translateX(2px); }
   }
-  .suggest :global(a:focus-visible) { outline-offset: -2px; }
 
   .actions {
     margin-top: var(--s-5);
@@ -323,7 +299,7 @@ const split = (name: string) => {
       return li;
     });
     list.replaceChildren(...rows);
-    root.querySelector("[data-nf-label]")!.textContent = "did you mean";
+    root.querySelector("[data-nf-label]")!.textContent = "Did you mean";
   }
 
   document.addEventListener("astro:page-load", run);
