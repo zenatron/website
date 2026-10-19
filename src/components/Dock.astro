@@ -16,23 +16,11 @@
  * Shown where there's a mouse and room for it; not on phones, whose
  * screen is the window.
  */
-import PageIcon, { type PageGlyph, type PageHue } from "@/components/PageIcon.astro";
+import PageIcon from "@/components/PageIcon.astro";
 import AppIcon from "@/components/AppIcon.astro";
 import FileIcon from "@/components/FileIcon.astro";
-import { PAGES, SITE } from "@/data/site";
-
-const page = (href: string) => PAGES.find((p) => p.href === href)!;
-const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
-
-const apps: { name: string; href: string; glyph: PageGlyph; hue: PageHue }[] = [
-  { name: "Home", href: "/", glyph: "home", hue: "graphite" },
-  { name: "Projects", href: "/projects/", glyph: "folder", hue: "blue" },
-  { name: "Writing", href: "/blog/", glyph: "pen", hue: "yellow" },
-  ...["/about/", "/photos/", "/dock/", "/say-hi/"].map((href) => {
-    const p = page(href);
-    return { name: cap(p.name), href, glyph: p.glyph, hue: p.hue };
-  }),
-];
+import { SITE } from "@/data/site";
+import { APPS as apps } from "@/data/apps";
 ---
 
 <nav class="dock" aria-label="Dock" transition:persist="dock" data-dock>

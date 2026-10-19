@@ -1,52 +1,55 @@
 ---
 /**
- * Where else to go, at the foot of every page — on a screen narrow enough
- * that the explorer is a drawer. There, nothing on screen says the rest of
- * the site exists unless you open the menu; this does, so reading to the
- * end of any page leads on to the next place rather than stopping.
+ * Where else to go, at the foot of every page on a phone. There, with no
+ * Dock and the sidebar put away in a drawer, nothing on screen says the
+ * rest of the site exists; this does, so reading to the end of any page
+ * leads on to the next place rather than stopping.
  *
- * Wide screens don't get it: the explorer is always there, listing the
- * same places.
+ * It's the Dock, as a phone draws one: the same apps (data/apps.ts), the
+ * same glass icons, the résumé and GitHub after them, laid out as a home
+ * screen on the Dock's own glass shelf, with names under the icons and a
+ * dot under the one you're in.
+ *
+ * Wider screens have the Dock itself.
  */
-import { COPYRIGHT, PAGES } from "@/data/site";
-import { FAVORITES } from "@/data/favorites";
-import { getAllProjects } from "@/lib/projects";
-import { getAllBlogPosts } from "@/lib/blog";
-import { PHOTOS } from "@/data/photos";
-import PageIcon, { type PageGlyph, type PageHue } from "@/components/PageIcon.astro";
+import { COPYRIGHT, SITE } from "@/data/site";
+import { APPS } from "@/data/apps";
+import PageIcon from "@/components/PageIcon.astro";
+import AppIcon from "@/components/AppIcon.astro";
+import FileIcon from "@/components/FileIcon.astro";
 
-
-const [projects, posts] = await Promise.all([getAllProjects(), getAllBlogPosts()]);
-const apps = FAVORITES.filter((f) => f.logo).length;
-const page = (href: string) => PAGES.find((p) => p.href === href);
-
-const places: { href: string; name: string; blurb: string; glyph: PageGlyph; hue?: PageHue }[] = [
-  { href: "/", name: "home", blurb: "Back to the start", glyph: "home" },
-  { href: "/about/", name: "about", blurb: "The story, the desk, and the lid", glyph: "person", hue: page("/about/")?.hue },
-  { href: "/dock/", name: "dock", blurb: `${apps} apps I use, and a few files`, glyph: "dock", hue: page("/dock/")?.hue },
-  { href: "/projects/", name: "projects", blurb: `${projects.length} things I’ve built`, glyph: "folder", hue: "blue" },
-  { href: "/blog/", name: "writing", blurb: `${posts.length} posts on homelabs and more`, glyph: "pen" },
-  { href: "/photos/", name: "photos", blurb: `${PHOTOS.length} shot on iPhone, edited on iPhone & Mac`, glyph: "camera", hue: page("/photos/")?.hue },
-  { href: "/say-hi/", name: "say hi", blurb: page("/say-hi/")?.blurb ?? "", glyph: "bubble", hue: page("/say-hi/")?.hue },
-];
-
-const here = Astro.url.pathname.replace(/\/+$/, "") || "/";
-const shown = places.filter((p) => (p.href.replace(/\/+$/, "") || "/") !== here);
+const norm = (p: string) => p.replace(/\/+$/, "") || "/";
+const here = norm(Astro.url.pathname);
+// The app you're in: the page itself, or the index a post or project sits under.
+const current = (href: string) => {
+  const h = norm(href);
+  return h === here || (h !== "/" && here.startsWith(`${h}/`));
+};
 ---
 
 <nav class="explore" aria-label="Keep exploring">
   <p class="glabel">Keep exploring</p>
-  <ul class="glist">
-    {shown.map((p) => (
+  <ul class="springboard">
+    {APPS.map((a) => (
       <li>
-        <a class="glint-host" href={p.href}>
-          <span class="tile" aria-hidden="true"><PageIcon glyph={p.glyph} hue={p.hue} /></span>
-          <span class="name">{p.name[0].toUpperCase() + p.name.slice(1)}</span>
-          <span class="blurb">{p.blurb}</span>
-          <svg class="go glist-go" aria-hidden="true" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
+        <a class="glint-host" href={a.href} aria-current={current(a.href) ? "page" : undefined}>
+          <span class="icon"><PageIcon glyph={a.glyph} hue={a.hue} /></span>
+          <span class="name">{a.name}</span>
         </a>
       </li>
     ))}
+    <li>
+      <a class="glint-host" href={SITE.resume}>
+        <span class="icon"><FileIcon form="doc" glyph="resume" ext="pdf" ink="red" /></span>
+        <span class="name">Résumé</span>
+      </a>
+    </li>
+    <li>
+      <a class="glint-host" href={SITE.github} rel="me noopener noreferrer">
+        <span class="icon"><AppIcon item={{ logo: "github.svg" }} /></span>
+        <span class="name">GitHub</span>
+      </a>
+    </li>
   </ul>
   {/* Phones have no menu bar, so the colophon it keeps lands here. */}
   <p class="colophon">{COPYRIGHT} · v{__APP_VERSION__}</p>
@@ -54,53 +57,79 @@ const shown = places.filter((p) => (p.href.replace(/\/+$/, "") || "/") !== here)
 
 <style>
   .explore { display: none; }
-
-  @media (max-width: 900px) {
+  @media (max-width: 640px) {
     .explore {
       display: block;
       margin-top: var(--s-7);
     }
   }
 
-  /* Set as the sidebar sets its favorites: a tinted tile, the name, and
-     here a line on what's there. */
-  .glist { --glist-inset: calc(var(--s-4) + 32px + var(--s-3)); }
-  a {
+  /* The Dock's shelf — same glass, edge and shadow — holding a home
+     screen's grid. Three across: nine icons make a full square, where
+     four across left GitHub alone on a row of its own. */
+  .springboard {
+    list-style: none;
+    margin: 0;
     display: grid;
-    grid-template-columns: 32px minmax(0, 1fr) 14px;
-    grid-template-rows: auto auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-5) var(--s-2);
+    padding: var(--s-5) var(--s-3);
+    background: var(--c-chrome-glass);
+    -webkit-backdrop-filter: blur(24px) saturate(1.8);
+    backdrop-filter: blur(24px) saturate(1.8);
+    border: 1px solid var(--c-hairline-strong);
+    border-radius: 22px;
+    box-shadow: var(--shadow-popover);
+  }
+
+  a {
+    position: relative;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    column-gap: var(--s-3);
-    row-gap: 1px;
-    min-height: 60px;
+    gap: 6px;
+    color: var(--c-text);
     text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
   }
-  .tile {
-    grid-row: 1 / span 2;
-    width: 32px;
-    height: 32px;
+  .icon {
+    display: block;
+    width: 62px;
+    height: 62px;
+    transition: transform var(--dur-state) var(--ease);
   }
-  .name { font-size: var(--t-sans-md); color: var(--c-text); }
-  .blurb {
-    grid-column: 2;
-    min-width: 0;
+  .icon :global(.fileicon) { width: 100%; height: 100%; }
+  /* A press sinks the icon, the way a home screen answers a tap. */
+  a:active .icon { transform: scale(0.9); }
+  a:focus-visible { outline: none; }
+  a:focus-visible .icon { outline: 1px solid var(--c-accent); outline-offset: 3px; border-radius: 22.5%; }
+
+  .name {
+    max-width: 100%;
     font-size: var(--t-sans-xs);
-    color: var(--c-muted);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .go {
-    grid-column: 3;
-    grid-row: 1 / span 2;
+
+  /* The app you're in, marked as the Dock marks it: a dot underneath. */
+  a[aria-current="page"]::after {
+    content: "";
+    position: absolute;
+    bottom: -9px;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    margin-left: -2px;
+    border-radius: 50%;
+    background: var(--c-text);
   }
-  a:active { background: var(--c-raised); }
 
   .colophon {
-    display: none;
     margin-top: var(--s-5);
     font-size: var(--t-sans-xs);
     color: var(--c-dim);
     text-align: center;
-  }
-  @media (max-width: 640px) {
-    .colophon { display: block; }
   }
 </style>
