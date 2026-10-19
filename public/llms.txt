@@ -26,6 +26,7 @@
 ## Projects — shipped
 
 - [Ledger](https://pvi.sh/projects/ledger/): A self-hosted budget tracker for households — SvelteKit, Bun, Postgres; live at ledger.pvi.sh.
+- [NotchApp](https://pvi.sh/projects/notchapp/): Turns the MacBook notch into a live, interactive hub — Swift, SwiftUI and Core Animation on macOS.
 - [preamble](https://pvi.sh/projects/preamble/): A terminal music-library manager for FLAC collections, written in Rust.
 - [diffl](https://pvi.sh/projects/diffl/): A browser-only file comparison tool — no upload, everything client-side.
 - [πCompress](https://pvi.sh/projects/pi-compress/): An April Fools' data compression tool that reliably makes files bigger.
