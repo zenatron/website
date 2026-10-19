@@ -61,7 +61,7 @@ const latestPhotos = PHOTOS.slice(-3).reverse();
         <Mark hue="orange">games</Mark> that don’t break in production.
       </p>
 
-      <p class="currently-label">currently</p>
+      <p class="currently-label">Currently</p>
       <dl class="currently">
         <div class="row">
           <dt style="--fg: var(--c-accent); --bg: var(--c-tint-accent)">open</dt>
@@ -171,9 +171,7 @@ const latestPhotos = PHOTOS.slice(-3).reverse();
    */
   .currently-label {
     margin-top: var(--s-6);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--track-label);
+    font-size: var(--t-sans-2xs);
     color: var(--c-dim);
   }
   /* One grid for the whole list, shared by every row through subgrid, so
@@ -193,8 +191,7 @@ const latestPhotos = PHOTOS.slice(-3).reverse();
   }
   .currently dt {
     justify-self: start;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
+    font-size: var(--t-sans-2xs);
     color: var(--fg);
     background: var(--bg);
     padding: 3px 8px;
@@ -216,7 +213,6 @@ const latestPhotos = PHOTOS.slice(-3).reverse();
   /* The figure is the claim, so it's set like one: the machine's voice,
      in the text color, with figures that don't jiggle. */
   .nines {
-    font-family: var(--font-mono);
     font-size: 0.92em;
     font-variant-numeric: tabular-nums;
     color: var(--c-text);
@@ -297,8 +293,7 @@ const latestPhotos = PHOTOS.slice(-3).reverse();
   .place {
     display: block;
     margin-top: 2px;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
+    font-size: var(--t-sans-2xs);
     color: var(--c-dim);
   }
   @media (hover: hover) {

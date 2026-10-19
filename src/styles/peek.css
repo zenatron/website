@@ -39,8 +39,7 @@
   padding-bottom: var(--s-2);
   margin-bottom: var(--s-3);
   border-bottom: 1px solid var(--c-hairline);
-  font-family: var(--font-mono);
-  font-size: var(--t-mono-xs);
+  font-size: var(--t-sans-2xs);
 }
 .peek-dot {
   flex: 0 0 auto;
@@ -76,7 +75,6 @@
 }
 .peek-context {
   margin-top: var(--s-2);
-  font-family: var(--font-mono);
-  font-size: var(--t-mono-xs);
+  font-size: var(--t-sans-2xs);
   color: var(--c-dim);
 }

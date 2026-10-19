@@ -162,8 +162,7 @@
 }
 .prose .codecopy {
   pointer-events: auto;
-  font-family: var(--font-mono);
-  font-size: var(--t-mono-xs);
+  font-size: var(--t-sans-2xs);
   color: var(--c-muted);
   background: var(--c-chrome);
   border: 1px solid var(--c-hairline);

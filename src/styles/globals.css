@@ -122,12 +122,12 @@
   }
   .btn.primary {
     color: var(--c-bg);
-    background: var(--c-link);
+    background: var(--c-accent);
     border-color: transparent;
   }
   @media (hover: hover) {
     .btn:hover { background: var(--c-raised); border-color: var(--c-hairline-strong); }
-    .btn.primary:hover { background: var(--c-link); filter: brightness(1.08); }
+    .btn.primary:hover { background: var(--c-accent); filter: brightness(1.08); }
   }
 }
 

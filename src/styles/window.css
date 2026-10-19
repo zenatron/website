@@ -114,8 +114,7 @@
 }
 
 .mwin-meta {
-  font-family: var(--font-mono);
-  font-size: var(--t-mono-xs);
+  font-size: var(--t-sans-2xs);
   color: var(--c-dim);
   white-space: nowrap;
 }

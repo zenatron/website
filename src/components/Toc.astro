@@ -27,7 +27,7 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
         <div class="lens" data-minimap-lens></div>
       </div>
       <div class="toc-list">
-        <p class="toc-head" id="toc-label">outline</p>
+        <p class="toc-head" id="toc-label">Contents</p>
         <ol>
           {items.map((h) => (
             <li class:list={[`d${h.depth}`]}>
@@ -103,9 +103,7 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     background: var(--c-raised);
   }
   .toc-head {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--track-label);
+    font-size: var(--t-sans-2xs);
     color: var(--c-dim);
     margin-bottom: var(--s-3);
   }
