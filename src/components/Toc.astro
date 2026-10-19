@@ -152,11 +152,12 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     }
   }
   .d3 a { color: var(--c-muted); }
-  /* Where you are, selected as the sidebar selects a row. */
+  /* Where you are, selected as the sidebar selects a row: by color
+     alone. A bolder weight is a wider line, and a heading that just fit
+     wrapped when it became current, shoving the outline down under it. */
   a[data-current] {
     color: var(--c-accent);
     background: var(--c-tint-accent);
-    font-weight: 600;
   }
 
   @media (max-width: 1200px) {

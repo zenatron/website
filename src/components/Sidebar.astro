@@ -514,7 +514,9 @@ const socials = [
 
   /* The selection: Finder's tinted row, the name in the accent. */
   .row[data-active] { background: var(--c-tint-accent); }
-  .row[data-active] a { color: var(--c-accent); font-weight: 600; }
+  /* Color, not weight: a bolder title is a wider one, and it moved
+     where a long title's ellipsis fell. Finder doesn't bold either. */
+  .row[data-active] a { color: var(--c-accent); }
 
   /*
    * A hit in a file's text: the file, set like its row above, then the
