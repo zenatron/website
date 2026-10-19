@@ -9,8 +9,8 @@
  */
 import { PROJECT_KIND } from "@/lib/projects";
 
-interface Props { title: string; type?: string }
-const { title, type = "other" } = Astro.props;
+interface Props { title: string; type?: string; icon?: string }
+const { title, type = "other", icon } = Astro.props;
 
 const kind = PROJECT_KIND[type];
 const chart = type === "data";
@@ -18,7 +18,9 @@ const letter = Array.from(title.trim())[0] ?? "?";
 const style = kind ? `--h: var(--c-hue-${kind.hue}); --t: var(--c-tint-${kind.hue})` : undefined;
 ---
 <span class:list={["picon", { plain: !kind }]} style={style} aria-hidden="true">
-  {chart ? (
+  {icon ? (
+    <img src={icon} alt="" width="96" height="96" />
+  ) : chart ? (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M4 20h16" /><path d="M7 16v-4" /><path d="M12 16V7" /><path d="M17 16v-7" />
     </svg>
@@ -52,6 +54,7 @@ const style = kind ? `--h: var(--c-hue-${kind.hue}); --t: var(--c-tint-${kind.hu
     letter-spacing: -0.04em;
     translate: 0 -0.03em;
   }
+  .picon img { width: 100%; height: 100%; object-fit: cover; }
   .picon svg { width: 50%; height: 50%; }
 
   /* The glass, as on AppIcon: gloss and shade, then the rim. */

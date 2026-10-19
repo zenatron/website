@@ -27,6 +27,8 @@ const projects = defineCollection({
     date: z.string().optional(),
     tags: z.array(z.string()).optional().default([]),
     thumbnail: z.string().optional(),
+    /** The project's own app icon, a squircle; replaces the lettered one. */
+    icon: z.string().optional(),
     image: z.string().optional(),
     images: z.array(z.string()).optional(),
     video: z.string().optional(),

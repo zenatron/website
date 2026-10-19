@@ -101,7 +101,7 @@ const suggested = await Promise.all((await getSuggestedProjects(slug, 2)).map(as
 >
   <article class="project" data-pagefind-body>
     <header class="head">
-      <span class="icon"><ProjectIcon title={entry.data.title} type={entry.data.type} /></span>
+      <span class="icon"><ProjectIcon title={entry.data.title} type={entry.data.type} icon={entry.data.icon} /></span>
       <div class="headtext">
         <p class="eyebrow">
           <span class:list={["kind", { plain: !kind }]} style={kind ? `--h: var(--c-hue-${kind.hue})` : undefined}>
