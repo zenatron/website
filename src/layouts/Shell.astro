@@ -288,17 +288,19 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
   /* Route changes are a pane swap, not a page fade. */
   @media (prefers-reduced-motion: no-preference) {
     ::view-transition-old(pane) {
-      animation: pane-out var(--dur-pane) var(--ease) both;
+      animation: pane-out var(--dur-state) var(--ease) both;
     }
     ::view-transition-new(pane) {
-      animation: pane-in var(--dur-pane) var(--ease) both;
+      animation: pane-in var(--dur-window) var(--ease-window) both;
     }
   }
+  /* The old page steps aside quickly; the new one arrives as a window
+     does, rising the few pixels the old one sank. */
   @keyframes pane-out {
     to { opacity: 0; transform: translateY(6px); }
   }
   @keyframes pane-in {
-    from { opacity: 0; }
+    from { opacity: 0; transform: translateY(6px); }
   }
 
   /* The scrim that dims the window behind the mobile drawer. */

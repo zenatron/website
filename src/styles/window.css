@@ -123,11 +123,11 @@
    macOS opens one. Closing is instant, which is what macOS does too. */
 dialog.mwin::backdrop { background: var(--c-scrim); }
 @media (prefers-reduced-motion: no-preference) {
-  dialog.mwin[open] { animation: mwin-open var(--dur-pane) var(--ease); }
-  dialog.mwin[open]::backdrop { animation: mwin-fade var(--dur-pane) var(--ease); }
+  dialog.mwin[open] { animation: mwin-open var(--dur-window) var(--ease-window); }
+  dialog.mwin[open]::backdrop { animation: mwin-fade var(--dur-window) var(--ease-window); }
 }
 @keyframes mwin-open {
-  from { opacity: 0; transform: scale(0.96); }
+  from { opacity: 0; transform: scale(0.97); }
 }
 @keyframes mwin-fade {
   from { opacity: 0; }

@@ -1,6 +1,8 @@
 ---
 /**
- * The outline pane. Long posts here run 25 minutes across a dozen
+ * The outline: an inspector beside the post, set the way Pages and
+ * Preview set their sidebars — a quiet panel on the chrome surface, a
+ * small header, the headings in the system face. Long posts here run 25 minutes across a dozen
  * headings, and there was no way to see the shape of one or jump inside
  * it — which the editor metaphor should have solved on day one.
  *
@@ -50,7 +52,6 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
   .toc {
     height: 100%;
     padding-left: var(--s-3);
-    border-left: 1px solid var(--c-hairline);
   }
   /* The pane's own padding already holds it off the edge where the pane
      scrolls, so it needs no more there. */
@@ -59,8 +60,12 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     top: var(--s-5);
     height: calc(var(--pane-h, 100vh) - var(--s-7));
     display: grid;
-    grid-template-columns: 32px minmax(0, 1fr);
-    gap: var(--s-3);
+    grid-template-columns: 26px minmax(0, 1fr);
+    gap: var(--s-2);
+    padding: var(--s-3) var(--s-2) var(--s-3) var(--s-3);
+    background: var(--c-chrome);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius-card);
   }
   @media screen and (min-width: 641px) {
     .inner { top: 0; height: calc(var(--pane-h, 100vh) - var(--s-5) * 2); }
@@ -80,6 +85,14 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     user-select: none;
   }
   .map canvas { display: block; width: 100%; }
+  /* The map is a second way to the same places, so it stays in the
+     background until it's wanted. */
+  :global(.js) .map {
+    opacity: 0.55;
+    transition: opacity var(--dur-state) var(--ease);
+  }
+  :global(.js) .map:hover,
+  :global(.js) .map[data-dragging] { opacity: 1; }
   /* The part of the post in view, like the lens over Xcode's minimap. */
   .lens {
     position: absolute;
@@ -102,22 +115,25 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     color: var(--c-text);
     background: var(--c-raised);
   }
+  /* The sidebar's section header, so the two side panels match. */
   .toc-head {
-    font-size: var(--t-sans-2xs);
+    padding-inline: var(--s-2);
+    font-size: 11px;
+    font-weight: 600;
     color: var(--c-dim);
-    margin-bottom: var(--s-3);
+    margin-bottom: var(--s-2);
   }
   ol { list-style: none; margin: 0; padding: 0; }
   li { margin-block: 1px; }
-  .d3 a { padding-left: var(--s-3); font-size: var(--t-sans-xs); }
+  .d3 a { padding-left: var(--s-4); font-size: var(--t-sans-2xs); }
 
   a {
     display: block;
     padding: 3px var(--s-2);
     border-radius: var(--radius-sm);
-    font-size: var(--t-sans-sm);
+    font-size: var(--t-sans-xs);
     line-height: var(--lh-snug);
-    color: var(--c-muted);
+    color: var(--c-text);
     transition: color var(--dur-state) var(--ease), background var(--dur-state) var(--ease);
   }
   @media (hover: hover) {
@@ -126,9 +142,12 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
       background: var(--c-raised);
     }
   }
+  .d3 a { color: var(--c-muted); }
+  /* Where you are, selected as the sidebar selects a row. */
   a[data-current] {
     color: var(--c-accent);
     background: var(--c-tint-accent);
+    font-weight: 600;
   }
 
   @media (max-width: 1200px) {

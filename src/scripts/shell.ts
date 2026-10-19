@@ -34,7 +34,9 @@ function syncTitlebar() {
   const link = [...document.querySelectorAll<HTMLAnchorElement>("#sidebar .row a[data-nav]")]
     .find((a) => (new URL(a.href).pathname.replace(/\/+$/, "") || "/") === here);
   const row = link?.closest<HTMLElement>(".row");
-  const tile = row?.querySelector<HTMLElement>(".tile");
+  // Home and the indexes have no sidebar row; the Dock has every app.
+  const dockIcon = document.querySelector<HTMLElement>(`[data-dock-item][data-href="${here === "/" ? "/" : `${here}/`}"] .icon`);
+  const tile = row?.querySelector<HTMLElement>(".tile") ?? dockIcon;
   const file = row?.querySelector<HTMLElement>(".ficon");
   const dot = row?.querySelector<HTMLElement>(".dot");
   const hue = row?.style.getPropertyValue("--h") ?? "";

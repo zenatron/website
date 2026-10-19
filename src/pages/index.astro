@@ -5,6 +5,7 @@ import Cells from "@/components/Cells.astro";
 import ReachCards from "@/components/ReachCards.astro";
 import Mark from "@/components/Mark.astro";
 import HeroArt from "@/components/HeroArt.astro";
+import SectionHead from "@/components/SectionHead.astro";
 import { SITE } from "@/data/site";
 import { PHOTOS } from "@/data/photos";
 import { getAllBlogPosts, seriesHue } from "@/lib/blog";
@@ -82,27 +83,18 @@ const latestPhotos = PHOTOS.slice(-3).reverse();
   </section>
 
   <section class="band">
-    <div class="bandhead">
-      <h2>Projects</h2>
-      <a href="/projects/">All projects <span aria-hidden="true">&rarr;</span></a>
-    </div>
+    <SectionHead title="Projects" href="/projects/" link="All projects" />
     <Cells cells={latestProjects} layout="pairs" />
   </section>
 
   <section class="band">
-    <div class="bandhead">
-      <h2>Writing</h2>
-      <a href="/blog/">All posts <span aria-hidden="true">&rarr;</span></a>
-    </div>
+    <SectionHead title="Writing" href="/blog/" link="All posts" />
     <Cells cells={latestPosts} layout="pairs" />
   </section>
 
   {latestPhotos.length > 0 && (
     <section class="band">
-      <div class="bandhead">
-        <h2>Photos</h2>
-        <a href="/photos/">All photos <span aria-hidden="true">&rarr;</span></a>
-      </div>
+      <SectionHead title="Photos" href="/photos/" link="All photos" />
       <ul class="shots">
         {latestPhotos.map((p) => (
           <li>
@@ -132,10 +124,7 @@ const latestPhotos = PHOTOS.slice(-3).reverse();
   )}
 
   <section class="band">
-    <div class="bandhead">
-      <h2>Get in touch</h2>
-      <a href="/say-hi/">Everywhere else <span aria-hidden="true">&rarr;</span></a>
-    </div>
+    <SectionHead title="Get in touch" href="/say-hi/" link="Everywhere else" />
     <ReachCards />
   </section>
 </Shell>
@@ -235,29 +224,8 @@ const latestPhotos = PHOTOS.slice(-3).reverse();
      sixteen icons instead of scrolling inside the screen. */
   .art { max-width: 100%; min-width: 0; }
 
-  .band { padding-block: var(--s-6); }
-  .band + .band { border-top: 1px solid var(--c-hairline); }
-
-  .bandhead {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--s-4);
-    margin-bottom: var(--s-5);
-  }
-  .bandhead h2 {
-    font-size: var(--t-sans-xl);
-    font-weight: 600;
-  }
-  .bandhead a {
-    font-size: var(--t-sans-sm);
-    color: var(--c-link);
-  }
-  @media (hover: hover) {
-    .bandhead a:hover {
-      text-decoration: underline; text-underline-offset: 3px;
-    }
-  }
+  /* Each band opens with a SectionHead, which brings its own rule. */
+  .band { padding-bottom: var(--s-6); }
 
   /* Three across, cropped to the library's 3:4, so the strip reads as a
      corner of /photos rather than three more cards. */

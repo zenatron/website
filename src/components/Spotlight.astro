@@ -53,7 +53,8 @@
   .spotlight::backdrop { background: transparent; }
   .spotlight:focus { outline: none; }
   @media (prefers-reduced-motion: no-preference) {
-    .spotlight[open] { animation: spot-in 180ms var(--ease); }
+    /* Arrives the way every window does: tokens.css, "Window". */
+    .spotlight[open] { animation: spot-in var(--dur-window) var(--ease-window); }
   }
   @keyframes spot-in {
     from { opacity: 0; transform: scale(0.97); }

@@ -62,30 +62,43 @@ if (art.kind === "diagram") {
 </span>
 
 <style>
+  /*
+   * The ground is a small desktop: the card's tint with its hue blooming
+   * in from two corners, the way the real wallpaper blooms behind the
+   * window. A flat tint read as an empty slab wherever the art didn't
+   * fill the card.
+   */
   .art {
     display: block;
     width: 100%;
     height: 100%;
-    background: var(--bg);
+    background:
+      radial-gradient(90% 80% at 0% 0%, color-mix(in srgb, var(--fg) 20%, transparent), transparent 65%),
+      radial-gradient(80% 70% at 100% 100%, color-mix(in srgb, var(--fg) 13%, transparent), transparent 65%),
+      var(--bg);
     overflow: hidden;
   }
 
   /*
-   * Thumbnails are matplotlib charts on white. Full-bleed they read as a
-   * bright slab, especially in dark mode, so they sit inset on the card's
-   * tint like paper on a mat. Hero banners still crop.
+   * A screenshot or a chart sits on that desktop the way a window does:
+   * inset, and lifted by the window shadow. drop-shadow rather than
+   * box-shadow, so it follows the picture's own edges inside the
+   * contain box — a phone screenshot casts a phone-shaped shadow.
+   * Hero banners still crop, flat.
    */
   .art img {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    padding: var(--s-3);
-    border-radius: calc(var(--radius-sm) + var(--s-3));
+    padding: var(--s-4);
+    filter:
+      drop-shadow(0 1px 2px rgba(0, 0, 0, 0.12))
+      drop-shadow(0 10px 18px rgba(0, 0, 0, 0.18));
   }
   .art.crop img {
     object-fit: cover;
     padding: 0;
-    border-radius: 0;
+    filter: none;
   }
 
   /* Diagrams sit back a little so the card reads as a preview, not a crop. */

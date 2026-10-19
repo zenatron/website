@@ -193,6 +193,12 @@ const go = [
     color: var(--c-bg);
     outline: none;
   }
+  /* Menus don't fly in; they appear, with the briefest fade, as macOS's do. */
+  @media (prefers-reduced-motion: no-preference) {
+    .menu[open] > .drop { animation: menu-in var(--dur-state) var(--ease); }
+  }
+  @keyframes menu-in { from { opacity: 0; } }
+
   /* A radio item's checkmark, in the gutter every item leaves for one. */
   .check { position: relative; }
   .check[aria-pressed="true"]::before {

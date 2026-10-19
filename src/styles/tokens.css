@@ -59,6 +59,11 @@
   --c-tile-light:   #FDFCF9;  /* an app icon's plate: the same in both themes */
   --c-trafficlight: #D8D2C6;  /* an unfocused window's lights */
   --c-wallpaper:    #ECE6DA;  /* the desktop behind the window */
+  /* The wallpaper's four blooms; the palette's tints, in light. */
+  --wp-1: var(--c-tint-accent);
+  --wp-2: var(--c-tint-blue);
+  --wp-3: var(--c-tint-violet);
+  --wp-4: var(--c-tint-green);
   /* The desk on /about: wall, desktop, felt mat, and whether the lamp is on. */
   --desk-wall:      #F1ECE3;
   --desk-top:       #E4DCCD;
@@ -110,7 +115,14 @@
   --c-tile-dark:    #24211C;
   --c-tile-light:   #FDFCF9;
   --c-trafficlight: #454036;
-  --c-wallpaper:    #0B0A08;
+  /* Lifted off black, with real color in its blooms: a dark desktop is
+     a mid-dark wallpaper, not a void, or the glass and the window's
+     shadow have nothing to show against. */
+  --c-wallpaper:    #1D1A16;
+  --wp-1: rgba(127, 209, 185, 0.20);
+  --wp-2: rgba(127, 189, 232, 0.24);
+  --wp-3: rgba(188, 164, 255, 0.26);
+  --wp-4: rgba(155, 214, 138, 0.16);
   --desk-wall:      #181612;
   --desk-top:       #23201B;
   --desk-edge:      #2E2A23;
@@ -163,7 +175,14 @@
     --c-tile-dark:    #24211C;
     --c-tile-light:   #FDFCF9;
     --c-trafficlight: #454036;
-    --c-wallpaper:    #0B0A08;
+    /* Lifted off black, with real color in its blooms: a dark desktop is
+       a mid-dark wallpaper, not a void, or the glass and the window's
+       shadow have nothing to show against. */
+    --c-wallpaper:    #1D1A16;
+    --wp-1: rgba(127, 209, 185, 0.20);
+    --wp-2: rgba(127, 189, 232, 0.24);
+    --wp-3: rgba(188, 164, 255, 0.26);
+    --wp-4: rgba(155, 214, 138, 0.16);
     --desk-wall:      #181612;
     --desk-top:       #23201B;
     --desk-edge:      #2E2A23;
@@ -220,10 +239,10 @@
 :root {
   --wallpaper:
     var(--sky),
-    radial-gradient(55% 60% at 0% 0%, var(--c-tint-accent), transparent 70%),
-    radial-gradient(45% 55% at 100% 12%, var(--c-tint-blue), transparent 70%),
-    radial-gradient(60% 60% at 85% 100%, var(--c-tint-violet), transparent 70%),
-    radial-gradient(45% 50% at 8% 100%, var(--c-tint-green), transparent 70%),
+    radial-gradient(55% 60% at 0% 0%, var(--wp-1), transparent 70%),
+    radial-gradient(45% 55% at 100% 12%, var(--wp-2), transparent 70%),
+    radial-gradient(60% 60% at 85% 100%, var(--wp-3), transparent 70%),
+    radial-gradient(45% 50% at 8% 100%, var(--wp-4), transparent 70%),
     var(--c-wallpaper);
 }
 
@@ -427,9 +446,22 @@ html[data-daypart="night"] {
   --c-chrome-glass: color-mix(in srgb, var(--c-chrome) 76%, transparent);
 }
 
-/* Motion — two durations, total. */
+/*
+   Motion — two kinds, and nothing in between.
+
+   State: a hover, a press, a color change. Quick and even.
+   Window: something arriving — a window or a sheet opening, Spotlight,
+   the next page swapping into the pane. Fast out of the gate, settling
+   softly, the way macOS opens a window, and always the same shape: it
+   fades up from a touch smaller (or, for the pane, a touch lower).
+
+   --dur-pane is the slow step a few decorative moments are paced from
+   (the glint, the steam off the mug); it isn't for things arriving.
+*/
 :root {
-  --dur-state: 120ms;
-  --dur-pane:  380ms;
-  --ease:      cubic-bezier(.2, 0, .4, 1);
+  --dur-state:  120ms;
+  --dur-window: 240ms;
+  --dur-pane:   380ms;
+  --ease:        cubic-bezier(.2, 0, .4, 1);
+  --ease-window: cubic-bezier(.2, .9, .25, 1);
 }

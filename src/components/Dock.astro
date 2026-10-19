@@ -87,7 +87,7 @@ import { APPS as apps } from "@/data/apps";
     flex: 0 0 auto;
     width: calc(var(--dock-icon) * var(--m));
     height: calc(var(--dock-icon) * var(--m));
-    transition: width 160ms var(--ease), height 160ms var(--ease);
+    transition: width var(--dur-state) var(--ease), height var(--dur-state) var(--ease);
   }
   /* While the pointer is on the shelf, size follows it frame by frame. */
   .shelf[data-tracking] .item { transition: none; }

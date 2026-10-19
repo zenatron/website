@@ -65,7 +65,9 @@ function currentHref(): string {
  */
 function iconFor(href: string): HTMLElement {
   const row = rowFor(href);
-  const tile = row?.querySelector<HTMLElement>(".tile");
+  // Home and the indexes have no sidebar row; the Dock has every app.
+  const dockIcon = document.querySelector<HTMLElement>(`[data-dock-item][data-href="${href === "/" ? "/" : `${href}/`}"] .icon`);
+  const tile = row?.querySelector<HTMLElement>(".tile") ?? dockIcon;
   const file = row?.querySelector<HTMLElement>(".ficon");
   let icon: HTMLElement;
   if (tile) {
