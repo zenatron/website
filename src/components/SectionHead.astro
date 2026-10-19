@@ -1,16 +1,19 @@
 ---
 /**
- * One page rhythm: a rule, a heading, and a mono meta note on the right.
- * Used for every band on a listing page so the sections read as parts of
- * one document rather than three separate widgets.
+ * One page rhythm: a rule, a heading, and on the right either a quiet
+ * meta note or a link to the whole of it ("All projects →"). Used for
+ * every section on every page — the homepage's bands too — so there's
+ * one section heading on the site, not four.
  */
-interface Props { title: string; meta?: string; blurb?: string; }
-const { title, meta, blurb } = Astro.props;
+interface Props { title: string; meta?: string; blurb?: string; href?: string; link?: string }
+const { title, meta, blurb, href, link } = Astro.props;
 ---
 <div class="sectionhead">
   <div class="line">
     <h2>{title}</h2>
-    {meta && <span class="meta">{meta}</span>}
+    {href && link ? (
+      <a class="more" href={href}>{link} <span aria-hidden="true">&rarr;</span></a>
+    ) : meta && <span class="meta">{meta}</span>}
   </div>
   {blurb && <p class="blurb">{blurb}</p>}
 </div>
@@ -34,10 +37,16 @@ const { title, meta, blurb } = Astro.props;
   }
   .meta {
     flex: 0 0 auto;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--track-label);
+    font-size: var(--t-sans-2xs);
     color: var(--c-dim);
+  }
+  .more {
+    flex: 0 0 auto;
+    font-size: var(--t-sans-sm);
+    color: var(--c-link);
+  }
+  @media (hover: hover) {
+    .more:hover { text-decoration: underline; text-underline-offset: 3px; }
   }
   .blurb {
     margin-top: var(--s-2);

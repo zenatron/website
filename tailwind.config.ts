@@ -37,8 +37,12 @@ const config: Config = {
       chip: "var(--radius-chip)",
       tile: "var(--radius-tile)",
     },
-    // Depth comes from surface value and hairlines.
-    boxShadow: { none: "none" },
+    // Depth comes from surface value and hairlines; only windows cast shadows.
+    boxShadow: {
+      none: "none",
+      window: "var(--shadow-window)",
+      popover: "var(--shadow-popover)",
+    },
     fontWeight: { normal: "400", medium: "500", semibold: "600", bold: "700" },
     fontFamily: {
       mono: "var(--font-mono)",
@@ -48,6 +52,7 @@ const config: Config = {
       "mono-xs": "var(--t-mono-xs)",
       "mono-sm": "var(--t-mono-sm)",
       "mono-md": "var(--t-mono-md)",
+      "sans-2xs": "var(--t-sans-2xs)",
       "sans-xs": "var(--t-sans-xs)",
       "sans-sm": "var(--t-sans-sm)",
       "sans-md": "var(--t-sans-md)",
@@ -82,7 +87,7 @@ const config: Config = {
       },
       height: {
         titlebar: "var(--h-titlebar)",
-        statusbar: "var(--h-statusbar)",
+        menubar: "var(--h-menubar)",
       },
       width: { sidebar: "var(--w-sidebar)" },
       lineHeight: {
@@ -97,7 +102,6 @@ const config: Config = {
         display: "var(--track-display)",
         head: "var(--track-head)",
         snug: "var(--track-snug)",
-        label: "var(--track-label)",
       },
     },
   },

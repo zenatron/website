@@ -1,9 +1,9 @@
 /**
- * The explorer persists across navigation, so active state and search are
- * synced here rather than re-rendered.
+ * The sidebar persists across navigation, so active state, search and
+ * which folders are open are synced here rather than re-rendered.
  *
- * There is no expansion state any more — the tree is two levels and
- * always open, which is what "too much nesting" was really about.
+ * A series is a folder. Its open state lives on the persisted DOM, so it
+ * lasts the visit; a folder holding the page you're on opens itself.
  */
 
 /** Do the query's characters appear in order? `revprox` matches the post. */
@@ -14,18 +14,33 @@ function subsequence(needle: string, hay: string): boolean {
 }
 
 /**
- * A row's name as it's shown — "tailscale-explained.mdx" — without the
- * screen-reader title inside the link, which made the fuzzy match run
- * across a whole sentence: "derp" matched twenty files.
+ * What a row is matched on: its URL's last segment — "tailscale-explained"
+ * — so the fuzzy subsequence match runs over a short slug rather than a
+ * whole title, where "derp" matched twenty posts. Titles are matched as
+ * plain substrings, separately.
  */
 function nameOf(row: HTMLElement): string {
   const a = row.querySelector("a");
   if (!a) return "";
-  return [...a.childNodes]
-    .filter((n) => !(n instanceof HTMLElement && n.classList.contains("sr-only")))
-    .map((n) => n.textContent)
-    .join("")
-    .toLowerCase();
+  return new URL(a.href).pathname.replace(/\/+$/, "").split("/").pop()!.toLowerCase();
+}
+
+/** Open or close a folder: its label, and every file it holds. */
+function setFolded(label: HTMLElement, folded: boolean) {
+  const key = label.dataset.foldKey;
+  label.toggleAttribute("data-folded", folded);
+  label.querySelector("[data-fold-toggle]")?.setAttribute("aria-expanded", String(!folded));
+  document.querySelectorAll<HTMLElement>(`#sidebar .row[data-fold="${CSS.escape(key ?? "")}"]`)
+    .forEach((r) => r.toggleAttribute("data-folded", folded));
+}
+
+function wireFolders() {
+  for (const btn of document.querySelectorAll<HTMLButtonElement>("#sidebar [data-fold-toggle]")) {
+    if (btn.dataset.wired) continue;
+    btn.dataset.wired = "1";
+    const label = btn.closest<HTMLElement>(".runlabel")!;
+    btn.addEventListener("click", () => setFolded(label, !label.hasAttribute("data-folded")));
+  }
 }
 
 function syncActive() {
@@ -39,6 +54,13 @@ function syncActive() {
     if (isActive) a.setAttribute("aria-current", "page");
     else a.removeAttribute("aria-current");
   });
+
+  // The page you're on is never inside a closed folder.
+  const current = document.querySelector<HTMLElement>("#sidebar .row[data-active][data-folded]");
+  const folder = current && document.querySelector<HTMLElement>(
+    `#sidebar .runlabel[data-fold-key="${CSS.escape(current.dataset.fold ?? "")}"]`
+  );
+  if (folder) setFolded(folder, false);
 
   // Keep the current file in view. The tree is its own scroller, and
   // scrollIntoView would scroll the page along with it.
@@ -59,19 +81,19 @@ function syncActive() {
  * is focused, and never under `astro dev`, where there's no index — the
  * filename filter above works the same either way.
  */
-interface PagefindHit {
+export interface PagefindHit {
   url: string;
   excerpt: string;
   meta: { title?: string };
   sub_results?: { title: string; url: string; excerpt: string; locations?: number[] }[];
 }
-interface Pagefind {
+export interface Pagefind {
   options(o: object): Promise<void>;
   init(): Promise<void>;
   debouncedSearch(q: string, o?: object, ms?: number): Promise<{ results: { data(): Promise<PagefindHit> }[] } | null>;
 }
 let pagefind: Promise<Pagefind | null> | null = null;
-function loadPagefind(): Promise<Pagefind | null> {
+export function loadPagefind(): Promise<Pagefind | null> {
   if (import.meta.env.DEV) return Promise.resolve(null);
   pagefind ??= (async () => {
     try {
@@ -119,16 +141,7 @@ function renderHit(hit: PagefindHit): HTMLLIElement {
 
   const file = document.createElement("span");
   file.className = "file";
-  const stem = row?.querySelector("a")?.firstChild?.textContent;
-  if (stem) {
-    file.append(stem);
-    const ext = document.createElement("span");
-    ext.className = "ext";
-    ext.textContent = ".mdx";
-    file.append(ext);
-  } else {
-    file.textContent = hit.meta.title ?? hit.url;
-  }
+  file.textContent = row?.dataset.title ?? hit.meta.title ?? hit.url;
   // Under which heading, when the hit isn't in the page's opening lines.
   if (best && best.url.includes("#")) {
     const where = document.createElement("span");
@@ -257,6 +270,7 @@ function wireSearch() {
 
 function sync() {
   wireSearch();
+  wireFolders();
   const input = document.querySelector<HTMLInputElement>("[data-search]");
   if (input) input.value = "";
   document.querySelectorAll<HTMLElement>("#sidebar .row, #sidebar .runlabel, #sidebar .sect:not(.hits)")

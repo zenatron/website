@@ -1,6 +1,6 @@
 ---
 /**
- * Callouts are distinguished by a left hairline and a mono label naming
+ * Callouts are distinguished by a left hairline and a small label naming
  * the type — not by a hue and not by an emoji. Only `error` takes red,
  * because red on this site means something actually failed.
  *
@@ -14,7 +14,7 @@ interface Props {
   class?: string;
 }
 const { type = "info", title, class: className } = Astro.props;
-const label = title ?? type;
+const label = title ?? type[0].toUpperCase() + type.slice(1);
 ---
 
 <aside class:list={["callout", type, className]}>
@@ -35,9 +35,10 @@ const label = title ?? type;
     border-color: var(--c-danger);
   }
 
+  /* Set as the grouped lists' headers are: small, semibold, quiet. */
   .label {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
+    font-size: var(--t-sans-xs);
+    font-weight: 600;
     color: var(--c-muted);
     margin-bottom: var(--s-2);
   }

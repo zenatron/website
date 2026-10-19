@@ -1,0 +1,48 @@
+---
+/**
+ * A page's app icon: the site's top-level places drawn as apps, the way
+ * the dock draws the real ones — a saturated squircle, lighter where the
+ * light falls, a white glyph, and the shared glass (styles/glass.css)
+ * with its glint on hover.
+ *
+ * One home for the glyphs: the sidebar's Favorites, the phone footer's
+ * Explore list, and — by cloning the sidebar's — the tabs and the window
+ * title all draw from here, so a page can't wear two different icons.
+ *
+ * Fills its parent; the parent decides the size.
+ */
+export type PageGlyph = "home" | "person" | "dock" | "camera" | "bubble" | "folder" | "pen";
+export type PageHue = "violet" | "orange" | "blue" | "green" | "yellow" | "graphite";
+
+interface Props { glyph: PageGlyph; hue?: PageHue }
+const { glyph, hue = "graphite" } = Astro.props;
+---
+<span class="pgicon glass" style={`--hi: var(--icon-${hue}-hi); --lo: var(--icon-${hue}-lo)`} aria-hidden="true">
+  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    {glyph === "home" && <path d="M2.5 7.4 8 2.8l5.5 4.6M4 6.3v6.9h3v-3.6h2v3.6h3V6.3" />}
+    {glyph === "person" && (<><circle cx="8" cy="5.4" r="2.6" fill="currentColor" /><path d="M3 13.6c.8-2.6 2.8-4 5-4s4.2 1.4 5 4" fill="currentColor" /></>)}
+    {glyph === "dock" && (<><rect x="1.8" y="10" width="12.4" height="3.6" rx="1.4" /><rect x="3.4" y="5.4" width="2.8" height="2.8" rx=".8" fill="currentColor" /><rect x="6.6" y="5.4" width="2.8" height="2.8" rx=".8" fill="currentColor" /><rect x="9.8" y="5.4" width="2.8" height="2.8" rx=".8" fill="currentColor" /></>)}
+    {glyph === "camera" && (<><path d="M2 5.6A1.4 1.4 0 0 1 3.4 4.2h1.7l1.1-1.6h3.6l1.1 1.6h1.7A1.4 1.4 0 0 1 14 5.6v6.2a1.4 1.4 0 0 1-1.4 1.4H3.4A1.4 1.4 0 0 1 2 11.8z" /><circle cx="8" cy="8.6" r="2.4" /></>)}
+    {glyph === "bubble" && <path d="M3.2 3h9.6A1.7 1.7 0 0 1 14.5 4.7v5a1.7 1.7 0 0 1-1.7 1.7H7.4L4.3 13.8v-2.4H3.2A1.7 1.7 0 0 1 1.5 9.7v-5A1.7 1.7 0 0 1 3.2 3z" fill="currentColor" />}
+    {glyph === "folder" && <path d="M1.8 4.6A1.3 1.3 0 0 1 3.1 3.3h3.1l1.4 1.5h5.3a1.3 1.3 0 0 1 1.3 1.3v5.8a1.3 1.3 0 0 1-1.3 1.3H3.1a1.3 1.3 0 0 1-1.3-1.3z" fill="currentColor" />}
+    {glyph === "pen" && (<><path d="M10.6 2.9a1.5 1.5 0 0 1 2.1 2.1L6 11.7l-2.9.8.8-2.9z" fill="currentColor" /><path d="M9.4 4.1l2.1 2.1" /></>)}
+  </svg>
+</span>
+
+<style>
+  .pgicon {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    color: var(--icon-glyph);
+    background: linear-gradient(var(--hi), var(--lo));
+  }
+  /* The glyph sits a little proud of its plate, the way a symbol on an
+     app icon is lit from above. */
+  svg {
+    width: 62%;
+    height: 62%;
+    filter: drop-shadow(0 0.5px 0.5px var(--icon-glyph-shadow));
+  }
+</style>

@@ -8,7 +8,9 @@ import { ClientRouter } from "astro:transitions";
 import Titlebar from "@/components/Titlebar.astro";
 import Tabs from "@/components/Tabs.astro";
 import Sidebar from "@/components/Sidebar.astro";
-import StatusBar from "@/components/StatusBar.astro";
+import MenuBar from "@/components/MenuBar.astro";
+import Dock from "@/components/Dock.astro";
+import Spotlight from "@/components/Spotlight.astro";
 import Explore from "@/components/Explore.astro";
 import JsonLd from "@/components/JsonLd.astro";
 import { SITE } from "@/data/site";
@@ -113,12 +115,27 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
         document.addEventListener("astro:after-swap", restore);
       })();
     </script>
+    <script is:inline define:vars={{ tz: SITE.timezone }}>
+      // The wallpaper's time of day, in the author's time zone, before
+      // first paint and again after every swap (which replaces <html>'s
+      // attributes). scripts/clock.ts keeps it current after that.
+      (function () {
+        function daypart() {
+          var h = Number(new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", hourCycle: "h23" }).format(new Date()));
+          document.documentElement.dataset.daypart = h >= 5 && h < 8 ? "dawn" : h >= 8 && h < 17 ? "day" : h >= 17 && h < 20 ? "dusk" : "night";
+        }
+        daypart();
+        document.addEventListener("astro:after-swap", daypart);
+      })();
+    </script>
     <ClientRouter />
     {schema && <JsonLd schema={schema} />}
   </head>
 
   <body>
     <a href="#main-content" class="skip">Skip to main content</a>
+
+    <MenuBar />
 
     <div class="window">
       <Titlebar />
@@ -131,8 +148,10 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
         </main>
         <div class="scrim" hidden data-scrim></div>
       </div>
-      <StatusBar />
     </div>
+
+    <Dock />
+    <Spotlight />
 
     <script>
       import "@/scripts/theme";
@@ -140,6 +159,9 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
       import "@/scripts/sidebar";
       import "@/scripts/tabs";
       import "@/scripts/window";
+      import "@/scripts/menubar";
+      import "@/scripts/dock";
+      import "@/scripts/spotlight";
       import "@/scripts/clock";
       import "@/scripts/peek";
       import "@/scripts/photos";
@@ -167,7 +189,20 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
    * no side gutter at all until max-width binds, so the window went
    * edge-to-edge everywhere between 640px and 1168px.
    */
-  body { padding: var(--s-5); }
+  /* What sits under the window: the gutter, or the Dock and its gaps. */
+  body {
+    --below: var(--s-5);
+    padding: 0 var(--s-5) var(--s-5);
+  }
+  @media screen and (min-width: 641px) and (min-height: 600px) {
+    body {
+      --below: calc(var(--s-3) * 2 + var(--h-dock));
+      padding-bottom: var(--s-3);
+    }
+  }
+
+  /* The menu bar runs the desktop's full width, over the gutter. */
+  .menubar { margin: 0 calc(var(--s-5) * -1) var(--s-5); }
 
   /*
    * The desktop the window sits on. Without it the window and the page
@@ -193,7 +228,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
    */
   @media screen and (min-width: 641px) {
     html, body { height: 100%; overflow: hidden; }
-    .window { height: calc(100dvh - var(--s-5) * 2); }
+    .window { height: calc(100dvh - var(--h-menubar) - var(--s-5) - var(--below)); }
     .pane {
       overflow-y: auto;
       overscroll-behavior-y: none;
@@ -211,11 +246,14 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     display: flex;
     flex-direction: column;
     max-width: var(--w-content);
-    min-height: calc(100vh - var(--s-5) * 2);
+    min-height: calc(100vh - var(--h-menubar) - var(--s-5) - var(--below));
     margin-inline: auto;
-    background: var(--c-bg);
+    /* Clear, so the chrome's glass shows the wallpaper; the pane brings
+       its own paper. */
+    background: transparent;
     border: 1px solid var(--c-hairline-strong);
     border-radius: var(--radius-window);
+    box-shadow: var(--shadow-window);
     transition: max-width var(--dur-pane) var(--ease);
     /* `clip`, not `hidden`: hidden makes the window a scroll container,
        which silently disables position:sticky for everything inside it —
@@ -244,22 +282,25 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     flex: 1 1 auto;
     min-width: 0;
     padding: var(--s-5) var(--s-6);
+    background: var(--c-bg);
   }
 
   /* Route changes are a pane swap, not a page fade. */
   @media (prefers-reduced-motion: no-preference) {
     ::view-transition-old(pane) {
-      animation: pane-out var(--dur-pane) var(--ease) both;
+      animation: pane-out var(--dur-state) var(--ease) both;
     }
     ::view-transition-new(pane) {
-      animation: pane-in var(--dur-pane) var(--ease) both;
+      animation: pane-in var(--dur-window) var(--ease-window) both;
     }
   }
+  /* The old page steps aside quickly; the new one arrives as a window
+     does, rising the few pixels the old one sank. */
   @keyframes pane-out {
     to { opacity: 0; transform: translateY(6px); }
   }
   @keyframes pane-in {
-    from { opacity: 0; }
+    from { opacity: 0; transform: translateY(6px); }
   }
 
   /* The scrim that dims the window behind the mobile drawer. */
@@ -276,6 +317,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     .window {
       border: 0;
       border-radius: 0;
+      box-shadow: none;
       min-height: 100vh;
     }
     .pane { padding: var(--s-4); }

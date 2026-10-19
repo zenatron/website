@@ -1,0 +1,276 @@
+---
+/**
+ * The menu bar, across the top of the desktop the window sits on. It took
+ * over from the editor's status bar: the clock, the version and the
+ * deploy now sit at its right, the way macOS puts its status items, and
+ * the build details, the branch and the copyright moved into the logo
+ * menu, where "About This Mac" keeps the same kind of facts.
+ *
+ * Every item does what it says. Go navigates; View drives the same
+ * switches the traffic lights and the theme button do; Window closes the
+ * tab you're on. The menus are <details>, so with JS off they still open
+ * and every link in them still works; scripts/menubar.ts adds what a menu
+ * bar does beyond that — one menu open at a time, sliding across to the
+ * next on hover, closing on a click outside or Escape.
+ *
+ * Phones don't get it: the window is the whole screen there, as it is on
+ * an iPhone, and nothing on an iPhone has a menu bar.
+ */
+import { COPYRIGHT, PAGES, SITE } from "@/data/site";
+
+const branch = __GIT_BRANCH__;
+const version = __APP_VERSION__;
+const built = new Date(__BUILD_TIME__).toLocaleString("en-US", {
+  timeZone: SITE.timezone,
+  dateStyle: "medium",
+  timeStyle: "short",
+});
+
+const go = [
+  { name: "Home", href: "/" },
+  ...PAGES.map((p) => ({ name: p.name[0].toUpperCase() + p.name.slice(1), href: p.href })),
+];
+---
+
+<header class="menubar" transition:persist="menubar" data-menubar>
+  <nav class="menus" aria-label="Menu bar">
+    <details class="menu" data-menu>
+      <summary class="logo glint-host" aria-label="About this site">
+        <span class="glass" data-glint-only><img src="/favicon.svg" alt="" width="15" height="15" /></span>
+      </summary>
+      <div class="drop">
+        <a href="/about/" data-nav>About {SITE.name}</a>
+        <hr />
+        <a href={SITE.resume}>Résumé</a>
+        <a href={SITE.repo} rel="noopener noreferrer">Source Code</a>
+        <hr />
+        <p class="fact">Version {version}</p>
+        <p class="fact">Built {built}</p>
+        <p class="fact">Branch <span class="mono">{branch}</span></p>
+        <p class="fact">{COPYRIGHT}</p>
+      </div>
+    </details>
+
+    <a class="app" href="/" data-nav>{SITE.name}</a>
+
+    <details class="menu" data-menu>
+      <summary>Go</summary>
+      <div class="drop">
+        {go.map((g) => <a href={g.href} data-nav>{g.name}</a>)}
+        <hr />
+        <a href="/projects/" data-nav>Projects</a>
+        <a href="/blog/" data-nav>Writing</a>
+      </div>
+    </details>
+
+    <details class="menu" data-menu>
+      <summary>View</summary>
+      <div class="drop">
+        <button type="button" data-menu-action="rail">Hide Sidebar</button>
+        <button type="button" data-menu-action="zoom">Zoom</button>
+        <hr />
+        <p class="head">Appearance</p>
+        <button type="button" class="check" data-theme-set="system">Automatic</button>
+        <button type="button" class="check" data-theme-set="light">Light</button>
+        <button type="button" class="check" data-theme-set="dark">Dark</button>
+      </div>
+    </details>
+
+    <details class="menu" data-menu>
+      <summary>Window</summary>
+      <div class="drop">
+        <button type="button" data-menu-action="close-tab">Close Tab</button>
+        <button type="button" data-menu-action="search">Find in Sidebar</button>
+      </div>
+    </details>
+
+    <details class="menu" data-menu>
+      <summary>Help</summary>
+      <div class="drop">
+        <button type="button" class="keyed" data-spotlight-open>Search…<kbd>⌘K</kbd></button>
+        <hr />
+        <a href="/say-hi/" data-nav>Say Hi</a>
+        <a href={`mailto:${SITE.email}`}>Email {SITE.email}</a>
+        <hr />
+        <a href="/rss.xml">RSS Feed</a>
+      </div>
+    </details>
+  </nav>
+
+  <div class="status">
+    <span class="deploy" title={`Built ${built}`} aria-hidden="true"><i></i>v{version}</span>
+    <button class="spot" type="button" data-spotlight-open aria-label="Spotlight search" title="Spotlight (⌘K)">
+      <svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+        <circle cx="7" cy="7" r="4.5" /><path d="m10.4 10.4 3.1 3.1" />
+      </svg>
+    </button>
+    <span class="clock tabular" data-clock aria-hidden="true"></span>
+  </div>
+</header>
+
+<style>
+  .menubar {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4);
+    height: var(--h-menubar);
+    padding-inline: var(--s-2);
+    background: var(--c-chrome-glass);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    backdrop-filter: blur(20px) saturate(1.6);
+    border-bottom: 1px solid var(--c-hairline);
+    font-size: var(--t-sans-xs);
+    line-height: 1;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .menus {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  /* Each title is a pill-less hit area that lights up when its menu is open. */
+  summary,
+  .app {
+    display: flex;
+    align-items: center;
+    height: calc(var(--h-menubar) - 6px);
+    padding-inline: 9px;
+    border-radius: var(--radius-chip);
+    color: var(--c-text);
+    cursor: default;
+    list-style: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  .app { font-weight: 700; }
+  .logo .glass { width: 15px; height: 15px; }
+  .logo img { width: 100%; height: 100%; }
+  .menu[open] > summary,
+  summary:focus-visible { background: var(--c-raised); outline: none; }
+  @media (hover: hover) {
+    .app:hover { background: var(--c-raised); }
+  }
+
+  .menu { position: relative; }
+
+  /* The dropdown: a popover, as macOS draws one. */
+  .drop {
+    position: absolute;
+    top: calc(100% + 3px);
+    left: 0;
+    min-width: 220px;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    background: var(--c-chrome);
+    border: 1px solid var(--c-hairline-strong);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-popover);
+  }
+  .drop a,
+  .drop button {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 5px 10px 5px 24px;
+    border-radius: var(--radius-chip);
+    color: var(--c-text);
+    text-align: left;
+    line-height: var(--lh-snug);
+    cursor: default;
+  }
+  /* The highlighted item is the accent, as macOS draws it. */
+  .drop a:hover,
+  .drop button:hover,
+  .drop a:focus-visible,
+  .drop button:focus-visible {
+    background: var(--c-accent);
+    color: var(--c-bg);
+    outline: none;
+  }
+  /* Menus don't fly in; they appear, with the briefest fade, as macOS's do. */
+  @media (prefers-reduced-motion: no-preference) {
+    .menu[open] > .drop { animation: menu-in var(--dur-state) var(--ease); }
+  }
+  @keyframes menu-in { from { opacity: 0; } }
+
+  /* A radio item's checkmark, in the gutter every item leaves for one. */
+  .check { position: relative; }
+  .check[aria-pressed="true"]::before {
+    content: "✓";
+    position: absolute;
+    left: 9px;
+    font-size: 11px;
+  }
+  .drop hr {
+    margin: 5px 10px;
+    border: 0;
+    border-top: 1px solid var(--c-hairline);
+  }
+  .head,
+  .fact {
+    padding: 4px 10px 4px 24px;
+    color: var(--c-dim);
+    line-height: var(--lh-snug);
+  }
+  .head { font-weight: 600; font-size: 11px; }
+  .mono { font-family: var(--font-mono); font-size: var(--t-mono-xs); }
+
+  /* Status items: the deploy, then the clock, at the far right. */
+  .status {
+    display: flex;
+    align-items: center;
+    gap: var(--s-4);
+    padding-inline: var(--s-2);
+    color: var(--c-text);
+  }
+  .deploy {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--c-muted);
+  }
+  /* Green for live, as a status light is — not the accent, which means
+     "selected" and would read as a link. */
+  .deploy i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--c-hue-green);
+  }
+  .spot {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: calc(var(--h-menubar) - 6px);
+    border-radius: var(--radius-chip);
+    color: var(--c-text);
+    cursor: default;
+  }
+  @media (hover: hover) {
+    .spot:hover { background: var(--c-raised); }
+  }
+  /* A shortcut, set at the item's far end as macOS sets one. */
+  .keyed { justify-content: space-between; gap: var(--s-5); }
+  .keyed kbd { font-family: inherit; color: var(--c-dim); }
+  .drop .keyed:hover kbd,
+  .drop .keyed:focus-visible kbd { color: inherit; }
+
+  /* Width reserved, so hydrating the clock can't shift anything. */
+  .clock {
+    min-width: 19ch;
+    text-align: right;
+  }
+
+  @media (max-width: 900px) {
+    .deploy { display: none; }
+  }
+  @media (max-width: 640px) {
+    .menubar { display: none; }
+  }
+</style>

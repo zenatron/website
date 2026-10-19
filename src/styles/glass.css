@@ -1,0 +1,70 @@
+/*
+   Icon glass, shared. An app's icon, a project's, a page's and the site's
+   own mark all wear the same glass, so it lives here rather than in each
+   icon's component, where three copies had already started to drift.
+
+     .glass                the squircle: clips, and carries the layers
+     .glass::before        gloss from the top, shade at the bottom, and
+                           the glint waiting just off the left edge
+     .glass::after         the rim: brightest where the light catches the
+                           top-left, over a hairline so a light plate
+                           still has an edge on a light page
+     .glass[data-glint-only]  for artwork that brings its own gloss and
+                           rim (the site's mark): just the glint
+
+   The glint crosses on hover — of the icon, or of anything marked
+   `glint-host`, a card or a row whose whole area is the target, where the
+   pointer is rarely on the icon itself.
+*/
+
+.glass {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 22.5%;
+}
+
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(115deg, transparent 40%, var(--glass-glint) 50%, transparent 60%) 100% 0 / 300% 100% no-repeat,
+    linear-gradient(var(--glass-gloss), transparent 45%, transparent 70%, var(--glass-shade));
+}
+.glass[data-glint-only]::before {
+  background:
+    linear-gradient(115deg, transparent 40%, var(--glass-glint) 50%, transparent 60%) 100% 0 / 300% 100% no-repeat;
+}
+
+.glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  padding: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(155deg, var(--glass-rim), var(--glass-rim-soft) 28%, transparent 52%, var(--glass-rim-soft)),
+    linear-gradient(var(--glass-line), var(--glass-line));
+  -webkit-mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
+  mask-composite: exclude;
+}
+.glass[data-glint-only]::after { content: none; }
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .glass:hover::before,
+  .glint-host:hover .glass::before {
+    animation: glass-glint calc(var(--dur-pane) * 2) var(--ease);
+  }
+}
+@keyframes glass-glint {
+  from { background-position: 100% 0, 0 0; }
+  to   { background-position: 0% 0, 0 0; }
+}

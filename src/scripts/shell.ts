@@ -34,7 +34,10 @@ function syncTitlebar() {
   const link = [...document.querySelectorAll<HTMLAnchorElement>("#sidebar .row a[data-nav]")]
     .find((a) => (new URL(a.href).pathname.replace(/\/+$/, "") || "/") === here);
   const row = link?.closest<HTMLElement>(".row");
-  const tile = row?.querySelector<HTMLElement>(".tile");
+  // Home and the indexes have no sidebar row; the Dock has every app.
+  const dockIcon = document.querySelector<HTMLElement>(`[data-dock-item][data-href="${here === "/" ? "/" : `${here}/`}"] .icon`);
+  const tile = row?.querySelector<HTMLElement>(".tile") ?? dockIcon;
+  const file = row?.querySelector<HTMLElement>(".ficon");
   const dot = row?.querySelector<HTMLElement>(".dot");
   const hue = row?.style.getPropertyValue("--h") ?? "";
   const tint = row?.style.getPropertyValue("--t") ?? "";
@@ -44,6 +47,10 @@ function syncTitlebar() {
     icon = document.createElement("span");
     icon.className = "ptile";
     icon.append(...[...tile.childNodes].map((n) => n.cloneNode(true)));
+  } else if (file) {
+    icon = document.createElement("span");
+    icon.className = "pfile";
+    icon.append(...[...file.childNodes].map((n) => n.cloneNode(true)));
   } else if (dot) {
     icon = document.createElement("span");
     icon.className = "pdot";

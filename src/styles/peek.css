@@ -1,8 +1,8 @@
 /*
    The card scripts/peek.ts shows over a link to another post or project.
-   Built by script, so it's styled here rather than in a component. No
-   shadow — depth on this site is surface and hairline — so it lifts off
-   the page as the chrome surface, with the stronger edge.
+   Built by script, so it's styled here rather than in a component. A
+   popover, so it lifts off the page as macOS lifts one: the chrome
+   surface, the stronger edge, and the popover shadow.
 */
 .peek {
   position: fixed;
@@ -11,6 +11,7 @@
   padding: var(--s-3) var(--s-4) var(--s-4);
   background: var(--c-chrome);
   border: 1px solid var(--c-hairline-strong);
+  box-shadow: var(--shadow-popover);
   border-radius: var(--radius-card);
   pointer-events: none;
   opacity: 0;
@@ -38,8 +39,7 @@
   padding-bottom: var(--s-2);
   margin-bottom: var(--s-3);
   border-bottom: 1px solid var(--c-hairline);
-  font-family: var(--font-mono);
-  font-size: var(--t-mono-xs);
+  font-size: var(--t-sans-2xs);
 }
 .peek-dot {
   flex: 0 0 auto;
@@ -75,7 +75,6 @@
 }
 .peek-context {
   margin-top: var(--s-2);
-  font-family: var(--font-mono);
-  font-size: var(--t-mono-xs);
+  font-size: var(--t-sans-2xs);
   color: var(--c-dim);
 }

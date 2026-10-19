@@ -23,9 +23,14 @@
   --c-muted:     #635D52;
   --c-dim:       #6C665B;
 
-  /* Accents. Each has a job; the hues are for personality. */
-  --c-accent:    #935D0F;  /* CURRENT / ACTIVE */
-  --c-link:      #1E7657;  /* NAVIGABLE */
+  /*
+     Accents. One accent, as macOS has one: it marks what's selected,
+     current or primary — the open tab, the selected row, the chosen menu
+     item, the button a page most wants pressed — and links wear it too.
+     Danger is the only other job-color; the hues are for personality.
+  */
+  --c-accent:    #1A66CC;  /* SELECTED / CURRENT / PRIMARY */
+  --c-link:      #1A66CC;  /* NAVIGABLE */
   --c-danger:    #B93A28;  /* GENUINE FAILURE */
 
   --c-hue-violet: #6A4BC4;
@@ -40,8 +45,8 @@
   --c-hue-teal:   #1C6F7A;
 
   /* Soft tints behind highlighted words and pills */
-  --c-tint-accent: #FBF0D8;
-  --c-tint-link:   #DCF0E6;
+  --c-tint-accent: #DDEBFB;
+  --c-tint-link:   #DDEBFB;
   --c-tint-violet: #ECE6FB;
   --c-tint-orange: #FCE8DA;
   --c-tint-blue:   #DDECF6;
@@ -54,6 +59,11 @@
   --c-tile-light:   #FDFCF9;  /* an app icon's plate: the same in both themes */
   --c-trafficlight: #D8D2C6;  /* an unfocused window's lights */
   --c-wallpaper:    #ECE6DA;  /* the desktop behind the window */
+  /* The wallpaper's four blooms; the palette's tints, in light. */
+  --wp-1: var(--c-tint-accent);
+  --wp-2: var(--c-tint-blue);
+  --wp-3: var(--c-tint-violet);
+  --wp-4: var(--c-tint-green);
   /* The desk on /about: wall, desktop, felt mat, and whether the lamp is on. */
   --desk-wall:      #F1ECE3;
   --desk-top:       #E4DCCD;
@@ -80,8 +90,8 @@
   --c-muted:     #A69E8D;
   --c-dim:       #948B7C;
 
-  --c-accent:    #FFB454;
-  --c-link:      #7FD1B9;
+  --c-accent:    #6CB4FF;
+  --c-link:      #6CB4FF;
   --c-danger:    #F2695E;
 
   --c-hue-violet: #BCA4FF;
@@ -92,8 +102,8 @@
   --c-hue-rose:   #F493C2;
   --c-hue-teal:   #7AD4DD;
 
-  --c-tint-accent: #3A2E19;
-  --c-tint-link:   #17352C;
+  --c-tint-accent: #16263A;
+  --c-tint-link:   #16263A;
   --c-tint-violet: #2A2340;
   --c-tint-orange: #3A2418;
   --c-tint-blue:   #162A38;
@@ -105,7 +115,14 @@
   --c-tile-dark:    #24211C;
   --c-tile-light:   #FDFCF9;
   --c-trafficlight: #454036;
-  --c-wallpaper:    #0B0A08;
+  /* Lifted off black, with real color in its blooms: a dark desktop is
+     a mid-dark wallpaper, not a void, or the glass and the window's
+     shadow have nothing to show against. */
+  --c-wallpaper:    #1D1A16;
+  --wp-1: rgba(108, 180, 255, 0.22);
+  --wp-2: rgba(127, 189, 232, 0.24);
+  --wp-3: rgba(188, 164, 255, 0.26);
+  --wp-4: rgba(155, 214, 138, 0.16);
   --desk-wall:      #181612;
   --desk-top:       #23201B;
   --desk-edge:      #2E2A23;
@@ -133,8 +150,8 @@
     --c-muted:     #A69E8D;
     --c-dim:       #948B7C;
 
-    --c-accent:    #FFB454;
-    --c-link:      #7FD1B9;
+    --c-accent:    #6CB4FF;
+    --c-link:      #6CB4FF;
     --c-danger:    #F2695E;
 
     --c-hue-violet: #BCA4FF;
@@ -145,8 +162,8 @@
     --c-hue-rose:   #F493C2;
     --c-hue-teal:   #7AD4DD;
 
-    --c-tint-accent: #3A2E19;
-    --c-tint-link:   #17352C;
+    --c-tint-accent: #16263A;
+    --c-tint-link:   #16263A;
     --c-tint-violet: #2A2340;
     --c-tint-orange: #3A2418;
     --c-tint-blue:   #162A38;
@@ -158,7 +175,14 @@
     --c-tile-dark:    #24211C;
     --c-tile-light:   #FDFCF9;
     --c-trafficlight: #454036;
-    --c-wallpaper:    #0B0A08;
+    /* Lifted off black, with real color in its blooms: a dark desktop is
+       a mid-dark wallpaper, not a void, or the glass and the window's
+       shadow have nothing to show against. */
+    --c-wallpaper:    #1D1A16;
+    --wp-1: rgba(108, 180, 255, 0.22);
+    --wp-2: rgba(127, 189, 232, 0.24);
+    --wp-3: rgba(188, 164, 255, 0.26);
+    --wp-4: rgba(155, 214, 138, 0.16);
     --desk-wall:      #181612;
     --desk-top:       #23201B;
     --desk-edge:      #2E2A23;
@@ -190,17 +214,65 @@
 }
 
 /*
+   A page's app icon: a saturated plate, lighter at the top where the
+   light falls, under a white glyph — the way System Settings, Photos and
+   Messages are drawn. Objects, not page, so the same in both themes; the
+   hues are the palette's, turned up to icon strength. Graphite is for
+   the places that have no hue of their own (home, the indexes).
+*/
+:root {
+  --icon-violet-hi:   #A68CFF;  --icon-violet-lo:   #6142D6;
+  --icon-orange-hi:   #FFB15C;  --icon-orange-lo:   #EA6A16;
+  --icon-blue-hi:     #5CC2FF;  --icon-blue-lo:     #1F78E0;
+  --icon-green-hi:    #6EDC85;  --icon-green-lo:    #229A48;
+  --icon-yellow-hi:   #FFE07A;  --icon-yellow-lo:   #F0A800;
+  --icon-graphite-hi: #8E8A84;  --icon-graphite-lo: #4A4741;
+  --icon-glyph:        #FFFFFF;
+  --icon-glyph-shadow: rgba(0, 0, 0, 0.22);
+}
+
+/*
    The desktop behind the window: the base, with the palette's tints
    blooming in from the corners. The tints swap with the theme, so the
    wallpaper does too.
 */
 :root {
   --wallpaper:
-    radial-gradient(55% 60% at 0% 0%, var(--c-tint-accent), transparent 70%),
-    radial-gradient(45% 55% at 100% 12%, var(--c-tint-blue), transparent 70%),
-    radial-gradient(60% 60% at 85% 100%, var(--c-tint-violet), transparent 70%),
-    radial-gradient(45% 50% at 8% 100%, var(--c-tint-green), transparent 70%),
+    var(--sky),
+    radial-gradient(55% 60% at 0% 0%, var(--wp-1), transparent 70%),
+    radial-gradient(45% 55% at 100% 12%, var(--wp-2), transparent 70%),
+    radial-gradient(60% 60% at 85% 100%, var(--wp-3), transparent 70%),
+    radial-gradient(45% 50% at 8% 100%, var(--wp-4), transparent 70%),
     var(--c-wallpaper);
+}
+
+/*
+   A dynamic desktop: the light over the wallpaper follows the hour in
+   Hartford, as a macOS dynamic wallpaper follows the sun — a low pink
+   glow at dawn, a pale sun high on the right by day, a burnt-orange
+   horizon under a violet sky at dusk, and a deep blue night settling
+   from the top. Set on <html> before first paint by Shell, and kept
+   current by the menu bar clock. Layered over the tints, so it works in
+   either theme.
+*/
+:root { --sky: linear-gradient(transparent, transparent); }
+html[data-daypart="dawn"] {
+  --sky:
+    radial-gradient(90% 55% at 30% 105%, rgba(255, 150, 125, 0.32), transparent 70%),
+    radial-gradient(70% 50% at 80% 0%, rgba(180, 170, 255, 0.16), transparent 70%);
+}
+html[data-daypart="day"] {
+  --sky: radial-gradient(55% 45% at 88% -5%, rgba(255, 238, 190, 0.38), transparent 70%);
+}
+html[data-daypart="dusk"] {
+  --sky:
+    radial-gradient(110% 55% at 65% 108%, rgba(255, 120, 60, 0.34), transparent 70%),
+    radial-gradient(80% 60% at 10% -5%, rgba(120, 80, 220, 0.22), transparent 70%);
+}
+html[data-daypart="night"] {
+  --sky:
+    radial-gradient(130% 80% at 50% -10%, rgba(25, 35, 95, 0.4), transparent 75%),
+    radial-gradient(40% 30% at 85% 8%, rgba(200, 210, 255, 0.1), transparent 70%);
 }
 
 /*
@@ -249,7 +321,7 @@
   --folder-emboss:   #2F86C9;
   --sticker-violet: #6A4BC4;
   --sticker-blue:   #24688F;
-  --sticker-teal:   #1E7657;
+  --sticker-teal:   #1A66CC;
   --sticker-green:  #397430;
   --sticker-orange: #B6531B;
   --sticker-amber:  #93600F;
@@ -271,7 +343,8 @@
   --t-mono-sm:  12px;
   --t-mono-md:  13px;
 
-  /* Sans */
+  /* Sans. 2xs is for labels — the small print mono used to set. */
+  --t-sans-2xs: 12px;
   --t-sans-xs:  13px;
   --t-sans-sm:  15px;
   --t-sans-md:  17px;
@@ -288,7 +361,6 @@
   --track-display: -0.03em;  /* page titles */
   --track-head:    -0.02em;  /* section heads, card titles */
   --track-snug:    -0.01em;  /* titles at body size */
-  --track-label:    0.08em;  /* small mono labels */
 
   --lh-display: 1.1;   /* page titles */
   --lh-head:    1.2;   /* headings, card titles */
@@ -320,14 +392,76 @@
   --radius-tile:    27%;
 
   --h-titlebar:  40px;
-  --h-statusbar: 28px;
-  --w-sidebar:   340px;  /* fits the longest filename beside its reading time: self-hosting-with-tailscale.mdx  25 min */
+  --h-menubar:   28px;
+  --dock-icon:   44px;
+  --h-dock:      58px;
+  --w-sidebar:   300px;  /* a Finder sidebar: titles past ~36 characters ellipsize, and the tooltip has the rest */
   --w-content:  1280px;
 }
 
-/* Motion — two durations, total. */
+/*
+   Depth, the way macOS draws it: a window is lifted off the desktop by a
+   wide, soft shadow with a tight contact shadow under it, and a popover
+   or sheet sits a little closer. Shadows only ever mean "this is a
+   window" — cards on a page stay flat, separated by surface and hairline.
+   Darker in the dark theme, where a light shadow would vanish.
+*/
 :root {
-  --dur-state: 120ms;
-  --dur-pane:  380ms;
-  --ease:      cubic-bezier(.2, 0, .4, 1);
+  --shadow-window:
+    0 0 0 0.5px rgba(36, 33, 28, 0.06),
+    0 2px 6px rgba(36, 33, 28, 0.06),
+    0 22px 48px -8px rgba(36, 33, 28, 0.2);
+  --shadow-popover:
+    0 0 0 0.5px rgba(36, 33, 28, 0.05),
+    0 8px 24px -4px rgba(36, 33, 28, 0.16);
+}
+:root[data-theme="dark"] {
+  --shadow-window:
+    0 0 0 0.5px rgba(0, 0, 0, 0.6),
+    0 2px 6px rgba(0, 0, 0, 0.3),
+    0 26px 60px -8px rgba(0, 0, 0, 0.65);
+  --shadow-popover:
+    0 0 0 0.5px rgba(0, 0, 0, 0.5),
+    0 10px 28px -4px rgba(0, 0, 0, 0.55);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --shadow-window:
+      0 0 0 0.5px rgba(0, 0, 0, 0.6),
+      0 2px 6px rgba(0, 0, 0, 0.3),
+      0 26px 60px -8px rgba(0, 0, 0, 0.65);
+    --shadow-popover:
+      0 0 0 0.5px rgba(0, 0, 0, 0.5),
+      0 10px 28px -4px rgba(0, 0, 0, 0.55);
+  }
+}
+
+/*
+   Vibrancy: the window's chrome — titlebar, tabs, sidebar, status bar —
+   lets the wallpaper's tint through, the way a macOS sidebar takes on the
+   color of whatever is behind the window. The content pane stays opaque
+   paper. Derived from --c-chrome, so it follows the theme on its own.
+*/
+:root {
+  --c-chrome-glass: color-mix(in srgb, var(--c-chrome) 76%, transparent);
+}
+
+/*
+   Motion — two kinds, and nothing in between.
+
+   State: a hover, a press, a color change. Quick and even.
+   Window: something arriving — a window or a sheet opening, Spotlight,
+   the next page swapping into the pane. Fast out of the gate, settling
+   softly, the way macOS opens a window, and always the same shape: it
+   fades up from a touch smaller (or, for the pane, a touch lower).
+
+   --dur-pane is the slow step a few decorative moments are paced from
+   (the glint, the steam off the mug); it isn't for things arriving.
+*/
+:root {
+  --dur-state:  120ms;
+  --dur-window: 240ms;
+  --dur-pane:   380ms;
+  --ease:        cubic-bezier(.2, 0, .4, 1);
+  --ease-window: cubic-bezier(.2, .9, .25, 1);
 }

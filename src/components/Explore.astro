@@ -1,132 +1,135 @@
 ---
 /**
- * Where else to go, at the foot of every page — on a screen narrow enough
- * that the explorer is a drawer. There, nothing on screen says the rest of
- * the site exists unless you open the menu; this does, so reading to the
- * end of any page leads on to the next place rather than stopping.
+ * Where else to go, at the foot of every page on a phone. There, with no
+ * Dock and the sidebar put away in a drawer, nothing on screen says the
+ * rest of the site exists; this does, so reading to the end of any page
+ * leads on to the next place rather than stopping.
  *
- * Wide screens don't get it: the explorer is always there, listing the
- * same places.
+ * It's the Dock, as a phone draws one: the same apps (data/apps.ts), the
+ * same glass icons, the résumé and GitHub after them, laid out as a home
+ * screen on the Dock's own glass shelf, with names under the icons and a
+ * dot under the one you're in.
+ *
+ * Wider screens have the Dock itself.
  */
-import { PAGES } from "@/data/site";
-import { FAVORITES } from "@/data/favorites";
-import { getAllProjects } from "@/lib/projects";
-import { getAllBlogPosts } from "@/lib/blog";
-import { PHOTOS } from "@/data/photos";
+import { COPYRIGHT, SITE } from "@/data/site";
+import { APPS } from "@/data/apps";
+import PageIcon from "@/components/PageIcon.astro";
+import AppIcon from "@/components/AppIcon.astro";
+import FileIcon from "@/components/FileIcon.astro";
 
-type Glyph = "home" | "person" | "dock" | "camera" | "bubble" | "folder" | "pen";
-
-const [projects, posts] = await Promise.all([getAllProjects(), getAllBlogPosts()]);
-const apps = FAVORITES.filter((f) => f.logo).length;
-const page = (href: string) => PAGES.find((p) => p.href === href);
-
-const places: { href: string; name: string; blurb: string; glyph: Glyph; hue?: string }[] = [
-  { href: "/", name: "home", blurb: "Back to the start", glyph: "home" },
-  { href: "/about/", name: "about", blurb: "The story, the desk, and the lid", glyph: "person", hue: page("/about/")?.hue },
-  { href: "/dock/", name: "dock", blurb: `${apps} apps I use, and a few files`, glyph: "dock", hue: page("/dock/")?.hue },
-  { href: "/projects/", name: "projects", blurb: `${projects.length} things I’ve built`, glyph: "folder" },
-  { href: "/blog/", name: "writing", blurb: `${posts.length} posts on homelabs and more`, glyph: "pen" },
-  { href: "/photos/", name: "photos", blurb: `${PHOTOS.length} shot on iPhone, edited on iPhone & Mac`, glyph: "camera", hue: page("/photos/")?.hue },
-  { href: "/say-hi/", name: "say hi", blurb: page("/say-hi/")?.blurb ?? "", glyph: "bubble", hue: page("/say-hi/")?.hue },
-];
-
-const here = Astro.url.pathname.replace(/\/+$/, "") || "/";
-const shown = places.filter((p) => (p.href.replace(/\/+$/, "") || "/") !== here);
-const vars = (hue?: string) =>
-  hue ? `--h: var(--c-hue-${hue}); --t: var(--c-tint-${hue})` : "--h: var(--c-muted); --t: var(--c-raised)";
+const norm = (p: string) => p.replace(/\/+$/, "") || "/";
+const here = norm(Astro.url.pathname);
+// The app you're in: the page itself, or the index a post or project sits under.
+const current = (href: string) => {
+  const h = norm(href);
+  return h === here || (h !== "/" && here.startsWith(`${h}/`));
+};
 ---
 
 <nav class="explore" aria-label="Keep exploring">
-  <p class="label">keep exploring</p>
-  <ul>
-    {shown.map((p) => (
+  <p class="glabel">Keep exploring</p>
+  <ul class="springboard">
+    {APPS.map((a) => (
       <li>
-        <a href={p.href} style={vars(p.hue)}>
-          <span class="tile" aria-hidden="true">
-            <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              {p.glyph === "home" && <path d="M2.5 7.4 8 2.8l5.5 4.6M4 6.3v6.9h3v-3.6h2v3.6h3V6.3" />}
-              {p.glyph === "person" && (<><circle cx="8" cy="5.4" r="2.6" /><path d="M3 13.6c.8-2.6 2.8-4 5-4s4.2 1.4 5 4" /></>)}
-              {p.glyph === "dock" && (<><rect x="1.8" y="10" width="12.4" height="3.6" rx="1.4" /><rect x="3.4" y="5.4" width="2.8" height="2.8" rx=".8" /><rect x="6.6" y="5.4" width="2.8" height="2.8" rx=".8" /><rect x="9.8" y="5.4" width="2.8" height="2.8" rx=".8" /></>)}
-              {p.glyph === "camera" && (<><path d="M2 5.6A1.4 1.4 0 0 1 3.4 4.2h1.7l1.1-1.6h3.6l1.1 1.6h1.7A1.4 1.4 0 0 1 14 5.6v6.2a1.4 1.4 0 0 1-1.4 1.4H3.4A1.4 1.4 0 0 1 2 11.8z" /><circle cx="8" cy="8.6" r="2.4" /></>)}
-              {p.glyph === "bubble" && <path d="M3.2 3h9.6A1.7 1.7 0 0 1 14.5 4.7v5a1.7 1.7 0 0 1-1.7 1.7H7.4L4.3 13.8v-2.4H3.2A1.7 1.7 0 0 1 1.5 9.7v-5A1.7 1.7 0 0 1 3.2 3z" />}
-              {p.glyph === "folder" && <path d="M1.8 4.6A1.3 1.3 0 0 1 3.1 3.3h3.1l1.4 1.5h5.3a1.3 1.3 0 0 1 1.3 1.3v5.8a1.3 1.3 0 0 1-1.3 1.3H3.1a1.3 1.3 0 0 1-1.3-1.3z" />}
-              {p.glyph === "pen" && (<><path d="M10.6 2.9a1.5 1.5 0 0 1 2.1 2.1L6 11.7l-2.9.8.8-2.9z" /><path d="M9.4 4.1l2.1 2.1" /></>)}
-            </svg>
-          </span>
-          <span class="name">{p.name}</span>
-          <span class="blurb">{p.blurb}</span>
-          <svg class="go" aria-hidden="true" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
+        <a class="glint-host" href={a.href} aria-current={current(a.href) ? "page" : undefined}>
+          <span class="icon"><PageIcon glyph={a.glyph} hue={a.hue} /></span>
+          <span class="name">{a.name}</span>
         </a>
       </li>
     ))}
+    <li>
+      <a class="glint-host" href={SITE.resume}>
+        <span class="icon"><FileIcon form="doc" glyph="resume" ext="pdf" ink="red" /></span>
+        <span class="name">Résumé</span>
+      </a>
+    </li>
+    <li>
+      <a class="glint-host" href={SITE.github} rel="me noopener noreferrer">
+        <span class="icon"><AppIcon item={{ logo: "github.svg" }} /></span>
+        <span class="name">GitHub</span>
+      </a>
+    </li>
   </ul>
+  {/* Phones have no menu bar, so the colophon it keeps lands here. */}
+  <p class="colophon">{COPYRIGHT} · v{__APP_VERSION__}</p>
 </nav>
 
 <style>
   .explore { display: none; }
-
-  @media (max-width: 900px) {
+  @media (max-width: 640px) {
     .explore {
       display: block;
       margin-top: var(--s-7);
     }
   }
 
-  .label {
-    margin: 0 0 var(--s-2);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--track-label);
-    color: var(--c-dim);
-  }
-
-  /* Set as the explorer sets its pages: a tinted tile, the name, and here
-     a line on what's there. */
-  ul {
+  /* The Dock's shelf — same glass, edge and shadow — holding a home
+     screen's grid. Three across: nine icons make a full square, where
+     four across left GitHub alone on a row of its own. */
+  .springboard {
     list-style: none;
     margin: 0;
-    padding: 0;
-    background: var(--c-chrome);
-    border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-card);
-    overflow: hidden;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-5) var(--s-2);
+    padding: var(--s-5) var(--s-3);
+    background: var(--c-chrome-glass);
+    -webkit-backdrop-filter: blur(24px) saturate(1.8);
+    backdrop-filter: blur(24px) saturate(1.8);
+    border: 1px solid var(--c-hairline-strong);
+    border-radius: 22px;
+    box-shadow: var(--shadow-popover);
   }
-  li + li { border-top: 1px solid var(--c-hairline); }
+
   a {
-    display: grid;
-    grid-template-columns: 32px minmax(0, 1fr) 14px;
-    grid-template-rows: auto auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    column-gap: var(--s-3);
-    row-gap: 1px;
-    min-height: 60px;
-    padding: var(--s-3) var(--s-4);
-    color: inherit;
+    gap: 6px;
+    color: var(--c-text);
     text-decoration: none;
-    transition: background var(--dur-state) var(--ease);
+    -webkit-tap-highlight-color: transparent;
   }
-  .tile {
-    grid-row: 1 / span 2;
-    display: grid;
-    place-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-tile);
-    color: var(--h);
-    background: var(--t);
+  .icon {
+    display: block;
+    width: 62px;
+    height: 62px;
+    transition: transform var(--dur-state) var(--ease);
   }
-  .name { font-size: var(--t-sans-md); color: var(--c-text); }
-  .blurb {
-    grid-column: 2;
-    min-width: 0;
+  .icon :global(.fileicon) { width: 100%; height: 100%; }
+  /* A press sinks the icon, the way a home screen answers a tap. */
+  a:active .icon { transform: scale(0.9); }
+  a:focus-visible { outline: none; }
+  a:focus-visible .icon { outline: 1px solid var(--c-accent); outline-offset: 3px; border-radius: 22.5%; }
+
+  .name {
+    max-width: 100%;
     font-size: var(--t-sans-xs);
-    color: var(--c-muted);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .go {
-    grid-column: 3;
-    grid-row: 1 / span 2;
+
+  /* The app you're in, marked as the Dock marks it: a dot underneath. */
+  a[aria-current="page"]::after {
+    content: "";
+    position: absolute;
+    bottom: -9px;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    margin-left: -2px;
+    border-radius: 50%;
+    background: var(--c-text);
+  }
+
+  .colophon {
+    margin-top: var(--s-5);
+    font-size: var(--t-sans-xs);
     color: var(--c-dim);
+    text-align: center;
   }
-  a:active { background: var(--c-raised); }
-  a:focus-visible { outline-offset: -2px; }
 </style>

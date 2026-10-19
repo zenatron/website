@@ -110,10 +110,11 @@ const items: Item[] = [
     </ul>
   </div>
 
-  <dialog class="win" data-win>
-    <div class="win-bar">
-      <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
-      <span class="win-name" data-win-name></span>
+  <dialog class="win mwin" data-win>
+    <div class="mwin-bar">
+      <span class="mwin-lights" aria-hidden="true"><i></i><i></i><i></i></span>
+      <p class="mwin-title" data-win-name></p>
+      <span></span>
     </div>
     {/*
       Every window's contents ship rendered and hidden inside the dialog;
@@ -245,8 +246,7 @@ const items: Item[] = [
     line-height: var(--lh-head);
   }
   .lnote {
-    font-size: var(--t-mono-xs);
-    font-family: var(--font-mono);
+    font-size: var(--t-sans-2xs);
     color: var(--c-muted);
     line-height: var(--lh-snug);
   }
@@ -263,30 +263,8 @@ const items: Item[] = [
     padding: 0;
     width: min(560px, calc(100vw - var(--s-6)));
     max-height: min(70vh, 620px);
-    background: var(--c-bg);
-    color: var(--c-text);
-    border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-card);
-    overflow: hidden;
   }
-  .win::backdrop { background: var(--c-scrim); }
   .win:focus, .win:focus-visible { outline: none; }
-  .win-bar {
-    display: flex;
-    align-items: center;
-    gap: var(--s-3);
-    height: var(--h-titlebar);
-    padding-inline: var(--s-3);
-    background: var(--c-chrome);
-    border-bottom: 1px solid var(--c-hairline);
-  }
-  .lights { display: flex; gap: var(--s-2); }
-  .lights i { width: 11px; height: 11px; border-radius: 50%; background: var(--c-trafficlight); }
-  .win-name {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    color: var(--c-muted);
-  }
   .win-body {
     padding: var(--s-4);
     overflow-y: auto;
@@ -296,8 +274,7 @@ const items: Item[] = [
     padding: var(--s-2) var(--s-3);
     border-top: 1px solid var(--c-hairline);
     background: var(--c-chrome);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
+    font-size: var(--t-sans-2xs);
     color: var(--c-muted);
   }
   .win-foot:empty { display: none; }
@@ -316,8 +293,7 @@ const items: Item[] = [
     font-size: var(--t-sans-sm);
   }
   .win-body :global(.row span:last-child) {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
+    font-size: var(--t-sans-2xs);
     color: var(--c-dim);
     flex: 0 0 auto;
   }
@@ -327,8 +303,7 @@ const items: Item[] = [
   .win-body :global(.quote .by) {
     display: block;
     margin-top: var(--s-2);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
+    font-size: var(--t-sans-2xs);
     color: var(--c-dim);
   }
 

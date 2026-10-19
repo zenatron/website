@@ -1,6 +1,6 @@
 {
   "name": "personalsite",
-  "version": "10.1.2",
+  "version": "10.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,7 +11,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "diagrams:retheme": "node scripts/retheme-diagrams.mjs",
-    "photos": "node scripts/photos.mjs"
+    "photos": "node scripts/photos.mjs",
+    "icons": "node scripts/icons.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",

@@ -2,6 +2,9 @@
 @import "./fonts.css";
 @import "./prose.css";
 @import "./peek.css";
+@import "./window.css";
+@import "./list.css";
+@import "./glass.css";
 
 @tailwind base;
 @tailwind components;
@@ -70,7 +73,8 @@
     text-transform: none;
   }
 
-  /* The only box-shadow permitted on the site is this focus ring. */
+  /* Box-shadows belong to windows (--shadow-window, --shadow-popover);
+     focus is an outline, never a shadow. */
   :focus-visible {
     outline: 1px solid var(--c-accent);
     outline-offset: 2px;
@@ -118,12 +122,12 @@
   }
   .btn.primary {
     color: var(--c-bg);
-    background: var(--c-link);
+    background: var(--c-accent);
     border-color: transparent;
   }
   @media (hover: hover) {
     .btn:hover { background: var(--c-raised); border-color: var(--c-hairline-strong); }
-    .btn.primary:hover { background: var(--c-link); filter: brightness(1.08); }
+    .btn.primary:hover { background: var(--c-accent); filter: brightness(1.08); }
   }
 }
 

@@ -3,18 +3,44 @@
  * A page's title and the sentence under it. Every top-level page opens
  * with one; it used to be five pasted copies that had started to
  * disagree about the space beneath it and whether to shrink on a phone.
+ *
+ * Every top-level page is an app — the Dock, the sidebar, the tabs and
+ * the window title all say so — so its header wears the same app icon,
+ * looked up from data/apps.ts by the page's own path. The page you land
+ * on is visibly the icon you clicked.
  */
+import PageIcon from "@/components/PageIcon.astro";
+import { APPS } from "@/data/apps";
+
 interface Props { title: string }
 const { title } = Astro.props;
+
+const here = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const app = APPS.find((a) => (a.href.replace(/\/+$/, "") || "/") === here);
 ---
 
-<header class="pagehead">
+<header class:list={["pagehead", { app }]}>
+  {app && <span class="icon glint-host"><PageIcon glyph={app.glyph} hue={app.hue} /></span>}
   <h1>{title}</h1>
   {Astro.slots.has("default") && <p><slot /></p>}
 </header>
 
 <style>
   .pagehead { margin-bottom: var(--s-6); }
+  /* With an icon: the icon beside the title, the sentence under both, as
+     a System Settings pane opens. */
+  .pagehead.app {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--s-4);
+    align-items: center;
+  }
+  .icon {
+    width: 56px;
+    height: 56px;
+  }
+  .app p { grid-column: 1 / -1; }
+
   h1 {
     font-size: var(--t-sans-2xl);
     font-weight: 700;
@@ -37,5 +63,7 @@ const { title } = Astro.props;
   /* A phone's column is 358px; 40px titles took two lines to say "Say hi". */
   @media (max-width: 640px) {
     h1 { font-size: var(--t-sans-xl); }
+    .icon { width: 44px; height: 44px; }
+    .pagehead.app { column-gap: var(--s-3); }
   }
 </style>

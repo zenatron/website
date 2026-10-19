@@ -1,0 +1,71 @@
+/*
+   The grouped list, as System Settings draws one: a header in plain
+   sentence case above a rounded group of rows on the chrome surface,
+   with separators inset past each row's leading icon. Say hi's profiles
+   and the 404's suggestions are both one of these, so a list of places
+   to go looks the same wherever it turns up.
+
+     .glabel      the group's header
+     .glist       the group; its <li>s are the rows
+     --glist-inset  where separators start, past the leading icon
+     .glist-go    a row's trailing chevron or arrow
+
+   A row's insides are its page's own business; the group, separators,
+   padding, hover and focus are set here.
+*/
+
+.glabel {
+  margin: 0 0 var(--s-2);
+  padding-inline: var(--s-4);
+  font-family: var(--font-sans);
+  font-size: var(--t-sans-xs);
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: var(--lh-snug);
+  color: var(--c-muted);
+  text-align: left;
+}
+
+.glist {
+  --glist-inset: var(--s-4);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  background: var(--c-chrome);
+  border: 1px solid var(--c-hairline);
+  border-radius: var(--radius-card);
+  overflow: clip;
+}
+.glist > li { position: relative; }
+.glist > li + li::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: var(--glist-inset);
+  height: 1px;
+  background: var(--c-hairline);
+}
+.glist > li > a,
+.glist > li > button {
+  width: 100%;
+  padding: var(--s-3) var(--s-4);
+  color: inherit;
+  text-align: left;
+  transition: background var(--dur-state) var(--ease);
+}
+.glist > li > a:focus-visible,
+.glist > li > button:focus-visible { outline-offset: -2px; }
+
+.glist-go {
+  flex: 0 0 auto;
+  color: var(--c-dim);
+  transition: color var(--dur-state) var(--ease), transform var(--dur-state) var(--ease);
+}
+
+@media (hover: hover) {
+  .glist > li > a:hover,
+  .glist > li > button:hover { background: var(--c-raised); }
+  .glist > li > a:hover .glist-go { color: var(--c-text); }
+}

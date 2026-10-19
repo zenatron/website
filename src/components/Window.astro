@@ -1,0 +1,36 @@
+---
+/**
+ * A window inside the window, for static content: a terminal in a post,
+ * the Photos library, a project's Get Info. The frame itself lives in
+ * styles/window.css so a script-driven <dialog> can wear it too.
+ *
+ * `inset` is for a window drawn into the page's flow rather than floating
+ * over it: card corners and the lighter shadow. The `meta` slot sits at
+ * the titlebar's right, where macOS puts a toolbar's accessories.
+ */
+interface Props {
+  title?: string;
+  inset?: boolean;
+  as?: "div" | "section" | "aside" | "figure";
+  /** Id for the title, so a section can be labelled by it. */
+  titleId?: string;
+  class?: string;
+  [attr: string]: unknown;
+}
+const { title, inset = true, as: Tag = "div", titleId, class: className, ...rest } = Astro.props;
+const hasMeta = Astro.slots.has("meta");
+const hasIcon = Astro.slots.has("icon");
+---
+<Tag class:list={["mwin", className]} data-inset={inset || undefined} {...rest}>
+  <div class="mwin-bar">
+    <span class="mwin-lights" aria-hidden="true"><i></i><i></i><i></i></span>
+    {title ? (
+      <p class="mwin-title" id={titleId}>
+        {hasIcon && <slot name="icon" />}
+        <span>{title}</span>
+      </p>
+    ) : <span></span>}
+    {hasMeta ? <span class="mwin-meta"><slot name="meta" /></span> : <span></span>}
+  </div>
+  <slot />
+</Tag>

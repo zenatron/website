@@ -49,7 +49,7 @@ import ThemeToggle from "@/components/ThemeToggle.astro";
     height: var(--h-titlebar);
     flex: 0 0 var(--h-titlebar);
     padding-inline: var(--s-3);
-    background: var(--c-chrome);
+    background: var(--c-chrome-glass);
     border-bottom: 1px solid var(--c-hairline);
   }
 
@@ -130,15 +130,18 @@ import ThemeToggle from "@/components/ThemeToggle.astro";
   .proxy img { width: 16px; height: 16px; border-radius: var(--radius-tile); }
   /* A page's tile from the explorer, shrunk to proxy size. */
   .proxy :global(.ptile) {
+    width: 16px;
+    height: 16px;
+  }
+  /* A file's icon from the sidebar: its app icon, or a document. */
+  .proxy :global(.pfile) {
     display: grid;
     place-items: center;
     width: 16px;
     height: 16px;
-    border-radius: var(--radius-tile);
-    color: var(--h);
-    background: var(--t);
+    color: var(--c-muted);
   }
-  .proxy :global(.ptile svg) { width: 11px; height: 11px; }
+  .proxy :global(.pfile svg) { width: 15px; height: 15px; }
   /* A file's dot from the explorer. */
   .proxy :global(.pdot) {
     width: 8px;
