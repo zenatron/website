@@ -1,0 +1,85 @@
+<!doctype html>
+<!--
+  The README's contact section, drawn the way /say-hi draws it.
+
+  ?kind=card&id=email|call&theme=light|dark   404x96   ReachCards: icon, lead, handle
+  ?kind=icon&id=<id>                           88x96   a dock icon with its label;
+                                                       one image for both themes
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: 'Next'; font-weight: 400 700; src: url('../public/fonts/atkinson-hyperlegible-next-latin.woff2') format('woff2'); }
+  @font-face { font-family: 'Mono'; font-weight: 400 500; src: url('../public/fonts/atkinson-hyperlegible-mono-latin.woff2') format('woff2'); }
+  :root { --c-chrome:#F6F3ED; --c-hairline:#E4DFD4; --c-text:#35312A; --c-muted:#635D52; --c-dim:#6C665B; --c-accent:#1A66CC; }
+  html.dark { --c-chrome:#1C1A16; --c-hairline:#332F27; --c-text:#EDE7DA; --c-muted:#A69E8D; --c-dim:#948B7C; --c-accent:#6CB4FF; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: transparent; }
+  body { font-family: 'Next', sans-serif; -webkit-font-smoothing: antialiased; }
+
+  .icon {
+    position: relative; flex: none; width: 56px; height: 56px; border-radius: 22.5%;
+    background: linear-gradient(#FDFCF9, #EFEBE2);
+    display: grid; place-items: center; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(36,33,28,.2), 0 4px 10px -2px rgba(36,33,28,.2);
+  }
+  .icon.circle { border-radius: 50%; }
+  .icon.ondark { background: #24211C; }
+  /* AppIcon.astro: centered on the artwork's ink, sized by iconbox */
+  .icon img { width: 100%; height: 100%; object-fit: contain; transform: translate(var(--dx), var(--dy)) scale(var(--k)); }
+  .icon::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255,255,255,.2), transparent 45%), linear-gradient(0deg, rgba(36,33,28,.1), transparent 35%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 .5px rgba(36,33,28,.12);
+  }
+
+  .card {
+    width: 404px; height: 96px; display: flex; align-items: center; gap: 16px; padding: 0 22px 0 20px;
+    background: var(--c-chrome); border: 1px solid var(--c-hairline); border-radius: 12px; color: var(--c-text);
+  }
+  .body { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .lead { font-size: 21px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+  .lead.addr { font-family: 'Mono', monospace; font-size: 18px; letter-spacing: -0.01em; }
+  .sub { font-size: 15px; color: var(--c-muted); }
+  .sub.addr { font-family: 'Mono', monospace; font-size: 13px; color: var(--c-dim); }
+  .go { color: var(--c-dim); }
+
+  /* Dock tile: the label sits in GitHub's own muted gray, which reads on
+     both its white and its #0d1117, so one image serves both themes. */
+  .tile { width: 88px; height: 96px; display: flex; flex-direction: column; align-items: center; gap: 9px; padding-top: 6px; }
+  .tile .label { font-family: 'Mono', monospace; font-size: 12px; color: #8B949E; white-space: nowrap; }
+</style>
+</head>
+<body>
+<script src="boxes.js"></script>
+<script>
+  const q = new URLSearchParams(location.search);
+  if (q.get('theme') === 'dark') document.documentElement.classList.add('dark');
+  const L = '../public/';
+  /* links.ts: logo, and appIcon where the artwork carries its own plate */
+  const ITEMS = {
+    email:  { logo: 'proton-mail.svg', lead: 'phil@pvi.sh', sub: 'The reliable way to reach me', copy: true },
+    call:   { logo: 'fantastical.webp', appIcon: true, lead: 'Book a call', sub: 'fantastical.app/philv' },
+    site:   { logo: '../favicon.svg', appIcon: true, label: 'pvi.sh' },
+    linkedin: { logo: 'linkedin.svg', appIcon: true, label: 'LinkedIn' },
+    bluesky:  { logo: 'bluesky.svg', label: 'Bluesky' },
+    discord:  { logo: 'discord.svg', label: 'Discord' },
+    underscore: { logo: 'underscore-games.svg', label: 'Underscore' },
+    kofi:     { logo: 'ko-fi.svg', appIcon: true, label: 'Ko-fi' },
+  };
+  const it = ITEMS[q.get('id')];
+  const box = BOXES[it.logo];
+  const bare = it.appIcon && box.shape !== 'free';
+  const k = bare
+    ? box.cover / Math.max(box.w, box.h)
+    : Math.min(0.58 / Math.sqrt(box.w * box.h), 0.72 / Math.max(box.w, box.h));
+  const pct = (n) => `${(n * 100).toFixed(2)}%`;
+  const icon = `<span class="icon ${bare ? box.shape : 'plate'}" style="--k:${k.toFixed(3)};--dx:${pct((0.5 - box.cx) * k)};--dy:${pct((0.5 - box.cy) * k)}"><img src="${L}logos/${it.logo}"></span>`;
+  const arrow = `<svg class="go" viewBox="0 0 16 16" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 11 5"/><path d="M6 5h5v5"/></svg>`;
+  document.body.innerHTML = q.get('kind') === 'card'
+    ? `<div class="card">${icon}<span class="body"><span class="lead ${it.copy ? 'addr' : ''}">${it.lead}</span><span class="sub ${it.copy ? '' : 'addr'}">${it.sub}</span></span>${arrow}</div>`
+    : `<div class="tile">${icon}<span class="label">${it.label}</span></div>`;
+</script>
+</body>
+</html>

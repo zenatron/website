@@ -1,0 +1,193 @@
+<!doctype html>
+<!--
+  Profile banners in the site's macOS language: the dynamic wallpaper,
+  a window with traffic lights and the mono path, the sans headline with
+  highlighted words, and the dock's glass icons.
+
+  ?kind=gh|li  &theme=light|dark   — rendered by render.sh at 2x.
+    gh  1280x400   GitHub README (corners transparent, light + dark via <picture>)
+    li  1584x396   LinkedIn cover (4:1; photo covers the bottom-left)
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: 'Next'; font-weight: 400 700; src: url('../public/fonts/atkinson-hyperlegible-next-latin.woff2') format('woff2'); }
+  @font-face { font-family: 'Mono'; font-weight: 400 500; src: url('../public/fonts/atkinson-hyperlegible-mono-latin.woff2') format('woff2'); }
+
+  /* tokens.css, verbatim */
+  :root {
+    --c-bg:#FDFCF9; --c-chrome:#F6F3ED; --c-raised:#EFEBE2; --c-hairline:#E4DFD4; --c-hairline-strong:#D3CCBE;
+    --c-text:#35312A; --c-muted:#635D52; --c-dim:#6C665B; --c-accent:#1A66CC;
+    --c-hue-violet:#6A4BC4; --c-hue-orange:#A44F1D; --c-hue-blue:#24688F; --c-hue-green:#397430;
+    --c-tint-accent:#DDEBFB; --c-tint-violet:#ECE6FB; --c-tint-orange:#FCE8DA; --c-tint-blue:#DDECF6; --c-tint-green:#E4F2DE;
+    --c-wallpaper:#ECE6DA;
+    --wp-1:var(--c-tint-accent); --wp-2:var(--c-tint-blue); --wp-3:var(--c-tint-violet); --wp-4:var(--c-tint-green);
+    --sky: radial-gradient(55% 45% at 88% -5%, rgba(255,238,190,.55), transparent 70%);
+    --shadow-window: 0 0 0 .5px rgba(36,33,28,.06), 0 2px 6px rgba(36,33,28,.06), 0 22px 48px -8px rgba(36,33,28,.22);
+    --tile-dark:#24211C;
+  }
+  html.dark {
+    --c-bg:#14130F; --c-chrome:#1C1A16; --c-raised:#26231D; --c-hairline:#332F27; --c-hairline-strong:#464035;
+    --c-text:#EDE7DA; --c-muted:#A69E8D; --c-dim:#948B7C; --c-accent:#6CB4FF;
+    --c-hue-violet:#BCA4FF; --c-hue-orange:#FFA06B; --c-hue-blue:#7FBDE8; --c-hue-green:#9BD68A;
+    --c-tint-accent:#16263A; --c-tint-violet:#2A2340; --c-tint-orange:#3A2418; --c-tint-blue:#162A38; --c-tint-green:#1E2E18;
+    --c-wallpaper:#1D1A16;
+    --wp-1:rgba(108,180,255,.22); --wp-2:rgba(127,189,232,.24); --wp-3:rgba(188,164,255,.26); --wp-4:rgba(155,214,138,.16);
+    /* dusk: a burnt-orange horizon under a violet sky */
+    --sky:
+      radial-gradient(110% 55% at 65% 108%, rgba(255,120,60,.34), transparent 70%),
+      radial-gradient(80% 60% at 10% -5%, rgba(120,80,220,.22), transparent 70%);
+    --shadow-window: 0 0 0 .5px rgba(0,0,0,.6), 0 2px 6px rgba(0,0,0,.3), 0 26px 60px -8px rgba(0,0,0,.65);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: transparent; }
+  body { font-family: 'Next', sans-serif; color: var(--c-text); -webkit-font-smoothing: antialiased; }
+
+  .desk {
+    position: relative; overflow: hidden;
+    width: var(--w); height: var(--h);
+    background:
+      var(--sky),
+      radial-gradient(55% 60% at 0% 0%, var(--wp-1), transparent 70%),
+      radial-gradient(45% 55% at 100% 12%, var(--wp-2), transparent 70%),
+      radial-gradient(60% 60% at 85% 100%, var(--wp-3), transparent 70%),
+      radial-gradient(45% 50% at 8% 100%, var(--wp-4), transparent 70%),
+      var(--c-wallpaper);
+  }
+
+  .window {
+    position: absolute; display: flex; flex-direction: column;
+    background: var(--c-bg); border-radius: 16px; overflow: hidden;
+    box-shadow: var(--shadow-window);
+  }
+  .titlebar {
+    flex: none; position: relative; display: flex; align-items: center; gap: 8px;
+    height: 40px; padding: 0 16px;
+    background: color-mix(in srgb, var(--c-chrome) 88%, transparent);
+    border-bottom: 1px solid var(--c-hairline);
+  }
+  .light { width: 12px; height: 12px; border-radius: 50%; box-shadow: inset 0 0 0 .5px rgba(0,0,0,.14); }
+  .close { background:#FF5F57 } .min { background:#FEBC2E } .zoom { background:#28C840 }
+  .path {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    font-family: 'Mono', monospace; font-size: 13px; color: var(--c-muted);
+  }
+  .pane { flex: 1; display: flex; align-items: center; }
+  .statusbar {
+    flex: none; display: flex; align-items: center; gap: 20px;
+    height: 28px; padding: 0 16px;
+    background: var(--c-chrome); border-top: 1px solid var(--c-hairline);
+    font-family: 'Mono', monospace; font-size: 12px; color: var(--c-dim);
+  }
+  .statusbar .branch { color: var(--c-accent); }
+  .statusbar .grow { flex: 1; }
+
+  h1 { font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; }
+  .statement { letter-spacing: -0.01em; line-height: 1.3; color: var(--c-text); }
+  .mark { white-space: nowrap; padding: 0 .28em .1em; border-radius: 8px; color: var(--fg); background: var(--bg); }
+  .violet { --fg: var(--c-hue-violet); --bg: var(--c-tint-violet); }
+  .blue   { --fg: var(--c-hue-blue);   --bg: var(--c-tint-blue); }
+  .green  { --fg: var(--c-hue-green);  --bg: var(--c-tint-green); }
+  .orange { --fg: var(--c-hue-orange); --bg: var(--c-tint-orange); }
+  .accent { --fg: var(--c-accent);     --bg: var(--c-tint-accent); }
+  .url { font-family: 'Mono', monospace; color: var(--c-accent); }
+
+  /* The dock's glass icons, after AppIcon.astro + glass.css */
+  .grid {
+    display: grid; grid-template-columns: repeat(4, var(--icon)); gap: var(--gap);
+    padding: var(--gap); background: var(--c-chrome);
+    border: 1px solid var(--c-hairline); border-radius: 12px;
+  }
+  .icon {
+    position: relative; width: var(--icon); height: var(--icon); border-radius: 22.5%;
+    background: linear-gradient(#FDFCF9, #EFEBE2);
+    display: grid; place-items: center; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(36,33,28,.18), 0 4px 10px -2px rgba(36,33,28,.18);
+  }
+  .icon img { width: 60%; height: 60%; object-fit: contain; }
+  .icon.bare img { width: 100%; height: 100%; object-fit: cover; }
+  .icon::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.2), transparent 45%),
+      linear-gradient(0deg, rgba(36,33,28,.1), transparent 35%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 .5px rgba(36,33,28,.12);
+  }
+
+  /* ---------- GitHub: 1280 x 400 ---------- */
+  .gh { --w: 1280px; --h: 400px; border-radius: 18px; }
+  .gh .window { inset: 26px 30px; }
+  .gh .pane { padding: 0 44px 0 52px; gap: 40px; justify-content: space-between; }
+  .gh h1 { font-size: 68px; }
+  .gh .statement { margin-top: 16px; font-size: 38px; max-width: 700px; }
+  .gh .grid { --icon: 64px; --gap: 16px; }
+
+  /* ---------- LinkedIn: 1584 x 396 ----------
+     The profile photo sits over the bottom-left (~x 40–380, y 180+ on
+     desktop), so the window keeps right of x 560. Type is sized to stay
+     legible at ~390px wide in the phone app (~0.25x). */
+  .li { --w: 1584px; --h: 396px; }
+  .menubar {
+    position: absolute; top: 0; left: 0; right: 0; height: 30px;
+    display: flex; align-items: center; gap: 22px; padding: 0 20px;
+    background: color-mix(in srgb, var(--c-chrome) 55%, transparent);
+    backdrop-filter: blur(20px);
+    font-size: 14px; color: var(--c-text);
+  }
+  .menubar b { font-weight: 700; }
+  .menubar .grow { flex: 1; }
+  .menubar .mono { font-family: 'Mono', monospace; font-size: 13px; color: var(--c-muted); }
+  .li .window { top: 62px; bottom: 40px; left: 560px; right: 56px; }
+  .li .pane { padding: 0 36px 0 44px; gap: 36px; justify-content: space-between; }
+  .li .statement { font-size: 40px; line-height: 1.32; max-width: 560px; }
+  .li .grid { --icon: 58px; --gap: 14px; }
+</style>
+</head>
+<body>
+<script>
+  const q = new URLSearchParams(location.search);
+  const kind = q.get('kind') || 'gh';
+  if ((q.get('theme') || 'dark') === 'dark') document.documentElement.classList.add('dark');
+
+  const L = '../public/logos/';
+  const icons = [
+    ['github.svg'], ['visual-studio-code.svg'], ['claude.svg'], ['rust.svg'],
+    ['docker.svg'], ['astro.svg'], ['unity.svg'], ['cmux.webp', 'bare'],
+  ].map(([f, c]) => `<span class="icon ${c || ''}"><img src="${L}${f}"></span>`).join('');
+
+  const lights = '<span class="light close"></span><span class="light min"></span><span class="light zoom"></span>';
+
+  const gh = `
+  <div class="desk gh">
+    <div class="window">
+      <div class="titlebar">${lights}<div class="path">phil@pvish — ~</div></div>
+      <div class="pane">
+        <div>
+          <h1>Phil Vishnevsky</h1>
+          <p class="statement">building <span class="mark blue">servers</span>, <span class="mark green">web apps</span> and <span class="mark orange">games</span> that don’t break in production.</p>
+        </div>
+        <div class="grid">${icons}</div>
+      </div>
+      <div class="statusbar"><span class="branch">main</span><span>Hartford, CT</span><span class="grow"></span><span>pvi.sh</span></div>
+    </div>
+  </div>`;
+
+  const li = `
+  <div class="desk li">
+    <div class="menubar"><b>pvi.sh</b><span>about</span><span>projects</span><span>writing</span><span>photos</span><span class="grow"></span><span class="mono">open to interesting projects</span></div>
+    <div class="window">
+      <div class="titlebar">${lights}<div class="path">phil@pvish — ~</div></div>
+      <div class="pane">
+        <p class="statement">building <span class="mark blue">servers</span>, <span class="mark green">web apps</span> and <span class="mark orange">games</span> that don’t break in production.</p>
+        <div class="grid">${icons}</div>
+      </div>
+      <div class="statusbar"><span class="branch">main</span><span>Hartford, CT</span><span class="grow"></span><span>pvi.sh</span></div>
+    </div>
+  </div>`;
+
+  document.body.innerHTML = kind === 'li' ? li : gh;
+</script>
+</body>
+</html>
