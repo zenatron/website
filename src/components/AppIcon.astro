@@ -17,6 +17,12 @@
  * it: artwork with cut-outs (Karakeep's H, Spotify's arcs) otherwise shows
  * the page through them, and turns into a dark blob on a dark page.
  *
+ * In dark mode the icons go dark the way macOS 26's do: the plate turns
+ * to the system's dark grey, and the glyph keeps its color. A glyph drawn
+ * in black ships a light-ink twin as `logoDark`, and an app icon ships
+ * the app's own dark icon there. Both files of a pair share a grid, so
+ * the light one's measurements serve for both.
+ *
  * Fills its parent; the parent decides the size. The dock and the home
  * page both draw icons through this, so the rules can't drift apart.
  */
@@ -24,7 +30,7 @@ import type { Favorite } from "@/data/favorites";
 import { iconBox } from "@/lib/iconbox";
 
 interface Props {
-  item: Pick<Favorite, "logo" | "appIcon" | "darkTile">;
+  item: Pick<Favorite, "logo" | "logoDark" | "appIcon" | "darkTile">;
   lazy?: boolean;
 }
 const { item, lazy = true } = Astro.props;
@@ -33,7 +39,9 @@ const box = await iconBox(item.logo!);
 const bare = Boolean(item.appIcon) && box.shape !== "free";
 const k = bare
   ? box.cover / Math.max(box.w, box.h)
-  : Math.min(0.58 / Math.sqrt(box.w * box.h), 0.72 / Math.max(box.w, box.h));
+  : // Matched to the apps' own macOS icons: Claude's spark spans 72% of
+    // its icon, Discord's Clyde 74% wide.
+    Math.min(0.70 / Math.sqrt(box.w * box.h), 0.74 / Math.max(box.w, box.h));
 const pct = (n: number) => `${(n * 100).toFixed(2)}%`;
 const style = `--k: ${k.toFixed(3)}; --dx: ${pct((0.5 - box.cx) * k)}; --dy: ${pct((0.5 - box.cy) * k)}`;
 ---
@@ -42,6 +50,7 @@ const style = `--k: ${k.toFixed(3)}; --dx: ${pct((0.5 - box.cx) * k)}; --dy: ${p
   style={style}
 >
   <img
+    class:list={[item.logoDark && "light"]}
     src={`/logos/${item.logo}`}
     alt=""
     width="64"
@@ -49,6 +58,17 @@ const style = `--k: ${k.toFixed(3)}; --dx: ${pct((0.5 - box.cx) * k)}; --dy: ${p
     loading={lazy ? "lazy" : undefined}
     decoding="async"
   />
+  {item.logoDark && (
+    <img
+      class="dark"
+      src={`/logos/${item.logoDark}`}
+      alt=""
+      width="64"
+      height="64"
+      loading={lazy ? "lazy" : undefined}
+      decoding="async"
+    />
+  )}
 </span>
 
 <style>
@@ -58,6 +78,7 @@ const style = `--k: ${k.toFixed(3)}; --dx: ${pct((0.5 - box.cx) * k)}; --dy: ${p
     height: 100%;
     /* Apple's squircle, near enough. SQUIRCLE in lib/iconbox.ts must match. */
     border-radius: 22.5%;
+    position: relative;
     background: linear-gradient(var(--c-tile-light), var(--c-tile-light-lo));
   }
   .appicon.circle { border-radius: 50%; }
@@ -67,6 +88,21 @@ const style = `--k: ${k.toFixed(3)}; --dx: ${pct((0.5 - box.cx) * k)}; --dy: ${p
     height: 100%;
     object-fit: contain;
     transform: translate(var(--dx), var(--dy)) scale(var(--k));
+  }
+
+  /*
+   * Dark mode. The plate is the grey macOS puts behind a dark icon, top to
+   * bottom. Only a glyph's plate changes: an app icon's backing shows only
+   * through its cut-outs, which were drawn to show light.
+   */
+  .appicon img.dark { position: absolute; inset: 0; display: none; }
+  :global(:root[data-theme="dark"]) .plate:not(.ondark) { background: linear-gradient(#313131, #141414); }
+  :global(:root[data-theme="dark"]) .appicon img.dark { display: block; }
+  :global(:root[data-theme="dark"]) .appicon img.light { display: none; }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme="light"])) .plate:not(.ondark) { background: linear-gradient(#313131, #141414); }
+    :global(:root:not([data-theme="light"])) .appicon img.dark { display: block; }
+    :global(:root:not([data-theme="light"])) .appicon img.light { display: none; }
   }
 
   .plate.ondark { background: var(--c-tile-dark); }

@@ -3,10 +3,8 @@ import Shell from "@/layouts/Shell.astro";
 import PageHead from "@/components/PageHead.astro";
 import AppIcon from "@/components/AppIcon.astro";
 import FileIcon from "@/components/FileIcon.astro";
-import Neofetch from "@/components/Neofetch.astro";
 import { DESK } from "@/data/desk";
 import { FAVORITES } from "@/data/favorites";
-import { MACHINES, NOW, PRINCIPLES } from "@/data/about";
 import { FORTUNES } from "@/data/site";
 
 /**
@@ -27,32 +25,43 @@ function jitter(name: string) {
     x: (a - 0.5) * 46,          // percent of a cell
     y: (b - 0.5) * 34,
     rot: (c - 0.5) * 13,        // degrees
-    scale: 0.86 + d * 0.32,
+    scale: 0.97 + d * 0.06,
   };
 }
 
 const apps = FAVORITES.filter((f) => f.logo);
 
 type Item =
-  | { kind: "app"; name: string; note?: string; href?: string; logo: string; appIcon: boolean; darkTile: boolean }
+  | { kind: "app"; name: string; note?: string; href?: string; logo: string; logoDark?: string; appIcon: boolean; darkTile: boolean }
   | { kind: "file"; name: string; note?: string; file: string; href?: string; deskKind: string; icon: (typeof DESK)[number]["icon"] };
 
+/** On the dock these jump to the About section they come from, not a window. */
+const ABOUT_SECTION: Record<string, string> = {
+  neofetch: "/about/#setup",
+  "now.txt": "/about/#now",
+  "principles.md": "/about/#principles",
+};
+
 const items: Item[] = [
-  ...DESK.map((o) => ({
-    kind: "file" as const,
-    name: o.file,
-    note: o.note,
-    file: o.file,
-    href: o.href,
-    deskKind: o.kind,
-    icon: o.icon,
-  })),
+  ...DESK.map((o) => {
+    const href = ABOUT_SECTION[o.file] ?? o.href;
+    return {
+      kind: "file" as const,
+      name: o.file,
+      note: o.note,
+      file: o.file,
+      href,
+      deskKind: ABOUT_SECTION[o.file] ? "link" : o.kind,
+      icon: o.icon,
+    };
+  }),
   ...apps.map((a) => ({
     kind: "app" as const,
     name: a.name,
     note: a.description,
     href: a.url,
     logo: a.logo!,
+    logoDark: a.logoDark,
     appIcon: Boolean(a.appIcon),
     darkTile: Boolean(a.darkTile),
   })),
@@ -123,22 +132,6 @@ const items: Item[] = [
       a crawler nor a no-JS visitor could read it.
     */}
     <div class="win-body" data-win-body>
-      <div data-win-variant="neofetch" hidden>
-        {MACHINES.map((m) => <Neofetch machine={m} />)}
-      </div>
-      <div data-win-variant="list" hidden>
-        {NOW.map((g) => (
-          <div class="group">
-            <p class="group-head">{g.heading}</p>
-            {g.items.map((it) => (
-              <div class="row"><span>{it.name}</span><span>{it.status}</span></div>
-            ))}
-          </div>
-        ))}
-      </div>
-      <div data-win-variant="text" hidden>
-        {PRINCIPLES.map((line) => <p class="line">{line}</p>)}
-      </div>
       <div data-win-variant="fortune" hidden>
         {FORTUNES.map((f) => (
           <p class="quote">

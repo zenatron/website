@@ -6,6 +6,8 @@ export interface LinkItem {
   description?: string;
   /** Filename under /public/logos. */
   logo: string;
+  /** Its dark-mode icon. Same meaning as on FAVORITES. */
+  logoDark?: string;
   /** The artwork carries its own backplate. Same meaning as on FAVORITES. */
   appIcon?: boolean;
   /**
@@ -36,7 +38,8 @@ export const links: LinkItem[] = [
     url: "https://fantastical.app/philv",
     handle: "fantastical.app/philv",
     description: "Book a call",
-    logo: "fantastical.webp",
+    logo: "fantastical-light.webp",
+    logoDark: "fantastical-dark.webp",
     appIcon: true,
     reach: true,
   },
@@ -46,6 +49,7 @@ export const links: LinkItem[] = [
     handle: "@zenatron",
     description: "Code, projects, and contributions",
     logo: "github.svg",
+    logoDark: "github-dark.svg",
   },
   {
     title: "LinkedIn",
@@ -53,6 +57,7 @@ export const links: LinkItem[] = [
     handle: "in/philvishnevsky",
     description: "The professional one",
     logo: "linkedin.svg",
+    logoDark: "linkedin-dark.svg",
     appIcon: true,
   },
   {
@@ -68,6 +73,7 @@ export const links: LinkItem[] = [
     handle: "underscore.games",
     description: "Games and tools for game developers",
     logo: "underscore-games.svg",
+    logoDark: "underscore-games-dark.svg",
   },
   {
     title: "Ko-fi",

@@ -12,6 +12,12 @@ export interface Favorite {
   /** Filename under /public/logos. Absent for the hobbies, which aren't brands. */
   logo?: string;
   /**
+   * The icon for dark mode, on the same grid as `logo`: the app's own dark
+   * icon where it ships one, or for a glyph, the same mark in light ink so
+   * it reads on the dark plate.
+   */
+  logoDark?: string;
+  /**
    * The artwork is drawn in white for dark backgrounds, so it needs a dark
    * tile or it renders invisible.
    */
@@ -30,6 +36,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "GitHub",
     logo: "github.svg",
+    logoDark: "github-dark.svg",
     description: "all my code",
     url: "https://github.com/zenatron",
     category: "tools",
@@ -44,13 +51,15 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Unity",
     logo: "unity.svg",
+    logoDark: "unity-dark.svg",
     description: "game engine of choice",
     url: "https://unity.com",
     category: "tools",
   },
   {
     name: "cmux",
-    logo: "cmux.webp",
+    logo: "cmux-light.webp",
+    logoDark: "cmux-dark.webp",
     appIcon: true,
     description: "cool terminal",
     url: "https://cmux.com",
@@ -66,10 +75,11 @@ export const FAVORITES: Favorite[] = [
     category: "apps",
   },
   {
-    name: "Tinycast",
-    logo: "tinycast.svg",
-    description: "better spotlight for macOS",
-    url: "https://github.com/abue-ammar/tinycast",
+    name: "NotchApp",
+    logo: "notchapp.png",
+    appIcon: true,
+    description: "the notch, made useful",
+    url: "/projects/notchapp/",
     category: "apps",
   },
   {
@@ -81,7 +91,8 @@ export const FAVORITES: Favorite[] = [
   },
   {
     name: "Todoist",
-    logo: "todoist.svg",
+    logo: "todoist-light.webp",
+    logoDark: "todoist-dark.webp",
     appIcon: true,
     description: "how i get sh*t done",
     url: "https://todoist.com",
@@ -89,7 +100,8 @@ export const FAVORITES: Favorite[] = [
   },
   {
     name: "Vivaldi",
-    logo: "vivaldi.svg",
+    logo: "vivaldi-light.webp",
+    logoDark: "vivaldi-dark.webp",
     appIcon: true,
     description: "function-first browser",
     url: "https://vivaldi.com",
@@ -97,7 +109,8 @@ export const FAVORITES: Favorite[] = [
   },
   {
     name: "Fantastical",
-    logo: "fantastical.webp",
+    logo: "fantastical-light.webp",
+    logoDark: "fantastical-dark.webp",
     appIcon: true,
     description: "book a call!",
     url: "https://fantastical.app/philv",
@@ -123,6 +136,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "LinkedIn",
     logo: "linkedin.svg",
+    logoDark: "linkedin-dark.svg",
     appIcon: true,
     description: "“professional” networking",
     url: "https://www.linkedin.com/in/philvishnevsky/",
@@ -139,7 +153,8 @@ export const FAVORITES: Favorite[] = [
   // Entertainment & Media
   {
     name: "Spotify",
-    logo: "spotify.svg",
+    logo: "spotify-light.webp",
+    logoDark: "spotify-dark.webp",
     appIcon: true,
     description: "you know this one",
     url: "https://spotify.com",
@@ -147,7 +162,7 @@ export const FAVORITES: Favorite[] = [
   },
   {
     name: "Steam",
-    logo: "steam.svg",
+    logo: "steam.webp",
     appIcon: true,
     description: "games besides minecraft",
     url: "https://store.steampowered.com",
@@ -174,6 +189,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Tailscale",
     logo: "tailscale.svg",
+    logoDark: "tailscale-dark.svg",
     description: "how i connect stuff",
     url: "https://tailscale.com",
     category: "tools",
@@ -256,6 +272,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Mattermost",
     logo: "mattermost-blue.svg",
+    logoDark: "mattermost-dark.svg",
     description: "team collaboration",
     url: "https://mattermost.com",
     category: "tools",
@@ -337,6 +354,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Bun",
     logo: "bun.svg",
+    logoDark: "bun-dark.svg",
     description: "ledger’s runtime",
     url: "https://bun.sh",
     category: "tools",
@@ -351,6 +369,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "SQLite",
     logo: "sqlite.svg",
+    logoDark: "sqlite-dark.svg",
     description: "preamble’s library index",
     url: "https://sqlite.org",
     category: "tools",
@@ -358,6 +377,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Rust",
     logo: "rust.svg",
+    logoDark: "rust-dark.svg",
     description: "preamble and πCompress",
     url: "https://www.rust-lang.org",
     category: "tools",
@@ -372,6 +392,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Jupyter",
     logo: "jupyter.svg",
+    logoDark: "jupyter-dark.svg",
     description: "where that coursework lives",
     url: "https://jupyter.org",
     category: "tools",
@@ -382,6 +403,13 @@ export const FAVORITES: Favorite[] = [
     appIcon: true,
     description: "dictation, all on-device",
     url: "https://github.com/altic-dev/FluidVoice",
+    category: "apps",
+  },
+  {
+    name: "Tinycast",
+    logo: "tinycast.svg",
+    description: "better spotlight for macOS",
+    url: "https://github.com/abue-ammar/tinycast",
     category: "apps",
   },
   {
