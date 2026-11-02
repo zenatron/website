@@ -17,6 +17,13 @@ interface Props {
   fixed?: boolean;
   noindex?: boolean;
   schema?: object | object[];
+  /** Loads the self-hosted KaTeX stylesheet, only on pages that need it. */
+  math?: boolean;
+  /** og:type article, with its dates and tags. */
+  article?: boolean;
+  publishedTime?: string;
+  modifiedTime?: string;
+  articleTags?: string[];
 }
 
 const {
@@ -26,6 +33,11 @@ const {
   fixed = false,
   noindex = false,
   schema,
+  math = false,
+  article = false,
+  publishedTime,
+  modifiedTime,
+  articleTags,
 } = Astro.props;
 
 const ogUrl = new URL(`/og/${ogSlug}.png`, Astro.site).href;
@@ -44,7 +56,11 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogUrl} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={article ? "article" : "website"} />
+    {article && publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {article && modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+    {article && articleTags?.map((tag) => <meta property="article:tag" content={tag} />)}
+    {math && <link rel="stylesheet" href="/katex/katex.css" />}
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:site_name" content={SITE.name} />
     <meta name="twitter:card" content="summary_large_image" />

@@ -88,9 +88,15 @@ a {
   justify-content: center;
   gap: 2rem;
   padding: 1.75rem 1.5rem 0;
+  padding-bottom: 1.5rem;
   font-size: 13px;
   pointer-events: none;
   view-transition-name: site-nav;
+  /* Text scrolling under the nav fades out instead of colliding with it. */
+  background: linear-gradient(var(--ground) 55%, transparent);
+}
+html.fixed .nav {
+  background: none;
 }
 .nav > * {
   pointer-events: auto;

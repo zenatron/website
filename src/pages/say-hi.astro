@@ -1,105 +1,135 @@
 ---
 /**
- * Say hi (it was "elsewhere").
- *
- * Two kinds of link, and the page says so. The ways to reach me lead, as
- * two big cards, because for someone deciding whether to get in touch
- * they're the point of the page. The profiles follow as one grouped list,
- * the way System Settings groups rows, with the same icons as the dock.
+ * Say hi: the ways to reach me first, then where else I am, as plain
+ * rows of name, what it's for, and the handle you'd type.
  */
-import Shell from "@/layouts/Shell.astro";
-import PageHead from "@/components/PageHead.astro";
-import AppIcon from "@/components/AppIcon.astro";
-import ReachCards from "@/components/ReachCards.astro";
+import Plain from "@/layouts/Plain.astro";
 import { links } from "@/lib/links";
 
+const reach = links.filter((l) => l.reach);
 const profiles = links.filter((l) => !l.reach);
-/* rel=me: these are Phil's profiles, and this page is his — the rel ties them together. */
+/* rel=me: these are my profiles, and this page is mine. */
 const rel = (url: string) => (url.startsWith("http") ? "me noopener noreferrer" : undefined);
 ---
 
-<Shell title="Say hi | Phil Vishnevsky" description="Email, book a call, or find me on the rest of the internet." ogSlug="say-hi">
-  <PageHead title="Say hi">
-    Where to find me. For what I <em>use</em> rather than where I am, see
-    <a href="/dock/">the dock</a>.
-  </PageHead>
+<Plain title="Say hi — Phil Vishnevsky" description="Email, book a call, or find me on the rest of the internet." ogSlug="say-hi">
+  <main class="page hi">
+    <header class="page-head">
+      <div>
+        <h1 class="sr-only">Say hi</h1>
+        <p class="motto">ping me.<span class="cursor" aria-hidden="true"></span></p>
+        <p class="lede">Email is the reliable way. For what I use rather than where I am, see <a class="ink" href="/dock/">the dock</a>.</p>
+      </div>
+    </header>
 
-  <h2 class="glabel">Get in touch</h2>
-  <div class="reach"><ReachCards /></div>
+    <ul class="reach">
+      {
+        reach.map((l) => (
+          <li>
+            <a href={l.url} rel={rel(l.url)}>
+              <span class="dim">{l.description?.toLowerCase()}</span>
+              <span class="big">{l.handle}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
 
-  <h2 class="glabel">Around the web</h2>
-  <ul class="group glist">
-    {profiles.map((l) => (
-      <li>
-        <a class="glint-host" href={l.url} rel={rel(l.url)}>
-          <span class="icon"><AppIcon item={l} /></span>
-          <span class="text">
-            <span class="title">{l.title}</span>
-            {l.description && <span class="desc">{l.description}</span>}
-          </span>
-          {l.handle && <span class="handle">{l.handle}</span>}
-          <svg class="go glist-go" aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 11 11 5" /><path d="M6 5h5v5" />
-          </svg>
-        </a>
-      </li>
-    ))}
-  </ul>
-</Shell>
+    <h2>elsewhere</h2>
+    <ul class="rows">
+      {
+        profiles.map((l) => (
+          <li>
+            <a href={l.url} rel={rel(l.url)}>
+              <span class="name">{l.title}</span>
+              <span class="dim desc">{l.description}</span>
+              <span class="rule" aria-hidden="true" />
+              <span class="handle">{l.handle} ↗</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </main>
+</Plain>
 
 <style>
-  .reach { margin-bottom: var(--s-7); }
-
-  /* Profiles: one grouped list, separators inset past the icon. */
-  .group { --glist-inset: calc(var(--s-4) + 40px + var(--s-4)); }
-  .group a {
-    display: grid;
-    grid-template-columns: 40px minmax(0, 1fr) auto 16px;
-    grid-template-areas: "icon text handle go";
-    align-items: center;
-    column-gap: var(--s-4);
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
-  .group .icon { grid-area: icon; width: 40px; height: 40px; }
-  .text {
-    grid-area: text;
+  a {
+    text-decoration: none;
+  }
+  .reach {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 2.5rem;
+    margin-bottom: 5rem;
+  }
+  .reach a {
     display: flex;
     flex-direction: column;
-    min-width: 0;
+    gap: 0.5rem;
   }
-  .title {
-    font-size: var(--t-sans-md);
-    font-weight: 600;
-    line-height: var(--lh-snug);
+  .reach .dim {
+    font-size: 12px;
+  }
+  .big {
+    font-size: clamp(1.25rem, 3vw, 1.6rem);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 6px;
+    text-decoration-color: color-mix(in srgb, currentColor 25%, transparent);
+    transition: text-decoration-color 150ms ease;
+  }
+  .reach a:hover .big {
+    text-decoration-color: currentColor;
+  }
+  h2 {
+    margin: 0 0 1rem;
+    font-size: 13px;
+    font-weight: 400;
+    opacity: 0.6;
+  }
+  .rows a {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.6rem 0;
+  }
+  .rows:hover .name {
+    opacity: 0.45;
+  }
+  .rows a:hover .name {
+    opacity: 1;
+  }
+  .name {
+    transition: opacity 150ms ease;
   }
   .desc {
-    font-size: var(--t-sans-sm);
-    color: var(--c-muted);
-    line-height: var(--lh-snug);
+    font-family: var(--sans);
+    font-size: 13px;
+  }
+  .rule {
+    flex: 1;
+    min-width: 2rem;
+    border-bottom: 1px dotted color-mix(in srgb, var(--fg) 25%, transparent);
+    transform: translateY(-0.3em);
   }
   .handle {
-    grid-area: handle;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    color: var(--c-dim);
+    font-size: 13px;
     white-space: nowrap;
   }
-  .group .go { grid-area: go; }
-
-  @media (hover: hover) {
-    .group a:hover .title { color: var(--c-link); }
-    .group a:hover .go { transform: translate(2px, -2px); }
-  }
-
-  /* Narrow: the handle drops under the description instead of competing
-     with it for a line. */
-  @media (max-width: 600px) {
-    .group a {
-      grid-template-columns: 40px minmax(0, 1fr) 16px;
-      grid-template-areas:
-        "icon text go"
-        "icon handle go";
-      row-gap: 2px;
+  @media (max-width: 640px) {
+    .rows a {
+      flex-wrap: wrap;
+      gap: 0.25rem 1rem;
     }
-    .handle { font-size: var(--t-mono-xs); white-space: normal; overflow-wrap: anywhere; }
+    .desc,
+    .rule {
+      display: none;
+    }
   }
 </style>
