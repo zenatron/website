@@ -100,6 +100,11 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
   let nextAuto = 0;
   let raf = 0;
   let last = performance.now();
+  /** On a phone, most names show only when something reaches them, so the nodes can sit closer. */
+  let compact = false;
+  /** Whether a node's name is always shown, or only when lit. */
+  const named = (n: Node) =>
+    n.kind !== "service" && (!compact || n.kind === "router" || servicesOn(n).length > 0);
 
   // ── Colors, re-read when the theme changes ─────────────────
   let fg = "#000",
@@ -149,6 +154,7 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     cols = Math.ceil(w / PITCH);
     rows = Math.ceil(h / PITCH);
+    compact = w < 640;
     heat = new Float32Array(cols * rows);
     echo = new Float32Array(cols * rows);
     const base = root.getBoundingClientRect();
@@ -167,63 +173,96 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
   }
 
   /**
-   * Routers first, far apart; the relay and the edge out toward the sides;
-   * each network's machines in a loose ring around their router; the
-   * services in a tight cluster around their host. Seeded, so the layout is
-   * the same on every visit at a given size.
+   * A planned layout rather than a scatter, so everything has room to be seen:
+   * each network gets a spot (the lab on one side, home on the other, both
+   * above the text), its machines evenly around its router, the server's
+   * services in a ring around it, and the relay and the edge out toward the
+   * sides. Phones (taller than wide) get their own plan. Any spot that lands
+   * on text, or on another node's name, moves to the nearest free one.
    */
   function placeNodes() {
-    const fixed = nodes.filter((n) => !n.guest);
-    const margin = Math.min(80, w * 0.08);
+    const portrait = h > w * 1.1;
+    const short = Math.min(w, h);
+    // On a phone the text fills the bottom half: plan inside the band above it.
+    const top = 76;
+    const textTop = Math.min(h, ...[...avoid, ...frost].filter((r) => r.top > h * 0.25).map((r) => r.top));
+    const band = Math.max(160, textTop - top - 16);
+    // How far a network's machines sit from its router, and services from their host.
+    const R = portrait
+      ? Math.max(48, Math.min(w * 0.2, band * 0.36))
+      : Math.max(72, Math.min(250, short * 0.23));
+    const rs = portrait ? Math.max(30, Math.min(w * 0.09, band * 0.16)) : Math.max(40, Math.min(104, short * 0.095));
+    // Fractions of the width, and of the band (phones) or the height (wider screens).
+    const plan: Record<string, [number, number]> = portrait
+      ? // Stacked: home in the upper part of the band, the lab and its services below it.
+        { lab: [0.18, 0.76], home: [0.64, 0.28], relay: [0.94, 0.96], edge: [0.08, 0.08] }
+      : { lab: [0.12, 0.36], home: [0.68, 0.32], relay: [0.94, 0.64], edge: [0.06, 0.68] };
+    const at = ([fx, fy]: [number, number]): [number, number] => [fx * w, portrait ? top + fy * band : fy * h];
     const placed: Node[] = [];
-    let seed = 7;
-    const rand = () => ((seed = Math.imul(seed ^ (seed >>> 15), 2246822507) + 0x9e3779b9) >>> 0) / 4294967296;
-    const order: Kind[] = ["router", "relay", "edge", "peer", "service"];
-    // Hosts before other peers, so their services have room left around them.
-    const rank = (n: Node) =>
-      order.indexOf(n.kind) * 10 + (n.kind === "peer" && servicesOn(n).length ? 0 : 1) + (n.offline ? 2 : 0);
-    const sorted = [...fixed].sort((a, b) => rank(a) - rank(b));
-    const reach = Math.max(120, Math.min(230, Math.min(w, h) * 0.26));
-    for (const n of sorted) {
-      const anchor = n.kind === "service" ? byName(n.host) : n.kind === "peer" ? routerOf(n) : undefined;
-      let best = { x: w / 2, y: h / 2, score: -Infinity };
-      for (let tries = 0; tries < 220; tries++) {
-        const x = margin + rand() * (w - margin * 2);
-        const y = margin + 40 + rand() * (h - margin * 2 - 40);
-        // The node and the name that runs to its right both stay off the text.
-        if (inAvoid(x, y, n.kind === "service" ? 24 : 48) || (n.kind !== "service" && inAvoid(x + 80, y, 24))) continue;
-        const near = Math.min(...placed.map((p) => Math.hypot(p.ax - x, p.ay - y)), Infinity);
-        // Names run about 100px to the right: keep them from landing on each other.
-        if (placed.some((p) => p.kind !== "service" && Math.abs(p.ay - y) < 20 && x - p.ax > -110 && x - p.ax < 120))
-          continue;
-        if (near < (n.kind === "service" ? 26 : 64)) continue;
-        let score: number;
-        if (n.kind === "router") {
-          // Networks spread apart, each with room around it for its machines.
-          const room = Math.min(220, x, w - x, y - 60, h - y);
-          // ...and up toward the middle of the page, above the text, so they fill it.
-          score = Math.min(near, w * 0.55) + room * 0.9 - Math.abs(y - h * 0.4) * 0.5 + rand() * 20;
-        } else if (n.kind === "relay" || n.kind === "edge") {
-          // Out toward a side, away from the networks; the edge on the side of
-          // the network it brings visitors to.
-          const served = n.kind === "edge" ? placed.find((p) => p.kind === "router" && p.site === "lab") : undefined;
-          const pull = served ? Math.hypot(served.ax - x, served.ay - y) * 0.35 : 0;
-          score = Math.min(near, 300) - Math.min(x, w - x) * 0.6 - pull + rand() * 10;
-        } else if (anchor) {
-          const d = Math.hypot(anchor.ax - x, anchor.ay - y);
-          const [lo, hi] = n.kind === "service" ? [38, 100] : [90, reach];
-          const loose = tries > 170 ? 1.6 : 1;
-          if (d < lo || d > hi * loose) continue;
-          score = Math.min(near, n.kind === "service" ? 50 : 110) + rand() * 10;
-        } else {
-          score = Math.min(near, 200) + rand() * 10;
-        }
-        if (score > best.score) best = { x, y, score };
+    const clear = (x: number, y: number, n: Node) => {
+      if (x < 24 || x > w - 24 || y < 76 || y > h - 24) return false;
+      const svc = n.kind === "service";
+      const labelled = named(n);
+      if (inAvoid(x, y, svc ? 22 : compact ? 28 : 40) || (labelled && inAvoid(x + 70, y, 20))) return false;
+      for (const p of placed) {
+        const d = Math.hypot(p.ax - x, p.ay - y);
+        if (d < (svc || p.kind === "service" ? 22 : compact ? 30 : 46)) return false;
+        // Names run about 100px to the right: keep them off each other.
+        if (labelled && named(p) && Math.abs(p.ay - y) < 18 && x - p.ax > -105 && x - p.ax < 110) return false;
       }
-      n.ax = n.x = best.x;
-      n.ay = n.y = best.y;
+      return true;
+    };
+    /** The planned spot if it's clear, otherwise the nearest clear one around it. */
+    const put = (n: Node, x: number, y: number) => {
+      let at: [number, number] = [x, y];
+      search: for (let r = 0; r < 320; r += 8) {
+        const steps = r === 0 ? 1 : Math.max(8, Math.round(r / 6));
+        for (let k = 0; k < steps; k++) {
+          const a = (k / steps) * Math.PI * 2;
+          const cx = x + Math.cos(a) * r,
+            cy = y + Math.sin(a) * r;
+          if (clear(cx, cy, n)) {
+            at = [cx, cy];
+            break search;
+          }
+        }
+      }
+      n.ax = n.x = at[0];
+      n.ay = n.y = at[1];
       placed.push(n);
+    };
+    const fixed = nodes.filter((n) => !n.guest);
+    const routers = fixed.filter((n) => n.kind === "router");
+    for (const r of routers) {
+      put(r, ...at(plan[r.site ?? ""] ?? [0.5, 0.3]));
     }
+    for (const n of fixed.filter((n) => n.kind === "relay" || n.kind === "edge")) {
+      put(n, ...at(plan[n.kind]));
+    }
+    // Each network's machines around its router: a server with services sits a
+    // little out on its own, the rest evenly spaced around a circle.
+    for (const r of routers) {
+      const ms = members(r);
+      const hosts = ms.filter((m) => servicesOn(m).length);
+      const rest = ms.filter((m) => !servicesOn(m).length);
+      // Servers sit out to the side of their router, with room for their ring of services.
+      const tilt = portrait ? 0 : -0.35;
+      hosts.forEach((m, i) => put(m, r.ax + (R + rs) * Math.cos(tilt + i), r.ay + (R + rs) * 0.6 * Math.sin(tilt + i)));
+      rest.forEach((m, i) => {
+        const a = -Math.PI / 2 + ((i + 0.5) / rest.length) * Math.PI * 2;
+        put(m, r.ax + Math.cos(a) * R, r.ay + Math.sin(a) * R * 0.85);
+      });
+      // Then each server's services, in a ring around it.
+      for (const host of hosts) {
+        const svcs = servicesOn(host);
+        svcs.forEach((sv, i) => {
+          const a = -Math.PI / 2 + (i / svcs.length) * Math.PI * 2;
+          put(sv, host.ax + Math.cos(a) * rs, host.ay + Math.sin(a) * rs);
+        });
+      }
+    }
+    // Anything left (a device with no network) goes wherever there's room.
+    for (const n of fixed) if (!placed.includes(n)) put(n, w * 0.5, h * 0.3);
   }
 
   // ── Grid helpers ───────────────────────────────────────────
@@ -727,10 +766,11 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       ctx.globalAlpha = 0.85 * fade;
       ctx.fillRect((i + 1) * PITCH + 2, (j - 1) * PITCH - 3, 4, 4);
     }
-    // Services only show their names when something reaches them, or on hover.
-    if (n.kind === "service" && !lit && n.flash < 0.25) return;
+    // Services (and on a phone, most devices) only show their names when something reaches them, or on hover.
+    const always = named(n);
+    if (!always && !lit && n.flash < 0.25) return;
     ctx.globalAlpha =
-      (n.kind === "service" ? Math.max(lit, n.flash) * 0.8 : (0.42 + lit * 0.5 + n.flash * 0.3) * dim) * fade;
+      (always ? (0.42 + lit * 0.5 + n.flash * 0.3) * dim : Math.max(lit, n.flash) * 0.8) * fade;
     ctx.fillStyle = fg;
     ctx.font = `${n.kind === "service" ? 10 : 11}px 'Atkinson Hyperlegible Mono', ui-monospace, monospace`;
     ctx.textBaseline = "middle";

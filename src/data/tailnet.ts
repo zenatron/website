@@ -37,7 +37,6 @@ export const PEERS: Peer[] = [
   { name: "apple-tv", os: "tvOS", site: "home", exitNode: true },
   { name: "desktop", os: "CachyOS", site: "home" },
   { name: "pi", os: "linux", site: "home" },
-  { name: "mbp", os: "macOS", site: "home", offline: "50d ago" },
   { name: "qpc", os: "Windows", site: "home", offline: "328d ago" },
 
   // The lab: a separate network with the server and everything running on it.
