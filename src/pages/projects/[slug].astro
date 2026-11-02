@@ -29,6 +29,8 @@ const hero = await cardArt({
   context: "hero",
 });
 const lead = hero.kind === "image" ? hero.src : null;
+/** A demo loop leads instead of the still, when there is one; the still is its poster. */
+const video = entry.data.video;
 const hasMath = /\$\$|\\\(|\\\[|\$[^$\n]+\$/.test(entry.body ?? "");
 
 const coursework = entry.data.type === "data";
@@ -117,7 +119,21 @@ const next = peers.length > 1 ? card(peers[(i + 1) % peers.length]) : null;
     </header>
 
     {
-      lead && (
+      video ? (
+        <figure class="lead">
+          <video
+            src={video}
+            poster={lead ?? undefined}
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            aria-label={`${entry.data.title} demo`}
+            data-loop
+          />
+        </figure>
+      ) : lead && (
         <figure class="lead">
           <img src={lead} alt={`${entry.data.title}${entry.data.tagline ? `, ${entry.data.tagline}` : ""}`} />
         </figure>
@@ -148,6 +164,18 @@ const next = peers.length > 1 ? card(peers[(i + 1) % peers.length]) : null;
 
 <script>
   import "@/scripts/code";
+
+  // The demo loop plays like a gif; with reduced motion it waits for the viewer to press play,
+  // and off screen it pauses.
+  document.querySelectorAll<HTMLVideoElement>("video[data-loop]").forEach((v) => {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      v.removeAttribute("autoplay");
+      v.pause();
+      v.controls = true;
+      return;
+    }
+    new IntersectionObserver(([e]) => (e.isIntersecting ? v.play().catch(() => {}) : v.pause())).observe(v);
+  });
 
   // While the cover is under the nav, the nav drops its fade so the art shows.
   const cover = document.querySelector<HTMLElement>(".cover");
@@ -247,7 +275,9 @@ const next = peers.length > 1 ? card(peers[(i + 1) % peers.length]) : null;
     border-radius: 6px;
     background: color-mix(in srgb, var(--fg) 6%, transparent);
   }
-  .lead img {
+  .lead img,
+  .lead video {
+    display: block;
     width: 100%;
     height: auto;
   }
