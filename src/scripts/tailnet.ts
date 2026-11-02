@@ -100,11 +100,15 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
   let nextAuto = 0;
   let raf = 0;
   let last = performance.now();
-  /** On a phone, most names show only when something reaches them, so the nodes can sit closer. */
+  /**
+   * On a phone the mesh is simpler: just the networks and their devices, the
+   * relay and the edge. Services fold into their server (requests still go
+   * there, and the log still names them) and offline machines aren't drawn.
+   */
   let compact = false;
+  const hidden = (n: Node) => compact && (n.kind === "service" || !!n.offline);
   /** Whether a node's name is always shown, or only when lit. */
-  const named = (n: Node) =>
-    n.kind !== "service" && (!compact || n.kind === "router" || servicesOn(n).length > 0);
+  const named = (n: Node) => n.kind !== "service";
 
   // ── Colors, re-read when the theme changes ─────────────────
   let fg = "#000",
@@ -189,7 +193,7 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     const band = Math.max(160, textTop - top - 16);
     // How far a network's machines sit from its router, and services from their host.
     const R = portrait
-      ? Math.max(48, Math.min(w * 0.2, band * 0.36))
+      ? Math.max(48, Math.min(w * 0.25, band * 0.3))
       : Math.max(72, Math.min(250, short * 0.23));
     const rs = portrait ? Math.max(30, Math.min(w * 0.09, band * 0.16)) : Math.max(40, Math.min(104, short * 0.095));
     // Fractions of the width, and of the band (phones) or the height (wider screens).
@@ -204,11 +208,15 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       const svc = n.kind === "service";
       const labelled = named(n);
       if (inAvoid(x, y, svc ? 22 : compact ? 28 : 40) || (labelled && inAvoid(x + 70, y, 20))) return false;
+      // A name that would run off the right edge would have to flip onto its
+      // neighbours: place it where it fits instead.
+      if (labelled && x + n.name.length * 6.8 + 28 > w - 8) return false;
       for (const p of placed) {
         const d = Math.hypot(p.ax - x, p.ay - y);
         if (d < (svc || p.kind === "service" ? 22 : compact ? 30 : 46)) return false;
-        // Names run about 100px to the right: keep them off each other.
-        if (labelled && named(p) && Math.abs(p.ay - y) < 18 && x - p.ax > -105 && x - p.ax < 110) return false;
+        // Names run to the right of their nodes: keep each off the other, by their real lengths.
+        const span = (m: Node) => m.name.length * 6.8 + 28;
+        if (labelled && named(p) && Math.abs(p.ay - y) < 18 && x - p.ax > -span(n) && x - p.ax < span(p)) return false;
       }
       return true;
     };
@@ -231,7 +239,7 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       n.ay = n.y = at[1];
       placed.push(n);
     };
-    const fixed = nodes.filter((n) => !n.guest);
+    const fixed = nodes.filter((n) => !n.guest && !hidden(n));
     const routers = fixed.filter((n) => n.kind === "router");
     for (const r of routers) {
       put(r, ...at(plan[r.site ?? ""] ?? [0.5, 0.3]));
@@ -242,7 +250,7 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     // Each network's machines around its router: a server with services sits a
     // little out on its own, the rest evenly spaced around a circle.
     for (const r of routers) {
-      const ms = members(r);
+      const ms = members(r).filter((m) => !hidden(m));
       const hosts = ms.filter((m) => servicesOn(m).length);
       const rest = ms.filter((m) => !servicesOn(m).length);
       // Servers sit out to the side of their router, with room for their ring of services.
@@ -254,7 +262,7 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       });
       // Then each server's services, in a ring around it.
       for (const host of hosts) {
-        const svcs = servicesOn(host);
+        const svcs = servicesOn(host).filter((sv) => !hidden(sv));
         svcs.forEach((sv, i) => {
           const a = -Math.PI / 2 + (i / svcs.length) * Math.PI * 2;
           put(sv, host.ax + Math.cos(a) * rs, host.ay + Math.sin(a) * rs);
@@ -313,7 +321,8 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       hops = [a, ra, relay, rb, target].filter((n): n is Node => !!n);
       how = relay ? `via ${relay.name.replace(/^derp-/, "")}` : a.kind === "edge" ? "edge" : "direct";
     }
-    if (b.kind === "service") hops.push(...tail);
+    // On a phone the services are folded into their server, so the trip ends there.
+    if (b.kind === "service" && !compact) hops.push(...tail);
     // A service on the asker's own host, or any doubled hop: drop the repeats.
     hops = hops.filter((n, i) => i === 0 || n !== hops[i - 1]);
     return { hops, how, relay };
@@ -438,7 +447,7 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
   }
 
   const nodeAt = (x: number, y: number) =>
-    nodes.find((n) => Math.hypot(n.x - x, n.y - y) < PITCH * (n.kind === "service" ? 1.6 : 3)) ?? null;
+    nodes.find((n) => !hidden(n) && Math.hypot(n.x - x, n.y - y) < PITCH * (n.kind === "service" ? 1.6 : 3)) ?? null;
 
   // ── Pointer ────────────────────────────────────────────────
   function onPointerDown(e: PointerEvent) {
@@ -738,6 +747,23 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       ctx.fillStyle = (n.hue && hue[n.hue]) || fg;
       ctx.globalAlpha = (0.55 + n.flash * 0.45 + lit * 0.3) * fade;
       cell(i, j);
+    } else if (servicesOn(n).length && !n.offline) {
+      // A server rack: three shelves, each with a status light that blinks on
+      // its own and all of them at once when traffic arrives.
+      for (const k of [-1, 0, 1]) {
+        const row = j + k * 2;
+        ctx.fillStyle = fg;
+        ctx.globalAlpha = (0.38 + n.flash * 0.35 + lit * 0.3) * fade;
+        cell(i - 1, row);
+        cell(i, row);
+        ctx.globalAlpha = (0.18 + lit * 0.2) * fade;
+        cell(i + 1, row);
+        // The light sits in the shelf's last cell.
+        const on = n.flash > 0.3 || Math.sin(now / 260 + k * 2.1 + n.phase) > 0.2;
+        ctx.fillStyle = green;
+        ctx.globalAlpha = (on ? 1 : 0.3) * fade;
+        ctx.fillRect((i + 1) * PITCH + 1, row * PITCH + 1, 4, 4);
+      }
     } else if (n.offline) {
       // Hollow and dim: still on the tailnet, just not here.
       ctx.globalAlpha = (0.16 + lit * 0.3) * fade;
@@ -760,11 +786,12 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
         cell(i, j);
       }
     }
-    // An exit node wears a small green cell at its shoulder.
+    // An exit node wears a small green cell at its shoulder (above the rack, for a server).
     if (n.exit) {
+      const rack = servicesOn(n).length > 0 && !n.offline;
       ctx.fillStyle = green;
       ctx.globalAlpha = 0.85 * fade;
-      ctx.fillRect((i + 1) * PITCH + 2, (j - 1) * PITCH - 3, 4, 4);
+      ctx.fillRect((i + (rack ? 2 : 1)) * PITCH + 2, (j - (rack ? 2 : 1)) * PITCH - 3, 4, 4);
     }
     // Services (and on a phone, most devices) only show their names when something reaches them, or on hover.
     const always = named(n);
@@ -797,6 +824,7 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     const touch = (a: Node, b: Node) => a === hovered || b === hovered || a === dragging || b === dragging;
     const routers = nodes.filter((n) => n.kind === "router");
     for (const n of nodes) {
+      if (hidden(n)) continue;
       if (n.kind === "peer" && !n.offline) {
         const r = n.guest ? null : routerOf(n);
         if (r) drawLink(n, r, touch(n, r) ? 0.45 : 0.17, 1);
@@ -838,7 +866,7 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       cell(k % cols, Math.floor(k / cols));
     }
 
-    for (const n of nodes) drawNode(n, now);
+    for (const n of nodes) if (!hidden(n)) drawNode(n, now);
     ctx.globalAlpha = 1;
   }
 
