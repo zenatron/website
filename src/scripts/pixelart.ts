@@ -59,6 +59,84 @@ function piDigits() {
   return (PI = out);
 }
 
+/** A made-up git history, drawn once per band height and kept: see the `commits` motif. */
+let historyCache: { key: string; width: number; cells: Map<number, Cell> } | null = null;
+function commitHistory(rows: number, seed: number) {
+  const key = `${rows}:${seed}`;
+  if (historyCache?.key === key) return historyCache;
+  let state = (seed * 2654435761) >>> 0 || 1;
+  const rand = () => ((state = Math.imul(state ^ (state >>> 15), 2246822507) + 0x6d2b79f5) >>> 0) / 4294967296;
+  const top = Math.round(rows * 0.36);
+  const gap = 3;
+  const maxLanes = Math.max(3, Math.min(5, Math.floor((rows * 0.5) / gap) + 1));
+  const laneY = (l: number) => top + l * gap;
+  const hues: Named[] = ["rose", "ember", "teal", "green", "violet", "blue", "orange"];
+  const cells = new Map<number, Cell>();
+  const put = (x: number, y: number, c: Cell) => {
+    if (y < 0 || y >= rows) return;
+    const k = x * rows + y;
+    const old = cells.get(k);
+    if (!old || old.v < c.v) cells.set(k, c);
+  };
+  // A fork or merge the way git draws one: along the lane, then over at 45°.
+  const line = (x0: number, y0: number, x1: number, y1: number, tone?: Named) => {
+    const dy = Math.abs(y1 - y0);
+    const bend = Math.max(x0, x1 - dy);
+    for (let cx = x0 + 1; cx < bend; cx++) if (cx % 2 === 0) put(cx, y0, { v: 0.26, tone });
+    const n = Math.max(x1 - bend, dy, 1);
+    for (let s = 0; s <= n; s++) put(Math.round(bend + ((x1 - bend) * s) / n), Math.round(y0 + ((y1 - y0) * s) / n), { v: 0.42, tone });
+  };
+
+  type Lane = { tone?: Named; age: number } | null;
+  const lanes: Lane[] = Array.from({ length: maxLanes }, (_, l) => (l === 0 ? { age: 0 } : null));
+  const TOTAL = 900;
+  let x = 0;
+  while (x < TOTAL) {
+    const prev = x;
+    x += 3 + Math.floor(rand() * 7);
+    const ending = x > TOTAL - 70;
+    const before = lanes.map((l) => l !== null);
+
+    // Merges: an old enough branch joins a lane below it (usually main, sometimes another branch).
+    for (let l = maxLanes - 1; l > 0; l--) {
+      const lane = lanes[l];
+      if (!lane || !before[l]) continue;
+      if (ending || (lane.age > 4 && rand() < 0.11)) {
+        const into = [...Array(l).keys()].filter((k) => lanes[k]);
+        const target = rand() < 0.6 || into.length === 1 ? 0 : into[Math.floor(rand() * into.length)];
+        line(prev, laneY(l), x, laneY(target), lane.tone);
+        put(x, laneY(target), { v: 0.95, tone: lanes[target]!.tone }); // the merge commit
+        lanes[l] = null;
+      }
+    }
+    // Forks: a new branch leaves any active line for a free lane.
+    if (!ending && rand() < 0.2) {
+      const free = lanes.map((l, k) => (l ? -1 : k)).filter((k) => k > 0);
+      const active = lanes.map((l, k) => (l ? k : -1)).filter((k) => k >= 0);
+      if (free.length) {
+        const parent = active[Math.floor(rand() * active.length)];
+        const child = free[Math.floor(rand() * Math.min(free.length, 2))];
+        lanes[child] = { tone: hues[Math.floor(rand() * hues.length)], age: 0 };
+        line(prev, laneY(parent), x, laneY(child), lanes[child]!.tone);
+      }
+    }
+    // The lines carry on, and some of them get a commit.
+    let any = false;
+    lanes.forEach((lane, l) => {
+      if (!lane) return;
+      if (before[l]) for (let cx = prev + 1; cx < x; cx++) if (cx % 2 === 0) put(cx, laneY(l), { v: 0.26, tone: lane.tone });
+      lane.age++;
+      if (rand() < (l === 0 ? 0.55 : 0.4)) {
+        put(x, laneY(l), { v: 0.95, tone: lane.tone });
+        any = true;
+      }
+    });
+    if (!any) put(x, laneY(0), { v: 0.95 });
+  }
+  historyCache = { key, width: x + 1, cells };
+  return historyCache;
+}
+
 const MOTIFS: Record<string, Motif> = {
   /** The notch: a dark shape at the top with glances lit in its wings, and a banner that drops and lifts. */
   notch({ i, j: row, cols, rows, t }) {
@@ -224,47 +302,15 @@ const MOTIFS: Record<string, Motif> = {
   },
 
   /**
-   * A commit graph: lanes in the projects' colours, commits sliding left as new
-   * ones land at the right, branches forking off and merging back.
+   * A commit graph from a made-up history: commits at uneven gaps on whichever
+   * branches are active, branches forking off any line and merging back into
+   * another after a while, each in its own colour, main in neutral. It scrolls
+   * left and loops: the history ends with everything merged, as it began.
    */
-  commits({ i, j: row, cols, rows, t, seed }) {
-    const lanes: Named[] = ["rose", "ember", "teal", "green"];
-    const top = Math.round(rows * 0.36);
-    const gap = Math.max(3, Math.floor((rows * 0.46) / lanes.length));
-    const lane = (row - top) / gap;
-    const shift = Math.floor(t * 4);
-    const x = i + shift; // world column
-    const SPACING = 6;
-    // Branches live for a stretch, then merge back into the main line (lane 0).
-    const alive = (l: number, wx: number) => {
-      if (l === 0) return true;
-      const span = Math.floor(wx / 48);
-      return hash(span, l, seed) < 0.62 && wx % 48 > 6 && wx % 48 < 40;
-    };
-    if (Number.isInteger(lane) && lane >= 0 && lane < lanes.length) {
-      const l = lane;
-      if (!alive(l, x)) return l === 0 ? { v: 0.25 } : null;
-      const commit = x % SPACING === 0 && hash(Math.floor(x / SPACING), l + 20, seed) < 0.7;
-      // The newest commit, at the right edge, pulses.
-      const newest = i >= cols - SPACING - 2 && commit && l === 0;
-      if (commit) return { v: newest ? 0.6 + 0.4 * Math.abs(Math.sin(t * 3)) : 0.9, tone: lanes[l] };
-      return x % 2 ? null : { v: 0.32, tone: lanes[l] };
-    }
-    // Forks and merges: a diagonal from the main line up to the branch at its ends.
-    for (let l = 1; l < lanes.length; l++) {
-      const wx = x % 48;
-      const span = Math.floor(x / 48);
-      if (hash(span, l, seed) >= 0.62) continue;
-      const y0 = top,
-        y1 = top + l * gap;
-      if (row <= y0 || row >= y1) continue;
-      const frac = (row - y0) / (y1 - y0);
-      // Forks rise from the main line near the start of a stretch; merges come back down near its end.
-      const fx = Math.round(2 + frac * 4);
-      const mx = Math.round(40 + (1 - frac) * 4);
-      if (wx === fx || wx === mx) return { v: 0.5, tone: lanes[l] };
-    }
-    return null;
+  commits({ i, j: row, rows, t, seed }) {
+    const h = commitHistory(rows, seed);
+    const wx = (((i + Math.floor(t * 4)) % h.width) + h.width) % h.width;
+    return h.cells.get(wx * rows + row) ?? null;
   },
 
   /** A line through the years, a node for each milestone, a pulse running along it. */
