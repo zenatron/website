@@ -33,7 +33,7 @@ const SOCIALS = [
         <h1>Hi, I’m <span class="name">Phil</span>.</h1>
         <p>Software engineer @ RTX, out of {SITE.city}, CT.</p>
         {/* Each mention wears its own colour, the project's where it has one. */}
-        <p>
+        <p class="past">
           Before that, <a class="ink tag" style="--h: var(--c-hue-violet)" href="/about/">CEM</a> (intern), Shortlist, and co-founding
           <a class="ink tag" style="--h: var(--c-hue-ember)" href="https://underscore.games" target="_blank" rel="noopener">Underscore Games</a>.
         </p>
@@ -188,17 +188,34 @@ const SOCIALS = [
   .sep {
     opacity: 0.4;
   }
+  /* On a phone the intro keeps to the bottom third or so, so the mesh above it
+     has room to make sense: the name, the role, what's on now, and the links.
+     The motto, the prompt, the history and the status wait for a wider screen. */
   @media (max-width: 640px) {
     .intro {
       left: 1.5rem;
-      bottom: 2.5rem;
-      gap: 1.75rem;
+      right: 1.5rem;
+      bottom: 1.5rem;
+      gap: 0;
+    }
+    .motto,
+    .prompt,
+    .past,
+    .status {
+      display: none;
     }
     .bio {
-      margin-left: -1rem;
-      padding: 1rem;
-      font-size: 14px;
-      line-height: 1.6;
+      margin-left: -0.75rem;
+      padding: 0.85rem 0.75rem;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .bio h1 {
+      font-size: 18px !important;
+      margin-bottom: 0.2rem !important;
+    }
+    .socials {
+      margin-top: 0.5rem !important;
     }
   }
 </style>
