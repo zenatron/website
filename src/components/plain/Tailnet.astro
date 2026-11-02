@@ -68,10 +68,15 @@ import { PEERS } from "@/data/tailnet";
       display: none;
     }
   }
-  /* On a phone the counts give their corner back to the mesh. */
-  @media (max-width: 640px) {
+  /* On a phone, or a short screen, the counts sit on one line under the nav. */
+  @media (max-width: 640px), (max-height: 560px) {
     .mesh-stats {
-      display: none;
+      top: 3.4rem;
+      right: 1.25rem;
+      display: flex;
+      gap: 0.9rem;
+      font-size: 10px;
+      opacity: 0.45;
     }
   }
 </style>

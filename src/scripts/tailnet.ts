@@ -158,7 +158,8 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     cols = Math.ceil(w / PITCH);
     rows = Math.ceil(h / PITCH);
-    compact = w < 640;
+    // Phones, and short screens (a phone on its side), get the simpler mesh.
+    compact = w < 640 || h < 560;
     heat = new Float32Array(cols * rows);
     echo = new Float32Array(cols * rows);
     const base = root.getBoundingClientRect();
@@ -186,6 +187,8 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
    */
   function placeNodes() {
     const portrait = h > w * 1.1;
+    // A phone on its side: the text has the left half, the networks the right.
+    const sideways = !portrait && h < 560;
     const short = Math.min(w, h);
     // On a phone the text fills the bottom half: plan inside the band above it.
     const top = 76;
@@ -194,10 +197,14 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     // How far a network's machines sit from its router, and services from their host.
     const R = portrait
       ? Math.max(48, Math.min(w * 0.25, band * 0.3))
-      : Math.max(72, Math.min(250, short * 0.23));
+      : sideways
+        ? Math.max(48, Math.min(h * 0.22, w * 0.11))
+        : Math.max(72, Math.min(250, short * 0.23));
     const rs = portrait ? Math.max(30, Math.min(w * 0.09, band * 0.16)) : Math.max(40, Math.min(104, short * 0.095));
     // Fractions of the width, and of the band (phones) or the height (wider screens).
-    const plan: Record<string, [number, number]> = portrait
+    const plan: Record<string, [number, number]> = sideways
+      ? { lab: [0.6, 0.66], home: [0.82, 0.38], relay: [0.96, 0.92], edge: [0.08, 0.28] }
+      : portrait
       ? // Stacked: home in the upper part of the band, the lab and its services below it.
         { lab: [0.18, 0.76], home: [0.64, 0.28], relay: [0.94, 0.96], edge: [0.08, 0.08] }
       : { lab: [0.12, 0.36], home: [0.68, 0.32], relay: [0.94, 0.64], edge: [0.06, 0.68] };
@@ -210,12 +217,12 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       if (inAvoid(x, y, svc ? 22 : compact ? 28 : 40) || (labelled && inAvoid(x + 70, y, 20))) return false;
       // A name that would run off the right edge would have to flip onto its
       // neighbours: place it where it fits instead.
-      if (labelled && x + n.name.length * 6.8 + 28 > w - 8) return false;
+      if (labelled && x + n.name.length * 7.2 + 36 > w - 8) return false;
       for (const p of placed) {
         const d = Math.hypot(p.ax - x, p.ay - y);
         if (d < (svc || p.kind === "service" ? 22 : compact ? 30 : 46)) return false;
         // Names run to the right of their nodes: keep each off the other, by their real lengths.
-        const span = (m: Node) => m.name.length * 6.8 + 28;
+        const span = (m: Node) => m.name.length * 7.2 + 36;
         if (labelled && named(p) && Math.abs(p.ay - y) < 18 && x - p.ax > -span(n) && x - p.ax < span(p)) return false;
       }
       return true;
@@ -254,7 +261,8 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       const hosts = ms.filter((m) => servicesOn(m).length);
       const rest = ms.filter((m) => !servicesOn(m).length);
       // Servers sit out to the side of their router, with room for their ring of services.
-      const tilt = portrait ? 0 : -0.35;
+      // Beside the router; on a phone on its side, above it, clear of the home network.
+      const tilt = sideways ? -Math.PI / 2 : portrait ? 0 : -0.35;
       hosts.forEach((m, i) => put(m, r.ax + (R + rs) * Math.cos(tilt + i), r.ay + (R + rs) * 0.6 * Math.sin(tilt + i)));
       rest.forEach((m, i) => {
         const a = -Math.PI / 2 + ((i + 0.5) / rest.length) * Math.PI * 2;
