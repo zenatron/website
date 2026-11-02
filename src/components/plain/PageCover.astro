@@ -1,0 +1,31 @@
+---
+/**
+ * A band of pixel art across the top of a page, behind the nav, fading into
+ * the page below it: the same flair the project pages wear, one motif per
+ * page. `tall` is the project size; the default is a quieter band.
+ */
+import PixelArt from "@/components/plain/PixelArt.astro";
+
+interface Props {
+  motif: string;
+  seed: string;
+  hue: string;
+  tall?: boolean;
+}
+const { motif, seed, hue, tall = false } = Astro.props;
+---
+
+<div class:list={["cover", { tall }]} data-cover>
+  <PixelArt motif={motif} seed={seed} hue={hue} fadeTop />
+</div>
+
+<script>
+  // While the cover is under the nav, the nav drops its fade so the art shows.
+  const cover = document.querySelector<HTMLElement>("[data-cover]");
+  if (cover) {
+    const update = () =>
+      document.documentElement.classList.toggle("over-cover", cover.getBoundingClientRect().bottom > 80);
+    update();
+    addEventListener("scroll", update, { passive: true });
+  }
+</script>

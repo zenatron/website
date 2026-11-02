@@ -1,317 +1,122 @@
 ---
-import Shell from "@/layouts/Shell.astro";
-import PageHead from "@/components/PageHead.astro";
-import AppIcon from "@/components/AppIcon.astro";
-import FileIcon from "@/components/FileIcon.astro";
-import { DESK } from "@/data/desk";
-import { FAVORITES } from "@/data/favorites";
-import { FORTUNES } from "@/data/site";
-
 /**
- * The dock (it was the desk): the apps I use and the things worth opening,
- * scattered on it. Icons are shown exactly as they ship — full color,
- * no tint — because an app icon is already a designed object.
+ * The dock: the apps I actually use, as a shelf. Small icons, a name,
+ * a line on what it's for, grouped the way favorites.ts groups them.
  */
+import Plain from "@/layouts/Plain.astro";
+import PageCover from "@/components/plain/PageCover.astro";
+import AppIcon from "@/components/AppIcon.astro";
+import { CATEGORY_LABELS, FAVORITES } from "@/data/favorites";
+import "@/styles/glass.css";
 
-/** Deterministic jitter, so the scatter is organic but never moves. */
-function seed(s: string) {
-  let h = 0x811c9dc5;
-  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
-  return (h >>> 0) / 0xffffffff;
-}
-function jitter(name: string) {
-  const a = seed(name), b = seed(name + "y"), c = seed(name + "r"), d = seed(name + "s");
-  return {
-    x: (a - 0.5) * 46,          // percent of a cell
-    y: (b - 0.5) * 34,
-    rot: (c - 0.5) * 13,        // degrees
-    scale: 0.97 + d * 0.06,
-  };
-}
-
-const apps = FAVORITES.filter((f) => f.logo);
-
-type Item =
-  | { kind: "app"; name: string; note?: string; href?: string; logo: string; logoDark?: string; appIcon: boolean; darkTile: boolean }
-  | { kind: "file"; name: string; note?: string; file: string; href?: string; deskKind: string; icon: (typeof DESK)[number]["icon"] };
-
-/** On the dock these jump to the About section they come from, not a window. */
-const ABOUT_SECTION: Record<string, string> = {
-  neofetch: "/about/#setup",
-  "now.txt": "/about/#now",
-  "principles.md": "/about/#principles",
-};
-
-const items: Item[] = [
-  ...DESK.map((o) => {
-    const href = ABOUT_SECTION[o.file] ?? o.href;
-    return {
-      kind: "file" as const,
-      name: o.file,
-      note: o.note,
-      file: o.file,
-      href,
-      deskKind: ABOUT_SECTION[o.file] ? "link" : o.kind,
-      icon: o.icon,
-    };
-  }),
-  ...apps.map((a) => ({
-    kind: "app" as const,
-    name: a.name,
-    note: a.description,
-    href: a.url,
-    logo: a.logo!,
-    logoDark: a.logoDark,
-    appIcon: Boolean(a.appIcon),
-    darkTile: Boolean(a.darkTile),
-  })),
-];
+const order = ["apps", "tools", "hobbies", "lifestyle", "fun"] as const;
+const groups = order
+  .map((c) => ({ key: c, label: CATEGORY_LABELS[c], items: FAVORITES.filter((f) => f.category === c) }))
+  .filter((g) => g.items.length > 0);
+const count = FAVORITES.filter((f) => f.logo).length;
 ---
 
-<Shell title="Dock | Phil Vishnevsky" description="The apps I actually use, and the things worth opening." ogSlug="dock">
-  <PageHead title="Dock">
-    {apps.length} apps I actually use, and a few things worth opening.
-    <span class="hint-hover">Hover</span><span class="hint-tap">Tap</span> for what they are.
-    The hardware they run on is on <a href="/about/#setup">the desk</a>.
-  </PageHead>
-
-  <div class="surface">
-    <ul class="objects">
-      {items.map((item) => {
-        const j = jitter(item.name);
-        const style = `--x:${j.x}%; --y:${j.y}%; --rot:${j.rot}deg; --scale:${j.scale}`;
-        return (
-          <li style={style}>
-            {item.kind === "app" ? (
-              <a href={item.href} rel="noopener noreferrer" class="obj">
-                <span class="icon"><AppIcon item={item} /></span>
-                <span class="label">
-                  <span class="lname">{item.name}</span>
-                  {item.note && <span class="lnote">{item.note}</span>}
-                </span>
-              </a>
-            ) : item.deskKind === "link" ? (
-              <a href={item.href} class="obj">
-                <span class="icon"><FileIcon {...item.icon} /></span>
-                <span class="label">
-                  <span class="lname">{item.file}</span>
-                  {item.note && <span class="lnote">{item.note}</span>}
-                </span>
-              </a>
-            ) : (
-              <button
-                type="button"
-                class="obj"
-                data-open-file={item.deskKind}
-                data-file-name={item.file}
-                data-file-note={item.note}
-              >
-                <span class="icon"><FileIcon {...item.icon} /></span>
-                <span class="label">
-                  <span class="lname">{item.file}</span>
-                  {item.note && <span class="lnote">{item.note}</span>}
-                </span>
-              </button>
-            )}
-          </li>
-        );
-      })}
-    </ul>
-  </div>
-
-  <dialog class="win mwin" data-win>
-    <div class="mwin-bar">
-      <span class="mwin-lights" aria-hidden="true"><i></i><i></i><i></i></span>
-      <p class="mwin-title" data-win-name></p>
-      <span></span>
-    </div>
-    {/*
-      Every window's contents ship rendered and hidden inside the dialog;
-      the script only switches between them. It used to build them from a
-      JSON payload on click, which put the desk's only text where neither
-      a crawler nor a no-JS visitor could read it.
-    */}
-    <div class="win-body" data-win-body>
-      <div data-win-variant="fortune" hidden>
-        {FORTUNES.map((f) => (
-          <p class="quote">
-            {f.text}
-            <span class="by">— {f.by}</span>
-          </p>
-        ))}
+<Plain title="Dock — Phil Vishnevsky" description="The apps I actually use." ogSlug="dock">
+  <PageCover motif="dock" seed="dock" hue="orange" />
+  <main class="page dock">
+    <header class="page-head">
+      <div>
+        <h1 class="sr-only">Dock</h1>
+        <p class="motto">good tools disappear.<span class="cursor" aria-hidden="true"></span></p>
+        <p class="lede">{count} apps I actually use, and what I do when I’m not using them. The hardware is on <a class="ink" href="/about/">about</a>.</p>
       </div>
-    </div>
-    <div class="win-foot" data-win-foot></div>
-  </dialog>
-</Shell>
+    </header>
+
+    {
+      groups.map((g) => (
+        <section>
+          <h2>{g.label.toLowerCase()}</h2>
+          <ul class="shelf">
+            {g.items.map((f) => {
+              const body = (
+                <>
+                  {f.logo ? (
+                    <span class="icon"><AppIcon item={f} /></span>
+                  ) : (
+                    <span class="icon none" aria-hidden="true" />
+                  )}
+                  <span class="text">
+                    <span class="name">{f.name}</span>
+                    {f.description && <span class="dim note">{f.description}</span>}
+                  </span>
+                </>
+              );
+              return (
+                <li>
+                  {f.url ? <a href={f.url} rel="noopener noreferrer">{body}</a> : <div>{body}</div>}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))
+    }
+  </main>
+</Plain>
 
 <style>
-  /* "Hover" where you can, "Tap" where you can't. */
-  .hint-tap { display: none; }
-  @media (hover: none) {
-    .hint-hover { display: none; }
-    .hint-tap { display: inline; }
+  section + section {
+    margin-top: 4rem;
   }
-
-
-  /*
-   * The desk surface: a dot grid, like graph paper under the objects.
-   * Not called `.table` — that's a Tailwind display utility, and it wins.
-   */
-  .surface {
-    position: relative;
-    padding: var(--s-6) var(--s-5) var(--s-8);
-    border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-card);
-    background-color: var(--c-chrome);
-    background-image: radial-gradient(var(--c-hairline) 1.4px, transparent 1.4px);
-    background-size: 22px 22px;
-    background-position: -11px -11px;
+  h2 {
+    margin: 0 0 1.25rem;
+    font-size: 13px;
+    font-weight: 400;
+    opacity: 0.6;
   }
-
-  .objects {
-    list-style: none;
+  .shelf {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 0.25rem 2rem;
     margin: 0;
     padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
-    gap: var(--s-5) var(--s-3);
+    list-style: none;
   }
-  /* The grid keeps it responsive; the jitter keeps it from looking like
-     a grid. Positions are seeded by name, so nothing ever moves. */
-  .objects li {
-    position: relative;
-    display: grid;
-    place-items: center;
-    transform: translate(var(--x), var(--y)) rotate(var(--rot));
-  }
-  /*
-   * Each item's transform makes it its own stacking context, so a label's
-   * z-index only ever applied inside its own object — later siblings
-   * painted straight over it. Lift the whole object instead.
-   */
-  .objects li:hover,
-  .objects li:focus-within {
-    z-index: 5;
-  }
-
-  .obj {
-    position: relative;
-    display: grid;
-    place-items: center;
-    padding: 0;
-    color: inherit;
-    cursor: pointer;
-  }
-
-  .icon {
-    display: grid;
-    place-items: center;
-    width: calc(64px * var(--scale));
-    height: calc(64px * var(--scale));
-    transition: transform var(--dur-state) var(--ease);
-  }
-
-  /* The label is absolutely placed so revealing it moves nothing. */
-  .label {
-    position: absolute;
-    top: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%) rotate(calc(var(--rot) * -1));
-    width: max-content;
-    max-width: 150px;
-    display: grid;
-    gap: 1px;
-    justify-items: center;
-    text-align: center;
-    padding: 5px 9px;
-    border-radius: var(--radius-sm);
-    background: var(--c-bg);
-    border: 1px solid var(--c-hairline);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--dur-state) var(--ease);
-    z-index: 2;
-  }
-  .lname {
-    font-size: var(--t-sans-xs);
-    font-weight: 600;
-    line-height: var(--lh-head);
-  }
-  .lnote {
-    font-size: var(--t-sans-2xs);
-    color: var(--c-muted);
-    line-height: var(--lh-snug);
-  }
-
-  .obj:focus-visible .label { opacity: 1; }
-  .obj:focus-visible .icon { transform: translateY(-6px) scale(1.08); }
-  @media (hover: hover) {
-    .obj:hover .label { opacity: 1; }
-    .obj:hover .icon { transform: translateY(-6px) scale(1.08); }
-  }
-
-  /* Window */
-  .win {
-    padding: 0;
-    width: min(560px, calc(100vw - var(--s-6)));
-    max-height: min(70vh, 620px);
-  }
-  .win:focus, .win:focus-visible { outline: none; }
-  .win-body {
-    padding: var(--s-4);
-    overflow-y: auto;
-    max-height: calc(70vh - var(--h-titlebar) - 44px);
-  }
-  .win-foot {
-    padding: var(--s-2) var(--s-3);
-    border-top: 1px solid var(--c-hairline);
-    background: var(--c-chrome);
-    font-size: var(--t-sans-2xs);
-    color: var(--c-muted);
-  }
-  .win-foot:empty { display: none; }
-
-  .win-body :global(.group-head) {
-    font-size: var(--t-sans-sm);
-    font-weight: 600;
-    margin-bottom: var(--s-2);
-  }
-  .win-body :global(.group + .group) { margin-top: var(--s-5); }
-  .win-body :global(.row) {
+  .shelf a,
+  .shelf div {
     display: flex;
-    justify-content: space-between;
-    gap: var(--s-4);
-    padding-block: 3px;
-    font-size: var(--t-sans-sm);
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.5rem 0;
+    color: inherit;
+    text-decoration: none;
   }
-  .win-body :global(.row span:last-child) {
-    font-size: var(--t-sans-2xs);
-    color: var(--c-dim);
+  .icon {
     flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
   }
-  .win-body :global(.line) { font-size: var(--t-sans-lg); line-height: var(--lh-body); }
-  .win-body :global(.quote) { font-size: var(--t-sans-md); line-height: var(--lh-body); }
-  /* Whoever said it, on their own line, as colophon. */
-  .win-body :global(.quote .by) {
-    display: block;
-    margin-top: var(--s-2);
-    font-size: var(--t-sans-2xs);
-    color: var(--c-dim);
+  .icon.none {
+    width: 28px;
+    background:
+      radial-gradient(circle, color-mix(in srgb, var(--fg) 35%, transparent) 2px, transparent 2.5px) center / 100% 100%
+        no-repeat;
   }
-
-  @media (max-width: 640px) {
-    .surface { padding: var(--s-5) var(--s-3); }
-    .objects {
-      grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
-      gap: var(--s-5) var(--s-2);
-    }
-    /* Touch has no hover, so the labels sit under every object. */
-    .label { opacity: 1; position: static; transform: none; border: 0; background: none; padding: 4px 0 0; max-width: 92px; }
-    .lnote { display: none; }
+  .text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .name {
+    font-size: 14px;
+    transition: opacity 150ms ease;
+  }
+  .note {
+    overflow: hidden;
+    font-family: var(--sans);
+    font-size: 12px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .shelf:hover a .name {
+    opacity: 0.45;
+  }
+  .shelf a:hover .name {
+    opacity: 1;
   }
 </style>
-
-<script>
-  import "@/scripts/desk";
-</script>

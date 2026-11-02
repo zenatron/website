@@ -1,569 +1,250 @@
 ---
 /**
- * About.
- *
- * One page rhythm, the same as /blog: every band opens with a rule, a
- * heading and a quiet note on the right. Color keeps the job it has in
- * the explorer — it says what kind of thing something is — so a status
- * dot here means the same as a dot anywhere else: filled for underway,
- * hollow for not yet.
- *
- * It ends on the same two cards as /say-hi, because the end of an about
- * page is exactly where someone decides to get in touch.
+ * About, in the quiet layout: a few lines of who, then the timeline, what
+ * I'm on now, the machines, and four principles. Plain rows throughout,
+ * the same rhythm as /blog.
  */
-import { getEntry } from "astro:content";
-import Shell from "@/layouts/Shell.astro";
-import Mark from "@/components/Mark.astro";
-import SectionHead from "@/components/SectionHead.astro";
-import ReachCards from "@/components/ReachCards.astro";
-import LaptopLid from "@/components/LaptopLid.astro";
-import DeskScene from "@/components/DeskScene.astro";
+import Plain from "@/layouts/Plain.astro";
+import PageCover from "@/components/plain/PageCover.astro";
 import { SITE, STATUS } from "@/data/site";
 import { profilePageSchema } from "@/lib/schema";
-import { readingMinutes } from "@/lib/blog";
-import { NOW, NOW_UPDATED, PRINCIPLES, TIMELINE } from "@/data/about";
-import { FAVORITES } from "@/data/favorites";
+import { MACHINES, NOW, NOW_UPDATED, PRINCIPLES, TIMELINE } from "@/data/about";
 
-type Hue = "violet" | "orange" | "blue" | "green" | "accent" | "link";
-const vars = (hue: Hue) => `--h: var(--c-hue-${hue}, var(--c-${hue})); --t: var(--c-tint-${hue})`;
-
-const HOBBIES = FAVORITES.filter((f) => f.category === "hobbies");
-const toolCount = FAVORITES.filter((f) => f.logo).length;
-
-const essay = await getEntry("blog", "principles");
-const essayMinutes = readingMinutes(essay?.data.readingTime);
-
-const education = TIMELINE.find((t) => t.kind === "education");
-const start = TIMELINE.find((t) => t.kind === "milestone");
-
-const founded = TIMELINE.find((t) => t.kind === "founder");
-
-/**
- * What the sentence above them doesn't say: the studio's name, the
- * degree, and since when. Dotted in the timeline's colors, so they read
- * as a preview of it.
- */
-const facts = [
-  founded && { text: `co-founder, ${founded.title}`, hue: "orange" as Hue },
-  education && { text: `${education.description} · ${education.title}`, hue: "violet" as Hue },
-  start && { text: `coding since ${start.year}` },
-].filter(Boolean) as { text: string; hue?: Hue }[];
-
-const nowUpdated = new Date(NOW_UPDATED).toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
-
-const PRINCIPLE_HUES: Hue[] = ["violet", "blue", "green", "orange"];
-
-/** The homepage's "currently" chips use green for building and blue for running. */
-const NOW_HUE: Record<string, Hue> = { Building: "green", Learning: "blue", Reading: "violet" };
-
-/** Filled means underway; hollow means not started, or not the point. */
-const STATUS_HUE: Record<string, Hue | undefined> = {
-  "in progress": "accent",
-  deployed: "link",
-  exploring: "blue",
-};
-
-const KIND: Record<string, { label: string; hue: Hue }> = {
-  work: { label: "work", hue: "green" },
-  founder: { label: "co-founder", hue: "orange" },
-  internship: { label: "internship", hue: "blue" },
-  education: { label: "study", hue: "violet" },
-  milestone: { label: "milestone", hue: "accent" },
-};
-
+const nowUpdated = new Date(NOW_UPDATED).toLocaleDateString("en-US", {
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
 ---
 
-<Shell title="About | Phil Vishnevsky" description="The story so far." ogSlug="about" schema={profilePageSchema()}>
-  <section class="hero">
-    <div class="portrait">
-      <img
-        src="/images/phil_headshot_bw.webp"
-        alt="Black-and-white portrait of Phil Vishnevsky"
-        width="480"
-        height="600"
-        loading="eager"
-        decoding="async"
-      />
-    </div>
-    <div class="lede">
-      <h1>About</h1>
-      <p class="statement">
-        I write code, break things, and occasionally ship something useful.
-        By day, I’m a <Mark hue="green">full-time SWE</Mark>.
-        By night it’s a <Mark hue="blue">homelab</Mark> at <span class="nines" title="four nines">99.99%</span> uptime
-        and <Mark hue="orange">card&nbsp;games</Mark> with the studio I <span class="whole">co-founded</span>, all
-        from a desk in <Mark hue="violet">Hartford, CT</Mark>.
+<Plain
+  title="About — Phil Vishnevsky"
+  ogSlug="about"
+  description="Phil Vishnevsky: software engineer, homelab tinkerer and game studio co-founder in Hartford, CT."
+  schema={profilePageSchema()}
+>
+  <PageCover motif="timeline" seed="about" hue="violet" />
+  <main class="page about">
+    <header class="page-head">
+      <div>
+        <h1 class="sr-only">About</h1>
+        <p class="motto">write code, break things,<br />occasionally ship.<span class="cursor" aria-hidden="true"></span></p>
+        <p class="lede">
+          By day, a full-time software engineer. By night, a homelab at 99.99% uptime and card games with the studio
+          I co-founded, all from a desk in {SITE.city}, CT.
+        </p>
+      </div>
+      <p class="dim side">
+        <span class="status"></span>{STATUS}<br />
+        <a class="ink" href={SITE.resume}>resume</a>
+        <span class="sep"> / </span>
+        <a class="ink" href="/dock/">dock</a>
+        <span class="sep"> / </span>
+        <a class="ink" href="/say-hi/">say hi</a>
       </p>
+    </header>
 
-      <ul class="facts">
-        <li class="status"><i aria-hidden="true"></i>{STATUS}</li>
-        {facts.map((f) => (
-          <li class:list={{ dotted: f.hue }} style={f.hue ? vars(f.hue) : undefined}>
-            {f.hue && <i aria-hidden="true"></i>}{f.text}
-          </li>
-        ))}
-      </ul>
+    <section>
+      <h2>timeline</h2>
+      <ol class="rows">
+        {
+          TIMELINE.map((t) => (
+            <li class="row">
+              <span class="when dim">{t.year}</span>
+              <div>
+                <p class="what">
+                  {t.title}
+                  {t.role && <span class="dim"> · {t.role}</span>}
+                </p>
+                <p class="desc">{t.description}</p>
+                {t.links && t.links.filter((l) => l.href.startsWith("http")).length > 0 && (
+                  <p class="links">
+                    {t.links
+                      .filter((l) => l.href.startsWith("http"))
+                      .map((l) => (
+                        <a class="ink dim" href={l.href} target="_blank" rel="noopener">{l.label}</a>
+                      ))}
+                  </p>
+                )}
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
 
-      <p class="actions">
-        <a class="file" href={SITE.resume}>
-          <svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M8 2.5v8M4.5 7 8 10.5 11.5 7M3 13.5h10" />
-          </svg>
-          <span>resume<span class="ext">.pdf</span></span>
-        </a>
-        <a class="jump" href="#contact">get in touch</a>
-      </p>
-    </div>
-  </section>
+    <section>
+      <h2>now <span class="dim">· {nowUpdated}</span></h2>
+      <div class="now">
+        {
+          NOW.map((g) => (
+            <div>
+              <p class="dim group">{g.heading.toLowerCase()}</p>
+              <ul>
+                {g.items.map((i) => (
+                  <li>
+                    {i.href ? <a class="ink" href={i.href}>{i.name}</a> : i.name}
+                    <span class="dim"> · {i.status}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </section>
 
-  <section id="principles" class="band">
-    <SectionHead title="Principles" meta="the short version" />
-    <ol class="manifesto">
-      {PRINCIPLES.map((line, i) => (
-        <li style={vars(PRINCIPLE_HUES[i % PRINCIPLE_HUES.length])}>
-          <span class="n" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
-          <span class="say">{line}</span>
-        </li>
-      ))}
-    </ol>
-    {essay && (
-      <a class="file essay" href={`/blog/${essay.slug}/`}>
-        <span>{essay.slug}<span class="ext">.mdx</span></span>
-        <span class="aside">the long version{essayMinutes && ` · ${essayMinutes}`}</span>
-        <span aria-hidden="true">&rarr;</span>
-      </a>
-    )}
-  </section>
+    <section>
+      <h2>machines</h2>
+      <div class="machines">
+        {
+          MACHINES.map((m) => (
+            <div class="machine">
+              <p class="host">
+                {SITE.user}@<span>{m.name}</span>
+              </p>
+              <dl>
+                {m.fields.map(([k, v]) => (
+                  <>
+                    <dt class="dim">{k}</dt>
+                    <dd>{v}</dd>
+                  </>
+                ))}
+              </dl>
+            </div>
+          ))
+        }
+      </div>
+    </section>
 
-  <section id="now" class="band">
-    <SectionHead title="Now" meta={`updated ${nowUpdated.toLowerCase()}`} />
-    <div class="now">
-      {NOW.map((group) => (
-        <div class="col" style={vars(NOW_HUE[group.heading] ?? "accent")}>
-          <p class="chip">{group.heading.toLowerCase()}</p>
-          <ul>
-            {group.items.map((item) => {
-              const hue = STATUS_HUE[item.status];
-              return (
-                <li>
-                  {item.href
-                    ? <a class="what" href={item.href}>{item.name}</a>
-                    : <span class="what">{item.name}</span>}
-                  <span class:list={["state", { hollow: !hue }]} style={hue ? vars(hue) : undefined}>
-                    <i aria-hidden="true"></i>{item.status}
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      ))}
-    </div>
-  </section>
-
-  <section id="resume" class="band">
-    <SectionHead title="Experience" meta={start ? `since ${start.year}` : undefined} />
-    <ol class="timeline">
-      {TIMELINE.map((item, i) => {
-        const kind = KIND[item.kind] ?? { label: item.kind, hue: "accent" as Hue };
-        return (
-          <li class:list={{ last: i === TIMELINE.length - 1 }} style={vars(kind.hue)}>
-            <span class="when">{item.year}</span>
-            <span class="stop" aria-hidden="true"></span>
-            <span class="entry">
-              <span class="org">
-                {item.title}
-                <span class="kind">{kind.label}</span>
-              </span>
-              {item.role && <span class="job">{item.role}</span>}
-              <span class="detail">{item.description}</span>
-              {item.links && (
-                <span class="entrylinks">
-                  {item.links.map((l) => (
-                    <a href={l.href} rel={l.href.startsWith("http") ? "noopener noreferrer" : undefined}>
-                      {l.label} <span aria-hidden="true">{l.href.startsWith("http") ? "↗" : "↑"}</span>
-                    </a>
-                  ))}
-                </span>
-              )}
-            </span>
-          </li>
-        );
-      })}
-    </ol>
-    <a class="file" href={SITE.resume}>
-      <svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M8 2.5v8M4.5 7 8 10.5 11.5 7M3 13.5h10" />
-      </svg>
-      <span>resume<span class="ext">.pdf</span></span>
-      <span class="aside">the full version</span>
-    </a>
-  </section>
-
-  <section id="setup" class="band">
-    <SectionHead title="Setup" meta="open anything" />
-    <DeskScene />
-  </section>
-
-  <section id="hobbies" class="band">
-    <SectionHead title="Outside the terminal" meta={`${HOBBIES.length}`} />
-    <div class="lidstage">
-      <LaptopLid items={HOBBIES.map((h) => ({ name: h.name, description: h.description }))} photo="/images/desk/macbook.webp" photoAspect={1800 / 1273} badge={{ href: "/dock/", label: "Dock", note: `the ${toolCount} apps I use →` }} logo={{ img: "/logos/underscore-games-fire.svg", href: "https://underscore.games", label: "Underscore Games", note: "the game studio I co-founded →" }} />
-    </div>
-    <a class="file" href="/dock/">
-      dock
-      <span class="aside">the {toolCount} apps I use</span>
-      <span aria-hidden="true">&rarr;</span>
-    </a>
-  </section>
-
-  <section id="contact" class="band">
-    <SectionHead title="Get in touch" />
-    <ReachCards />
-  </section>
-</Shell>
+    <section>
+      <h2>principles</h2>
+      <ol class="principles">
+        {PRINCIPLES.map((p) => <li>{p}</li>)}
+      </ol>
+      <p><a class="ink dim" href="/blog/principles/">the long version →</a></p>
+    </section>
+  </main>
+</Plain>
 
 <style>
-  /* Hero: a studio portrait, already cut to the frame's 4:5. */
-  .hero {
-    display: grid;
-    grid-template-columns: 220px minmax(0, 1fr);
-    gap: var(--s-6);
-    align-items: center;
-    padding-block: var(--s-4) var(--s-2);
+  .about {
+    font-size: 14px;
   }
-  /* Glass, as the app icons are: a gloss, a rim that catches the light at
-     the top-left, and a glint across it when you hover. */
-  .portrait {
-    position: relative;
-    isolation: isolate;
-    aspect-ratio: 4 / 5;
-    max-width: 100%;
-    border-radius: var(--radius-card);
-    overflow: hidden;
-    background: var(--c-chrome);
+  .side {
+    margin: 0;
+    font-size: 13px;
+    line-height: 2;
+    text-align: right;
   }
-  .portrait img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .portrait::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    background:
-      linear-gradient(115deg, transparent 40%, var(--glass-glint) 50%, transparent 60%) 100% 0 / 300% 100% no-repeat,
-      linear-gradient(var(--glass-gloss), transparent 35%, transparent 75%, var(--glass-shade));
-  }
-  .portrait::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    padding: 1px;
-    border-radius: inherit;
-    pointer-events: none;
-    background:
-      linear-gradient(155deg, var(--glass-rim), var(--glass-rim-soft) 28%, transparent 52%, var(--glass-rim-soft)),
-      linear-gradient(var(--glass-line), var(--glass-line));
-    -webkit-mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(black 0 0) content-box, linear-gradient(black 0 0);
-    mask-composite: exclude;
-  }
-  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-    .portrait:hover::before { animation: portrait-glint calc(var(--dur-pane) * 2.4) var(--ease); }
-  }
-  @keyframes portrait-glint {
-    from { background-position: 100% 0, 0 0; }
-    to   { background-position: 0% 0, 0 0; }
-  }
-
-  h1 {
-    font-size: var(--t-sans-2xl);
-    font-weight: 700;
-    letter-spacing: var(--track-display);
-  }
-  .statement {
-    margin-top: var(--s-3);
-    font-size: var(--t-sans-lg);
-    line-height: var(--lh-body);
-    max-width: 44ch;
-    text-wrap: pretty;
-  }
-  .whole { white-space: nowrap; }
-  /* The home page's four nines, set the same way. */
-  .nines {
-    font-size: 0.92em;
-    font-variant-numeric: tabular-nums;
-    color: var(--c-text);
-    letter-spacing: var(--track-snug);
-  }
-
-  .facts {
-    list-style: none;
-    margin: var(--s-4) 0 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--s-2);
-  }
-  .facts li {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 3px 10px;
-    font-size: var(--t-sans-2xs);
-    line-height: var(--lh-ui);
-    color: var(--c-muted);
-    border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-chip);
-  }
-  .facts .status {
-    color: var(--c-accent);
-    background: var(--c-tint-accent);
-    border-color: transparent;
-  }
-  .facts i {
-    flex: none;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-  }
-  .facts .dotted i { background: var(--h); }
-
-  .actions {
-    margin-top: var(--s-5);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--s-4);
-  }
-  .jump {
-    font-size: var(--t-sans-sm);
-    color: var(--c-link);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-thickness: 1px;
-  }
-
-  /* A file, set the way the explorer sets one: the button every "read
-     more" on this page uses, so they read as one kind of thing. */
-  .file {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--s-2);
-    padding: 6px 14px;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    color: var(--c-text);
-    background: var(--c-chrome);
-    border: 1px solid var(--c-hairline);
-    border-radius: var(--radius-sm);
-    transition: background var(--dur-state) var(--ease), border-color var(--dur-state) var(--ease);
-  }
-  .file svg { color: var(--c-muted); }
-  .file .ext { color: var(--c-dim); }
-  .file .aside {
-    font-family: var(--font-sans);
-    font-size: var(--t-sans-xs);
-    color: var(--c-muted);
-  }
-  @media (hover: hover) {
-    .file:hover { background: var(--c-raised); border-color: var(--c-hairline-strong); }
-    .jump:hover { color: var(--c-text); }
-  }
-  .band .file { margin-top: var(--s-5); }
-
-  /* Bands */
-  .band {
-    margin-top: var(--s-7);
-    scroll-margin-top: var(--s-5);
-  }
-
-  ul, ol { list-style: none; margin: 0; padding: 0; }
-
-  /* Principles — the strongest four lines on the site, set like it. */
-  .manifesto {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--s-5) var(--s-6);
-  }
-  .manifesto li {
-    display: flex;
-    align-items: baseline;
-    gap: var(--s-3);
-  }
-  .manifesto .n {
-    flex: 0 0 auto;
-    font-size: var(--t-sans-2xs);
-    color: var(--h);
-    background: var(--t);
-    padding: 2px 7px;
-    border-radius: var(--radius-chip);
-    transform: translateY(-0.3em);
-  }
-  .manifesto .say {
-    font-size: var(--t-sans-xl);
-    font-weight: 600;
-    letter-spacing: var(--track-display);
-    line-height: var(--lh-head);
-  }
-
-  /* Now: three columns, each headed by the homepage's state chip. */
-  .now {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: var(--s-5) var(--s-6);
-  }
-  .chip {
+  .status {
     display: inline-block;
-    margin-bottom: var(--s-2);
-    padding: 3px 10px;
-    font-size: var(--t-sans-2xs);
-    line-height: var(--lh-snug);
-    color: var(--h);
-    background: var(--t);
-    border-radius: var(--radius-chip);
-  }
-  .col li {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding-block: var(--s-3);
-  }
-  .col li + li { border-top: 1px solid var(--c-hairline); }
-  .what { font-size: var(--t-sans-sm); line-height: var(--lh-snug); }
-  a.what {
-    color: inherit;
-    text-decoration: underline;
-    text-decoration-color: var(--c-hairline);
-    text-underline-offset: 3px;
-  }
-  @media (hover: hover) {
-    a.what:hover { color: var(--c-link); text-decoration-color: currentColor; }
-  }
-  .state {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: var(--t-sans-2xs);
-    color: var(--c-dim);
-  }
-  .state i {
     width: 6px;
     height: 6px;
-    border-radius: 50%;
-    background: var(--h);
+    margin-right: 0.5rem;
+    background: var(--c-hue-green);
+    transform: translateY(-1px);
   }
-  .state.hollow i {
-    background: transparent;
-    border: 1px solid var(--c-hairline-strong);
+  .sep {
+    opacity: 0.4;
   }
-
-  /* Experience: the explorer's line through its stops, one color per kind. */
-  .timeline {
-    max-width: 72ch;
+  section {
+    margin-top: 4.5rem;
   }
-  .timeline li {
-    position: relative;
+  h2 {
+    margin: 0 0 1.5rem;
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: lowercase;
+    opacity: 0.6;
+  }
+  p {
+    margin: 0;
+  }
+  .rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .row {
     display: grid;
-    grid-template-columns: 13ch 20px minmax(0, 1fr);
-    column-gap: var(--s-3);
-    padding-bottom: var(--s-5);
-  }
-  .timeline li.last { padding-bottom: 0; }
-  /* The line runs down the stop column, from this stop to the next. */
-  .timeline li:not(.last)::before {
-    content: "";
-    position: absolute;
-    left: calc(13ch + var(--s-3) + 10px);
-    top: 14px;
-    bottom: -6px;
-    width: 1px;
-    background: var(--c-hairline-strong);
+    grid-template-columns: 9rem 1fr;
+    gap: 1.5rem;
+    padding: 0.9rem 0;
+    border-top: 1px dotted color-mix(in srgb, var(--fg) 18%, transparent);
   }
   .when {
-    padding-top: 3px;
-    font-size: var(--t-sans-xs);
-    color: var(--c-muted);
+    font-size: 13px;
     font-variant-numeric: tabular-nums;
   }
-  .stop {
-    position: relative;
-    z-index: 1;
-    justify-self: center;
-    margin-top: 7px;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--h);
-    outline: 3px solid var(--c-bg);
+  .desc {
+    max-width: 60ch;
+    margin-top: 0.35rem;
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--fg-muted);
   }
-  .entry { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .org {
+  .links {
     display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--s-2);
-    font-size: var(--t-sans-md);
-    font-weight: 600;
-    line-height: var(--lh-snug);
+    gap: 1rem;
+    margin-top: 0.4rem;
+    font-size: 12px;
   }
-  .kind {
-    font-size: var(--t-sans-2xs);
-    font-weight: 400;
-    color: var(--h);
-    background: var(--t);
-    padding: 1px 8px;
-    border-radius: var(--radius-chip);
+  .now {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 2rem;
   }
-  .job {
-    font-size: var(--t-sans-2xs);
-    color: var(--c-dim);
+  .now ul,
+  .principles {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    line-height: 2;
   }
-  .detail { margin-top: 2px; font-size: var(--t-sans-sm); color: var(--c-muted); max-width: 62ch; }
-  .entrylinks { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-4); margin-top: var(--s-1); }
-  .entrylinks a {
-    font-size: var(--t-sans-xs);
-    color: var(--c-link);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-thickness: 1px;
+  .group {
+    margin-bottom: 0.5rem;
+    font-size: 12px;
   }
-
-  /* The real lid, at a size where the stickers can be read. */
-  .lidstage { max-width: 760px; margin-inline: auto; }
-
-  @media (max-width: 860px) {
-    .manifesto { grid-template-columns: minmax(0, 1fr); gap: var(--s-4); }
+  .machines {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 2rem;
   }
-
-  @media (max-width: 720px) {
-    .hero {
-      grid-template-columns: minmax(0, 1fr);
-      gap: var(--s-5);
-    }
-    .portrait { width: 180px; }
-    .manifesto .say { font-size: var(--t-sans-lg); }
+  .host {
+    margin-bottom: 0.75rem;
   }
-
-  /* The same step down PageHead takes on a phone. */
+  .host span {
+    color: var(--c-accent);
+  }
+  dl {
+    display: grid;
+    grid-template-columns: 6rem 1fr;
+    gap: 0.2rem 1rem;
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  dd {
+    margin: 0;
+  }
+  .principles {
+    margin-bottom: 1rem;
+    counter-reset: p;
+  }
+  .principles li::before {
+    counter-increment: p;
+    content: counter(p, decimal-leading-zero) "  ";
+    opacity: 0.4;
+  }
   @media (max-width: 640px) {
-    h1 { font-size: var(--t-sans-xl); }
-  }
-
-  /* Narrow: the year moves above its entry and the line keeps its column. */
-  @media (max-width: 560px) {
-    .timeline li { grid-template-columns: 20px minmax(0, 1fr); }
-    .timeline li:not(.last)::before { left: 10px; }
-    .when { grid-column: 2; grid-row: 1; padding-top: 0; font-size: var(--t-sans-2xs); }
-    .stop { grid-column: 1; grid-row: 1 / span 2; }
-    .entry { grid-column: 2; }
+    .side {
+      text-align: left;
+    }
+    .row {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
   }
 </style>

@@ -1,0 +1,113 @@
+---
+/**
+ * The quiet layout: a row of words up top, the page under it, nothing
+ * else. Pages move with the browser's own cross-document view
+ * transitions (see plain.css), so there's no client router to keep alive.
+ */
+import "@/styles/plain.css";
+import Nav from "@/components/plain/Nav.astro";
+import JsonLd from "@/components/JsonLd.astro";
+import { SITE } from "@/data/site";
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogSlug?: string;
+  /** A single screen: no page scroll, no overscroll bounce. */
+  fixed?: boolean;
+  noindex?: boolean;
+  schema?: object | object[];
+  /** Loads the self-hosted KaTeX stylesheet, only on pages that need it. */
+  math?: boolean;
+  /** og:type article, with its dates and tags. */
+  article?: boolean;
+  publishedTime?: string;
+  modifiedTime?: string;
+  articleTags?: string[];
+}
+
+const {
+  title = "Phil Vishnevsky",
+  description = "Phil Vishnevsky is a software engineer in Hartford, CT building servers, web apps and games. Writing on Tailscale, VPNs and self-hosting, plus the projects behind them.",
+  ogSlug = "home",
+  fixed = false,
+  noindex = false,
+  schema,
+  math = false,
+  article = false,
+  publishedTime,
+  modifiedTime,
+  articleTags,
+} = Astro.props;
+
+const ogUrl = new URL(`/og/${ogSlug}.png`, Astro.site).href;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en" class:list={{ fixed }}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <link rel="canonical" href={canonicalUrl} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:type" content={article ? "article" : "website"} />
+    {article && publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {article && modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+    {article && articleTags?.map((tag) => <meta property="article:tag" content={tag} />)}
+    {math && <link rel="stylesheet" href="/katex/katex.css" />}
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <meta name="theme-color" content="#FDFCF9" media="(prefers-color-scheme: light)" data-system="#FDFCF9" />
+    <meta name="theme-color" content="#1C1A16" media="(prefers-color-scheme: dark)" data-system="#1C1A16" />
+    <link rel="alternate" type="application/rss+xml" title={`${SITE.name} — Writing`} href="/rss.xml" />
+    <link rel="preload" href="/fonts/atkinson-hyperlegible-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/atkinson-hyperlegible-next-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <script is:inline>
+      (function () {
+        var r = document.documentElement;
+        r.classList.add("js");
+        try {
+          var t = localStorage.getItem("theme");
+          if (t === "light" || t === "dark") r.setAttribute("data-theme", t);
+        } catch (e) {}
+
+        // View transitions with a direction. A link with data-vt="forward"
+        // or "back" stores its direction; both pages tag the transition so
+        // plain.css can slide instead of fade. Inline, because pagereveal
+        // fires before deferred module scripts run.
+        var KEY = "vt-direction";
+        document.addEventListener("click", function (e) {
+          var a = e.target && e.target.closest && e.target.closest("a[data-vt]");
+          if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+          try { sessionStorage.setItem(KEY, a.dataset.vt); } catch (e) {}
+        });
+        function tag(e, clear) {
+          var dir = null;
+          try {
+            dir = sessionStorage.getItem(KEY);
+            if (clear) sessionStorage.removeItem(KEY);
+          } catch (err) {}
+          if (dir && e.viewTransition && e.viewTransition.types) e.viewTransition.types.add(dir);
+        }
+        window.addEventListener("pageswap", function (e) { tag(e, false); });
+        window.addEventListener("pagereveal", function (e) { tag(e, true); });
+      })();
+    </script>
+    <script>
+      import "@/scripts/theme";
+    </script>
+    {schema && <JsonLd schema={schema} />}
+  </head>
+  <body>
+    <Nav />
+    <slot />
+  </body>
+</html>

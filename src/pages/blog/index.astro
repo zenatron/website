@@ -1,103 +1,119 @@
 ---
-import Shell from "@/layouts/Shell.astro";
-import PageHead from "@/components/PageHead.astro";
-import Cells from "@/components/Cells.astro";
-import Series from "@/components/Series.astro";
-import Archive from "@/components/Archive.astro";
-import SectionHead from "@/components/SectionHead.astro";
-import { cardArt } from "@/lib/cardart";
-import { getAllBlogPosts, POST_SERIES } from "@/lib/blog";
+/**
+ * Writing, as a plain list: everything that isn't coursework, newest
+ * first, then the coursework folded away at the bottom.
+ */
+import Plain from "@/layouts/Plain.astro";
+import PageCover from "@/components/plain/PageCover.astro";
+import { getAllBlogPosts } from "@/lib/blog";
 
 const posts = await getAllBlogPosts();
-
-const monthYear = (v: string | Date | undefined) => {
-  if (!v) return undefined;
-  const d = new Date(v);
-  return Number.isNaN(d.getTime())
-    ? undefined
-    : d.toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
-};
-
-/**
- * Two series and a handful of standalone posts. The coursework is twelve
- * structurally identical entries; rendering those as cards buried the
- * five posts worth reading under thirteen that aren't.
- */
-const seriesTitle = (key: string) => POST_SERIES.find((s) => s.key === key)?.title ?? key;
-const SERIES = {
-  "homelab-networking": {
-    title: seriesTitle("homelab-networking"),
-    blurb:
-      "Five posts that build on each other, from what a VPN actually is up to a reverse proxy fronting the whole rack. Start at the top.",
-  },
-  "data-mining": {
-    title: seriesTitle("data-mining"),
-    blurb:
-      "Weekly write-ups from an intro data mining course — the pipeline, classification, regression, clustering, and a midterm study guide.",
-  },
-} as const;
-
-const inSeries = (key: string) =>
-  posts
-    .filter((p) => p.data.series === key)
-    .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0))
-    .map((p) => ({
-      slug: p.slug,
-      title: p.data.title,
-      excerpt: p.data.excerpt,
-      readingTime: p.data.readingTime,
-      date: p.data.date,
-      order: p.data.seriesOrder ?? 0,
-      cover: p.data.cover,
-    }));
-
-const homelab = inSeries("homelab-networking");
-const coursework = inSeries("data-mining");
-
-const standalone = posts.filter((p) => !p.data.series);
-const cells = await Promise.all(
-  standalone.map(async (p) => ({
-    title: p.data.title,
-    href: `/blog/${p.slug}/`,
-    slug: p.slug,
-    description: p.data.excerpt || undefined,
-    meta: monthYear(p.data.date),
-    art: await cardArt({ slug: p.slug, title: p.data.title, cover: p.data.cover, collection: "blog" }),
-  }))
-);
+const fmt = (d: string) =>
+  new Date(d).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric", timeZone: "UTC" });
+const writing = posts.filter((p) => p.data.series !== "data-mining");
+const coursework = posts
+  .filter((p) => p.data.series === "data-mining")
+  .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0));
 ---
 
-<Shell title="Writing | Phil Vishnevsky" description="Thoughts on code, tools, and building things." ogSlug="blog">
-  <PageHead title="Writing">
-    {posts.length - coursework.length} posts on homelabs, networking, tooling, and
-    whatever I broke recently{coursework.length > 0 && `, plus ${coursework.length} pages of coursework notes`}.
-  </PageHead>
+<Plain title="Blog — Phil Vishnevsky" ogSlug="blog" description="Writing by Phil Vishnevsky on Tailscale, VPNs, self-hosting and building things.">
+  <PageCover motif="writing" seed="blog" hue="blue" />
+  <main class="page blog">
+    <header class="page-head">
+      <div>
+        <h1 class="sr-only">Blog</h1>
+        <p class="motto">notes from the homelab.<span class="cursor" aria-hidden="true"></span></p>
+        <p class="lede">Tailscale, VPNs, self-hosting, and whatever I’m building.</p>
+      </div>
+      <a class="ink dim rss" href="/rss.xml">rss</a>
+    </header>
 
-  {homelab.length > 0 && (
-    <Series
-      title={SERIES["homelab-networking"].title}
-      blurb={SERIES["homelab-networking"].blurb}
-      entries={homelab}
-      hue={POST_SERIES.find((s) => s.key === "homelab-networking")?.hue}
-    />
-  )}
+    <ol class="list">
+      {
+        writing.map((p) => (
+          <li>
+            <a href={`/blog/${p.slug}/`}>
+              <span class="title">{p.data.title}</span>
+              <span class="rule" aria-hidden="true" />
+              <time class="dim" datetime={p.data.date}>{fmt(p.data.date)}</time>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
 
-  {cells.length > 0 && (
-    <section class="loose">
-      <SectionHead title="Posts" meta={`${cells.length}`} />
-      <Cells cells={cells} layout="pairs" />
-    </section>
-  )}
-
-  {coursework.length > 0 && (
-    <Archive
-      title={SERIES["data-mining"].title}
-      blurb={SERIES["data-mining"].blurb}
-      entries={coursework}
-    />
-  )}
-</Shell>
+    <details class="course">
+      <summary class="dim">data mining coursework · {coursework.length} posts</summary>
+      <ol class="list">
+        {
+          coursework.map((p) => (
+            <li>
+              <a href={`/blog/${p.slug}/`}>
+                <span class="title">{p.data.title}</span>
+                <span class="rule" aria-hidden="true" />
+                <time class="dim" datetime={p.data.date}>{fmt(p.data.date)}</time>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </details>
+  </main>
+</Plain>
 
 <style>
-  .loose { margin-top: var(--s-7); }
+  .rss {
+    font-size: 13px;
+  }
+  .list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .list a {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.6rem 0;
+    color: inherit;
+    text-decoration: none;
+  }
+  .title {
+    transition: opacity 150ms ease;
+  }
+  .list:hover .title {
+    opacity: 0.45;
+  }
+  .list a:hover .title,
+  .list a:focus-visible .title {
+    opacity: 1;
+  }
+  .rule {
+    flex: 1;
+    min-width: 2rem;
+    border-bottom: 1px dotted color-mix(in srgb, var(--fg) 25%, transparent);
+    transform: translateY(-0.3em);
+  }
+  time {
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .course {
+    margin-top: 4rem;
+  }
+  .course summary {
+    cursor: pointer;
+    font-size: 13px;
+    margin-bottom: 1rem;
+  }
+  @media (max-width: 640px) {
+    .list a {
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+    .rule {
+      display: none;
+    }
+  }
 </style>

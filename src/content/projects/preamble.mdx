@@ -1,5 +1,7 @@
 ---
 title: "preamble"
+tagline: "A decade of FLACs, finally sorted."
+motif: "waveform"
 description: "A terminal music-library manager in Rust — scans, de-duplicates, and enriches a FLAC collection from a keyboard-driven TUI."
 type: "tool"
 slug: "preamble"
@@ -13,7 +15,7 @@ github: "https://github.com/zenatron/preamble"
 ---
 
 import TerminalFrame from '@/components/mdx/TerminalFrame.astro';
-import TermShots from '@/components/mdx/TermShots.astro';
+import Gallery from '@/components/mdx/Gallery.astro';
 import Callout from '@/components/mdx/Callout.astro';
 
 A terminal music-library manager written in Rust. It walks a directory tree,
@@ -25,12 +27,12 @@ This is the one I actually use. My library had accumulated a decade of
 duplicates, half-tagged rips, and files that decoded to silence — and no GUI
 tool would tell me which was which without a lot of clicking.
 
-<TermShots shots={[
-  { src: "/images/projects/preamble/library.webp", alt: "The Library tab: tracks sorted by artist, three selected, one with a decode error", caption: "library" },
-  { src: "/images/projects/preamble/duplicates.webp", alt: "A duplicate group compared tag by tag, with the suggested keeper starred", caption: "duplicates" },
-  { src: "/images/projects/preamble/properties.webp", alt: "The properties panel showing every stored tag for one track", caption: "properties" },
-  { src: "/images/projects/preamble/grouped.webp", alt: "The library grouped by artist with track counts, sizes and runtimes", caption: "grouped by artist" },
-  { src: "/images/projects/preamble/stats.webp", alt: "The statistics screen: totals, formats, decades, top artists and health", caption: "stats" },
+<Gallery ratio={1800 / 1192} shots={[
+  { src: "/images/projects/preamble/library.webp", alt: "The Library tab: tracks sorted by artist, three selected, one with a decode error", title: "Library", caption: "Sorted, filtered and searchable, with the broken files flagged." },
+  { src: "/images/projects/preamble/duplicates.webp", alt: "A duplicate group compared tag by tag, with the suggested keeper starred", title: "Duplicates", caption: "Compared tag by tag, with the keeper suggested." },
+  { src: "/images/projects/preamble/properties.webp", alt: "The properties panel showing every stored tag for one track", title: "Properties", caption: "Every tag on a track, editable in place." },
+  { src: "/images/projects/preamble/grouped.webp", alt: "The library grouped by artist with track counts, sizes and runtimes", title: "Grouped", caption: "By artist or album, with counts, sizes and runtimes." },
+  { src: "/images/projects/preamble/stats.webp", alt: "The statistics screen: totals, formats, decades, top artists and health", title: "Stats", caption: "Formats, decades, top artists and library health." },
 ]} />
 
 <TerminalFrame title="preamble --help">

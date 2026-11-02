@@ -1,0 +1,248 @@
+---
+/**
+ * A group of captioned shots.
+ *
+ * Desktop: an accordion. The panels share one row; the open one is wide
+ * and in colour, the rest fold into grey slivers. Hovering (once the
+ * cursor settles) or clicking opens one, and its title and caption sit
+ * under the row.
+ *
+ * Phones, and phone screenshots anywhere (`kind="phone"`): a row of
+ * cards that scrolls sideways, each with its caption under it.
+ *
+ * `ratio` is the shots' width/height; mixed sizes are letterboxed.
+ */
+interface Shot {
+  src: string;
+  alt: string;
+  title: string;
+  caption?: string;
+}
+interface Props {
+  shots: Shot[];
+  title?: string;
+  kind?: "wide" | "phone";
+  ratio?: number;
+  start?: number;
+}
+const { shots, title, kind = "wide", ratio = 16 / 9, start = 0 } = Astro.props;
+---
+
+<figure class:list={["gallery", kind]} data-gallery style={`--ratio: ${ratio}; --n: ${shots.length}`}>
+  {title && <figcaption class="g-title">{title}</figcaption>}
+  <ul class="g-row" tabindex="0" aria-label={title ?? "Screenshots"}>
+    {
+      shots.map((s, i) => (
+        <li class="g-panel" data-open={i === start ? "" : undefined}>
+          <button type="button" aria-label={s.title} aria-pressed={i === start ? "true" : "false"}>
+            <img src={s.src} alt={s.alt} loading="lazy" decoding="async" />
+          </button>
+          <span class="g-card-cap">
+            <span class="g-t">{s.title}</span>
+            {s.caption && <span class="g-c">{s.caption}</span>}
+          </span>
+        </li>
+      ))
+    }
+  </ul>
+  {
+    kind === "wide" && (
+      <div class="g-caps" aria-live="polite">
+        {shots.map((s, i) => (
+          <p class="g-cap" data-cap={i} hidden={i !== start}>
+            <span class="g-t">{s.title}</span>
+            {s.caption && <span class="g-c">{s.caption}</span>}
+          </p>
+        ))}
+      </div>
+    )
+  }
+</figure>
+
+<script>
+  const HOVER_INTENT = 150;
+  document.querySelectorAll<HTMLElement>("[data-gallery].wide").forEach((g) => {
+    const panels = [...g.querySelectorAll<HTMLElement>(".g-panel")];
+    const caps = [...g.querySelectorAll<HTMLElement>("[data-cap]")];
+    let timer = 0;
+    const open = (n: number) => {
+      panels.forEach((p, i) => {
+        p.toggleAttribute("data-open", i === n);
+        p.querySelector("button")!.setAttribute("aria-pressed", String(i === n));
+      });
+      caps.forEach((c, i) => (c.hidden = i !== n));
+    };
+    panels.forEach((p, i) => {
+      p.addEventListener("click", () => open(i));
+      p.addEventListener("pointerenter", (e) => {
+        if (e.pointerType !== "mouse") return;
+        clearTimeout(timer);
+        timer = window.setTimeout(() => open(i), HOVER_INTENT);
+      });
+      p.addEventListener("pointerleave", () => clearTimeout(timer));
+      p.addEventListener("focusin", () => open(i));
+    });
+  });
+</script>
+
+<style>
+  .gallery {
+    margin: 3rem 0 !important;
+  }
+  .g-title {
+    margin-bottom: 0.75rem;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--fg-muted);
+    text-transform: lowercase;
+  }
+  .g-row {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+  }
+  .g-panel {
+    margin: 0 !important;
+  }
+  .g-panel button {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    overflow: hidden;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--fg) 6%, transparent);
+    cursor: pointer;
+  }
+  .g-panel img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left center;
+  }
+  .g-t {
+    color: var(--fg);
+  }
+  .g-c {
+    color: var(--fg-muted);
+  }
+
+  /* ── Wide: the accordion ── */
+  /* Tall enough that the open panel (10 parts of 10 + n - 1) shows its
+     shot at its own ratio, with no letterbox. */
+  .wide .g-row {
+    height: min(
+      28rem,
+      calc((min(100vw - 3rem, 56rem) - (var(--n) - 1) * 0.5rem) * 10 / (9 + var(--n)) / var(--ratio))
+    );
+  }
+  .wide .g-panel {
+    flex: 1 1 0;
+    min-width: 0;
+    transition: flex-grow 0.55s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  .wide .g-panel[data-open] {
+    flex-grow: 10;
+  }
+  .wide .g-panel img {
+    filter: grayscale(1) brightness(0.8);
+    opacity: 0.6;
+    transition: filter 0.4s ease, opacity 0.4s ease;
+  }
+  .wide .g-panel[data-open] img,
+  .wide .g-panel:hover img {
+    filter: none;
+    opacity: 1;
+  }
+  .wide .g-panel[data-open] img {
+    object-fit: contain;
+    object-position: center;
+  }
+  .wide .g-card-cap {
+    display: none;
+  }
+  .g-caps {
+    margin-top: 0.85rem;
+    min-height: 3em;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .g-cap[hidden] {
+    display: none !important;
+  }
+  .g-cap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.75rem;
+    margin: 0 !important;
+  }
+
+  /* ── Phone screenshots, and every gallery on a phone: cards that scroll ── */
+  .phone .g-row,
+  .g-row:where(.wide *) {
+    scrollbar-width: none;
+  }
+  .phone .g-row {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1rem;
+    padding-bottom: 0.5rem !important;
+  }
+  .phone .g-panel {
+    flex: 0 0 auto;
+    width: clamp(9.5rem, 22%, 12rem);
+    scroll-snap-align: start;
+  }
+  .phone .g-panel button {
+    height: auto;
+    aspect-ratio: var(--ratio);
+    border-radius: 14px;
+    cursor: default;
+  }
+  .phone .g-panel img {
+    object-fit: cover;
+  }
+  .g-card-cap {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.6rem;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .g-card-cap .g-c {
+    font-size: 12px;
+  }
+
+  @media (max-width: 760px) {
+    .wide .g-row {
+      height: auto;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      gap: 0.75rem;
+      padding-bottom: 0.5rem !important;
+    }
+    .wide .g-panel,
+    .wide .g-panel[data-open] {
+      flex: 0 0 85%;
+      scroll-snap-align: start;
+    }
+    .wide .g-panel button {
+      height: auto;
+      aspect-ratio: var(--ratio);
+    }
+    .wide .g-panel img {
+      filter: none;
+      opacity: 1;
+      object-fit: cover;
+    }
+    .wide .g-card-cap {
+      display: flex;
+    }
+    .g-caps {
+      display: none;
+    }
+  }
+</style>

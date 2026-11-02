@@ -1,5 +1,7 @@
 ---
 title: "Ledger"
+tagline: "A budget that asks before you buy."
+motif: "ledger"
 description: "A self-hosted budget tracker for households — ask before you buy or record it after, then see where the money actually went."
 type: "app"
 slug: "ledger"
@@ -13,7 +15,7 @@ github: "https://github.com/zenatron/ledger"
 live: "https://ledger.pvi.sh"
 ---
 
-import Screens from '@/components/mdx/Screens.astro';
+import Gallery from '@/components/mdx/Gallery.astro';
 import Callout from '@/components/mdx/Callout.astro';
 
 A self-hosted budget tracker for households. Every purchase is either a request
@@ -26,13 +28,13 @@ comes from an external [Pocket ID](https://pocket-id.org) instance over OIDC,
 passkeys only. Deployment is one app container and a database behind a reverse
 proxy.
 
-<Screens shots={[
-  { src: "/images/projects/ledger/ledger.webp", alt: "The ledger view with Safe to Spend at the top", caption: "safe-to-spend" },
-  { src: "/images/projects/ledger/buckets.webp", alt: "Buckets moving money aside on a schedule", caption: "buckets" },
-  { src: "/images/projects/ledger/harmony.webp", alt: "Harmony answering a plain-language question about spending", caption: "harmony" },
-  { src: "/images/projects/ledger/calendar.webp", alt: "A month of spending laid out on a calendar", caption: "calendar" },
-  { src: "/images/projects/ledger/map.webp", alt: "A month of purchases drawn on a map, sized by amount", caption: "map" },
-  { src: "/images/projects/ledger/ledger-dark.webp", alt: "The same ledger view in dark mode", caption: "dark" },
+<Gallery kind="phone" ratio={786 / 1704} shots={[
+  { src: "/images/projects/ledger/ledger.webp", alt: "The ledger view with Safe to Spend at the top", title: "Ledger", caption: "Safe to Spend up top, requests waiting below." },
+  { src: "/images/projects/ledger/buckets.webp", alt: "Buckets moving money aside on a schedule", title: "Buckets", caption: "Money set aside on a schedule." },
+  { src: "/images/projects/ledger/harmony.webp", alt: "Harmony answering a plain-language question about spending", title: "Harmony", caption: "Ask in plain words, answered locally." },
+  { src: "/images/projects/ledger/calendar.webp", alt: "A month of spending laid out on a calendar", title: "Calendar", caption: "What's coming in and going out." },
+  { src: "/images/projects/ledger/map.webp", alt: "A month of purchases drawn on a map, sized by amount", title: "Map", caption: "The month by where you were." },
+  { src: "/images/projects/ledger/ledger-dark.webp", alt: "The same ledger view in dark mode", title: "Dark", caption: "The same, after hours." },
 ]} />
 
 ## Safe to Spend

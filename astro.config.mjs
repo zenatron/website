@@ -1,5 +1,4 @@
 import { defineConfig } from "astro/config";
-import tailwind from "@astrojs/tailwind";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import remarkMath from "remark-math";
@@ -88,7 +87,6 @@ function rehypeWrapTables() {
 export default defineConfig({
   site: "https://pvi.sh",
   integrations: [
-    tailwind({ applyBaseStyles: false }),
     mdx(),
     sitemap({
       filter: (page) => !coursework.has(new URL(page).pathname),

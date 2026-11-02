@@ -1,306 +1,148 @@
 ---
 /**
- * Not found — as the alert macOS shows when a file has gone missing, and
- * then actually useful: the pages whose names are closest to what was
- * typed, matched in the browser against every page, project and post,
- * because this page is static and only the browser knows the path.
- *
- * Without JavaScript it still says what happened and offers three places
- * to start. The zsh line survives underneath, smaller: a 404 genuinely is
- * an error, and the site's desktop fiction lets it say so.
+ * Not found, said the way the tailnet would: no route to the host that
+ * was asked for. The browser then matches the path against every page,
+ * project and post and offers the closest; without JavaScript it offers
+ * three places to start.
  */
-import Shell from "@/layouts/Shell.astro";
-import FileIcon from "@/components/FileIcon.astro";
+import Plain from "@/layouts/Plain.astro";
 import { PAGES } from "@/data/site";
-import { getAllBlogPosts, POST_SERIES } from "@/lib/blog";
-import { getAllProjects, projectSlug, PROJECT_KIND } from "@/lib/projects";
-
-interface Candidate {
-  href: string;
-  /** What the explorer calls it. */
-  name: string;
-  title: string;
-  section: "page" | "projects" | "blog";
-  /** A color var, or empty for a hollow dot. */
-  hue: string;
-  aliases?: string[];
-}
+import { getAllBlogPosts } from "@/lib/blog";
+import { getAllProjects, projectSlug } from "@/lib/projects";
 
 const [posts, projects] = await Promise.all([getAllBlogPosts(), getAllProjects()]);
-const hueVar = (h?: string) => (h ? `var(--c-hue-${h})` : "");
-
-const candidates: Candidate[] = [
-  ...PAGES.map((p) => ({ href: p.href, name: p.name, title: p.blurb, section: "page" as const, hue: hueVar(p.hue), aliases: p.aliases })),
-  { href: "/projects/", name: "projects", title: "My experiments, projects, and failures", section: "page", hue: "", aliases: ["project", "work", "portfolio"] },
-  { href: "/blog/", name: "writing", title: "Thoughts on code, tools, and building things", section: "page", hue: "", aliases: ["blog", "posts", "articles"] },
-  ...projects.map((p) => ({
-    href: `/projects/${projectSlug(p)}/`,
-    name: `${projectSlug(p)}.mdx`,
-    title: p.data.title,
-    section: "projects" as const,
-    hue: hueVar(PROJECT_KIND[p.data.type]?.hue),
-  })),
-  ...posts.map((p) => ({
-    href: `/blog/${p.slug}/`,
-    name: `${p.slug}.mdx`,
-    title: p.data.title,
-    section: "blog" as const,
-    hue: hueVar(POST_SERIES.find((s) => s.key === p.data.series)?.hue),
-  })),
+const candidates = [
+  ...PAGES.map((p) => ({ href: p.href, name: p.name, title: p.blurb, aliases: p.aliases ?? [] })),
+  { href: "/projects/", name: "projects", title: "Things I built", aliases: ["project", "work", "portfolio"] },
+  { href: "/blog/", name: "blog", title: "Writing", aliases: ["writing", "posts", "articles"] },
+  ...projects.map((p) => ({ href: `/projects/${projectSlug(p)}/`, name: projectSlug(p), title: p.data.title, aliases: [] })),
+  ...posts.map((p) => ({ href: `/blog/${p.slug}/`, name: p.slug, title: p.data.title, aliases: [] })),
 ];
-
-/** Where to start when nothing is close: shown without JS, and as the fallback. */
 const starters = candidates.filter((c) => ["/about/", "/projects/", "/blog/"].includes(c.href));
-const split = (name: string) => {
-  const dot = name.lastIndexOf(".");
-  return dot > 0 ? [name.slice(0, dot), name.slice(dot)] : [name, ""];
-};
 ---
 
-<Shell title="Not found | Phil Vishnevsky" description="That page doesn’t exist. Start from the writing, the projects, or the story instead." explore={false}>
-  <section class="alert" data-404>
-    <div class="icon"><FileIcon form="missing" /></div>
+<Plain title="Not found — Phil Vishnevsky" description="That page doesn’t exist." noindex>
+  <main class="page nf">
+    <p class="motto">no route to host.<span class="cursor" aria-hidden="true"></span></p>
+    <h1 class="lede">
+      <span class="dim">$ tailscale ping pvi.sh<span data-nf-path></span></span><br />
+      This page doesn’t exist. It may have moved, or the link has a typo.
+    </h1>
 
-    <h1 data-nf-title>This page couldn’t be found.</h1>
-    <p class="why" data-nf-why>It may have moved, or the link has a typo.</p>
-
-    <p class="label glabel" data-nf-label>Start somewhere</p>
-    <ul class="suggest glist" data-nf-list>
-      {starters.map((c) => {
-        const [stem, ext] = split(c.name);
-        return (
-          <li>
-            <a href={c.href}>
-              <span class:list={["dot", { plain: !c.hue }]} style={c.hue ? `--h: ${c.hue}` : undefined} aria-hidden="true"></span>
-              <span class="fname">{stem}<span class="ext">{ext}</span></span>
-              <span class="ftitle">{c.title}</span>
-              <svg class="go glist-go" aria-hidden="true" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
-            </a>
-          </li>
-        );
-      })}
+    <p class="dim label" data-nf-label>try one of these</p>
+    <ul class="rows" data-nf-list>
+      {starters.map((c) => (
+        <li><a href={c.href}><span>{c.name}</span><span class="rule" aria-hidden="true" /><span class="dim">{c.title}</span></a></li>
+      ))}
     </ul>
-
-    <p class="actions">
-      <a class="btn primary" href="/">Go home</a>
-      <button class="btn" type="button" data-nf-search>Search</button>
-    </p>
-
-    <p class="zsh" aria-hidden="true"><span class="zshname">zsh:</span> no such file or directory: <span data-nf-path></span></p>
-  </section>
-
-  <script type="application/json" data-nf-candidates set:html={JSON.stringify(candidates)} />
-</Shell>
-
-<style>
-  .alert {
-    max-width: 560px;
-    margin: var(--s-7) auto var(--s-6);
-    text-align: center;
-  }
-  .icon {
-    width: 88px;
-    height: 88px;
-    margin: 0 auto var(--s-4);
-  }
-  h1 {
-    font-size: var(--t-sans-xl);
-    font-weight: 700;
-    letter-spacing: var(--track-display);
-    line-height: var(--lh-head);
-    overflow-wrap: anywhere;
-  }
-  .why {
-    margin-top: var(--s-2);
-    color: var(--c-muted);
-  }
-
-  .label { margin-top: var(--s-6); }
-
-  /* Suggestions, set as the explorer sets files, in one grouped list. */
-  .suggest { --glist-inset: calc(var(--s-4) + 8px + var(--s-3)); }
-  .suggest :global(a) {
-    display: grid;
-    grid-template-columns: 8px auto minmax(0, 1fr) 14px;
-    align-items: center;
-    column-gap: var(--s-3);
-  }
-  .suggest :global(.dot) {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--h);
-  }
-  .suggest :global(.dot.plain) { background: transparent; border: 1px solid var(--c-hairline-strong); }
-  .suggest :global(.fname) {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    color: var(--c-text);
-    white-space: nowrap;
-  }
-  .suggest :global(.ext) { color: var(--c-dim); }
-  .suggest :global(.ftitle) {
-    min-width: 0;
-    font-size: var(--t-sans-xs);
-    color: var(--c-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  @media (hover: hover) {
-    .suggest :global(a:hover .go) { transform: translateX(2px); }
-  }
-
-  .actions {
-    margin-top: var(--s-5);
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: var(--s-2);
-  }
-
-  .zsh {
-    margin-top: var(--s-6);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    color: var(--c-dim);
-    overflow-wrap: anywhere;
-  }
-  .zshname { color: var(--c-danger); }
-
-  @media (max-width: 480px) {
-    .alert { margin-top: var(--s-5); }
-    h1 { font-size: var(--t-sans-lg); }
-    .suggest :global(a) { grid-template-columns: 8px minmax(0, 1fr) 14px; row-gap: 2px; }
-    .suggest :global(.fname) { overflow: hidden; text-overflow: ellipsis; }
-    .suggest :global(.ftitle) { grid-column: 2; }
-    .suggest :global(.go) { grid-column: 3; grid-row: 1 / span 2; }
-  }
-</style>
+    <script type="application/json" data-nf-candidates set:html={JSON.stringify(candidates)} />
+  </main>
+</Plain>
 
 <script>
-  // Search: the explorer's search, in its drawer where it's a drawer.
-  document.addEventListener("astro:page-load", () => {
-    const btn = document.querySelector<HTMLButtonElement>("[data-nf-search]");
-    if (!btn || btn.dataset.wired) return;
-    btn.dataset.wired = "1";
-    btn.addEventListener("click", () => {
-      const toggle = document.querySelector<HTMLButtonElement>(".drawer-toggle");
-      if (toggle && toggle.offsetParent) toggle.click();
-      // Asked for search, so the field takes focus — and the keyboard with
-      // it — which opening the drawer on its own deliberately doesn't do.
-      document.querySelector<HTMLInputElement>("[data-search]")?.focus();
-    });
-  });
+  type C = { href: string; name: string; title: string; aliases: string[] };
+  const path = location.pathname;
+  const pathEl = document.querySelector("[data-nf-path]");
+  if (pathEl) pathEl.textContent = path.replace(/\/$/, "");
+  const all: C[] = JSON.parse(document.querySelector("[data-nf-candidates]")?.textContent ?? "[]");
+  const words = path.toLowerCase().split(/[\/\-_.\s]+/).filter((w) => w.length > 1);
 
-  interface Candidate {
-    href: string; name: string; title: string;
-    section: "page" | "projects" | "blog"; hue: string; aliases?: string[];
-  }
-
-  /** Edit distance, for "tailscal" against "tailscale-explained". */
-  function lev(a: string, b: string): number {
-    if (!a.length) return b.length;
-    if (!b.length) return a.length;
-    let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  // Levenshtein on short strings is cheap enough to run on every candidate.
+  const dist = (a: string, b: string) => {
+    const d = Array.from({ length: b.length + 1 }, (_, i) => i);
     for (let i = 1; i <= a.length; i++) {
-      const cur = [i];
+      let prev = d[0];
+      d[0] = i;
       for (let j = 1; j <= b.length; j++) {
-        cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        const t = d[j];
+        d[j] = Math.min(d[j] + 1, d[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1));
+        prev = t;
       }
-      prev = cur;
     }
-    return prev[b.length];
-  }
-
-  /** "Reverse-Proxy_Homelab.html" → "reverse proxy homelab" */
-  const norm = (s: string) =>
-    decodeURIComponent(s).toLowerCase().replace(/\.(mdx?|html?|php|aspx?)$/, "").replace(/[^a-z0-9]+/g, " ").trim();
-
-  /**
-   * How close a page is to what was typed: the best of spelling (edit
-   * distance against its slug), shared words (against its slug and title),
-   * and plain containment — plus a little for being in the folder that
-   * was asked for. Aliases match the way a slug does.
-   */
-  function score(c: Candidate, q: string, section: string | null): number {
-    const slug = norm(c.href.split("/").pop() || c.name);
-    const names = [slug, ...(c.aliases ?? []).map(norm)];
-    const words = new Set(`${names.join(" ")} ${norm(c.title)}`.split(" ").filter(Boolean));
-    const qWords = q.split(" ").filter((w) => w.length > 1);
-
-    const spelling = Math.max(...names.map((n) => 1 - lev(q, n) / Math.max(q.length, n.length)));
-    // A typed word counts when it's the start of a real one: "tailsc" is
-    // "tailscale", but "re" isn't "reduction".
-    const shared = qWords.length
-      ? qWords.filter((w) => w.length >= 3 && [...words].some((v) => v.startsWith(w))).length / qWords.length
-      : 0;
-    const contains = names.some((n) => n.includes(q) || (q.includes(n) && n.length > 3)) ? 0.9 : 0;
-    // A name that starts with what was typed beats one that merely has it.
-    const prefix = names.some((n) => n.startsWith(q)) ? 0.06 : 0;
-
-    let s = Math.max(spelling, shared * 0.85, contains) + prefix;
-    if (section && c.section === section) s += 0.08;
+    return d[b.length];
+  };
+  const score = (c: C) => {
+    const names = [c.name, ...c.aliases].map((n) => n.toLowerCase());
+    const hay = `${c.name} ${c.title}`.toLowerCase();
+    let s = 0;
+    for (const w of words) {
+      if (hay.includes(w)) s += 3;
+      const best = Math.min(...names.map((n) => dist(w, n) / Math.max(w.length, n.length)));
+      if (best < 0.4) s += 4 * (1 - best);
+    }
     return s;
+  };
+  const ranked = all
+    .map((c) => ({ c, s: score(c) }))
+    .filter((r) => r.s > 1.5)
+    .sort((a, b) => b.s - a.s)
+    .slice(0, 5);
+  const list = document.querySelector("[data-nf-list]");
+  if (ranked.length && list) {
+    document.querySelector("[data-nf-label]")!.textContent = "did you mean";
+    list.replaceChildren(
+      ...ranked.map(({ c }) => {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.href = c.href;
+        const name = document.createElement("span");
+        name.textContent = c.name;
+        const rule = document.createElement("span");
+        rule.className = "rule";
+        const title = document.createElement("span");
+        title.className = "dim";
+        title.textContent = c.title;
+        a.append(name, rule, title);
+        li.append(a);
+        return li;
+      })
+    );
   }
-
-  function run() {
-    const root = document.querySelector<HTMLElement>("[data-404]");
-    if (!root) return;
-    const raw = document.querySelector<HTMLScriptElement>("[data-nf-candidates]")?.textContent;
-    const candidates: Candidate[] = raw ? JSON.parse(raw) : [];
-
-    const path = location.pathname;
-    const parts = path.split("/").filter(Boolean);
-    const leaf = parts[parts.length - 1] ?? "";
-    const folder = parts.length > 1 ? parts[0].toLowerCase() : null;
-    const section = folder && /^(blog|posts?|writing)$/.test(folder) ? "blog" : folder && /^projects?$/.test(folder) ? "projects" : null;
-
-    root.querySelector("[data-nf-path]")!.textContent = path;
-
-    if (leaf) {
-      const shown = decodeURIComponent(leaf).replace(/\.(mdx?|html?)$/i, "");
-      root.querySelector("[data-nf-title]")!.textContent = `The page “${shown}” couldn’t be found.`;
-      if (parts.length > 1) {
-        root.querySelector("[data-nf-why]")!.textContent = `There’s nothing by that name in ~/${parts.slice(0, -1).join("/")}. It may have moved, or the link has a typo.`;
-      }
-    }
-
-    const q = norm(leaf);
-    if (!q) return;
-    // Close enough to be worth suggesting, and not far behind the best —
-    // a strong match shouldn't drag in the merely similar.
-    const scored = candidates
-      .map((c) => ({ c, s: score(c, q, section) }))
-      .filter((r) => r.s >= 0.5)
-      .sort((a, b) => b.s - a.s);
-    const top = scored[0]?.s ?? 0;
-    const best = scored.filter((r) => r.s >= top - 0.2).slice(0, 3);
-    if (!best.length) return;
-
-    // Built from nodes, not markup: the path is the visitor's, not ours.
-    const list = root.querySelector<HTMLElement>("[data-nf-list]")!;
-    const template = list.querySelector("li");
-    if (!template) return;
-    const rows = best.map(({ c }) => {
-      const li = template.cloneNode(true) as HTMLElement;
-      const a = li.querySelector("a")!;
-      a.href = c.href;
-      const dot = li.querySelector<HTMLElement>(".dot")!;
-      dot.classList.toggle("plain", !c.hue);
-      if (c.hue) dot.style.setProperty("--h", c.hue); else dot.style.removeProperty("--h");
-      const dotAt = c.name.lastIndexOf(".");
-      const fname = li.querySelector(".fname")!;
-      const ext = document.createElement("span");
-      ext.className = "ext";
-      ext.textContent = dotAt > 0 ? c.name.slice(dotAt) : "";
-      fname.replaceChildren(dotAt > 0 ? c.name.slice(0, dotAt) : c.name, ext);
-      li.querySelector(".ftitle")!.textContent = c.title;
-      return li;
-    });
-    list.replaceChildren(...rows);
-    root.querySelector("[data-nf-label]")!.textContent = "Did you mean";
-  }
-
-  document.addEventListener("astro:page-load", run);
 </script>
+
+<style>
+  .nf {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  h1.lede {
+    font-weight: 400;
+    margin-bottom: 3.5rem;
+  }
+  h1 .dim {
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .label {
+    margin: 0 0 0.75rem;
+    font-size: 12px;
+  }
+  .rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .rows :global(a) {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    color: inherit;
+    text-decoration: none;
+  }
+  .rows :global(.rule) {
+    flex: 1;
+    min-width: 1.5rem;
+    border-bottom: 1px dotted color-mix(in srgb, var(--fg) 25%, transparent);
+    transform: translateY(-0.3em);
+  }
+  .rows :global(.dim) {
+    max-width: 50%;
+    overflow: hidden;
+    font-size: 13px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+</style>
