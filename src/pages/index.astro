@@ -22,7 +22,7 @@ const SOCIALS = [
     <Tailnet />
     <header class="intro">
       <p class="motto" data-mesh-avoid>
-        small machines,<br />quietly talking<span class="cursor" aria-hidden="true"></span>
+        small machines,<br /> quietly talking<span class="cursor" aria-hidden="true"></span>
       </p>
       <div class="bio" data-mesh-frost>
         {/* A shell prompt opens the panel, its three lights in the mesh's own cells. */}
@@ -188,17 +188,24 @@ const SOCIALS = [
   .sep {
     opacity: 0.4;
   }
-  /* On a phone the intro keeps to the bottom third or so, so the mesh above it
-     has room to make sense: the name, the role, what's on now, and the links.
-     The motto, the prompt, the history and the status wait for a wider screen. */
-  @media (max-width: 640px) {
+  /* On a phone, or any short screen (a phone on its side), the intro keeps to
+     a third of the height or less, so the mesh has room to make sense: the
+     motto on one line, the name, the role, what's on now and the links. The
+     prompt, the history and the status wait for a bigger screen. */
+  @media (max-width: 640px), (max-height: 560px) {
     .intro {
       left: 1.5rem;
       right: 1.5rem;
-      bottom: 1.5rem;
-      gap: 0;
+      bottom: 1.25rem;
+      gap: 0.6rem;
     }
-    .motto,
+    .motto {
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .motto br {
+      display: none;
+    }
     .prompt,
     .past,
     .status {
@@ -216,6 +223,23 @@ const SOCIALS = [
     }
     .socials {
       margin-top: 0.5rem !important;
+    }
+  }
+  /* The shortest screens set the intro a size smaller still. */
+  @media (max-height: 420px) {
+    .bio {
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .bio h1 {
+      font-size: 16px !important;
+    }
+  }
+  /* On its side, the intro takes the left half and the mesh the right. */
+  @media (max-height: 560px) and (min-width: 641px) {
+    .intro {
+      right: auto;
+      max-width: min(48vw, 30rem);
     }
   }
 </style>
