@@ -13,9 +13,9 @@ export interface Peer {
 
 export const PEERS: Peer[] = [
   { name: "macbook", os: "macOS" },
-  { name: "cachyos", os: "linux" },
+  { name: "desktop", os: "CachyOS" },
   { name: "iphone", os: "iOS" },
-  { name: "homelab", os: "linux" },
+  { name: "homelab", os: "Unraid" },
   { name: "nas", os: "linux" },
   { name: "pi", os: "linux" },
   { name: "proxy", os: "linux" },

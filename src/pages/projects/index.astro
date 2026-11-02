@@ -267,7 +267,11 @@ const coursework = projects.filter(isCoursework).map((p) => ({
     .frame {
       height: auto;
       width: 100%;
+      aspect-ratio: 3 / 2;
       border-radius: 1rem;
+    }
+    .type {
+      font-size: clamp(1.5rem, 8vw, 2.5rem);
     }
     .pill {
       display: none;

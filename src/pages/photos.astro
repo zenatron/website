@@ -255,6 +255,15 @@ const data = hang.map((i) => {
     .col {
       display: contents;
     }
+    /* One shape for every shot on a phone, so the column reads evenly;
+       the viewer still shows each one whole. */
+    figure button {
+      aspect-ratio: 4 / 5;
+    }
+    figure img {
+      height: 100%;
+      object-fit: cover;
+    }
     figcaption {
       position: static;
       max-width: none;
