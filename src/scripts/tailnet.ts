@@ -1,26 +1,27 @@
 /**
  * The home page's mesh: the tailnet, drawn on a grid of square cells.
  *
- * Peers sit at fixed anchors and breathe a little. Packets cross between
- * them on their own (and now and then detour through a DERP relay),
- * leaving a trail of lit cells that fades. Clicking empty ground joins a
- * short-lived guest peer, which handshakes with its nearest neighbours;
- * clicking a peer pings everyone from it. A small log in the corner
- * prints what happened the way `tailscale ping` would.
+ * Machines sit on networks. Behind a site's router they reach each other over
+ * the LAN; between sites a packet crosses both routers, directly or by way of
+ * the DERP relay. The server runs a cluster of services, most behind Caddy,
+ * and public visitors reach the public ones through Cloudflare.
  *
- * Machines sit on networks: behind a site's router they reach each other
- * over the LAN; between sites a packet crosses both routers, directly or by
- * way of the DERP relay. Hovering a machine says how its last ping went.
+ * Traffic happens on its own: pings between devices, requests to services,
+ * DNS lookups, and visitors from outside. Each leaves a trail of lit cells
+ * that fades, and a line in the log the way `tailscale ping` or an access log
+ * would say it. Hovering a machine says how its last exchange went.
  *
- * Peers can be dragged to a new spot (a click without moving still pings);
- * dragging a router brings its network along.
+ * Clicking empty ground joins a short-lived guest peer; clicking a machine
+ * pings everyone from it (a router, its own network; a service gets visited).
+ * Anything can be dragged to a new spot; a router brings its network along,
+ * and the server its services.
  *
- * Anything marked [data-mesh-frost] gets no peer placed or dragged onto
- * it, but the mesh still runs behind it (it wears a frosted panel).
- * Anything marked [data-mesh-avoid] is kept clear: no peer is placed
- * there and no cell is lit over it, so the text stays legible.
+ * Anything marked [data-mesh-frost] gets no node placed or dragged onto it,
+ * but the mesh still runs behind it (it wears a frosted panel). Anything
+ * marked [data-mesh-avoid] is kept clear: no node is placed there and no cell
+ * is lit over it, so the text stays legible.
  */
-import type { Peer } from "@/data/tailnet";
+import type { Hue, Peer } from "@/data/tailnet";
 
 const PITCH = 8; // css px from one cell to the next
 const BLOCK = 6; // a cell's lit square
@@ -28,19 +29,25 @@ const SPEED = 260; // px per second a packet travels
 const DECAY = 0.9; // a trail cell keeps this much of its light each frame
 const MAX_GUESTS = 5;
 const GUEST_LIFE = 24_000; // ms
+const HUES: Hue[] = ["violet", "blue", "green", "orange", "ember", "rose", "teal"];
 
-type Kind = "peer" | "router" | "relay";
+type Kind = "peer" | "router" | "relay" | "service" | "edge";
 type Node = {
   name: string;
   os: string;
   kind: Kind;
   site?: string;
   exit: boolean;
+  offline?: string;
+  host?: string;
+  proxied: boolean;
+  publicName?: string;
+  hue?: Hue;
   guest: boolean;
-  /** How its last ping went, for the hover label. */
+  /** How its last exchange went, for the hover label. */
   last?: { how: string; ms: number };
-  /** For a relay: how many packets it has carried. */
-  relayed: number;
+  /** A relay's packets carried; a service's requests served. */
+  count: number;
   ax: number; // anchor, px
   ay: number;
   x: number;
@@ -51,21 +58,21 @@ type Node = {
   flash: number;
 };
 type Packet = {
-  hops: Node[]; // from, (relay,) to
+  hops: Node[];
   leg: number;
   t: number; // 0..1 along the current leg
-  len: number;
   reply: boolean;
-  start: number;
   onArrive?: () => void;
 };
 type Ripple = { x: number; y: number; r: number; max: number; reply: boolean };
+type Route = { hops: Node[]; how: string; relay?: Node };
 
 export function mountTailnet(root: HTMLElement, peers: Peer[]) {
   const canvas = root.querySelector("canvas")!;
   const ctx = canvas.getContext("2d")!;
   const logEl = root.querySelector<HTMLElement>("[data-mesh-log]");
   const peersEl = root.querySelector<HTMLElement>("[data-mesh-peers]");
+  const servicesEl = root.querySelector<HTMLElement>("[data-mesh-services]");
   const packetsEl = root.querySelector<HTMLElement>("[data-mesh-packets]");
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -74,8 +81,8 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     cols = 0,
     rows = 0,
     dpr = 1;
-  let heat = new Float32Array(0); // accent: outbound packets
-  let echo = new Float32Array(0); // green: replies
+  let heat = new Float32Array(0); // accent: requests going out
+  let echo = new Float32Array(0); // green: replies coming back
   let mask = new Uint8Array(0); // 1 where a cell is kept clear
   let avoid: DOMRect[] = [];
   let frost: DOMRect[] = [];
@@ -84,7 +91,7 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
   const ripples: Ripple[] = [];
   const pointer = { x: -1e4, y: -1e4 };
   let hovered: Node | null = null;
-  /** The peer being dragged, where the drag started, and whether it has moved enough to count. */
+  /** The node being dragged, where the drag started, and whether it has moved enough to count. */
   let dragging: Node | null = null;
   let dragFrom = { x: 0, y: 0 };
   let dragMoved = false;
@@ -98,17 +105,37 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
   let fg = "#000",
     accent = "#00f",
     green = "#0a0";
+  const hue: Record<string, string> = {};
   const readColors = () => {
     const s = getComputedStyle(document.documentElement);
     fg = s.getPropertyValue("--c-text").trim() || fg;
     accent = s.getPropertyValue("--c-accent").trim() || accent;
     green = s.getPropertyValue("--c-hue-green").trim() || green;
+    for (const n of HUES) hue[n] = s.getPropertyValue(`--c-hue-${n}`).trim();
   };
+
+  // ── Who's who ──────────────────────────────────────────────
+  const byName = (name?: string) => (name ? nodes.find((n) => n.name === name) : undefined);
+  const online = (n: Node) => !n.offline;
+  /** The router a node sits behind: its own site's, or for a service its host's. */
+  const routerOf = (n: Node): Node | undefined => {
+    if (n.kind === "service") {
+      const host = byName(n.host);
+      return host ? routerOf(host) : undefined;
+    }
+    return n.site ? nodes.find((r) => r.kind === "router" && r.site === n.site && r !== n) : undefined;
+  };
+  const members = (r: Node) => nodes.filter((n) => n.kind === "peer" && n.site === r.site && !n.guest);
+  const servicesOn = (host: Node) => nodes.filter((n) => n.kind === "service" && n.host === host.name);
+  const relayNode = () => nodes.find((n) => n.kind === "relay");
+  const edgeNode = () => nodes.find((n) => n.kind === "edge");
+  const caddy = () => nodes.find((n) => n.kind === "service" && n.name === "caddy");
+  const devices = () => nodes.filter((n) => n.kind === "peer" && online(n));
 
   // ── Layout ─────────────────────────────────────────────────
   const inRects = (rects: DOMRect[], x: number, y: number, pad: number) =>
     rects.some((r) => x > r.left - pad && x < r.right + pad && y > r.top - pad && y < r.bottom + pad);
-  /** Somewhere no peer may sit: clear areas and frosted panels alike. */
+  /** Somewhere no node may sit: clear areas and frosted panels alike. */
   const inAvoid = (x: number, y: number, pad = 0) => inRects(avoid, x, y, pad) || inRects(frost, x, y, pad);
 
   function measure() {
@@ -136,47 +163,58 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     mask = new Uint8Array(cols * rows);
     for (let j = 0; j < rows; j++)
       for (let i = 0; i < cols; i++) if (inRects(avoid, i * PITCH, j * PITCH, PITCH * 2)) mask[j * cols + i] = 1;
-    placePeers();
+    placeNodes();
   }
 
   /**
-   * Routers first, far apart; the relay near an edge; then each network's
-   * machines in a loose ring around their router. Seeded, so the layout is
+   * Routers first, far apart; the relay and the edge out toward the sides;
+   * each network's machines in a loose ring around their router; the
+   * services in a tight cluster around their host. Seeded, so the layout is
    * the same on every visit at a given size.
    */
-  function placePeers() {
+  function placeNodes() {
     const fixed = nodes.filter((n) => !n.guest);
     const margin = Math.min(80, w * 0.08);
     const placed: Node[] = [];
     let seed = 7;
     const rand = () => ((seed = Math.imul(seed ^ (seed >>> 15), 2246822507) + 0x9e3779b9) >>> 0) / 4294967296;
-    const order: Kind[] = ["router", "relay", "peer"];
-    const sorted = [...fixed].sort((a, b) => order.indexOf(a.kind) - order.indexOf(b.kind));
-    const reach = Math.max(110, Math.min(210, Math.min(w, h) * 0.24));
+    const order: Kind[] = ["router", "relay", "edge", "peer", "service"];
+    // Hosts before other peers, so their services have room left around them.
+    const rank = (n: Node) =>
+      order.indexOf(n.kind) * 10 + (n.kind === "peer" && servicesOn(n).length ? 0 : 1) + (n.offline ? 2 : 0);
+    const sorted = [...fixed].sort((a, b) => rank(a) - rank(b));
+    const reach = Math.max(120, Math.min(230, Math.min(w, h) * 0.26));
     for (const n of sorted) {
-      const router = n.kind === "peer" ? routerOf(n) : undefined;
+      const anchor = n.kind === "service" ? byName(n.host) : n.kind === "peer" ? routerOf(n) : undefined;
       let best = { x: w / 2, y: h / 2, score: -Infinity };
-      for (let tries = 0; tries < 160; tries++) {
+      for (let tries = 0; tries < 220; tries++) {
         const x = margin + rand() * (w - margin * 2);
         const y = margin + 40 + rand() * (h - margin * 2 - 40);
-        // The machine and the name that runs to its right both stay off the text.
-        if (inAvoid(x, y, 48) || inAvoid(x + 80, y, 24)) continue;
+        // The node and the name that runs to its right both stay off the text.
+        if (inAvoid(x, y, n.kind === "service" ? 24 : 48) || (n.kind !== "service" && inAvoid(x + 80, y, 24))) continue;
         const near = Math.min(...placed.map((p) => Math.hypot(p.ax - x, p.ay - y)), Infinity);
         // Names run about 100px to the right: keep them from landing on each other.
-        if (placed.some((p) => Math.abs(p.ay - y) < 22 && x - p.ax > -110 && x - p.ax < 120)) continue;
-        if (near < 64) continue;
+        if (placed.some((p) => p.kind !== "service" && Math.abs(p.ay - y) < 20 && x - p.ax > -110 && x - p.ax < 120))
+          continue;
+        if (near < (n.kind === "service" ? 26 : 64)) continue;
         let score: number;
         if (n.kind === "router") {
-          // Networks spread out across the page.
-          score = Math.min(near, w * 0.6) + rand() * 20;
-        } else if (n.kind === "relay") {
-          // Out toward an edge, away from both networks.
-          score = Math.min(near, 300) - Math.min(x, w - x) * 0.6 + rand() * 10;
-        } else if (router) {
-          // Around its router, not too close to anyone.
-          const d = Math.hypot(router.ax - x, router.ay - y);
-          if (d < 90 || d > reach * (tries > 120 ? 1.6 : 1)) continue;
-          score = Math.min(near, 110) + rand() * 10;
+          // Networks spread apart, each with room around it for its machines.
+          const room = Math.min(220, x, w - x, y - 60, h - y);
+          // ...and up toward the middle of the page, above the text, so they fill it.
+          score = Math.min(near, w * 0.55) + room * 0.9 - Math.abs(y - h * 0.4) * 0.5 + rand() * 20;
+        } else if (n.kind === "relay" || n.kind === "edge") {
+          // Out toward a side, away from the networks; the edge on the side of
+          // the network it brings visitors to.
+          const served = n.kind === "edge" ? placed.find((p) => p.kind === "router" && p.site === "lab") : undefined;
+          const pull = served ? Math.hypot(served.ax - x, served.ay - y) * 0.35 : 0;
+          score = Math.min(near, 300) - Math.min(x, w - x) * 0.6 - pull + rand() * 10;
+        } else if (anchor) {
+          const d = Math.hypot(anchor.ax - x, anchor.ay - y);
+          const [lo, hi] = n.kind === "service" ? [38, 100] : [90, reach];
+          const loose = tries > 170 ? 1.6 : 1;
+          if (d < lo || d > hi * loose) continue;
+          score = Math.min(near, n.kind === "service" ? 50 : 110) + rand() * 10;
         } else {
           score = Math.min(near, 200) + rand() * 10;
         }
@@ -187,11 +225,6 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       placed.push(n);
     }
   }
-
-  const routerOf = (n: Node) =>
-    n.site ? nodes.find((r) => r.kind === "router" && r.site === n.site && r !== n) : undefined;
-  const members = (r: Node) => nodes.filter((n) => n.kind === "peer" && n.site === r.site && !n.guest);
-  const relayNode = () => nodes.find((n) => n.kind === "relay");
 
   // ── Grid helpers ───────────────────────────────────────────
   const cellAt = (x: number, y: number) => {
@@ -204,7 +237,7 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     if (k >= 0 && !mask[k]) grid[k] = Math.min(1, grid[k] + v);
   };
 
-  // ── Events ─────────────────────────────────────────────────
+  // ── Routes and traffic ─────────────────────────────────────
   function log(line: string) {
     if (!logEl) return;
     const row = document.createElement("div");
@@ -212,114 +245,163 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     logEl.append(row);
     while (logEl.children.length > 4) logEl.firstElementChild!.remove();
   }
+
   /**
    * The way a packet goes from a to b. On one network: over the LAN, through
    * its router. Between networks: out through a's router, across (directly,
-   * or through the relay), and in through b's.
+   * or through the relay), in through b's. A service is reached through its
+   * host, and through Caddy when it's behind it. A visitor arrives at the
+   * edge, which goes straight to the lab's router.
    */
-  function route(a: Node, b: Node, viaRelay: boolean) {
-    const ra = a.kind === "router" ? undefined : routerOf(a);
-    const rb = b.kind === "router" ? undefined : routerOf(b);
-    if (ra && ra === rb) return { hops: [a, ra, b], how: "lan", relay: undefined };
-    const relay = viaRelay ? relayNode() : undefined;
-    const hops = [a, ra, relay, rb, b].filter((n): n is Node => !!n && n !== a && n !== b);
-    return {
-      hops: [a, ...hops, b],
-      how: relay ? `via ${relay.name.replace(/^derp-/, "")}` : "direct",
-      relay,
-    };
+  function route(a: Node, b: Node, viaRelay: boolean): Route {
+    const target = b.kind === "service" ? (byName(b.host) ?? b) : b;
+    const tail: Node[] = [];
+    if (b.kind === "service") {
+      const proxy = caddy();
+      if (b.proxied && proxy && proxy !== b) tail.push(proxy);
+      tail.push(b);
+    }
+    const ra = a.kind === "router" || a.kind === "edge" ? undefined : routerOf(a);
+    const rb = target.kind === "router" ? undefined : routerOf(target);
+    let hops: Node[];
+    let how: string;
+    let relay: Node | undefined;
+    if (ra && ra === rb) {
+      hops = [a, ra, target];
+      how = "lan";
+    } else {
+      relay = viaRelay && a.kind !== "edge" ? relayNode() : undefined;
+      hops = [a, ra, relay, rb, target].filter((n): n is Node => !!n);
+      how = relay ? `via ${relay.name.replace(/^derp-/, "")}` : a.kind === "edge" ? "edge" : "direct";
+    }
+    if (b.kind === "service") hops.push(...tail);
+    // A service on the asker's own host, or any doubled hop: drop the repeats.
+    hops = hops.filter((n, i) => i === 0 || n !== hops[i - 1]);
+    return { hops, how, relay };
   }
-  /** Round-trip time for that route, made up but in proportion. */
+
+  /** Round-trip time for that route: made up, but in proportion. */
   const ms = (a: Node, b: Node, how: string) =>
     how === "lan"
       ? 1 + Math.floor(Math.random() * 4)
       : Math.round(
-          6 + Math.hypot(a.x - b.x, a.y - b.y) / 60 + Math.random() * 6 + (how.startsWith("via") ? 24 + Math.random() * 14 : 0),
+          6 +
+            Math.hypot(a.x - b.x, a.y - b.y) / 60 +
+            Math.random() * 6 +
+            (how.startsWith("via") ? 24 + Math.random() * 14 : 0) +
+            (how === "edge" ? 20 + Math.random() * 20 : 0),
         );
 
-  function send(from: Node, to: Node, opts: { viaRelay?: boolean; reply?: boolean; quiet?: boolean; hops?: Node[] } = {}) {
-    const r = opts.hops ? { hops: opts.hops, how: "", relay: undefined } : route(from, to, !!opts.viaRelay);
+  function bump() {
     sent++;
     if (packetsEl) {
       packetsEl.textContent = sent.toLocaleString();
       packetsEl.animate?.([{ opacity: 1 }, { opacity: 0.35 }], { duration: 600, easing: "ease-out" });
     }
-    if (r.relay) r.relay.relayed++;
-    const p: Packet = {
-      hops: r.hops,
-      leg: 0,
-      t: 0,
-      len: 1,
-      reply: !!opts.reply,
-      start: performance.now(),
-    };
-    if (!opts.reply) {
-      p.onArrive = () => {
-        // Every ping gets its pong, back the way it came.
-        const back = send(to, from, { reply: true, quiet: true, hops: [...r.hops].reverse() });
-        if (r.relay) r.relay.relayed++;
-        back.onArrive = () => {
-          const time = ms(from, to, r.how);
-          // Both ends remember how it went, for their hover labels.
-          if (from.kind === "peer") from.last = { how: r.how, ms: time };
-          if (to.kind === "peer") to.last = { how: r.how, ms: time };
-          if (opts.quiet) return;
-          const via = r.relay ? `DERP(${r.relay.name.replace(/^derp-/, "")})` : r.how;
-          log(`pong from ${to.name} via ${via} in ${time}ms`);
-        };
-      };
-    }
-    packets.push(p);
-    return p;
   }
 
-  function peersOnline() {
-    if (peersEl) peersEl.textContent = String(nodes.filter((n) => n.kind === "peer").length);
+  /**
+   * Sends a packet along a route, and the answer back the same way. `say`
+   * turns the round trip into a log line (or nothing, to stay quiet).
+   */
+  function exchange(
+    from: Node,
+    to: Node,
+    opts: { viaRelay?: boolean; say?: (time: number, r: Route) => string | null } = {},
+  ) {
+    if (!online(from) || !online(to)) return;
+    const r = route(from, to, !!opts.viaRelay);
+    if (r.hops.length < 2) return;
+    bump();
+    if (r.relay) r.relay.count++;
+    const out: Packet = { hops: r.hops, leg: 0, t: 0, reply: false };
+    out.onArrive = () => {
+      if (to.kind === "service") to.count++;
+      bump();
+      if (r.relay) r.relay.count++;
+      const back: Packet = { hops: [...r.hops].reverse(), leg: 0, t: 0, reply: true };
+      back.onArrive = () => {
+        const time = ms(from, to, r.how);
+        // Both ends remember how it went, for their hover labels.
+        for (const n of [from, to]) if (n.kind === "peer" || n.kind === "service") n.last = { how: r.how, ms: time };
+        const line = opts.say?.(time, r);
+        if (line) log(line);
+      };
+      packets.push(back);
+    };
+    packets.push(out);
+  }
+
+  const via = (r: Route) => (r.relay ? `DERP(${r.relay.name.replace(/^derp-/, "")})` : r.how);
+  const ping = (a: Node, b: Node, quiet: boolean, viaRelay = false) =>
+    exchange(a, b, { viaRelay, say: quiet ? undefined : (t, r) => `pong from ${b.name} via ${via(r)} in ${t}ms` });
+  const visit = (a: Node, svc: Node, quiet: boolean, viaRelay = false) =>
+    exchange(a, svc, {
+      viaRelay,
+      say: quiet
+        ? undefined
+        : (t) => (svc.name === "adguard" ? `${a.name} → adguard: dns in ${t}ms` : `${a.name} → ${svc.name} 200 in ${t}ms`),
+    });
+  const visitor = (svc: Node) => {
+    const edge = edgeNode();
+    if (edge) exchange(edge, svc, { say: (t) => `visitor → ${svc.publicName ?? svc.name} via cloudflare 200 in ${t}ms` });
+  };
+
+  function counts() {
+    if (peersEl) peersEl.textContent = String(nodes.filter((n) => n.kind === "peer" && online(n)).length);
+    if (servicesEl) servicesEl.textContent = String(nodes.filter((n) => n.kind === "service").length);
   }
 
   function joinGuest(x: number, y: number) {
     const guests = nodes.filter((n) => n.guest);
     if (guests.length >= MAX_GUESTS) nodes.splice(nodes.indexOf(guests[0]), 1);
     const name = `guest-${Math.random().toString(16).slice(2, 6)}`;
-    const g: Node = {
-      name,
-      os: "browser",
-      kind: "peer",
-      exit: false,
-      relayed: 0,
-      guest: true,
-      ax: x,
-      ay: y,
-      x,
-      y,
-      phase: Math.random() * 6,
-      born: performance.now(),
-      flash: 1,
-    };
+    const g = makeNode({ name, os: "browser" });
+    Object.assign(g, { guest: true, ax: x, ay: y, x, y, born: performance.now(), flash: 1 });
     nodes.push(g);
     ripples.push({ x, y, r: 0, max: 90, reply: false });
     log(`${name} joined the tailnet`);
-    peersOnline();
-    // Handshake with the three nearest.
-    nodes
-      .filter((n) => n !== g && n.kind === "peer")
+    counts();
+    // Handshake with the three nearest devices.
+    devices()
+      .filter((n) => n !== g)
       .sort((a, b) => Math.hypot(a.x - x, a.y - y) - Math.hypot(b.x - x, b.y - y))
       .slice(0, 3)
-      .forEach((n, i) => setTimeout(() => send(g, n, { quiet: i > 0 }), i * 120));
+      .forEach((n, i) => setTimeout(() => ping(g, n, i > 0), i * 120));
   }
 
-  /** A machine pings everyone; a router pings the machines on its network. */
-  function pingAll(from: Node) {
+  /**
+   * A click on a node: a device pings everyone, a router its own network,
+   * the server visits its services, a service gets a few visitors, the edge
+   * sends the public ones a visitor each.
+   */
+  function poke(from: Node) {
     from.flash = 1;
     ripples.push({ x: from.x, y: from.y, r: 0, max: 70, reply: false });
-    const targets = from.kind === "router" ? members(from) : nodes.filter((n) => n !== from && n.kind === "peer");
-    targets
-      .forEach((n, i) => setTimeout(() => send(from, n, { quiet: i > 0 }), i * 90));
+    if (from.offline) return log(`${from.name} is offline, last seen ${from.offline}`);
+    if (from.kind === "router")
+      return members(from)
+        .filter(online)
+        .forEach((n, i) => setTimeout(() => ping(from, n, i > 0), i * 90));
+    if (from.kind === "service")
+      return devices()
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3)
+        .forEach((n, i) => setTimeout(() => visit(n, from, i > 0), i * 120));
+    if (from.kind === "edge")
+      return nodes.filter((n) => n.publicName).forEach((s, i) => setTimeout(() => visitor(s), i * 150));
+    if (from.kind === "relay") return;
+    const own = servicesOn(from);
+    if (own.length) return own.forEach((s, i) => setTimeout(() => visit(from, s, i > 0), i * 70));
+    devices()
+      .filter((n) => n !== from)
+      .forEach((n, i) => setTimeout(() => ping(from, n, i > 0, Math.random() < 0.2), i * 90));
   }
 
   const nodeAt = (x: number, y: number) =>
-    nodes.find((n) => Math.hypot(n.x - x, n.y - y) < PITCH * 3) ?? null;
+    nodes.find((n) => Math.hypot(n.x - x, n.y - y) < PITCH * (n.kind === "service" ? 1.6 : 3)) ?? null;
 
+  // ── Pointer ────────────────────────────────────────────────
   function onPointerDown(e: PointerEvent) {
     if (e.button !== 0 || (e.target as Element).closest("a, button, [data-mesh-ignore]")) return;
     const r = root.getBoundingClientRect();
@@ -332,6 +414,9 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     e.preventDefault();
   }
 
+  const fits = (x: number, y: number, n: Node) =>
+    !inAvoid(x, y, 20) && (n.kind === "service" || !inAvoid(x + 70, y, 12));
+
   function onPointerMove(e: PointerEvent) {
     const r = root.getBoundingClientRect();
     pointer.x = e.clientX - r.left;
@@ -342,22 +427,26 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
         // Kept on the canvas, below the nav, and off the text: past an edge it stops there.
         const x = Math.max(24, Math.min(w - 120, pointer.x));
         const y = Math.max(72, Math.min(h - 24, pointer.y));
-        // Its name runs to the right, so that has to stay clear of the text too.
-        if (!inAvoid(x, y, 20) && !inAvoid(x + 70, y, 12)) {
+        if (fits(x, y, dragging)) {
           const dx = x - dragging.ax,
             dy = y - dragging.ay;
           dragging.ax = x;
           dragging.ay = y;
-          // A router brings its network along, each machine as far as it can go.
-          if (dragging.kind === "router")
-            for (const m of members(dragging)) {
-              const mx = Math.max(24, Math.min(w - 120, m.ax + dx)),
-                my = Math.max(72, Math.min(h - 24, m.ay + dy));
-              if (!inAvoid(mx, my, 20) && !inAvoid(mx + 70, my, 12)) {
-                m.ax = mx;
-                m.ay = my;
-              }
+          // A router brings its network along, and a server its services, each as far as it can go.
+          const followers =
+            dragging.kind === "router"
+              ? members(dragging).flatMap((m) => [m, ...servicesOn(m)])
+              : dragging.kind === "peer"
+                ? servicesOn(dragging)
+                : [];
+          for (const m of followers) {
+            const mx = Math.max(24, Math.min(w - 120, m.ax + dx)),
+              my = Math.max(72, Math.min(h - 24, m.ay + dy));
+            if (fits(mx, my, m)) {
+              m.ax = mx;
+              m.ay = my;
             }
+          }
         }
         dragging.flash = Math.max(dragging.flash, 0.4);
       }
@@ -393,16 +482,39 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     const x = e.clientX - r.left,
       y = e.clientY - r.top;
     const hit = nodeAt(x, y);
-    if (hit) pingAll(hit);
+    if (hit) poke(hit);
     else if (!inAvoid(x, y, 8)) joinGuest(x, y);
   }
 
   // ── Simulation ─────────────────────────────────────────────
+  /** The network goes about its day: pings, service requests, DNS, and the odd visitor. */
+  function chatter() {
+    const devs = devices();
+    const services = nodes.filter((n) => n.kind === "service" && n.name !== "caddy" && n.name !== "adguard");
+    const dns = byName("adguard");
+    const pub = nodes.filter((n) => n.publicName);
+    const pick = <T,>(xs: T[]) => xs[Math.floor(Math.random() * xs.length)];
+    const roll = Math.random();
+    const quiet = Math.random() < 0.55;
+    if (roll < 0.34 && devs.length > 1) {
+      const a = pick(devs);
+      let b = a;
+      while (b === a) b = pick(devs);
+      ping(a, b, quiet, Math.random() < 0.22);
+    } else if (roll < 0.72 && services.length && devs.length) {
+      visit(pick(devs), pick(services), quiet, Math.random() < 0.18);
+    } else if (roll < 0.88 && dns && devs.length) {
+      visit(pick(devs), dns, quiet);
+    } else if (pub.length) {
+      visitor(pick(pub));
+    }
+  }
+
   function step(now: number, dt: number) {
     const s = dt / 1000;
     for (const n of nodes) {
-      // A slow breath around the anchor; guests drift a little more.
-      const amp = n === dragging ? 0 : n.guest ? 10 : 5;
+      // A slow breath around the anchor; guests drift a little more, services barely.
+      const amp = n === dragging ? 0 : n.guest ? 10 : n.kind === "service" ? 2 : 5;
       n.x = n.ax + Math.sin(now / 2300 + n.phase) * amp;
       n.y = n.ay + Math.cos(now / 2900 + n.phase * 1.3) * amp;
       n.flash *= 0.94;
@@ -413,21 +525,13 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       if (n.guest && now - n.born > GUEST_LIFE) {
         nodes.splice(i, 1);
         log(`${n.name} went offline`);
-        peersOnline();
+        counts();
       }
     }
 
-    // The tailnet chats on its own.
     if (now > nextAuto) {
-      const real = nodes.filter((n) => n.kind === "peer");
-      if (real.length > 1) {
-        const a = real[Math.floor(Math.random() * real.length)];
-        let b = a;
-        while (b === a) b = real[Math.floor(Math.random() * real.length)];
-        // Across networks, now and then the direct path fails and DERP carries it.
-        send(a, b, { viaRelay: Math.random() < 0.22, quiet: Math.random() < 0.6 });
-      }
-      nextAuto = now + 700 + Math.random() * 1600;
+      chatter();
+      nextAuto = now + 450 + Math.random() * 1100;
     }
 
     for (let i = packets.length - 1; i >= 0; i--) {
@@ -452,7 +556,7 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
           p.t = 0;
         } else {
           packets.splice(i, 1);
-          ripples.push({ x: b.x, y: b.y, r: 0, max: p.reply ? 18 : 30, reply: p.reply });
+          ripples.push({ x: b.x, y: b.y, r: 0, max: b.kind === "service" ? 16 : p.reply ? 18 : 30, reply: p.reply });
           p.onArrive?.();
         }
       }
@@ -462,8 +566,7 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       const r = ripples[i];
       const r0 = r.r;
       r.r += 70 * s;
-      // Only light the ring when it crosses into a new cell, so it reads as
-      // a ring and not a filled disc.
+      // Only light the ring when it crosses into a new cell, so it reads as a ring and not a filled disc.
       if (Math.floor(r.r / PITCH) === Math.floor(r0 / PITCH) && r0 > 0) {
         if (r.r >= r.max) ripples.splice(i, 1);
         continue;
@@ -488,8 +591,7 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
   const cell = (i: number, j: number) => ctx.fillRect(i * PITCH, j * PITCH, BLOCK, BLOCK);
 
   function drawGround(now: number) {
-    // A faint dot field with slow weather moving through it, brighter
-    // around the pointer.
+    // A faint dot field with slow weather moving through it, brighter around the pointer.
     ctx.fillStyle = fg;
     const t = now / 1000;
     const pr = 90;
@@ -512,10 +614,11 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
   }
 
   /** A link as dots, one every `every` cells: 1 for a wire, more for the internet. */
-  function drawLink(a: Node, b: Node, alpha: number, every = 2) {
+  function drawLink(a: Node, b: Node, alpha: number, every = 2, color = fg) {
     const len = Math.hypot(b.x - a.x, b.y - a.y);
     const n = Math.floor(len / PITCH);
     ctx.globalAlpha = alpha;
+    ctx.fillStyle = color;
     let lastK = -1;
     for (let s = 0; s <= n; s++) {
       const x = a.x + ((b.x - a.x) * s) / n,
@@ -538,12 +641,36 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     }
   }
 
+  /** What hovering a node says about it, the way `tailscale status` might. No addresses, real or made up. */
+  function label(n: Node) {
+    if (n === dragging) return `${n.name} · moving`;
+    if (n.offline) return `${n.name} · ${n.os} · offline, last seen ${n.offline}`;
+    switch (n.kind) {
+      case "router": {
+        const m = members(n).filter(online).length;
+        return `${n.name} · ${m} ${m === 1 ? "device" : "devices"}`;
+      }
+      case "relay":
+        return `${n.name} · relay · ${n.count} relayed`;
+      case "edge":
+        return `${n.name} · edge · public traffic in`;
+      case "service":
+        return `${n.name} · ${n.os} · ${n.count} ${n.count === 1 ? "request" : "requests"}${n.publicName ? ` · ${n.publicName}` : ""}`;
+      default: {
+        const svcs = servicesOn(n).length;
+        const how = n.last ? `${n.last.how} ${n.last.ms}ms` : "idle";
+        return `${n.name} · ${n.guest ? "guest" : n.os} · ${how}${n.exit ? " · exit node" : ""}${svcs ? ` · ${svcs} services` : ""}`;
+      }
+    }
+  }
+
   function drawNode(n: Node, now: number) {
     const i = Math.floor(n.x / PITCH),
       j = Math.floor(n.y / PITCH);
     const fade = n.guest ? Math.min(1, (GUEST_LIFE - (now - n.born)) / 3000) : 1;
-    const lit = n === hovered ? 1 : 0;
-    ctx.fillStyle = n.flash > 0.05 ? (n.guest ? accent : fg) : fg;
+    const lit = n === hovered || n === dragging ? 1 : 0;
+    const dim = n.offline ? 0.4 : 1;
+    ctx.fillStyle = fg;
     if (n.kind === "relay") {
       // A hollow square: a relay forwards, it doesn't host.
       ctx.globalAlpha = (0.35 + lit * 0.4 + n.flash * 0.3) * fade;
@@ -557,6 +684,28 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       cell(i, j);
       ctx.globalAlpha = (0.35 + lit * 0.3) * fade;
       cell(i + 1, j - 2);
+    } else if (n.kind === "edge") {
+      // A little cloud of cells, in the edge's orange.
+      ctx.fillStyle = hue.orange || fg;
+      ctx.globalAlpha = (0.45 + n.flash * 0.4 + lit * 0.3) * fade;
+      for (const [di, dj] of [
+        [-2, 0], [-1, 0], [0, 0], [1, 0], [2, 0],
+        [-1, -1], [0, -1], [1, -1],
+        [0, -2],
+      ])
+        cell(i + di, j + dj);
+    } else if (n.kind === "service") {
+      // A single cell in the service's colour.
+      ctx.fillStyle = (n.hue && hue[n.hue]) || fg;
+      ctx.globalAlpha = (0.55 + n.flash * 0.45 + lit * 0.3) * fade;
+      cell(i, j);
+    } else if (n.offline) {
+      // Hollow and dim: still on the tailnet, just not here.
+      ctx.globalAlpha = (0.16 + lit * 0.3) * fade;
+      cell(i - 1, j);
+      cell(i + 1, j);
+      cell(i, j - 1);
+      cell(i, j + 1);
     } else {
       // A plus of cells, the centre brightest.
       ctx.globalAlpha = (0.55 + n.flash * 0.45 + lit * 0.3) * fade;
@@ -578,49 +727,50 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       ctx.globalAlpha = 0.85 * fade;
       ctx.fillRect((i + 1) * PITCH + 2, (j - 1) * PITCH - 3, 4, 4);
     }
-    ctx.globalAlpha = (0.42 + lit * 0.5 + n.flash * 0.3) * fade;
+    // Services only show their names when something reaches them, or on hover.
+    if (n.kind === "service" && !lit && n.flash < 0.25) return;
+    ctx.globalAlpha =
+      (n.kind === "service" ? Math.max(lit, n.flash) * 0.8 : (0.42 + lit * 0.5 + n.flash * 0.3) * dim) * fade;
     ctx.fillStyle = fg;
-    ctx.font = "11px 'Atkinson Hyperlegible Mono', ui-monospace, monospace";
+    ctx.font = `${n.kind === "service" ? 10 : 11}px 'Atkinson Hyperlegible Mono', ui-monospace, monospace`;
     ctx.textBaseline = "middle";
-    // Hovered: what it is and how its last ping went, the way `tailscale status`
-    // would say it. No addresses, real or made up.
-    const detail =
-      n === dragging
-        ? "moving"
-        : n.kind === "router"
-          ? `${members(n).length} ${members(n).length === 1 ? "device" : "devices"}`
-          : n.kind === "relay"
-            ? `relay · ${n.relayed} relayed`
-            : `${n.guest ? "guest" : n.os} · ${n.last ? `${n.last.how} ${n.last.ms}ms` : "idle"}${n.exit ? " · exit node" : ""}`;
-    const label = n === hovered || n === dragging ? `${n.name} · ${detail}` : n.name;
+    const text = lit ? label(n) : n.name;
     // Near the right edge the name goes on the left of the node instead of off the page.
-    const width = ctx.measureText(label).width;
-    const right = (i + 2.5) * PITCH;
+    const width = ctx.measureText(text).width;
+    const gap = n.kind === "service" ? 1.5 : 2.5;
+    const right = (i + gap) * PITCH;
     if (right + width > w - 8) {
       ctx.textAlign = "right";
-      ctx.fillText(label, (i - 2) * PITCH, j * PITCH + BLOCK / 2);
+      ctx.fillText(text, (i - gap + 0.5) * PITCH, j * PITCH + BLOCK / 2);
       ctx.textAlign = "left";
-    } else ctx.fillText(label, right, j * PITCH + BLOCK / 2);
+    } else ctx.fillText(text, right, j * PITCH + BLOCK / 2);
   }
 
   function draw(now: number) {
     ctx.clearRect(0, 0, w, h);
     drawGround(now);
 
-    // The wiring: each machine to its router (solid, it's the LAN), the routers
-    // to each other (dotted, it's the internet), and the relay faintly to both.
-    // Everything touching the hovered node is brighter.
-    ctx.fillStyle = fg;
+    // The wiring: each machine to its router (solid, it's the LAN), each
+    // service to its host (or to Caddy in front of it), the routers to each
+    // other (dotted, it's the internet), and the relay and the edge faintly
+    // to the routers. Everything touching the hovered node is brighter.
     const touch = (a: Node, b: Node) => a === hovered || b === hovered || a === dragging || b === dragging;
     const routers = nodes.filter((n) => n.kind === "router");
     for (const n of nodes) {
-      if (n.kind !== "peer") continue;
-      const r = n.guest ? null : routerOf(n);
-      if (r) drawLink(n, r, touch(n, r) ? 0.45 : 0.17, 1);
-      else {
-        // A guest is out on the internet: a faint line to the nearest router.
-        const nearest = routers.sort((p, q) => Math.hypot(p.x - n.x, p.y - n.y) - Math.hypot(q.x - n.x, q.y - n.y))[0];
-        if (nearest) drawLink(n, nearest, 0.1, 2);
+      if (n.kind === "peer" && !n.offline) {
+        const r = n.guest ? null : routerOf(n);
+        if (r) drawLink(n, r, touch(n, r) ? 0.45 : 0.17, 1);
+        else {
+          // A guest is out on the internet: a faint line to the nearest router.
+          const nearest = [...routers].sort(
+            (p, q) => Math.hypot(p.x - n.x, p.y - n.y) - Math.hypot(q.x - n.x, q.y - n.y),
+          )[0];
+          if (nearest) drawLink(n, nearest, 0.1, 2);
+        }
+      } else if (n.kind === "service") {
+        const proxy = caddy();
+        const up = n.proxied && proxy && proxy !== n ? proxy : byName(n.host);
+        if (up) drawLink(n, up, touch(n, up) ? 0.5 : 0.2, 1, (n.hue && hue[n.hue]) || fg);
       }
     }
     for (let a = 0; a < routers.length; a++)
@@ -628,6 +778,10 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
         drawLink(routers[a], routers[b], touch(routers[a], routers[b]) ? 0.4 : 0.14, 2);
     const relay = relayNode();
     if (relay) for (const r of routers) drawLink(relay, r, touch(relay, r) ? 0.35 : 0.07, 3);
+    const edge = edgeNode();
+    const host = nodes.find((n) => n.kind === "peer" && servicesOn(n).length);
+    const lab = host && routerOf(host);
+    if (edge && lab) drawLink(edge, lab, touch(edge, lab) ? 0.4 : 0.1, 3, hue.orange || fg);
 
     drawGrid(heat, accent);
     drawGrid(echo, green);
@@ -657,15 +811,20 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
   }
 
   // ── Wiring ─────────────────────────────────────────────────
-  for (const p of peers) {
-    nodes.push({
+  function makeNode(p: Peer): Node {
+    return {
       name: p.name,
       os: p.os,
       kind: p.kind ?? "peer",
       site: p.site,
       exit: !!p.exitNode,
-      relayed: 0,
+      offline: p.offline,
+      host: p.host,
+      proxied: !!p.proxied,
+      publicName: p.publicName,
+      hue: p.hue,
       guest: false,
+      count: 0,
       ax: 0,
       ay: 0,
       x: 0,
@@ -673,11 +832,12 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       phase: Math.random() * 6,
       born: 0,
       flash: 0,
-    });
+    };
   }
+  for (const p of peers) nodes.push(makeNode(p));
   readColors();
   measure();
-  peersOnline();
+  counts();
   log("# click anywhere to join the tailnet");
 
   const ro = new ResizeObserver(() => {
