@@ -12,7 +12,10 @@
 const PITCH = 8;
 const BLOCK = 6;
 
-type Cell = { v: number; tone?: "hue" | "add" | "del" };
+/** A palette hue by name, for motifs that need more than the page's one colour. */
+type Named = "violet" | "blue" | "green" | "orange" | "ember" | "rose" | "teal";
+type Cell = { v: number; tone?: "hue" | "add" | "del" | Named };
+const NAMED: Named[] = ["violet", "blue", "green", "orange", "ember", "rose", "teal"];
 type Ctx = { i: number; j: number; cols: number; rows: number; t: number; seed: number };
 type Motif = (c: Ctx) => Cell | null;
 
@@ -165,30 +168,103 @@ const MOTIFS: Record<string, Motif> = {
   // ── Page covers ────────────────────────────────────────────
   // Each draws in the lower part of the band, below where the nav sits.
 
-  /** A paragraph being typed, a cursor at its end; it starts over once it's written. */
+  /**
+   * Code typing itself: a gutter of line numbers, indentation, and tokens in
+   * their colours (keywords, names, strings, comments), the cursor at the end.
+   * It starts over once the block is written.
+   */
   writing({ i, j: row, cols, rows, t, seed }) {
-    const j = row - Math.round(rows * 0.38);
+    const j = row - Math.round(rows * 0.36);
     if (j < 0 || j % 2) return null;
     const line = j / 2;
-    const lines = Math.max(2, Math.floor((rows * 0.46) / 2) + 1);
+    const lines = Math.max(3, Math.round((rows * 0.5) / 2));
     if (line >= lines) return null;
-    const width = Math.min(cols - 8, Math.round(cols * 0.4));
+    const width = Math.min(cols - 6, Math.max(40, Math.round(cols * 0.5)));
     const left = Math.round((cols - width) / 2);
     const x = i - left;
     if (x < 0 || x >= width) return null;
-    // Ragged right edge, and a short last line.
-    const len = line === lines - 1 ? Math.round(width * 0.45) : width - Math.floor(hash(line, 7, seed) * 7);
-    if (x >= len) return null;
-    // Word gaps.
-    if (hash(Math.floor((x + line * 3) / 4), line, seed) < 0.18 && x % 4 === 3) return null;
-    let before = 0;
-    for (let l = 0; l < line; l++) before += l === lines - 1 ? Math.round(width * 0.45) : width - Math.floor(hash(l, 7, seed) * 7);
-    const total = before + len;
-    const typed = Math.floor((t * 22) % (total + 60));
-    const at = before + x;
-    if (at === typed) return { v: Math.sin(t * 6) > 0 ? 1 : 0.35, tone: "hue" };
-    if (at > typed) return { v: 0.07 };
-    return { v: 0.45 };
+    // The gutter: a line number's worth of cells, then a gap.
+    if (x < 2) return { v: 0.16 };
+    if (x < 4) return null;
+    const cx = x - 4;
+    // A line: indent, then words separated by single gaps, each word a token kind.
+    const indent = [0, 2, 2, 4, 4, 2, 0, 2][(line + Math.floor(seed)) % 8];
+    const isComment = hash(line, 11, seed) < 0.16;
+    const length = indent + 6 + Math.floor(hash(line, 12, seed) * (width - 16 - indent));
+    if (cx < indent || cx >= length) return null;
+    // Words: walk from the indent, each 2–7 cells long, one cell apart.
+    let pos = indent,
+      w = 0;
+    while (pos < length) {
+      const wl = 2 + Math.floor(hash(line * 31 + w, 13, seed) * 6);
+      if (cx >= pos && cx < pos + wl) break;
+      if (cx === pos + wl) return null;
+      pos += wl + 1;
+      w++;
+    }
+    // Typed so far, across the whole block.
+    const per = width - 4;
+    const at = line * per + cx;
+    const typed = Math.floor((t * 56) % (lines * per + 120));
+    if (at === typed) return { v: Math.sin(t * 7) > 0 ? 1 : 0.4, tone: "hue" };
+    if (at > typed) return { v: 0.05 };
+    if (isComment) return { v: 0.22 };
+    // The first word a keyword; then names, strings and the odd number.
+    const kind =
+      w === 0
+        ? "violet"
+        : hash(line * 7 + w, 14, seed) < 0.26
+          ? "green"
+          : hash(line * 5 + w, 15, seed) < 0.38
+            ? "blue"
+            : hash(line + w, 16, seed) < 0.18
+              ? "orange"
+              : undefined;
+    return kind ? { v: 0.75, tone: kind as Named } : { v: 0.5 };
+  },
+
+  /**
+   * A commit graph: lanes in the projects' colours, commits sliding left as new
+   * ones land at the right, branches forking off and merging back.
+   */
+  commits({ i, j: row, cols, rows, t, seed }) {
+    const lanes: Named[] = ["rose", "ember", "teal", "green"];
+    const top = Math.round(rows * 0.36);
+    const gap = Math.max(3, Math.floor((rows * 0.46) / lanes.length));
+    const lane = (row - top) / gap;
+    const shift = Math.floor(t * 4);
+    const x = i + shift; // world column
+    const SPACING = 6;
+    // Branches live for a stretch, then merge back into the main line (lane 0).
+    const alive = (l: number, wx: number) => {
+      if (l === 0) return true;
+      const span = Math.floor(wx / 48);
+      return hash(span, l, seed) < 0.62 && wx % 48 > 6 && wx % 48 < 40;
+    };
+    if (Number.isInteger(lane) && lane >= 0 && lane < lanes.length) {
+      const l = lane;
+      if (!alive(l, x)) return l === 0 ? { v: 0.25 } : null;
+      const commit = x % SPACING === 0 && hash(Math.floor(x / SPACING), l + 20, seed) < 0.7;
+      // The newest commit, at the right edge, pulses.
+      const newest = i >= cols - SPACING - 2 && commit && l === 0;
+      if (commit) return { v: newest ? 0.6 + 0.4 * Math.abs(Math.sin(t * 3)) : 0.9, tone: lanes[l] };
+      return x % 2 ? null : { v: 0.32, tone: lanes[l] };
+    }
+    // Forks and merges: a diagonal from the main line up to the branch at its ends.
+    for (let l = 1; l < lanes.length; l++) {
+      const wx = x % 48;
+      const span = Math.floor(x / 48);
+      if (hash(span, l, seed) >= 0.62) continue;
+      const y0 = top,
+        y1 = top + l * gap;
+      if (row <= y0 || row >= y1) continue;
+      const frac = (row - y0) / (y1 - y0);
+      // Forks rise from the main line near the start of a stretch; merges come back down near its end.
+      const fx = Math.round(2 + frac * 4);
+      const mx = Math.round(40 + (1 - frac) * 4);
+      if (wx === fx || wx === mx) return { v: 0.5, tone: lanes[l] };
+    }
+    return null;
   },
 
   /** A line through the years, a node for each milestone, a pulse running along it. */
@@ -323,7 +399,7 @@ const MOTIFS: Record<string, Motif> = {
   },
 };
 
-type Palette = { fg: string; hue: string; add: string; del: string };
+type Palette = { fg: string; hue: string; add: string; del: string; named: Record<string, string> };
 
 function palette(el: HTMLElement): Palette {
   const s = getComputedStyle(el);
@@ -333,6 +409,7 @@ function palette(el: HTMLElement): Palette {
     hue: s.getPropertyValue("--art-hue").trim() || root.getPropertyValue("--c-accent").trim(),
     add: root.getPropertyValue("--c-hue-green").trim(),
     del: root.getPropertyValue("--c-danger").trim(),
+    named: Object.fromEntries(NAMED.map((n) => [n, root.getPropertyValue(`--c-hue-${n}`).trim()])),
   };
 }
 
@@ -381,7 +458,8 @@ function mount(el: HTMLElement, still: boolean) {
           continue;
         }
         ctx.globalAlpha = Math.min(1, c.v) * fade * dim;
-        ctx.fillStyle = c.tone === "hue" ? pal.hue : c.tone === "add" ? pal.add : c.tone === "del" ? pal.del : pal.fg;
+        ctx.fillStyle =
+          c.tone === "hue" ? pal.hue : c.tone === "add" ? pal.add : c.tone === "del" ? pal.del : c.tone ? pal.named[c.tone] : pal.fg;
         ctx.fillRect(ox + i * PITCH, oy + j * PITCH, BLOCK, BLOCK);
       }
     }

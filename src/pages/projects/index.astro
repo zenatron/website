@@ -7,6 +7,7 @@
  */
 import Plain from "@/layouts/Plain.astro";
 import PixelArt from "@/components/plain/PixelArt.astro";
+import PageCover from "@/components/plain/PageCover.astro";
 import sharp from "sharp";
 import { join } from "node:path";
 import { getAllProjects, projectHue, projectSlug } from "@/lib/projects";
@@ -45,6 +46,7 @@ const coursework = projects.filter(isCoursework).map((p) => ({
 ---
 
 <Plain title="Projects — Phil Vishnevsky" ogSlug="projects" fixed>
+  <PageCover motif="commits" seed="projects" hue="rose" />
   <main class="projects">
     <h1 class="sr-only">Projects</h1>
     <div class="strip" data-strip>
@@ -158,12 +160,13 @@ const coursework = projects.filter(isCoursework).map((p) => ({
 </script>
 
 <style>
+  /* The strip fills what the cover leaves, centred in it. */
   .projects {
-    height: 100dvh;
+    height: calc(100dvh - clamp(140px, 14vw, 210px));
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-top: 3rem;
+    padding-bottom: 2rem;
   }
   .strip {
     display: flex;
@@ -281,7 +284,7 @@ const coursework = projects.filter(isCoursework).map((p) => ({
     }
     .projects {
       height: auto;
-      padding: 6rem 1.5rem 4rem;
+      padding: 1rem 1.5rem 4rem;
     }
     .strip {
       flex-direction: column;
