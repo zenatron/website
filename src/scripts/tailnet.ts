@@ -112,14 +112,12 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
 
   // ── Colors, re-read when the theme changes ─────────────────
   let fg = "#000",
-    ground = "#fff",
     accent = "#00f",
     green = "#0a0";
   const hue: Record<string, string> = {};
   const readColors = () => {
     const s = getComputedStyle(document.documentElement);
     fg = s.getPropertyValue("--c-text").trim() || fg;
-    ground = s.getPropertyValue("--c-bg").trim() || ground;
     accent = s.getPropertyValue("--c-accent").trim() || accent;
     green = s.getPropertyValue("--c-hue-green").trim() || green;
     for (const n of HUES) hue[n] = s.getPropertyValue(`--c-hue-${n}`).trim();
@@ -750,30 +748,17 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       ctx.globalAlpha = (0.55 + n.flash * 0.45 + lit * 0.3) * fade;
       cell(i, j);
     } else if (servicesOn(n).length && !n.offline) {
-      // A server: one solid unit rather than cells, split into drive bays by
-      // thin lines, each bay with a status light that blinks on its own, all
-      // lit at once when traffic lands.
-      // Three cells wide, four tall, centred on the node's row.
-      const bays = 4;
-      const width = 3 * PITCH - 2,
-        height = 4 * PITCH - 2;
-      const left = (i - 1) * PITCH,
-        top = j * PITCH + BLOCK / 2 - height / 2;
-      ctx.fillStyle = fg;
-      ctx.globalAlpha = (0.42 + n.flash * 0.3 + lit * 0.3) * fade;
-      ctx.fillRect(left, top, width, height);
-      for (let k = 0; k < bays; k++) {
-        const y = top + 1 + k * 7;
-        if (k > 0) {
-          // The seam between bays, in the page's own colour.
-          ctx.fillStyle = ground;
-          ctx.globalAlpha = 0.85 * fade;
-          ctx.fillRect(left + 2, y - 1, width - 4, 1);
-        }
-        const on = n.flash > 0.3 || Math.sin(now / 260 + k * 2.1 + n.phase) > 0.2;
-        ctx.fillStyle = green;
-        ctx.globalAlpha = (on ? 1 : 0.35) * fade;
-        ctx.fillRect(left + width - 7, y + 2, 4, 2);
+      // A server: a 3×4 grid of cells, the mesh's own squares. Each row's last
+      // cell is a status light that blinks on its own, all lit when traffic lands.
+      for (let row = j - 2; row <= j + 1; row++) {
+        ctx.fillStyle = fg;
+        ctx.globalAlpha = (0.38 + n.flash * 0.35 + lit * 0.3) * fade;
+        cell(i - 1, row);
+        cell(i, row);
+        const on = n.flash > 0.3 || Math.sin(now / 260 + row * 2.1 + n.phase) > 0.2;
+        ctx.fillStyle = on ? green : fg;
+        ctx.globalAlpha = (on ? 0.95 : 0.22) * fade;
+        cell(i + 1, row);
       }
     } else if (n.offline) {
       // Hollow and dim: still on the tailnet, just not here.
@@ -802,7 +787,7 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       const rack = servicesOn(n).length > 0 && !n.offline;
       ctx.fillStyle = green;
       ctx.globalAlpha = 0.85 * fade;
-      ctx.fillRect((i + (rack ? 2 : 1)) * PITCH + (rack ? 1 : 2), (j - 1) * PITCH - (rack ? 12 : 3), 4, 4);
+      ctx.fillRect((i + (rack ? 2 : 1)) * PITCH + 2, (j - (rack ? 2 : 1)) * PITCH - 3, 4, 4);
     }
     // Services (and on a phone, most devices) only show their names when something reaches them, or on hover.
     const always = named(n);
