@@ -1,0 +1,39 @@
+---
+/**
+ * The nav, written as `tailscale status` would list peers: each page is a
+ * host on the tailnet, and the one you're on is marked `*`. Dimmed until
+ * current or hovered.
+ */
+const LINKS = [
+  { label: "mesh", href: "/" },
+  { label: "projects", href: "/projects/" },
+  { label: "photos", href: "/photos/" },
+  { label: "blog", href: "/blog/" },
+  { label: "about", href: "/about/" },
+];
+
+const path = Astro.url.pathname;
+const current = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
+---
+
+<nav class="nav" aria-label="Main" data-mesh-avoid>
+  <a class="nav-host" href="/" aria-label="Home">pvish</a>
+  <ul>
+    {
+      LINKS.map(({ label, href }) => (
+        <li>
+          <a href={href} aria-current={current(href) ? "page" : undefined}>
+            {label}
+            {current(href) && <span aria-hidden="true">*</span>}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <button type="button" class="nav-theme" data-theme-toggle aria-label="Toggle theme">
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+      <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.4"></circle>
+      <path d="M8 2a6 6 0 0 1 0 12z" fill="currentColor"></path>
+    </svg>
+  </button>
+</nav>

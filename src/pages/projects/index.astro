@@ -1,68 +1,280 @@
 ---
-import Shell from "@/layouts/Shell.astro";
-import PageHead from "@/components/PageHead.astro";
-import { cardArt } from "@/lib/cardart";
-import Cells from "@/components/Cells.astro";
-import Archive from "@/components/Archive.astro";
-import { getAllProjects, projectHue, projectSlug } from "@/lib/projects";
+/**
+ * The things I built, side by side in one strip that starts on the
+ * page's column and runs off the right edge. A vertical wheel or swipe
+ * glides it sideways (see the script). Phones get a plain list.
+ * Coursework is listed under the strip, out of the way.
+ */
+import Plain from "@/layouts/Plain.astro";
+import { getAllProjects, projectSlug } from "@/lib/projects";
 
 const projects = await getAllProjects();
-
-const monthYear = (v: string | Date | undefined) => {
-  if (!v) return undefined;
-  const d = new Date(v);
-  return Number.isNaN(d.getTime())
-    ? undefined
-    : d.toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
-};
-
-/**
- * The things I built get cards; the data mining coursework gets the same
- * numbered index it has on /blog. As cards, seven exercises outnumbered
- * the four projects people actually come here for.
- */
 const isCoursework = (p: (typeof projects)[number]) => p.data.type === "data";
-const built = projects.filter((p) => !isCoursework(p));
-const coursework = projects
-  .filter(isCoursework)
-  .reverse()
-  .map((p, i) => ({
-    slug: projectSlug(p),
-    href: `/projects/${projectSlug(p)}/`,
-    title: p.data.title.replace(/^Intro to Data Mining:\s*/, ""),
-    note: p.data.description || undefined,
-    order: i + 1,
-    date: p.data.date,
-  }));
+const year = (v?: string) => (v ? new Date(v).getUTCFullYear() : "");
 
-const cells = await Promise.all(built.map(async (p) => ({
-  title: p.data.title,
-  href: `/projects/${projectSlug(p)}/`,
-  slug: projectSlug(p),
-  description: p.data.description || undefined,
-  meta: monthYear(p.data.date),
-  hue: projectHue(p),
-  art: await cardArt({
+const built = projects
+  .filter((p) => !isCoursework(p))
+  .map((p) => ({
     slug: projectSlug(p),
     title: p.data.title,
-    thumbnail: p.data.thumbnail,
-    collection: "projects",
-  }),
-})));
+    description: p.data.description,
+    year: year(p.data.date),
+    thumb: p.data.thumbnail,
+  }));
+const coursework = projects.filter(isCoursework).map((p) => ({
+  slug: projectSlug(p),
+  title: p.data.title.replace(/^Intro to Data Mining:\s*/, ""),
+}));
 ---
-<Shell title="Projects | Phil Vishnevsky" description="My experiments, projects, and failures." ogSlug="projects">
-  <PageHead title="Projects">
-    Experiments, coursework, and things I built because they didn’t exist yet.
-  </PageHead>
-  <Cells cells={cells} layout="pairs" />
 
-  {coursework.length > 0 && (
-    <Archive
-      title="Data mining coursework"
-      blurb="Exercises and projects from an intro data mining course, in the order they were assigned — from Python basics to clustering wines."
-      entries={coursework}
-      initial={coursework.length}
-    />
-  )}
-</Shell>
+<Plain title="Projects — Phil Vishnevsky" ogSlug="projects" fixed>
+  <main class="projects">
+    <h1 class="sr-only">Projects</h1>
+    <div class="strip" data-strip>
+      {
+        built.map((p, i) => (
+          <a class="tile" href={`/projects/${p.slug}/`} data-vt="forward" data-slug={p.slug}>
+            <div class="frame">
+              {p.thumb ? (
+                <img src={p.thumb} alt="" loading={i < 2 ? "eager" : "lazy"} fetchpriority={i === 0 ? "high" : undefined} />
+              ) : (
+                <div class="type" aria-hidden="true">{p.title}</div>
+              )}
+              <span class="pill">view project</span>
+            </div>
+            <div class="caption">
+              <span class="name">{p.title}</span>
+              <span class="year">{p.year}</span>
+            </div>
+            {p.description && <p class="tagline">{p.description}</p>}
+          </a>
+        ))
+      }
+      <aside class="coursework">
+        <p class="year">coursework · data mining</p>
+        <ul>
+          {coursework.map((c) => (
+            <li><a class="ink" href={`/projects/${c.slug}/`}>{c.title}</a></li>
+          ))}
+        </ul>
+      </aside>
+    </div>
+  </main>
+</Plain>
 
+<script>
+  /**
+   * A vertical wheel turns into a sideways glide that eases toward its
+   * target; sideways swipes over the strip are left to the browser.
+   * Arrow and page keys step it. Below 1024px the strip is a list and
+   * none of this runs.
+   */
+  const GLIDE = 0.18;
+  const STEPS: Record<string, number> = {
+    ArrowRight: 0.1, ArrowDown: 0.1, ArrowLeft: -0.1, ArrowUp: -0.1,
+    PageDown: 0.8, PageUp: -0.8, " ": 0.8, End: Infinity, Home: -Infinity,
+  };
+  const strip = document.querySelector<HTMLElement>("[data-strip]");
+  const desktop = matchMedia("(min-width: 1024px)");
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (strip) {
+    // Back from a project, open on the one just viewed.
+    const lastKey = "projects-last";
+    try {
+      const last = sessionStorage.getItem(lastKey);
+      const el = last && strip.querySelector<HTMLElement>(`[data-slug="${CSS.escape(last)}"]`);
+      if (el && desktop.matches) strip.scrollLeft = el.offsetLeft - parseFloat(getComputedStyle(strip).paddingLeft);
+    } catch {}
+    strip.addEventListener("click", (e) => {
+      const tile = (e.target as Element).closest<HTMLElement>("[data-slug]");
+      try { if (tile) sessionStorage.setItem(lastKey, tile.dataset.slug!); } catch {}
+    });
+
+    let target = strip.scrollLeft;
+    let raf = 0;
+    const glide = () => {
+      const before = strip.scrollLeft;
+      strip.scrollLeft += (target - before) * GLIDE;
+      // Scroll positions round to whole pixels and stall short of the target.
+      if (strip.scrollLeft === before) {
+        strip.scrollLeft = target;
+        raf = 0;
+        return;
+      }
+      raf = requestAnimationFrame(glide);
+    };
+    const glideBy = (delta: number) => {
+      const max = strip.scrollWidth - strip.clientWidth;
+      target = Math.max(0, Math.min(max, (raf ? target : strip.scrollLeft) + delta));
+      if (still) strip.scrollLeft = target;
+      else if (!raf) raf = requestAnimationFrame(glide);
+    };
+
+    addEventListener("wheel", (e) => {
+      if (!desktop.matches) return;
+      const sideways = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+      if (sideways && strip.contains(e.target as Node)) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+        return;
+      }
+      e.preventDefault();
+      const d = sideways ? e.deltaX : e.deltaY;
+      glideBy(e.deltaMode === 1 ? d * 16 : d);
+    }, { passive: false });
+
+    addEventListener("keydown", (e) => {
+      const step = STEPS[e.key];
+      if (!desktop.matches || step === undefined || e.altKey || e.ctrlKey || e.metaKey) return;
+      if (e.key === " " && e.target instanceof HTMLButtonElement) return;
+      e.preventDefault();
+      glideBy((e.key === " " && e.shiftKey ? -step : step) * strip.clientWidth);
+    });
+  }
+</script>
+
+<style>
+  .projects {
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 3rem;
+  }
+  .strip {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    padding: 0 var(--gutter);
+    scrollbar-width: none;
+  }
+  .strip::-webkit-scrollbar {
+    display: none;
+  }
+  .tile {
+    display: block;
+    width: min-content;
+    flex-shrink: 0;
+    color: inherit;
+    text-decoration: none;
+  }
+  .frame {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    height: min(62vh, 42rem);
+    overflow: hidden;
+    background: color-mix(in srgb, var(--fg) 6%, transparent);
+  }
+  .frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s ease-out;
+  }
+  .type {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    padding: 2rem;
+    font-size: clamp(2rem, 5vh, 3.5rem);
+    letter-spacing: -0.02em;
+    text-align: center;
+    color: color-mix(in srgb, var(--fg) 70%, transparent);
+    transition: transform 0.7s ease-out;
+  }
+  .tile:hover img,
+  .tile:focus-visible img,
+  .tile:hover .type,
+  .tile:focus-visible .type {
+    transform: scale(1.03);
+  }
+  .pill {
+    position: absolute;
+    left: 1rem;
+    bottom: 1rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 999px;
+    background: rgb(0 0 0 / 0.55);
+    color: #f6f3ed;
+    font-size: 12px;
+    opacity: 0;
+    transform: translateY(4px);
+    backdrop-filter: blur(12px);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    pointer-events: none;
+  }
+  .tile:hover .pill,
+  .tile:focus-visible .pill {
+    opacity: 1;
+    transform: none;
+  }
+  .caption {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    white-space: nowrap;
+  }
+  .year {
+    margin: 0;
+    font-size: 12px;
+    color: var(--fg-muted);
+  }
+  .tagline {
+    margin: 0.25rem 0 0;
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--fg-muted);
+  }
+  .coursework {
+    flex-shrink: 0;
+    align-self: flex-end;
+    width: 18rem;
+    padding-left: 2rem;
+    font-size: 13px;
+  }
+  .coursework ul {
+    margin: 0.75rem 0 0;
+    padding: 0;
+    list-style: none;
+    line-height: 2;
+  }
+  .coursework a {
+    opacity: 0.7;
+  }
+
+  /* Phones and narrow windows: a plain list, scrolling the page. */
+  @media (max-width: 1023px) {
+    :global(html.fixed) {
+      overflow: auto;
+    }
+    .projects {
+      height: auto;
+      padding: 6rem 1.5rem 4rem;
+    }
+    .strip {
+      flex-direction: column;
+      gap: 3.5rem;
+      overflow: visible;
+      padding: 0;
+    }
+    .tile,
+    .coursework {
+      width: 100%;
+    }
+    .frame {
+      height: auto;
+      width: 100%;
+      border-radius: 1rem;
+    }
+    .pill {
+      display: none;
+    }
+    .coursework {
+      align-self: auto;
+      padding: 0;
+    }
+  }
+</style>

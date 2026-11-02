@@ -1,287 +1,109 @@
 ---
-import Shell from "@/layouts/Shell.astro";
-import { cardArt } from "@/lib/cardart";
-import Cells from "@/components/Cells.astro";
-import ReachCards from "@/components/ReachCards.astro";
-import Mark from "@/components/Mark.astro";
-import HeroArt from "@/components/HeroArt.astro";
-import SectionHead from "@/components/SectionHead.astro";
+/**
+ * Home: one screen, the tailnet behind it, a few lines of who I am in
+ * the bottom-left corner.
+ */
+import Plain from "@/layouts/Plain.astro";
+import Tailnet from "@/components/plain/Tailnet.astro";
 import { SITE } from "@/data/site";
-import { PHOTOS } from "@/data/photos";
-import { getAllBlogPosts, seriesHue } from "@/lib/blog";
-import { getAllProjects, projectHue, projectSlug } from "@/lib/projects";
 import { personSchema, websiteSchema } from "@/lib/schema";
 
-const [posts, projects] = await Promise.all([getAllBlogPosts(), getAllProjects()]);
-
-const monthYear = (v: string | Date | undefined) => {
-  if (!v) return undefined;
-  const d = new Date(v);
-  return Number.isNaN(d.getTime())
-    ? undefined
-    : d.toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
-};
-
-const latestProjects = await Promise.all(projects.slice(0, 3).map(async (p) => ({
-  title: p.data.title,
-  href: `/projects/${projectSlug(p)}/`,
-  slug: projectSlug(p),
-  description: p.data.description || undefined,
-  meta: monthYear(p.data.date),
-  hue: projectHue(p),
-  art: await cardArt({
-    slug: projectSlug(p),
-    title: p.data.title,
-    thumbnail: p.data.thumbnail,
-    collection: "projects",
-  }),
-})));
-
-const latestPosts = await Promise.all(posts.slice(0, 3).map(async (p) => ({
-  title: p.data.title,
-  href: `/blog/${p.slug}/`,
-  slug: p.slug,
-  description: p.data.excerpt || undefined,
-  meta: monthYear(p.data.date),
-  hue: seriesHue(p.data.series),
-  art: await cardArt({ slug: p.slug, title: p.data.title, cover: p.data.cover, collection: "blog" }),
-})));
-
-/** The newest three, newest first; each opens in the viewer on /photos. */
-const latestPhotos = PHOTOS.slice(-3).reverse();
+const SOCIALS = [
+  { label: "github", href: SITE.github },
+  { label: "linkedin", href: "https://www.linkedin.com/in/philvishnevsky/" },
+  { label: "email", href: `mailto:${SITE.email}` },
+  { label: "resume", href: SITE.resume },
+  { label: "say hi", href: "/say-hi/" },
+];
 ---
 
-<Shell schema={[personSchema(), websiteSchema()]}>
-  <section class="hero">
-    <div class="intro">
-      <h1>{SITE.name}</h1>
-      <p class="statement">
-        a full-stack engineer in <Mark hue="violet">Hartford</Mark>
-        building <Mark hue="blue">servers</Mark>,
-        <Mark hue="green">web apps</Mark>, and
-        <Mark hue="orange">games</Mark> that don’t break in production.
+<Plain fixed schema={[personSchema(), websiteSchema()]}>
+  <main class="home">
+    <Tailnet />
+    <header class="intro">
+      <p class="motto" data-mesh-avoid>
+        small machines,<br />quietly talking<span class="cursor" aria-hidden="true"></span>
       </p>
-
-      <p class="currently-label">Currently</p>
-      <dl class="currently">
-        <div class="row">
-          <dt style="--fg: var(--c-accent); --bg: var(--c-tint-accent)">open</dt>
-          <dd>to <Mark hue="accent">interesting projects</Mark></dd>
-        </div>
-        <div class="row">
-          <dt style="--fg: var(--c-hue-green); --bg: var(--c-tint-green)">building</dt>
-          <dd><a class="ref" href="/projects/preamble/"><Mark hue="green">preamble</Mark></a>, a FLAC organizer, and tools for card games</dd>
-        </div>
-        <div class="row">
-          <dt style="--fg: var(--c-hue-blue); --bg: var(--c-tint-blue)">running</dt>
-          <dd>a <Mark hue="blue">homelab</Mark> with <span class="nines" title="four nines">99.99%</span> uptime</dd>
-        </div>
-      </dl>
-    </div>
-
-    <div class="art"><HeroArt /></div>
-  </section>
-
-  <section class="band">
-    <SectionHead title="Projects" href="/projects/" link="All projects" />
-    <Cells cells={latestProjects} layout="pairs" />
-  </section>
-
-  <section class="band">
-    <SectionHead title="Writing" href="/blog/" link="All posts" />
-    <Cells cells={latestPosts} layout="pairs" />
-  </section>
-
-  {latestPhotos.length > 0 && (
-    <section class="band">
-      <SectionHead title="Photos" href="/photos/" link="All photos" />
-      <ul class="shots">
-        {latestPhotos.map((p) => (
-          <li>
-            <a href={`/photos/#${p.id}`} data-photo-link={p.id}>
-              <span class="shot" style={p.tone && `--tone: ${p.tone}`}>
-                <picture>
-                  <source type="image/avif" srcset={`/images/photos/${p.id}-480.avif 480w, /images/photos/${p.id}-960.avif 960w`} sizes="(max-width: 640px) 33vw, 300px" />
-                  <img
-                    src={`/images/photos/${p.id}-480.webp`}
-                    srcset={`/images/photos/${p.id}-480.webp 480w, /images/photos/${p.id}-960.webp 960w`}
-                    sizes="(max-width: 640px) 33vw, 300px"
-                    alt={p.alt}
-                    width={p.width}
-                    height={p.height}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </picture>
-              </span>
-              <span class="caption">{p.title}</span>
-              {p.place && <span class="place">{p.place}</span>}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
-  )}
-
-  <section class="band">
-    <SectionHead title="Get in touch" href="/say-hi/" link="Everywhere else" />
-    <ReachCards />
-  </section>
-</Shell>
+      <div class="bio" data-mesh-avoid>
+        <h1>Hi, I’m Phil.</h1>
+        <p>Software engineer @ RTX, out of {SITE.city}, CT.</p>
+        <p>
+          Before that, <a class="ink" href="/about/">CEM</a> (intern), Shortlist, and co-founding
+          <a class="ink" href="https://underscore.games" target="_blank" rel="noopener">Underscore Games</a>.
+        </p>
+        <p>
+          Currently building <a class="ink" href="/projects/preamble/">preamble</a>, and self-hosting
+          <a class="ink" href="/blog/">everything I can</a>.
+        </p>
+        <p class="socials">
+          {
+            SOCIALS.map(({ label, href }, i) => (
+              <>
+                {i > 0 && <span class="sep"> / </span>}
+                <a class="ink" href={href} {...(href.startsWith("http") && { target: "_blank", rel: "noopener" })}>
+                  {label}
+                </a>
+              </>
+            ))
+          }
+        </p>
+      </div>
+    </header>
+  </main>
+</Plain>
 
 <style>
-  .hero {
-    display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-    gap: var(--s-7);
-    align-items: center;
-    padding-block: var(--s-5) var(--s-6);
-  }
-
-  h1 {
-    font-size: var(--t-sans-3xl);
-    font-weight: 700;
-    letter-spacing: var(--track-display);
-  }
-
-  .statement {
-    margin-top: var(--s-4);
-    font-size: var(--t-sans-xl);
-    font-weight: 400;
-    line-height: var(--lh-ui);
-    letter-spacing: var(--track-head);
-    max-width: 22ch;
-  }
-
-  /*
-   * Each line gets a real labelled column instead of a loose asterisk:
-   * the state is a mono chip, the thing itself stays in the author's
-   * voice, and the sentences align down the list.
-   */
-  .currently-label {
-    margin-top: var(--s-6);
-    font-size: var(--t-sans-2xs);
-    color: var(--c-dim);
-  }
-  /* One grid for the whole list, shared by every row through subgrid, so
-     the chip column is exactly as wide as the widest chip and the
-     sentences line up at any width. */
-  .currently {
-    margin: var(--s-3) 0 0;
-    display: grid;
-    grid-template-columns: max-content minmax(0, 1fr);
-    gap: var(--s-2) var(--s-3);
-  }
-  .currently .row {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: subgrid;
-    align-items: baseline;
-  }
-  .currently dt {
-    justify-self: start;
-    font-size: var(--t-sans-2xs);
-    color: var(--fg);
-    background: var(--bg);
-    padding: 3px 8px;
-    border-radius: var(--radius-chip);
-    line-height: var(--lh-snug);
-  }
-  .currently dd {
-    margin: 0;
-    font-size: var(--t-sans-sm);
-    line-height: var(--lh-body);
-    color: var(--c-muted);
-  }
-
-  .ref { color: inherit; }
-  @media (hover: hover) {
-    .ref:hover { text-decoration: underline; text-underline-offset: 3px; }
-  }
-
-  /* The figure is the claim, so it's set like one: the machine's voice,
-     in the text color, with figures that don't jiggle. */
-  .nines {
-    font-size: 0.92em;
-    font-variant-numeric: tabular-nums;
-    color: var(--c-text);
-    letter-spacing: var(--track-snug);
-  }
-
-  /*
-   * Narrow: the chips keep their column rather than stacking over their
-   * sentences — stacked, the three rows came apart into six loose lines.
-   * Hairlines hold each row together as one line of a list.
-   */
-  @media (max-width: 480px) {
-    .currently { row-gap: 0; }
-    .currently .row { padding-block: var(--s-3); }
-    .currently .row + .row { border-top: 1px solid var(--c-hairline); }
-    .currently dd { font-size: var(--t-sans-xs); line-height: var(--lh-ui); }
-  }
-
-  /* min-width: 0, or the dock strip on a phone sizes the column to all
-     sixteen icons instead of scrolling inside the screen. */
-  .art { max-width: 100%; min-width: 0; }
-
-  /* Each band opens with a SectionHead, which brings its own rule. */
-  .band { padding-bottom: var(--s-6); }
-
-  /* Three across, cropped to the library's 3:4, so the strip reads as a
-     corner of /photos rather than three more cards. */
-  .shots {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--s-4);
-  }
-  .shots a { display: block; color: inherit; }
-  .shot {
-    display: block;
-    aspect-ratio: 3 / 4;
+  .home {
+    position: relative;
+    height: 100dvh;
     overflow: hidden;
-    border-radius: var(--radius-card);
-    background: var(--tone, var(--c-sunken));
   }
-  .shot img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform var(--dur-pane) var(--ease);
+  .intro {
+    position: absolute;
+    left: var(--gutter);
+    bottom: clamp(3rem, 14vh, 8rem);
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    max-width: min(54rem, calc(100vw - 3rem));
+    pointer-events: none;
   }
-  .caption {
-    display: block;
-    margin-top: var(--s-3);
-    font-size: var(--t-sans-sm);
-    font-weight: 600;
-    line-height: var(--lh-snug);
+  .intro > * {
+    pointer-events: auto;
+    width: fit-content;
   }
-  .place {
-    display: block;
-    margin-top: 2px;
-    font-size: var(--t-sans-2xs);
-    color: var(--c-dim);
+  .bio {
+    font-size: 15px;
+    line-height: max(22px, 3vh);
   }
-  @media (hover: hover) {
-    .shots a:hover img { transform: scale(1.03); }
-    .shots a:hover .caption { color: var(--c-link); }
+  .bio h1,
+  .bio p {
+    margin: 0;
+    font-size: inherit;
+    font-weight: 400;
   }
-  @media (max-width: 560px) {
-    .shots { gap: var(--s-2); }
-    .shot { border-radius: var(--radius-sm); }
-    .caption { font-size: var(--t-sans-xs); }
-    .place { display: none; }
+  .socials {
+    margin-top: 1.5vh !important;
   }
-
-  @media (max-width: 860px) {
-    .hero {
-      grid-template-columns: minmax(0, 1fr);
-      gap: var(--s-5);
-      padding-block: var(--s-5) var(--s-6);
+  .socials a {
+    opacity: 0.6;
+  }
+  .socials a:hover,
+  .socials a:focus-visible {
+    opacity: 1;
+  }
+  .sep {
+    opacity: 0.4;
+  }
+  @media (max-width: 640px) {
+    .intro {
+      left: 1.5rem;
+      bottom: 2.5rem;
+      gap: 1.75rem;
     }
-    .statement { max-width: none; font-size: var(--t-sans-lg); }
-    h1 { font-size: var(--t-sans-2xl); }
+    .bio {
+      font-size: 14px;
+      line-height: 1.6;
+    }
   }
 </style>
