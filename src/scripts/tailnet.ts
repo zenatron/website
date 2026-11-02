@@ -8,6 +8,10 @@
  * clicking a peer pings everyone from it. A small log in the corner
  * prints what happened the way `tailscale ping` would.
  *
+ * Peers can be dragged to a new spot (a click without moving still pings).
+ *
+ * Anything marked [data-mesh-frost] gets no peer placed or dragged onto
+ * it, but the mesh still runs behind it (it wears a frosted panel).
  * Anything marked [data-mesh-avoid] is kept clear: no peer is placed
  * there and no cell is lit over it, so the text stays legible.
  */
@@ -23,7 +27,6 @@ const GUEST_LIFE = 24_000; // ms
 type Node = {
   name: string;
   os: string;
-  ip: string;
   relay: boolean;
   guest: boolean;
   ax: number; // anchor, px
@@ -46,13 +49,6 @@ type Packet = {
 };
 type Ripple = { x: number; y: number; r: number; max: number; reply: boolean };
 
-/** A stable 100.x.y.z for a name, so a peer keeps its address between visits. */
-function ipFor(name: string) {
-  let h = 2166136261;
-  for (const c of name) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0;
-  return `100.${64 + (h % 64)}.${(h >>> 8) % 256}.${(h >>> 16) % 254 + 1}`;
-}
-
 export function mountTailnet(root: HTMLElement, peers: Peer[]) {
   const canvas = root.querySelector("canvas")!;
   const ctx = canvas.getContext("2d")!;
@@ -70,11 +66,17 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
   let echo = new Float32Array(0); // green: replies
   let mask = new Uint8Array(0); // 1 where a cell is kept clear
   let avoid: DOMRect[] = [];
+  let frost: DOMRect[] = [];
   const nodes: Node[] = [];
   const packets: Packet[] = [];
   const ripples: Ripple[] = [];
   const pointer = { x: -1e4, y: -1e4 };
   let hovered: Node | null = null;
+  /** The peer being dragged, where the drag started, and whether it has moved enough to count. */
+  let dragging: Node | null = null;
+  let dragFrom = { x: 0, y: 0 };
+  let dragMoved = false;
+  let swallowClick = false;
   let sent = 0;
   let nextAuto = 0;
   let raf = 0;
@@ -92,8 +94,10 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
   };
 
   // ── Layout ─────────────────────────────────────────────────
-  const inAvoid = (x: number, y: number, pad = 0) =>
-    avoid.some((r) => x > r.left - pad && x < r.right + pad && y > r.top - pad && y < r.bottom + pad);
+  const inRects = (rects: DOMRect[], x: number, y: number, pad: number) =>
+    rects.some((r) => x > r.left - pad && x < r.right + pad && y > r.top - pad && y < r.bottom + pad);
+  /** Somewhere no peer may sit: clear areas and frosted panels alike. */
+  const inAvoid = (x: number, y: number, pad = 0) => inRects(avoid, x, y, pad) || inRects(frost, x, y, pad);
 
   function measure() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -109,13 +113,17 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     heat = new Float32Array(cols * rows);
     echo = new Float32Array(cols * rows);
     const base = root.getBoundingClientRect();
-    avoid = [...document.querySelectorAll<HTMLElement>("[data-mesh-avoid]")].map((el) => {
-      const r = el.getBoundingClientRect();
-      return new DOMRect(r.left - base.left, r.top - base.top, r.width, r.height);
-    });
+    const rects = (sel: string) =>
+      [...document.querySelectorAll<HTMLElement>(sel)].map((el) => {
+        const r = el.getBoundingClientRect();
+        return new DOMRect(r.left - base.left, r.top - base.top, r.width, r.height);
+      });
+    avoid = rects("[data-mesh-avoid]");
+    frost = rects("[data-mesh-frost]");
+    // Only the clear areas are masked; frosted panels let the mesh run behind them.
     mask = new Uint8Array(cols * rows);
     for (let j = 0; j < rows; j++)
-      for (let i = 0; i < cols; i++) if (inAvoid(i * PITCH, j * PITCH, PITCH * 2)) mask[j * cols + i] = 1;
+      for (let i = 0; i < cols; i++) if (inRects(avoid, i * PITCH, j * PITCH, PITCH * 2)) mask[j * cols + i] = 1;
     placePeers();
   }
 
@@ -210,7 +218,6 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     const g: Node = {
       name,
       os: "browser",
-      ip: ipFor(name),
       relay: false,
       guest: true,
       ax: x,
@@ -244,19 +251,61 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
   const nodeAt = (x: number, y: number) =>
     nodes.find((n) => Math.hypot(n.x - x, n.y - y) < PITCH * 3) ?? null;
 
+  function onPointerDown(e: PointerEvent) {
+    if (e.button !== 0 || (e.target as Element).closest("a, button, [data-mesh-ignore]")) return;
+    const r = root.getBoundingClientRect();
+    const hit = nodeAt(e.clientX - r.left, e.clientY - r.top);
+    if (!hit) return;
+    dragging = hit;
+    dragFrom = { x: e.clientX, y: e.clientY };
+    dragMoved = false;
+    root.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  }
+
   function onPointerMove(e: PointerEvent) {
     const r = root.getBoundingClientRect();
     pointer.x = e.clientX - r.left;
     pointer.y = e.clientY - r.top;
-    hovered = nodeAt(pointer.x, pointer.y);
-    root.style.cursor = hovered ? "pointer" : "crosshair";
+    if (dragging) {
+      if (!dragMoved && Math.hypot(e.clientX - dragFrom.x, e.clientY - dragFrom.y) > 4) dragMoved = true;
+      if (dragMoved) {
+        // Kept on the canvas, below the nav, and off the text: past an edge it stops there.
+        const x = Math.max(24, Math.min(w - 120, pointer.x));
+        const y = Math.max(72, Math.min(h - 24, pointer.y));
+        // Its name runs to the right, so that has to stay clear of the text too.
+        if (!inAvoid(x, y, 20) && !inAvoid(x + 70, y, 12)) {
+          dragging.ax = x;
+          dragging.ay = y;
+        }
+        dragging.flash = Math.max(dragging.flash, 0.4);
+      }
+      root.style.cursor = "grabbing";
+    } else {
+      hovered = nodeAt(pointer.x, pointer.y);
+      root.style.cursor = hovered ? "grab" : "crosshair";
+    }
     if (still) draw(performance.now());
+  }
+
+  function onPointerUp(e: PointerEvent) {
+    if (!dragging) return;
+    // A drag isn't a click: don't ping as the button comes up.
+    swallowClick = dragMoved;
+    if (dragMoved) log(`${dragging.name} moved`);
+    dragging = null;
+    if (root.hasPointerCapture(e.pointerId)) root.releasePointerCapture(e.pointerId);
+    root.style.cursor = "grab";
   }
   function onPointerLeave() {
     pointer.x = pointer.y = -1e4;
     hovered = null;
   }
   function onClick(e: MouseEvent) {
+    if (swallowClick) {
+      swallowClick = false;
+      return;
+    }
     // Links and buttons above the canvas keep their clicks.
     if ((e.target as Element).closest("a, button, [data-mesh-ignore]")) return;
     const r = root.getBoundingClientRect();
@@ -272,7 +321,7 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     const s = dt / 1000;
     for (const n of nodes) {
       // A slow breath around the anchor; guests drift a little more.
-      const amp = n.guest ? 10 : 5;
+      const amp = n === dragging ? 0 : n.guest ? 10 : 5;
       n.x = n.ax + Math.sin(now / 2300 + n.phase) * amp;
       n.y = n.ay + Math.cos(now / 2900 + n.phase * 1.3) * amp;
       n.flash *= 0.94;
@@ -438,7 +487,9 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     ctx.fillStyle = fg;
     ctx.font = "11px 'Atkinson Hyperlegible Mono', ui-monospace, monospace";
     ctx.textBaseline = "middle";
-    const label = n === hovered ? `${n.name}  ${n.ip}  ${n.os}` : n.name;
+    // Hovered: what it runs and how it's reached. No addresses, real or made up.
+    const how = n.relay ? "relay" : n.guest ? "guest" : n === dragging ? "moving" : "direct";
+    const label = n === hovered || n === dragging ? `${n.name} · ${n.os} · ${how}` : n.name;
     ctx.fillText(label, (i + 2.5) * PITCH, j * PITCH + BLOCK / 2);
   }
 
@@ -495,7 +546,6 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     nodes.push({
       name: p.name,
       os: p.os,
-      ip: ipFor(p.name),
       relay: !!p.relay,
       guest: false,
       ax: 0,
@@ -523,7 +573,10 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
   });
   themeObs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", readColors);
+  root.addEventListener("pointerdown", onPointerDown);
   root.addEventListener("pointermove", onPointerMove);
+  root.addEventListener("pointerup", onPointerUp);
+  root.addEventListener("pointercancel", onPointerUp);
   root.addEventListener("pointerleave", onPointerLeave);
   root.addEventListener("click", onClick);
   // Fonts land after the first frame; redraw the labels in the right face.

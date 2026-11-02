@@ -24,7 +24,7 @@ const SOCIALS = [
       <p class="motto" data-mesh-avoid>
         small machines,<br />quietly talking<span class="cursor" aria-hidden="true"></span>
       </p>
-      <div class="bio" data-mesh-avoid>
+      <div class="bio" data-mesh-frost>
         <h1>Hi, I’m Phil.</h1>
         <p>Software engineer @ RTX, out of {SITE.city}, CT.</p>
         <p>
@@ -72,9 +72,18 @@ const SOCIALS = [
     pointer-events: auto;
     width: fit-content;
   }
+  /* Frosted, so packets crossing behind the words stay visible, softened. The
+     negative margin keeps the text lined up with the motto above it. */
   .bio {
+    margin-left: -1.5rem;
+    padding: 1.25rem 1.5rem;
     font-size: 15px;
     line-height: max(22px, 3vh);
+    border-radius: 14px;
+    border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
+    background: color-mix(in srgb, var(--ground) 52%, transparent);
+    -webkit-backdrop-filter: blur(3px) saturate(1.4);
+    backdrop-filter: blur(3px) saturate(1.4);
   }
   .bio h1,
   .bio p {
@@ -102,6 +111,8 @@ const SOCIALS = [
       gap: 1.75rem;
     }
     .bio {
+      margin-left: -1rem;
+      padding: 1rem;
       font-size: 14px;
       line-height: 1.6;
     }
