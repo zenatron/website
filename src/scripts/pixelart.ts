@@ -217,29 +217,51 @@ const MOTIFS: Record<string, Motif> = {
     return null;
   },
 
-  /** A viewfinder: corner brackets, an iris that breathes, the thirds marked faintly. */
-  aperture({ i, j: row, cols, rows, t }) {
-    const top = Math.round(rows * 0.36);
-    const j = row - top;
-    const h = Math.max(6, Math.round(rows * 0.5));
-    if (j < 0 || j >= h) return null;
-    const w = Math.round(h * 1.5);
-    const left = Math.round((cols - w) / 2);
-    const x = i - left;
-    if (x < 0 || x >= w) return null;
-    const arm = Math.max(3, Math.round(h * 0.22));
-    const edgeX = x === 0 || x === w - 1,
-      edgeY = j === 0 || j === h - 1;
-    if ((edgeX && (j < arm || j >= h - arm)) || (edgeY && (x < arm || x >= w - arm))) return { v: 0.7 };
-    if ((x === Math.round(w / 3) || x === Math.round((2 * w) / 3)) && (j === Math.round(h / 3) || j === Math.round((2 * h) / 3)))
-      return { v: 0.3 };
-    const cx = w / 2 - 0.5,
-      cy = h / 2 - 0.5;
-    const r = Math.hypot(x - cx, (j - cy) * 1.0);
-    const iris = h * 0.34 * (0.7 + 0.3 * Math.sin(t * 0.9));
-    if (Math.abs(r - iris) < 0.55) return { v: 0.85, tone: "hue" };
-    if (r < 0.8) return { v: 0.6 };
-    return null;
+  /**
+   * A lens stopping down and opening up: a barrel ring with its marks, and seven
+   * blades that turn as they close, leaving a seven-sided opening with a little
+   * light coming through.
+   */
+  aperture({ i, j, rows, cols, t }) {
+    const cx = cols / 2 - 0.5,
+      cy = rows * 0.6;
+    const R = Math.max(7, rows * 0.42);
+    const dx = i - cx,
+      dy = j - cy;
+    const r = Math.hypot(dx, dy);
+    const phi = Math.atan2(dy, dx);
+    const TAU = Math.PI * 2;
+    // The barrel's marks, every 30°, just outside it.
+    if (r > R + 0.9 && r < R + 2) {
+      const a = ((phi % (TAU / 12)) + TAU / 12) % (TAU / 12);
+      return a < 0.12 || a > TAU / 12 - 0.12 ? { v: 0.3 } : null;
+    }
+    if (r > R) return null;
+    if (r > R - 1.1) return { v: 0.6 };
+    // How open the iris is: from about f/16 to f/1.4 and back.
+    const open = 0.5 + 0.5 * Math.sin(t * 0.55);
+    const a = R * (0.2 + 0.62 * open);
+    const N = 7;
+    const sector = TAU / N;
+    // The blades turn as they close.
+    const turn = (1 - open) * 0.9;
+    const local = (((phi - turn) % sector) + sector) % sector;
+    // A regular heptagon: inside when the distance along the sector's middle is under the apothem.
+    const along = r * Math.cos(local - sector / 2);
+    if (along < a - 0.6) {
+      // The opening: dark, with light toward the middle.
+      const glow = Math.max(0, 1 - r / Math.max(1, a));
+      return glow > 0.35 ? { v: 0.12 + glow * 0.4, tone: "hue" } : null;
+    }
+    if (along < a + 0.4) return { v: 0.85 };
+    // The blades: curved seams between them, alternating shades.
+    const twist = (r - a) / R;
+    const bladePhi = phi - turn - twist * 1.2;
+    const bladeLocal = (((bladePhi % sector) + sector) % sector) / sector;
+    if (bladeLocal < 0.13) return { v: 0.62 };
+    const blade = Math.floor((((bladePhi % TAU) + TAU) % TAU) / sector);
+    // Each blade lighter toward its leading edge, so they read as overlapping leaves.
+    return { v: (blade % 2 ? 0.14 : 0.24) + bladeLocal * 0.14 };
   },
 
   /** A row of app icons, swelling as the magnification passes along them. */

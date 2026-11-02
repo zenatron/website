@@ -108,9 +108,7 @@ const next = peers.length > 1 ? card(peers[(i + 1) % peers.length]) : null;
             {live && <a class="ink" href={live} rel="noopener noreferrer">{host(live)} ↗</a>}
             {source && <a class="ink" href={source} rel="noopener noreferrer">{host(source)} ↗</a>}
             {downloads.map((d) => (
-              <a class="ink" href={`/downloads/${d.filename}`} download>
-                {d.label ?? d.filename} ↓
-              </a>
+              <a class="ink" href={`/downloads/${d.filename}`} download>{`${d.label ?? d.filename} ↓`}</a>
             ))}
           </p>
         )

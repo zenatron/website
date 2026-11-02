@@ -5,7 +5,7 @@
  */
 import Plain from "@/layouts/Plain.astro";
 import Tailnet from "@/components/plain/Tailnet.astro";
-import { SITE } from "@/data/site";
+import { SITE, STATUS } from "@/data/site";
 import { personSchema, websiteSchema } from "@/lib/schema";
 
 const SOCIALS = [
@@ -25,24 +25,30 @@ const SOCIALS = [
         small machines,<br />quietly talking<span class="cursor" aria-hidden="true"></span>
       </p>
       <div class="bio" data-mesh-frost>
-        <h1>Hi, I’m Phil.</h1>
+        {/* A shell prompt opens the panel, its three lights in the mesh's own cells. */}
+        <p class="prompt" aria-hidden="true">
+          <span class="lights"><i></i><i></i><i></i></span>
+          <span>{SITE.user}@{SITE.host} ~ % whoami</span>
+        </p>
+        <h1>Hi, I’m <span class="name">Phil</span>.</h1>
         <p>Software engineer @ RTX, out of {SITE.city}, CT.</p>
+        {/* Each mention wears its own colour, the project's where it has one. */}
         <p>
-          Before that, <a class="ink" href="/about/">CEM</a> (intern), Shortlist, and co-founding
-          <a class="ink" href="https://underscore.games" target="_blank" rel="noopener">Underscore Games</a>.
+          Before that, <a class="ink tag" style="--h: var(--c-hue-violet)" href="/about/">CEM</a> (intern), Shortlist, and co-founding
+          <a class="ink tag" style="--h: var(--c-hue-ember)" href="https://underscore.games" target="_blank" rel="noopener">Underscore Games</a>.
         </p>
         <p>
-          Currently building <a class="ink" href="/projects/preamble/">preamble</a>, and self-hosting
-          <a class="ink" href="/blog/">everything I can</a>.
+          Currently building <a class="ink tag" style="--h: var(--c-hue-teal)" href="/projects/preamble/">preamble</a>, and self-hosting
+          <a class="ink tag" style="--h: var(--c-hue-blue)" href="/blog/">everything I can</a>.
         </p>
+        <p class="status"><i aria-hidden="true"></i>{STATUS}</p>
         <p class="socials">
           {
             SOCIALS.map(({ label, href }, i) => (
               <>
                 {i > 0 && <span class="sep"> / </span>}
-                <a class="ink" href={href} {...(href.startsWith("http") && { target: "_blank", rel: "noopener" })}>
-                  {label}
-                </a>
+                {/* The label hugs its tags: whitespace inside a link would be underlined too. */}
+                <a class="ink" href={href} {...(href.startsWith("http") && { target: "_blank", rel: "noopener" })}>{label}</a>
               </>
             ))
           }
@@ -92,7 +98,85 @@ const SOCIALS = [
     font-weight: 400;
   }
   .socials {
-    margin-top: 1.5vh !important;
+    margin-top: 0.35rem !important;
+  }
+
+  /* The prompt: three cells for the window's lights, then the command. */
+  .prompt {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.9rem !important;
+    font-size: 12px;
+    color: var(--fg-muted);
+  }
+  .lights {
+    display: flex;
+    gap: 4px;
+  }
+  .lights i {
+    width: 6px;
+    height: 6px;
+    background: var(--c-hue-ember);
+  }
+  .lights i:nth-child(2) {
+    background: var(--c-hue-orange);
+  }
+  .lights i:nth-child(3) {
+    background: var(--c-hue-green);
+  }
+  .bio h1 {
+    margin-bottom: 0.35rem !important;
+    font-size: 22px !important;
+    letter-spacing: -0.01em;
+  }
+  /* The name in the accent, underlined with a row of cells. */
+  .name {
+    color: var(--c-accent);
+    background: radial-gradient(circle, var(--c-accent) 0 1.5px, transparent 1.6px) 0 100% / 6px 3px repeat-x;
+    padding-bottom: 4px;
+  }
+  /* A mention: a square of its colour before it, its underline in that colour. */
+  .tag {
+    text-decoration-color: color-mix(in srgb, var(--h) 55%, transparent) !important;
+  }
+  .tag::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 0.4em;
+    transform: translateY(-2px);
+    background: var(--h);
+  }
+  .tag:hover,
+  .tag:focus-visible {
+    color: var(--h);
+    text-decoration-color: var(--h) !important;
+  }
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1.1rem !important;
+    font-size: 13px;
+    color: var(--fg-muted);
+  }
+  .status i {
+    width: 6px;
+    height: 6px;
+    background: var(--c-hue-green);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    50% {
+      opacity: 0.35;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .status i {
+      animation: none;
+    }
   }
   .socials a {
     opacity: 0.6;

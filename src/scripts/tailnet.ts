@@ -141,7 +141,8 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       for (let tries = 0; tries < 80; tries++) {
         const x = margin + rand() * (w - margin * 2);
         const y = margin + 40 + rand() * (h - margin * 2 - 40);
-        if (inAvoid(x, y, 48)) continue;
+        // The peer and the name that runs to its right both stay off the text.
+        if (inAvoid(x, y, 48) || inAvoid(x + 80, y, 24)) continue;
         const near = Math.min(...placed.map((p) => Math.hypot(p.ax - x, p.ay - y)), Infinity);
         // Relays prefer the far edges; everyone else prefers room.
         const edge = n.relay ? -Math.min(x, w - x) * 0.6 : 0;
