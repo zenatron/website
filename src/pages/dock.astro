@@ -4,6 +4,7 @@
  * a line on what it's for, grouped the way favorites.ts groups them.
  */
 import Plain from "@/layouts/Plain.astro";
+import PageCover from "@/components/plain/PageCover.astro";
 import AppIcon from "@/components/AppIcon.astro";
 import { CATEGORY_LABELS, FAVORITES } from "@/data/favorites";
 import "@/styles/glass.css";
@@ -16,6 +17,7 @@ const count = FAVORITES.filter((f) => f.logo).length;
 ---
 
 <Plain title="Dock — Phil Vishnevsky" description="The apps I actually use." ogSlug="dock">
+  <PageCover motif="dock" seed="dock" hue="orange" />
   <main class="page dock">
     <header class="page-head">
       <div>

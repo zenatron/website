@@ -4,6 +4,7 @@
  * first, then the coursework folded away at the bottom.
  */
 import Plain from "@/layouts/Plain.astro";
+import PageCover from "@/components/plain/PageCover.astro";
 import { getAllBlogPosts } from "@/lib/blog";
 
 const posts = await getAllBlogPosts();
@@ -16,6 +17,7 @@ const coursework = posts
 ---
 
 <Plain title="Blog — Phil Vishnevsky" ogSlug="blog" description="Writing by Phil Vishnevsky on Tailscale, VPNs, self-hosting and building things.">
+  <PageCover motif="writing" seed="blog" hue="blue" />
   <main class="page blog">
     <header class="page-head">
       <div>

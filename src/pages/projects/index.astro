@@ -7,15 +7,28 @@
  */
 import Plain from "@/layouts/Plain.astro";
 import PixelArt from "@/components/plain/PixelArt.astro";
+import sharp from "sharp";
+import { join } from "node:path";
 import { getAllProjects, projectHue, projectSlug } from "@/lib/projects";
 
 const projects = await getAllProjects();
 const isCoursework = (p: (typeof projects)[number]) => p.data.type === "data";
 const year = (v?: string) => (v ? new Date(v).getUTCFullYear() : "");
 
-const built = projects
+/** Whether a screenshot is a phone's (tall) or a window's (wide), so the tile can frame it right. */
+const shape = async (src?: string) => {
+  if (!src) return undefined;
+  try {
+    const { width = 1, height = 1 } = await sharp(join(process.cwd(), "public", src)).metadata();
+    return height > width ? "tall" : "wide";
+  } catch {
+    return "wide";
+  }
+};
+
+const built = await Promise.all(projects
   .filter((p) => !isCoursework(p))
-  .map((p) => ({
+  .map(async (p) => ({
     slug: projectSlug(p),
     title: p.data.title,
     description: p.data.tagline ?? p.data.description,
@@ -23,7 +36,8 @@ const built = projects
     thumb: p.data.thumbnail,
     motif: p.data.motif,
     hue: projectHue(p) ?? "blue",
-  }));
+    shape: await shape(p.data.thumbnail),
+  })));
 const coursework = projects.filter(isCoursework).map((p) => ({
   slug: projectSlug(p),
   title: p.data.title.replace(/^Intro to Data Mining:\s*/, ""),
@@ -37,11 +51,17 @@ const coursework = projects.filter(isCoursework).map((p) => ({
       {
         built.map((p, i) => (
           <a class="tile" href={`/projects/${p.slug}/`} data-vt="forward" data-slug={p.slug}>
-            <div class="frame">
-              {p.thumb ? (
-                <img src={p.thumb} alt="" loading={i < 2 ? "eager" : "lazy"} fetchpriority={i === 0 ? "high" : undefined} />
-              ) : (
-                <PixelArt motif={p.motif} seed={p.slug} hue={p.hue} />
+            {/* The project's pixel art, in its own colour, with the screenshot whole on top of it. */}
+            <div class="frame" style={`--tile-hue: var(--c-hue-${p.hue})`}>
+              <PixelArt motif={p.motif} seed={p.slug} hue={p.hue} dim={!!p.thumb} />
+              {p.thumb && (
+                <img
+                  class:list={["shot", p.shape]}
+                  src={p.thumb}
+                  alt=""
+                  loading={i < 2 ? "eager" : "lazy"}
+                  fetchpriority={i === 0 ? "high" : undefined}
+                />
               )}
               <span class="pill">view project</span>
             </div>
@@ -149,7 +169,8 @@ const coursework = projects.filter(isCoursework).map((p) => ({
     display: flex;
     gap: 0.75rem;
     overflow-x: auto;
-    padding: 0 var(--gutter);
+    /* The column's left edge, but on a very wide screen no more than 12vw in. */
+    padding: 0 max(1.5rem, min(var(--gutter), 12vw));
     scrollbar-width: none;
   }
   .strip::-webkit-scrollbar {
@@ -162,35 +183,40 @@ const coursework = projects.filter(isCoursework).map((p) => ({
     color: inherit;
     text-decoration: none;
   }
+  /* Sized by the window's height, but never a wall: a big screen gets more
+     tiles in view, not bigger ones. */
   .frame {
     position: relative;
     aspect-ratio: 3 / 2;
-    height: min(62vh, 42rem);
+    height: clamp(15rem, 46vh, 27rem);
     overflow: hidden;
-    background: color-mix(in srgb, var(--fg) 6%, transparent);
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--tile-hue) 9%, var(--ground));
   }
-  .frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.7s ease-out;
+  /* The screenshot sits whole on the art, never cropped: a window's wide,
+     a phone's tall. */
+  .shot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    max-width: 82%;
+    max-height: 74%;
+    width: auto;
+    height: auto;
+    border-radius: 8px;
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--fg) 10%, transparent),
+      0 18px 40px rgb(0 0 0 / 0.35);
+    transform: translate(-50%, -50%);
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .type {
-    display: grid;
-    place-items: center;
-    height: 100%;
-    padding: 2rem;
-    font-size: clamp(2rem, 5vh, 3.5rem);
-    letter-spacing: -0.02em;
-    text-align: center;
-    color: color-mix(in srgb, var(--fg) 70%, transparent);
-    transition: transform 0.7s ease-out;
+  .shot.tall {
+    max-height: 86%;
+    border-radius: 14px;
   }
-  .tile:hover img,
-  .tile:focus-visible img,
-  .tile:hover .type,
-  .tile:focus-visible .type {
-    transform: scale(1.03);
+  .tile:hover .shot,
+  .tile:focus-visible .shot {
+    transform: translate(-50%, -52%) scale(1.03);
   }
   .pill {
     position: absolute;
@@ -272,9 +298,6 @@ const coursework = projects.filter(isCoursework).map((p) => ({
       width: 100%;
       aspect-ratio: 3 / 2;
       border-radius: 1rem;
-    }
-    .type {
-      font-size: clamp(1.5rem, 8vw, 2.5rem);
     }
     .pill {
       display: none;

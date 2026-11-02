@@ -11,8 +11,10 @@ interface Props {
   label?: string;
   /** Fade toward the top edge, for art that sits under the nav. */
   fadeTop?: boolean;
+  /** Quieter, for art behind a screenshot. */
+  dim?: boolean;
 }
-const { motif = "clusters", seed, hue, class: className, label, fadeTop = false } = Astro.props;
+const { motif = "clusters", seed, hue, class: className, label, fadeTop = false, dim = false } = Astro.props;
 ---
 
 <div
@@ -21,6 +23,7 @@ const { motif = "clusters", seed, hue, class: className, label, fadeTop = false 
   data-motif={motif}
   data-seed={seed}
   data-fade-top={fadeTop ? "" : undefined}
+  data-dim={dim ? "" : undefined}
   style={hue ? `--art-hue: var(--c-hue-${hue})` : undefined}
   role={label ? "img" : undefined}
   aria-label={label}

@@ -6,6 +6,7 @@
  * underneath.
  */
 import Plain from "@/layouts/Plain.astro";
+import PageCover from "@/components/plain/PageCover.astro";
 import { PHOTOS, PHOTO_WIDTHS, type Photo } from "@/data/photos";
 
 const src = (id: string, w: number, ext: "avif" | "webp") => `/images/photos/${id}-${w}.${ext}`;
@@ -54,6 +55,7 @@ const data = hang.map((i) => {
 ---
 
 <Plain title="Photos — Phil Vishnevsky" ogSlug="photos" description="Photos by Phil Vishnevsky, shot and edited on iPhone.">
+  <PageCover motif="aperture" seed="photos" hue="green" />
   <main class="page photos">
     <header class="page-head">
       <div>

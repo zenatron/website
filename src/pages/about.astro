@@ -5,6 +5,7 @@
  * the same rhythm as /blog.
  */
 import Plain from "@/layouts/Plain.astro";
+import PageCover from "@/components/plain/PageCover.astro";
 import { SITE, STATUS } from "@/data/site";
 import { profilePageSchema } from "@/lib/schema";
 import { MACHINES, NOW, NOW_UPDATED, PRINCIPLES, TIMELINE } from "@/data/about";
@@ -22,6 +23,7 @@ const nowUpdated = new Date(NOW_UPDATED).toLocaleDateString("en-US", {
   description="Phil Vishnevsky: software engineer, homelab tinkerer and game studio co-founder in Hartford, CT."
   schema={profilePageSchema()}
 >
+  <PageCover motif="timeline" seed="about" hue="violet" />
   <main class="page about">
     <header class="page-head">
       <div>

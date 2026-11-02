@@ -95,10 +95,11 @@ const MOTIFS: Record<string, Motif> = {
     const bars = Math.floor(cols / 3);
     const b = Math.floor(i / 3);
     if (i % 3 === 2 || b >= bars) return null;
-    const base = rows - 3;
+    const base = Math.round(rows * 0.8);
     const budget = Math.round(rows * 0.42);
     const n = hash(b, 0, seed);
-    const height = Math.round((0.15 + n * n * 0.7) * (rows - 6));
+    // The tallest bar stops short of the top, where the nav sits on a cover.
+    const height = Math.round((0.15 + n * n * 0.7) * Math.min(rows - 6, rows * 0.6));
     const grow = Math.min(1, t / 1.5 - b * 0.01);
     const top = base - Math.round(height * Math.max(0, grow));
     if (j === budget && i % 4 < 2) return { v: 0.35 };
@@ -161,6 +162,128 @@ const MOTIFS: Record<string, Motif> = {
     return { v: 0.12 + ((d - 6) / 3) * 0.3 };
   },
 
+  // ── Page covers ────────────────────────────────────────────
+  // Each draws in the lower part of the band, below where the nav sits.
+
+  /** A paragraph being typed, a cursor at its end; it starts over once it's written. */
+  writing({ i, j: row, cols, rows, t, seed }) {
+    const j = row - Math.round(rows * 0.38);
+    if (j < 0 || j % 2) return null;
+    const line = j / 2;
+    const lines = Math.max(2, Math.floor((rows * 0.46) / 2) + 1);
+    if (line >= lines) return null;
+    const width = Math.min(cols - 8, Math.round(cols * 0.4));
+    const left = Math.round((cols - width) / 2);
+    const x = i - left;
+    if (x < 0 || x >= width) return null;
+    // Ragged right edge, and a short last line.
+    const len = line === lines - 1 ? Math.round(width * 0.45) : width - Math.floor(hash(line, 7, seed) * 7);
+    if (x >= len) return null;
+    // Word gaps.
+    if (hash(Math.floor((x + line * 3) / 4), line, seed) < 0.18 && x % 4 === 3) return null;
+    let before = 0;
+    for (let l = 0; l < line; l++) before += l === lines - 1 ? Math.round(width * 0.45) : width - Math.floor(hash(l, 7, seed) * 7);
+    const total = before + len;
+    const typed = Math.floor((t * 22) % (total + 60));
+    const at = before + x;
+    if (at === typed) return { v: Math.sin(t * 6) > 0 ? 1 : 0.35, tone: "hue" };
+    if (at > typed) return { v: 0.07 };
+    return { v: 0.45 };
+  },
+
+  /** A line through the years, a node for each milestone, a pulse running along it. */
+  timeline({ i, j: row, cols, rows, t }) {
+    const mid = Math.round(rows * 0.62);
+    const j = row;
+    const left = 4,
+      right = cols - 5;
+    if (i < left || i > right) return null;
+    const stops = 8;
+    const at = (k: number) => Math.round(left + ((right - left) * k) / (stops - 1));
+    const pulse = left + (((t * 18) % (right - left + 40)) - 20);
+    const near = Math.abs(i - pulse);
+    for (let k = 0; k < stops; k++) {
+      const x = at(k);
+      if (Math.abs(i - x) <= 1 && Math.abs(j - mid) <= 1) {
+        const lit = pulse >= x;
+        return { v: lit ? 0.9 : 0.35, tone: lit && k === stops - 1 ? "hue" : undefined };
+      }
+      if (i === x && (j === mid - 3 || j === mid - 4) && k % 2 === 0) return { v: 0.2 };
+    }
+    if (j === mid) {
+      if (near < 3) return { v: 1 - near * 0.25, tone: "hue" };
+      return i % 2 ? null : { v: i < pulse ? 0.4 : 0.18 };
+    }
+    return null;
+  },
+
+  /** A viewfinder: corner brackets, an iris that breathes, the thirds marked faintly. */
+  aperture({ i, j: row, cols, rows, t }) {
+    const top = Math.round(rows * 0.36);
+    const j = row - top;
+    const h = Math.max(6, Math.round(rows * 0.5));
+    if (j < 0 || j >= h) return null;
+    const w = Math.round(h * 1.5);
+    const left = Math.round((cols - w) / 2);
+    const x = i - left;
+    if (x < 0 || x >= w) return null;
+    const arm = Math.max(3, Math.round(h * 0.22));
+    const edgeX = x === 0 || x === w - 1,
+      edgeY = j === 0 || j === h - 1;
+    if ((edgeX && (j < arm || j >= h - arm)) || (edgeY && (x < arm || x >= w - arm))) return { v: 0.7 };
+    if ((x === Math.round(w / 3) || x === Math.round((2 * w) / 3)) && (j === Math.round(h / 3) || j === Math.round((2 * h) / 3)))
+      return { v: 0.3 };
+    const cx = w / 2 - 0.5,
+      cy = h / 2 - 0.5;
+    const r = Math.hypot(x - cx, (j - cy) * 1.0);
+    const iris = h * 0.34 * (0.7 + 0.3 * Math.sin(t * 0.9));
+    if (Math.abs(r - iris) < 0.55) return { v: 0.85, tone: "hue" };
+    if (r < 0.8) return { v: 0.6 };
+    return null;
+  },
+
+  /** A row of app icons, swelling as the magnification passes along them. */
+  dock({ i, j: row, cols, rows, t, seed }) {
+    const n = 9;
+    const size = 3,
+      gap = 2;
+    const width = n * size + (n - 1) * gap;
+    const left = Math.round((cols - width) / 2);
+    const base = rows - 3;
+    if (i < left - 2 || i > left + width + 1) return null;
+    if (row === base + 1 && (i - left) % 2 === 0) return { v: 0.18 };
+    const k = Math.floor((i - left) / (size + gap));
+    const within = (i - left) % (size + gap);
+    if (k < 0 || k >= n || within >= size) return null;
+    const pointer = ((Math.sin(t * 0.7) + 1) / 2) * (n - 1);
+    const lift = Math.max(0, 1 - Math.abs(k - pointer) / 1.6);
+    const height = size + Math.round(lift * 3);
+    const top = base - height + 1;
+    if (row < top || row > base) return null;
+    const hued = hash(k, 3, seed) < 0.3;
+    return { v: 0.45 + lift * 0.45, tone: hued ? "hue" : undefined };
+  },
+
+  /** Rings going out from a point, like a ping looking for someone. */
+  signal({ i, j: row, cols, rows, t }) {
+    const cx = Math.round(cols * 0.5),
+      cy = Math.round(rows * 0.84);
+    // Flattened, so whole rings fit in the band rather than running out of its top as stripes.
+    const top = Math.round(rows * 0.34);
+    const d = Math.hypot(i - cx, (row - cy) * 2.4);
+    if (d < 1.2) return { v: 1, tone: "hue" };
+    if (row > cy || row < top) return null;
+    const period = 9;
+    const phase = (d - t * 7) % period;
+    const p = phase < 0 ? phase + period : phase;
+    if (p < 1) {
+      // Rings fade out within a few times the band's height, so they stay a ping, not stripes.
+      const fade = Math.max(0, 1 - d / Math.min(cols * 0.45, (cy - top) * 2.4));
+      return fade > 0.05 ? { v: 0.15 + fade * 0.7, tone: p < 0.5 && d < 10 ? "hue" : undefined } : null;
+    }
+    return null;
+  },
+
   /** Three clusters of points, the way a k-means plot draws them. */
   clusters({ i, j, cols, rows, seed }) {
     const centers = [
@@ -218,6 +341,8 @@ function mount(el: HTMLElement, still: boolean) {
 
   // Art under the nav fades toward the top edge, so the links stay legible.
   const fadeTop = el.hasAttribute("data-fade-top");
+  // Behind a screenshot the art steps back, so it frames the shot instead of competing.
+  const dim = el.hasAttribute("data-dim") ? 0.42 : 1;
   const draw = (t: number) => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const ox = (el.clientWidth - cols * PITCH) / 2,
@@ -228,12 +353,12 @@ function mount(el: HTMLElement, still: boolean) {
         const c = motif({ i, j, cols, rows, t, seed });
         if (!c) {
           // The ground: the same faint dots as the mesh.
-          ctx.globalAlpha = 0.06 * fade;
+          ctx.globalAlpha = 0.06 * fade * dim;
           ctx.fillStyle = pal.fg;
           ctx.fillRect(ox + i * PITCH + 2, oy + j * PITCH + 2, 2, 2);
           continue;
         }
-        ctx.globalAlpha = Math.min(1, c.v) * fade;
+        ctx.globalAlpha = Math.min(1, c.v) * fade * dim;
         ctx.fillStyle = c.tone === "hue" ? pal.hue : c.tone === "add" ? pal.add : c.tone === "del" ? pal.del : pal.fg;
         ctx.fillRect(ox + i * PITCH, oy + j * PITCH, BLOCK, BLOCK);
       }

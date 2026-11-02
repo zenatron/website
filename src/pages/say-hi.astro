@@ -4,6 +4,7 @@
  * rows of name, what it's for, and the handle you'd type.
  */
 import Plain from "@/layouts/Plain.astro";
+import PageCover from "@/components/plain/PageCover.astro";
 import { links } from "@/lib/links";
 
 const reach = links.filter((l) => l.reach);
@@ -13,6 +14,7 @@ const rel = (url: string) => (url.startsWith("http") ? "me noopener noreferrer" 
 ---
 
 <Plain title="Say hi — Phil Vishnevsky" description="Email, book a call, or find me on the rest of the internet." ogSlug="say-hi">
+  <PageCover motif="signal" seed="say-hi" hue="teal" />
   <main class="page hi">
     <header class="page-head">
       <div>
