@@ -21,8 +21,12 @@ const projects = defineCollection({
   type: "content",
   schema: z.object({
     title: z.string(),
+    /** The short line under the name: what it is, in a breath. */
+    tagline: z.string().optional(),
     description: z.string().optional().default(""),
     type: z.string().optional().default("other"),
+    /** The pixel art drawn for it; see scripts/pixelart.ts. */
+    motif: z.enum(["notch", "ledger", "waveform", "diff", "pi", "clusters"]).optional(),
     slug: z.string().optional(),
     date: z.string().optional(),
     tags: z.array(z.string()).optional().default([]),

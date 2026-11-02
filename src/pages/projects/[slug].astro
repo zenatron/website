@@ -1,13 +1,15 @@
 ---
 /**
- * A project, in the quiet layout: a way back to the strip, what kind of
- * thing it is and when, its name and one line, where to use it, a banner
- * when there's a real landscape image, then the writing. The way back
- * plays the strip's slide in reverse.
+ * A project, the way the strip promised it: a pixel-art cover in the
+ * project's own colour, then its name and the one line, a paragraph on
+ * what it is, where to use it, the lead image, and the story told
+ * between galleries. Previous and next wrap around the strip's order, so
+ * there's always somewhere to go, and the way back slides to the strip.
  */
 import Plain from "@/layouts/Plain.astro";
+import PixelArt from "@/components/plain/PixelArt.astro";
 import { cardArt } from "@/lib/cardart";
-import { getAllProjects, projectSlug, PROJECT_KIND } from "@/lib/projects";
+import { getAllProjects, projectHue, projectSlug, PROJECT_KIND } from "@/lib/projects";
 import { creativeWorkSchema, isoDate } from "@/lib/schema";
 import "@/styles/article.css";
 
@@ -26,24 +28,46 @@ const hero = await cardArt({
   collection: "projects",
   context: "hero",
 });
-const banner = hero.kind === "image" ? hero.src : null;
+const lead = hero.kind === "image" ? hero.src : null;
 const hasMath = /\$\$|\\\(|\\\[|\$[^$\n]+\$/.test(entry.body ?? "");
 
-const kind = PROJECT_KIND[entry.data.type]?.label ?? "project";
 const coursework = entry.data.type === "data";
-const made = entry.data.date
-  ? new Date(entry.data.date).toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" })
-  : undefined;
+const kind = PROJECT_KIND[entry.data.type]?.label ?? "project";
+const hue = projectHue(entry) ?? "blue";
+const motif = entry.data.motif ?? (coursework ? "clusters" : "clusters");
+
+/** "Fall 2026", the way a term or a season of work is remembered. */
+const season = (v?: string) => {
+  if (!v) return undefined;
+  const d = new Date(v);
+  const m = d.getUTCMonth();
+  const name = m < 2 || m === 11 ? "Winter" : m < 5 ? "Spring" : m < 8 ? "Summer" : "Fall";
+  return `${name} ${m === 11 ? d.getUTCFullYear() + 1 : d.getUTCFullYear()}`;
+};
+
 const source = entry.data.github || entry.data.githubRepo;
 const live = entry.data.live || entry.data.demoUrl;
 const downloads = entry.data.downloads ?? [];
+const host = (u: string) => {
+  try {
+    const url = new URL(u);
+    return `${url.host.replace(/^www\./, "")}${url.pathname}`.replace(/\/+$/, "");
+  } catch {
+    return u;
+  }
+};
 
-// Next and previous among the same group (built things, or coursework).
+// Pager: the same group, in the strip's order, wrapping around.
 const peers = (await getAllProjects()).filter((p) => (p.data.type === "data") === coursework);
 const i = peers.findIndex((p) => projectSlug(p) === slug);
-const at = (n: number) => (peers[n] ? { slug: projectSlug(peers[n]), title: peers[n].data.title } : null);
-const newer = at(i - 1);
-const older = at(i + 1);
+const card = (p: (typeof peers)[number]) => ({
+  slug: projectSlug(p),
+  title: p.data.title,
+  line: p.data.tagline ?? p.data.description,
+  thumb: p.data.thumbnail,
+});
+const prev = peers.length > 1 ? card(peers[(i - 1 + peers.length) % peers.length]) : null;
+const next = peers.length > 1 ? card(peers[(i + 1) % peers.length]) : null;
 ---
 
 <Plain
@@ -62,21 +86,26 @@ const older = at(i + 1);
     live,
   })}
 >
+  <div class="cover">
+    <PixelArt motif={motif} seed={slug} hue={hue} fadeTop />
+  </div>
+
   <main class="article project" data-pagefind-body>
     <a class="a-back" href="/projects/" data-vt={coursework ? undefined : "back"}>← projects</a>
-    <header class="a-head">
-      <p class="a-meta kicker">
+    <header class="p-head">
+      <h1>{entry.data.title}</h1>
+      {entry.data.tagline && <p class="tagline">{entry.data.tagline}</p>}
+      {entry.data.description && <p class="about">{entry.data.description}</p>}
+      <p class="a-meta facts">
         <span>{kind}</span>
-        {made && <span>{made}</span>}
+        {season(entry.data.date) && <span>{season(entry.data.date)}</span>}
         {entry.data.tags.length > 0 && <span>{entry.data.tags.join(", ")}</span>}
       </p>
-      <h1>{entry.data.title}</h1>
-      {entry.data.description && <p class="desc">{entry.data.description}</p>}
       {
         (live || source || downloads.length > 0) && (
-          <p class="a-meta links">
-            {live && <a class="ink" href={live} rel="noopener noreferrer">live ↗</a>}
-            {source && <a class="ink" href={source} rel="noopener noreferrer">source ↗</a>}
+          <p class="links">
+            {live && <a class="ink" href={live} rel="noopener noreferrer">{host(live)} ↗</a>}
+            {source && <a class="ink" href={source} rel="noopener noreferrer">{host(source)} ↗</a>}
             {downloads.map((d) => (
               <a class="ink" href={`/downloads/${d.filename}`} download>
                 {d.label ?? d.filename} ↓
@@ -87,77 +116,213 @@ const older = at(i + 1);
       }
     </header>
 
-    {banner && (
-      <figure class="banner">
-        <img src={banner} alt="" />
-      </figure>
-    )}
+    {
+      lead && (
+        <figure class="lead">
+          <img src={lead} alt={`${entry.data.title}${entry.data.tagline ? `, ${entry.data.tagline}` : ""}`} />
+        </figure>
+      )
+    }
 
-    <div class="prose"><Content /></div>
+    <div class="prose story"><Content /></div>
 
     {
-      (newer || older) && (
-        <nav class="a-foot a-pager" aria-label="More projects">
-          {older && (
-            <a class="prev" href={`/projects/${older.slug}/`}>
-              <small>← older</small>
-              {older.title}
+      prev && next && (
+        <nav class="pager" aria-label="More projects">
+          {[
+            { p: prev, dir: "← previous", cls: "prev" },
+            { p: next, dir: "next →", cls: "next" },
+          ].map(({ p, dir, cls }) => (
+            <a class={cls} href={`/projects/${p.slug}/`} data-preview={p.thumb}>
+              <small>{dir}</small>
+              <span class="pt">{p.title}</span>
+              {p.line && <span class="pl">{p.line}</span>}
             </a>
-          )}
-          {newer && (
-            <a class="next" href={`/projects/${newer.slug}/`}>
-              <small>newer →</small>
-              {newer.title}
-            </a>
-          )}
+          ))}
         </nav>
       )
     }
   </main>
+  <img class="peek" data-peek alt="" aria-hidden="true" />
 </Plain>
 
 <script>
   import "@/scripts/code";
+
+  // While the cover is under the nav, the nav drops its fade so the art shows.
+  const cover = document.querySelector<HTMLElement>(".cover");
+  if (cover) {
+    const update = () =>
+      document.documentElement.classList.toggle("over-cover", cover.getBoundingClientRect().bottom > 80);
+    update();
+    addEventListener("scroll", update, { passive: true });
+  }
+
+  // A preview of the neighbouring project trails the cursor over the pager.
+  const peek = document.querySelector<HTMLImageElement>("[data-peek]");
+  const fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
+  if (peek && fine) {
+    let x = 0, y = 0, px = 0, py = 0, raf = 0, on = false;
+    const follow = () => {
+      px += (x - px) * 0.25;
+      py += (y - py) * 0.25;
+      peek.style.transform = `translate(${px}px, ${py}px) translate(-50%, calc(-100% - 18px))`;
+      raf = on || Math.abs(x - px) > 0.5 ? requestAnimationFrame(follow) : 0;
+    };
+    document.querySelectorAll<HTMLAnchorElement>("[data-preview]").forEach((a) => {
+      if (!a.dataset.preview) return;
+      a.addEventListener("pointerenter", (e) => {
+        peek.src = a.dataset.preview!;
+        x = px = e.clientX;
+        y = py = e.clientY;
+        on = true;
+        peek.classList.add("on");
+        if (!raf) raf = requestAnimationFrame(follow);
+      });
+      a.addEventListener("pointermove", (e) => {
+        x = e.clientX;
+        y = e.clientY;
+      });
+      a.addEventListener("pointerleave", () => {
+        on = false;
+        peek.classList.remove("on");
+      });
+    });
+  }
 </script>
 
 <style>
-  .kicker {
-    margin: 0 0 0.75rem !important;
+  /* Full-bleed art behind the nav, fading into the page. */
+  .cover {
+    position: relative;
+    height: clamp(180px, 26vw, 380px);
   }
-  .desc {
-    max-width: 36rem;
-    margin-top: 1rem;
-    font-size: 17px;
-    line-height: 1.55;
+  .cover::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 45%;
+    background: linear-gradient(transparent, var(--ground));
+    pointer-events: none;
+  }
+  .project {
+    max-width: 56rem;
+    padding-top: 2.5rem;
+  }
+  .p-head h1 {
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+  }
+  .tagline {
+    margin-top: 0.25rem !important;
+    font-size: 16px;
     color: var(--fg-muted);
+  }
+  .about {
+    max-width: 42rem;
+    margin-top: 2rem !important;
+    font-size: 16px;
+    line-height: 1.7;
     text-wrap: pretty;
+  }
+  .facts {
+    margin-top: 1.5rem !important;
   }
   .links {
     display: flex;
     flex-wrap: wrap;
     gap: 1.25rem;
-    margin-top: 1.5rem !important;
+    margin-top: 0.75rem !important;
+    font-family: var(--mono);
     font-size: 13px;
   }
   .links a {
     color: var(--fg) !important;
   }
-  /* Wider than the column, the way the strip's tiles are big. */
-  .banner {
-    margin: 0 -4rem 3.5rem !important;
-    aspect-ratio: 3 / 2;
+  .lead {
+    margin: 4rem 0 0 !important;
     overflow: hidden;
+    border-radius: 6px;
     background: color-mix(in srgb, var(--fg) 6%, transparent);
   }
-  .banner img {
+  .lead img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
   }
-  @media (max-width: 960px) {
-    .banner {
-      margin: 0 0 2.5rem !important;
-      border-radius: 1rem;
+  /* The story: prose at a reading measure, galleries and images at the frame's width. */
+  .story {
+    max-width: none;
+    margin-top: 4rem;
+  }
+  .story > :global(:not(figure, .mwin, .codewrap, .codegroup, p:has(> img))) {
+    max-width: 42rem;
+  }
+  .story :global(img) {
+    border-radius: 6px;
+  }
+  .pager {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-top: 6rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+  }
+  .pager a {
+    display: flex;
+    flex-direction: column;
+    max-width: 22rem;
+    color: var(--fg) !important;
+  }
+  .pager .next {
+    align-items: flex-end;
+    text-align: right;
+  }
+  .pager small {
+    margin-bottom: 0.35rem;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-muted);
+  }
+  .pt {
+    font-size: 16px;
+  }
+  .pl {
+    font-size: 14px;
+    color: var(--fg-muted);
+  }
+  .peek {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 40;
+    width: 15rem;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: 6px;
+    box-shadow: 0 12px 32px rgb(0 0 0 / 0.3);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .peek.on {
+    opacity: 1;
+  }
+  .peek:not([src]) {
+    display: none;
+  }
+  @media (max-width: 640px) {
+    .project {
+      padding-top: 1.5rem;
+    }
+    .pager {
+      flex-direction: column;
+    }
+    .pager .next {
+      align-items: flex-start;
+      text-align: left;
     }
   }
 </style>

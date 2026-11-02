@@ -6,7 +6,8 @@
  * Coursework is listed under the strip, out of the way.
  */
 import Plain from "@/layouts/Plain.astro";
-import { getAllProjects, projectSlug } from "@/lib/projects";
+import PixelArt from "@/components/plain/PixelArt.astro";
+import { getAllProjects, projectHue, projectSlug } from "@/lib/projects";
 
 const projects = await getAllProjects();
 const isCoursework = (p: (typeof projects)[number]) => p.data.type === "data";
@@ -17,9 +18,11 @@ const built = projects
   .map((p) => ({
     slug: projectSlug(p),
     title: p.data.title,
-    description: p.data.description,
+    description: p.data.tagline ?? p.data.description,
     year: year(p.data.date),
     thumb: p.data.thumbnail,
+    motif: p.data.motif,
+    hue: projectHue(p) ?? "blue",
   }));
 const coursework = projects.filter(isCoursework).map((p) => ({
   slug: projectSlug(p),
@@ -38,7 +41,7 @@ const coursework = projects.filter(isCoursework).map((p) => ({
               {p.thumb ? (
                 <img src={p.thumb} alt="" loading={i < 2 ? "eager" : "lazy"} fetchpriority={i === 0 ? "high" : undefined} />
               ) : (
-                <div class="type" aria-hidden="true">{p.title}</div>
+                <PixelArt motif={p.motif} seed={p.slug} hue={p.hue} />
               )}
               <span class="pill">view project</span>
             </div>

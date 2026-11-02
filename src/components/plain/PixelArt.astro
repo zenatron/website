@@ -1,0 +1,47 @@
+---
+/**
+ * A project's pixel art (see scripts/pixelart.ts). Fills its parent; the
+ * parent decides the size. `hue` is one of the palette's hue names.
+ */
+interface Props {
+  motif?: string;
+  seed: string;
+  hue?: string;
+  class?: string;
+  label?: string;
+  /** Fade toward the top edge, for art that sits under the nav. */
+  fadeTop?: boolean;
+}
+const { motif = "clusters", seed, hue, class: className, label, fadeTop = false } = Astro.props;
+---
+
+<div
+  class:list={["art", className]}
+  data-pixel-art
+  data-motif={motif}
+  data-seed={seed}
+  data-fade-top={fadeTop ? "" : undefined}
+  style={hue ? `--art-hue: var(--c-hue-${hue})` : undefined}
+  role={label ? "img" : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : "true"}
+>
+  <canvas></canvas>
+</div>
+
+<script>
+  import "@/scripts/pixelart";
+</script>
+
+<style>
+  .art {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  canvas {
+    position: absolute;
+    inset: 0;
+  }
+</style>

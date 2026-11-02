@@ -1,5 +1,7 @@
 ---
 title: "NotchApp"
+tagline: "Your notch, put to work."
+motif: "notch"
 description: "Turns the MacBook notch into a live, interactive hub — music, alerts, stats and search, all in the space the camera leaves behind."
 type: "app"
 slug: "notchapp"
@@ -12,7 +14,7 @@ icon: "/images/projects/notchapp/icon.png"
 github: "https://github.com/danielrabnovich/NotchApp"
 ---
 
-import Screens from '@/components/mdx/Screens.astro';
+import Gallery from '@/components/mdx/Gallery.astro';
 import Callout from '@/components/mdx/Callout.astro';
 
 A macOS app that makes the notch useful. Closed, it is a black shape that blends
@@ -23,22 +25,6 @@ Native Swift, with SwiftUI and AppKit for the interface and Core Animation for
 the glass and the motion. It targets Apple silicon on macOS, and it is built
 with the Command Line Tools alone — there is no Xcode project.
 
-<Screens shots={[
-  { src: "/images/projects/notchapp/home.webp", alt: "The open notch with now playing, weather, a meeting and a task", caption: "home" },
-  { src: "/images/projects/notchapp/search.webp", alt: "Search finding a pitch deck from a vague description", caption: "search: files" },
-  { src: "/images/projects/notchapp/search-web.webp", alt: "A web answer about the Golden Gate Bridge with sources", caption: "search: web" },
-  { src: "/images/projects/notchapp/search-instant.webp", alt: "Instant answers for time zones, percentages, units and day counts", caption: "search: instant" },
-  { src: "/images/projects/notchapp/glances.webp", alt: "Three Glance layouts, each full and compact", caption: "glances" },
-  { src: "/images/projects/notchapp/alerts.webp", alt: "A Flash and three Banners under the notch", caption: "alerts" },
-  { src: "/images/projects/notchapp/shelf.webp", alt: "The Shelf with files beside AirDrop and Taildrop", caption: "shelf" },
-  { src: "/images/projects/notchapp/clipboard.webp", alt: "Clipboard history", caption: "clipboard" },
-  { src: "/images/projects/notchapp/tasks.webp", alt: "Tasks with due times and links", caption: "tasks" },
-  { src: "/images/projects/notchapp/tiles2.webp", alt: "Controls with twelve tiles", caption: "controls" },
-  { src: "/images/projects/notchapp/mixer.webp", alt: "Per-app volume faders", caption: "mixer" },
-  { src: "/images/projects/notchapp/stats.webp", alt: "CPU, GPU, memory and power cards", caption: "stats" },
-  { src: "/images/projects/notchapp/cleaner.webp", alt: "The disk Cleaner", caption: "cleaner" },
-  { src: "/images/projects/notchapp/usage.webp", alt: "Coding-agent token usage and API value", caption: "agents" },
-]} />
 
 ## Glances
 
@@ -46,6 +32,8 @@ Up to five small live indicators on each side of the closed notch: music, a
 timer, CPU and GPU, temperature, power, battery, the next event, network, VPN.
 Each has a compact form, and a crowded side compacts its outer ones by itself.
 Click one to act on it, hold it for the details.
+
+![Three Glance layouts, each full and compact](/images/projects/notchapp/glances.webp)
 
 ## Alerts in three tiers
 
@@ -55,6 +43,8 @@ Click one to act on it, hold it for the details.
 - **Prompts** carry buttons, like "Join Zoom", and fold into a tab when you do
   not answer, so they are still there later.
 
+![A Flash and three Banners under the notch](/images/projects/notchapp/alerts.webp)
+
 ## Search
 
 The best part: one bar that works out what you mean. Describe a file
@@ -63,6 +53,13 @@ on the Mac. Ask a question and it answers from the web, with numbered sources.
 Ask for the weather anywhere. Type a sum, a conversion, a time zone or a day
 count and the answer is there before you finish. The AI runs locally through
 Ollama, so nothing goes to a cloud model.
+
+<Gallery title="Search" ratio={2.23} shots={[
+  { src: "/images/projects/notchapp/search.webp", alt: "Search finding a pitch deck from a vague description", title: "Files", caption: "Describe it the way you remember it; it finds it on the Mac." },
+  { src: "/images/projects/notchapp/search-web.webp", alt: "A web answer about the Golden Gate Bridge with sources", title: "Web", caption: "Answers from the web, with numbered sources." },
+  { src: "/images/projects/notchapp/search-weather.webp", alt: "The weather for a city, from the search bar", title: "Weather", caption: "Anywhere, without opening an app." },
+  { src: "/images/projects/notchapp/search-instant.webp", alt: "Instant answers for time zones, percentages, units and day counts", title: "Instant", caption: "Sums, conversions, time zones and day counts, before you finish typing." },
+]} />
 
 ## The rest of it
 
@@ -83,6 +80,17 @@ Ollama, so nothing goes to a cloud model.
   the API-equivalent cost.
 - **Tasks, notes, a teleprompter,** and a timer with Pomodoro.
 - **Keyboard shortcuts** for every tab.
+
+<Gallery title="Everything else" ratio={3} shots={[
+  { src: "/images/projects/notchapp/shelf.webp", alt: "The Shelf with files beside AirDrop and Taildrop", title: "Shelf", caption: "Drag files in and out, with AirDrop and Taildrop drop zones." },
+  { src: "/images/projects/notchapp/clipboard.webp", alt: "Clipboard history", title: "Clipboard", caption: "History, a tab away." },
+  { src: "/images/projects/notchapp/tiles2.webp", alt: "Controls with twelve tiles", title: "Controls", caption: "Keep Awake, the mic, a colour picker, OCR and more." },
+  { src: "/images/projects/notchapp/mixer.webp", alt: "Per-app volume faders", title: "Mixer", caption: "Per-app volume, on a Core Audio process tap." },
+  { src: "/images/projects/notchapp/stats.webp", alt: "CPU, GPU, memory and power cards", title: "Stats", caption: "Read from the SMC and IOReport, no helper and no root." },
+  { src: "/images/projects/notchapp/cleaner.webp", alt: "The disk Cleaner", title: "Cleaner", caption: "Disk cleanup and an app uninstaller." },
+  { src: "/images/projects/notchapp/usage.webp", alt: "Coding-agent token usage and API value", title: "Agents", caption: "Claude Code and Codex sessions, and what the tokens would have cost." },
+  { src: "/images/projects/notchapp/tasks.webp", alt: "Tasks with due times and links", title: "Tasks", caption: "Due times and links, next to the music." },
+]} />
 
 <Callout type="note" title="Apple silicon only">
 Builds come from the Command Line Tools alone, which can't make universal
