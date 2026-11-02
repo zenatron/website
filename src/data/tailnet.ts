@@ -1,23 +1,31 @@
 /**
- * The peers drawn on the home page's mesh. Placeholder names: swap in the
- * real machines on the tailnet (and drop any that would say too much).
- * `relay` draws the peer as a hollow DERP relay, parked near an edge,
- * that some packets detour through.
+ * The machines drawn on the home page's mesh, by network. Devices with the
+ * same `site` sit behind that site's router and reach each other over the
+ * LAN; between sites, traffic crosses the internet (directly, or through the
+ * DERP relay when it can't). `exitNode` marks a machine others can send all
+ * their traffic through.
  */
 export interface Peer {
   name: string;
-  /** What `tailscale status` would say it runs; shown next to the name on hover. */
+  /** What it runs; shown on hover. */
   os: string;
-  relay?: boolean;
+  kind?: "peer" | "router" | "relay";
+  /** Which network it's on. Routers name the network they serve. */
+  site?: string;
+  exitNode?: boolean;
 }
 
 export const PEERS: Peer[] = [
-  { name: "macbook", os: "macOS" },
-  { name: "desktop", os: "CachyOS" },
-  { name: "iphone", os: "iOS" },
-  { name: "homelab", os: "Unraid" },
-  { name: "nas", os: "linux" },
-  { name: "pi", os: "linux" },
-  { name: "proxy", os: "linux" },
-  { name: "derp-nyc", os: "relay", relay: true },
+  // Home: one router, the Apple devices and the desktop behind it.
+  { name: "home-router", os: "router", kind: "router", site: "home" },
+  { name: "macbook", os: "macOS", site: "home" },
+  { name: "iphone", os: "iOS", site: "home" },
+  { name: "ipad", os: "iPadOS", site: "home" },
+  { name: "apple-tv", os: "tvOS", site: "home", exitNode: true },
+  { name: "desktop", os: "CachyOS", site: "home" },
+  // The lab: a separate network with the server on it.
+  { name: "lab-router", os: "router", kind: "router", site: "lab" },
+  { name: "homelab", os: "Unraid", site: "lab", exitNode: true },
+  // Tailscale's relay, for when two networks can't reach each other directly.
+  { name: "derp-nyc", os: "relay", kind: "relay" },
 ];
