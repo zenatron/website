@@ -301,7 +301,7 @@ export const FAVORITES: Favorite[] = [
   {
     name: "Proton Mail",
     logo: "proton-mail.svg",
-    description: "where phil@pvi.sh lands",
+    description: "electron-based, hmmm",
     url: "https://proton.me/mail",
     category: "apps",
   },
@@ -403,13 +403,6 @@ export const FAVORITES: Favorite[] = [
     appIcon: true,
     description: "dictation, all on-device",
     url: "https://github.com/altic-dev/FluidVoice",
-    category: "apps",
-  },
-  {
-    name: "Tinycast",
-    logo: "tinycast.svg",
-    description: "better spotlight for macOS",
-    url: "https://github.com/abue-ammar/tinycast",
     category: "apps",
   },
   {

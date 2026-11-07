@@ -3,7 +3,8 @@
  * with stable @id anchors — `/#person` and `/#website` — so a BlogPosting's
  * author reference resolves to the same Person the homepage describes.
  */
-import { COPYRIGHT_YEAR, SITE } from "@/data/site";
+import { COPYRIGHT_YEAR, LOCATION, SITE } from "@/data/site";
+import { CURRENT_JOB } from "@/data/about";
 import { links } from "@/lib/links";
 
 const URL_ = SITE.url.replace(/\/+$/, "");
@@ -41,14 +42,14 @@ export function personSchema() {
     familyName: "Vishnevsky",
     url: `${URL_}/`,
     image: `${URL_}/og/about.png`,
-    jobTitle: "Software Engineer",
-    description:
-      "Full-stack engineer in Hartford, CT building servers, web apps, and games.",
+    jobTitle: CURRENT_JOB.role,
+    worksFor: { "@type": "Organization", name: CURRENT_JOB.title },
+    description: `Full-stack engineer in ${LOCATION} building servers, web apps, and games.`,
     email: `mailto:${SITE.email}`,
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Hartford",
-      addressRegion: "CT",
+      addressLocality: SITE.city,
+      addressRegion: SITE.region,
       addressCountry: "US",
     },
     sameAs,

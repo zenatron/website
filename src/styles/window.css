@@ -9,10 +9,8 @@
      .mwin           the frame: page surface, hairline, window corner, shadow
      .mwin-bar       the titlebar: lights | centered title | accessories
      .mwin-lights    three 12px dots, 8px apart — grey, as an unfocused
-                     window's are, unless one is a real control
-     .mwin-light     a light that does something (close), in color
+                     window's are
      .mwin-title     the title, set like the main titlebar's
-     .mwin-body      the contents
 */
 
 .mwin {
@@ -56,43 +54,6 @@
   outline: 0.5px solid var(--light-edge);
   outline-offset: -0.5px;
 }
-
-/* A 12px dot in a 20px target, as the main titlebar's lights are. */
-.mwin-light {
-  display: grid;
-  place-items: center;
-  width: 20px;
-  height: 20px;
-  margin-inline: -4px;
-  padding: 0;
-  cursor: pointer;
-}
-.mwin-light::before {
-  content: "";
-  grid-area: 1 / 1;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--light-close);
-  outline: 0.5px solid var(--light-edge);
-  outline-offset: -0.5px;
-}
-.mwin-light svg {
-  grid-area: 1 / 1;
-  z-index: 1;
-  width: 12px;
-  height: 12px;
-  fill: none;
-  stroke: var(--light-glyph);
-  stroke-width: 1.3;
-  stroke-linecap: round;
-  opacity: 0;
-  transition: opacity var(--dur-state) var(--ease);
-}
-.mwin-light:hover svg,
-.mwin-light:focus-visible svg { opacity: 1; }
-.mwin-light:focus-visible { outline: none; }
-.mwin-light:focus-visible::before { outline: 1px solid var(--c-accent); outline-offset: 2px; }
 
 .mwin-title {
   display: flex;

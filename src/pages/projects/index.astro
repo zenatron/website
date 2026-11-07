@@ -49,6 +49,7 @@ const coursework = projects.filter(isCoursework).map((p) => ({
   <PageCover motif="commits" seed="projects" hue="rose" />
   <main class="projects">
     <h1 class="sr-only">Projects</h1>
+    <div class="rail" data-rail data-at-start>
     <div class="strip" data-strip>
       {
         built.map((p, i) => (
@@ -75,6 +76,12 @@ const coursework = projects.filter(isCoursework).map((p) => ({
           </a>
         ))
       }
+    </div>
+    </div>
+    {/* One row under the strip, on the page's margins: the coursework on the
+        left, where it's seen without scrolling, and the way along the strip
+        at its end. */}
+    <div class="rail-foot">
       <aside class="coursework">
         <p class="year">coursework · data mining</p>
         <ul>
@@ -83,6 +90,11 @@ const coursework = projects.filter(isCoursework).map((p) => ({
           ))}
         </ul>
       </aside>
+      {/* Desktop only: the strip runs off the edge, so offer a way along it. */}
+      <div class="rail-nav">
+        <button type="button" data-step="-1" aria-label="Previous projects" disabled>←</button>
+        <button type="button" data-step="1" aria-label="More projects">→</button>
+      </div>
     </div>
   </main>
 </Plain>
@@ -94,6 +106,8 @@ const coursework = projects.filter(isCoursework).map((p) => ({
    * Arrow and page keys step it. Below 1024px the strip is a list and
    * none of this runs.
    */
+  import { glassOnHover } from "@/scripts/glass";
+
   const GLIDE = 0.18;
   const STEPS: Record<string, number> = {
     ArrowRight: 0.1, ArrowDown: 0.1, ArrowLeft: -0.1, ArrowUp: -0.1,
@@ -103,7 +117,23 @@ const coursework = projects.filter(isCoursework).map((p) => ({
   const desktop = matchMedia("(min-width: 1024px)");
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  glassOnHover("[data-strip] .tile", ".pill");
+
   if (strip) {
+    const rail = strip.closest<HTMLElement>("[data-rail]")!;
+    const buttons = [...document.querySelectorAll<HTMLButtonElement>("[data-step]")];
+    /** Fade the edges that have more to show, and dim the button that can't go further. */
+    const edges = () => {
+      const max = strip.scrollWidth - strip.clientWidth;
+      const start = strip.scrollLeft <= 2;
+      const end = strip.scrollLeft >= max - 2;
+      rail.toggleAttribute("data-at-start", start);
+      rail.toggleAttribute("data-at-end", end);
+      for (const b of buttons) b.disabled = b.dataset.step === "-1" ? start : end;
+    };
+    strip.addEventListener("scroll", edges, { passive: true });
+    new ResizeObserver(edges).observe(strip);
+
     // Back from a project, open on the one just viewed.
     const lastKey = "projects-last";
     try {
@@ -136,6 +166,9 @@ const coursework = projects.filter(isCoursework).map((p) => ({
       else if (!raf) raf = requestAnimationFrame(glide);
     };
 
+    for (const b of buttons)
+      b.addEventListener("click", () => glideBy(Number(b.dataset.step) * strip.clientWidth * 0.8));
+
     addEventListener("wheel", (e) => {
       if (!desktop.matches) return;
       const sideways = Math.abs(e.deltaX) > Math.abs(e.deltaY);
@@ -167,6 +200,75 @@ const coursework = projects.filter(isCoursework).map((p) => ({
     flex-direction: column;
     justify-content: center;
     padding-bottom: 2rem;
+  }
+  /* Soft edges where the strip runs on past the window, so it reads as a row to scroll. */
+  .rail {
+    position: relative;
+  }
+  .rail::before,
+  .rail::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+    width: 6rem;
+    pointer-events: none;
+    transition: opacity 0.3s ease-out;
+  }
+  .rail::before {
+    left: 0;
+    background: linear-gradient(to right, var(--ground), transparent);
+  }
+  .rail::after {
+    right: 0;
+    background: linear-gradient(to left, var(--ground), transparent);
+  }
+  .rail[data-at-start]::before,
+  .rail[data-at-end]::after {
+    opacity: 0;
+  }
+  .rail-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-top: 2rem;
+    padding: 0 max(1.5rem, min(var(--gutter), 12vw));
+  }
+  .rail-nav {
+    display: flex;
+    flex-shrink: 0;
+    gap: 0.5rem;
+  }
+  .rail-nav button {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 1px solid color-mix(in srgb, var(--fg) 18%, transparent);
+    border-radius: 999px;
+    background: none;
+    color: var(--fg);
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 150ms ease, border-color 150ms ease;
+  }
+  .rail-nav button:hover,
+  .rail-nav button:focus-visible {
+    opacity: 1;
+    border-color: color-mix(in srgb, var(--fg) 40%, transparent);
+  }
+  .rail-nav button:disabled {
+    opacity: 0.2;
+    cursor: default;
+  }
+  /* Nothing to scroll: no edges, no buttons. */
+  .rail[data-at-start][data-at-end] + .rail-foot .rail-nav {
+    display: none;
   }
   .strip {
     display: flex;
@@ -227,12 +329,17 @@ const coursework = projects.filter(isCoursework).map((p) => ({
     bottom: 1rem;
     padding: 0.4rem 0.75rem;
     border-radius: 999px;
-    background: rgb(0 0 0 / 0.55);
+    background: rgb(0 0 0 / 0.28);
     color: #f6f3ed;
+    /* Clear glass lets a bright photo through; a soft shadow keeps the words on it. */
+    text-shadow: 0 1px 2px rgb(0 0 0 / 0.55);
     font-size: 12px;
     opacity: 0;
     transform: translateY(4px);
-    backdrop-filter: blur(12px);
+    /* Liquid glass where the browser can refract (see scripts/glass.ts), else frost. */
+    -webkit-backdrop-filter: var(--hyalite, blur(12px));
+    backdrop-filter: var(--hyalite, blur(12px));
+    box-shadow: var(--hyalite-edge, none);
     transition: opacity 0.3s ease-out, transform 0.3s ease-out;
     pointer-events: none;
   }
@@ -260,18 +367,22 @@ const coursework = projects.filter(isCoursework).map((p) => ({
     line-height: 1.5;
     color: var(--fg-muted);
   }
+  /* A line of links: the label, then each piece of coursework. */
   .coursework {
-    flex-shrink: 0;
-    align-self: flex-end;
-    width: 18rem;
-    padding-left: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 1.25rem;
     font-size: 13px;
   }
   .coursework ul {
-    margin: 0.75rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    margin: 0;
     padding: 0;
     list-style: none;
-    line-height: 2;
+    line-height: 1.8;
   }
   .coursework a {
     opacity: 0.7;
@@ -281,6 +392,11 @@ const coursework = projects.filter(isCoursework).map((p) => ({
   @media (max-width: 1023px) {
     :global(html.fixed) {
       overflow: auto;
+    }
+    /* The page scrolls here after all, so the nav needs its fade back once
+       the cover has gone by. */
+    :global(html.fixed:not(.over-cover) .nav) {
+      background: linear-gradient(var(--ground) 72%, transparent);
     }
     .projects {
       height: auto;
@@ -292,8 +408,7 @@ const coursework = projects.filter(isCoursework).map((p) => ({
       overflow: visible;
       padding: 0;
     }
-    .tile,
-    .coursework {
+    .tile {
       width: 100%;
     }
     .frame {
@@ -302,12 +417,25 @@ const coursework = projects.filter(isCoursework).map((p) => ({
       aspect-ratio: 3 / 2;
       border-radius: 1rem;
     }
-    .pill {
+    .pill,
+    .rail::before,
+    .rail::after,
+    .rail-nav {
       display: none;
     }
-    .coursework {
-      align-self: auto;
+    /* After the last project, as the list's last entry. */
+    .rail-foot {
+      margin-top: 3.5rem;
       padding: 0;
+    }
+    .coursework {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .coursework ul {
+      flex-direction: column;
+      gap: 0;
+      line-height: 2;
     }
   }
 </style>

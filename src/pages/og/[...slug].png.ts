@@ -1,6 +1,7 @@
 import type { APIRoute, GetStaticPaths } from "astro";
 import { getCollection } from "astro:content";
 import { generateOGImage } from "@/lib/og";
+import { LOCATION } from "@/data/site";
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const blogPosts = await getCollection("blog");
@@ -8,7 +9,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   const paths = [
     // Static pages
-    { params: { slug: "home" }, props: { title: "Phil Vishnevsky", subtitle: "Full-stack engineer in Hartford, CT", type: "page", tags: [] } },
+    { params: { slug: "home" }, props: { title: "Phil Vishnevsky", subtitle: `Full-stack engineer in ${LOCATION}`, type: "page", tags: [] } },
     { params: { slug: "blog" }, props: { title: "Writing", subtitle: "Thoughts on code, tools, and building things", type: "page", tags: [] } },
     { params: { slug: "projects" }, props: { title: "Projects", subtitle: "My experiments, projects, and failures", type: "page", tags: [] } },
     { params: { slug: "about" }, props: { title: "About", subtitle: "The story so far", type: "page", tags: [] } },

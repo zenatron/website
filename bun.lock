@@ -21,7 +21,6 @@
       "devDependencies": {
         "exifr": "^7.1.3",
         "pagefind": "^1.5.2",
-        "postcss": "^8",
         "prettier": "^3.5.3",
         "prettier-plugin-astro": "^0.14.1",
         "typescript": "^5",

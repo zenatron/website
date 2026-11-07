@@ -6,7 +6,7 @@
  */
 import Plain from "@/layouts/Plain.astro";
 import PageCover from "@/components/plain/PageCover.astro";
-import { SITE, STATUS } from "@/data/site";
+import { LOCATION, SITE, STATUS } from "@/data/site";
 import { profilePageSchema } from "@/lib/schema";
 import { MACHINES, NOW, NOW_UPDATED, PRINCIPLES, TIMELINE } from "@/data/about";
 
@@ -20,7 +20,7 @@ const nowUpdated = new Date(NOW_UPDATED).toLocaleDateString("en-US", {
 <Plain
   title="About — Phil Vishnevsky"
   ogSlug="about"
-  description="Phil Vishnevsky: software engineer, homelab tinkerer and game studio co-founder in Hartford, CT."
+  description="Phil Vishnevsky: software engineer, homelab tinkerer and game studio co-founder in ${LOCATION}."
   schema={profilePageSchema()}
 >
   <PageCover motif="timeline" seed="about" hue="violet" />
@@ -31,7 +31,7 @@ const nowUpdated = new Date(NOW_UPDATED).toLocaleDateString("en-US", {
         <p class="motto">write code, break things,<br />occasionally ship.<span class="cursor" aria-hidden="true"></span></p>
         <p class="lede">
           By day, a full-time software engineer. By night, a homelab at 99.99% uptime and card games with the studio
-          I co-founded, all from a desk in {SITE.city}, CT.
+          I co-founded, all from a desk in {LOCATION}.
         </p>
       </div>
       <p class="dim side">
@@ -84,7 +84,6 @@ const nowUpdated = new Date(NOW_UPDATED).toLocaleDateString("en-US", {
                 {g.items.map((i) => (
                   <li>
                     {i.href ? <a class="ink" href={i.href}>{i.name}</a> : i.name}
-                    <span class="dim"> · {i.status}</span>
                   </li>
                 ))}
               </ul>
@@ -158,7 +157,8 @@ const nowUpdated = new Date(NOW_UPDATED).toLocaleDateString("en-US", {
     text-transform: lowercase;
     opacity: 0.6;
   }
-  p {
+  /* Not the lede: scoped, this would outrank the shared .lede spacing. */
+  p:not(.lede) {
     margin: 0;
   }
   .rows {

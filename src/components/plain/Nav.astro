@@ -12,7 +12,8 @@ const LINKS = [
   { label: "about", href: "/about/" },
 ];
 
-const path = Astro.url.pathname;
+// With or without the trailing slash (/projects and /projects/ are the same page).
+const path = Astro.url.pathname.replace(/\/?$/, "/");
 const current = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
 ---
 

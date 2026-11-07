@@ -112,12 +112,14 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
 
   // ── Colors, re-read when the theme changes ─────────────────
   let fg = "#000",
+    ground = "#fff",
     accent = "#00f",
     green = "#0a0";
   const hue: Record<string, string> = {};
   const readColors = () => {
     const s = getComputedStyle(document.documentElement);
     fg = s.getPropertyValue("--c-text").trim() || fg;
+    ground = s.getPropertyValue("--c-bg").trim() || ground;
     accent = s.getPropertyValue("--c-accent").trim() || accent;
     green = s.getPropertyValue("--c-hue-green").trim() || green;
     for (const n of HUES) hue[n] = s.getPropertyValue(`--c-hue-${n}`).trim();
@@ -470,8 +472,10 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     e.preventDefault();
   }
 
+  // The name runs to the right of a node, or to its left near the right edge
+  // (as drawNode does): keep whichever side it lands on off the text.
   const fits = (x: number, y: number, n: Node) =>
-    !inAvoid(x, y, 20) && (n.kind === "service" || !inAvoid(x + 70, y, 12));
+    !inAvoid(x, y, 20) && (n.kind === "service" || !inAvoid(x + 70 > w - 8 ? x - 70 : x + 70, y, 12));
 
   function onPointerMove(e: PointerEvent) {
     const r = root.getBoundingClientRect();
@@ -481,7 +485,8 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       if (!dragMoved && Math.hypot(e.clientX - dragFrom.x, e.clientY - dragFrom.y) > 4) dragMoved = true;
       if (dragMoved) {
         // Kept on the canvas, below the nav, and off the text: past an edge it stops there.
-        const x = Math.max(24, Math.min(w - 120, pointer.x));
+        // The same margin on both sides; a name near the right edge flips to the left.
+        const x = Math.max(24, Math.min(w - 24, pointer.x));
         const y = Math.max(72, Math.min(h - 24, pointer.y));
         if (fits(x, y, dragging)) {
           const dx = x - dragging.ax,
@@ -496,7 +501,7 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
                 ? servicesOn(dragging)
                 : [];
           for (const m of followers) {
-            const mx = Math.max(24, Math.min(w - 120, m.ax + dx)),
+            const mx = Math.max(24, Math.min(w - 24, m.ax + dx)),
               my = Math.max(72, Math.min(h - 24, m.ay + dy));
             if (fits(mx, my, m)) {
               m.ax = mx;
@@ -797,6 +802,18 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
       ctx.globalAlpha = 0.85 * fade;
       ctx.fillRect((i + (rack ? 2 : 1)) * PITCH + 2, (j - (rack ? 2 : 1)) * PITCH - 3, 4, 4);
     }
+  }
+
+  /**
+   * A node's name, drawn after every node and wire on a patch of the page's
+   * own ground, so a line or a lit trail never runs through the letters.
+   */
+  function drawLabel(n: Node, now: number) {
+    const i = Math.floor(n.x / PITCH),
+      j = Math.floor(n.y / PITCH);
+    const fade = n.guest ? Math.min(1, (GUEST_LIFE - (now - n.born)) / 3000) : 1;
+    const lit = n === hovered || n === dragging ? 1 : 0;
+    const dim = n.offline ? 0.4 : 1;
     // Services (and on a phone, most devices) only show their names when something reaches them, or on hover.
     const always = named(n);
     if (!always && !lit && n.flash < 0.25) return;
@@ -810,11 +827,18 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     const width = ctx.measureText(text).width;
     const gap = n.kind === "service" ? 1.5 : 2.5;
     const right = (i + gap) * PITCH;
-    if (right + width > w - 8) {
-      ctx.textAlign = "right";
-      ctx.fillText(text, (i - gap + 0.5) * PITCH, j * PITCH + BLOCK / 2);
-      ctx.textAlign = "left";
-    } else ctx.fillText(text, right, j * PITCH + BLOCK / 2);
+    const flip = right + width > w - 8;
+    const x = flip ? (i - gap + 0.5) * PITCH - width : right;
+    const y = j * PITCH + BLOCK / 2;
+    // The patch shows as much as the name does, so a name fading in doesn't leave a hole first.
+    const shown = always ? 1 : Math.min(1, Math.max(lit, n.flash) * 1.5);
+    const textAlpha = ctx.globalAlpha;
+    ctx.fillStyle = ground;
+    ctx.globalAlpha = 0.85 * shown * fade;
+    ctx.fillRect(x - 2, y - 7, width + 4, 14);
+    ctx.globalAlpha = textAlpha;
+    ctx.fillStyle = fg;
+    ctx.fillText(text, x, y);
   }
 
   function draw(now: number) {
@@ -871,6 +895,7 @@ export function mountTailnet(root: HTMLElement, peers: Peer[]) {
     }
 
     for (const n of nodes) if (!hidden(n)) drawNode(n, now);
+    for (const n of nodes) if (!hidden(n)) drawLabel(n, now);
     ctx.globalAlpha = 1;
   }
 

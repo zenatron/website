@@ -1,35 +1,10 @@
 /**
  * The palette, in TypeScript.
  *
- * Mirrors src/styles/tokens.css and exists for one reason: Satori (which
- * renders the OG images and the card covers) resolves no CSS custom
- * properties, so it needs literal values. Change these together.
+ * The dark theme from src/styles/tokens.css, as literal values: Satori
+ * (which renders the OG images) resolves no CSS custom properties. Change
+ * these together.
  */
-export const LIGHT = {
-  bg: "#FDFCF9",
-  chrome: "#F6F3ED",
-  raised: "#EFEBE2",
-  sunken: "#F2EFE8",
-  hairline: "#E4DFD4",
-  text: "#35312A",
-  muted: "#635D52",
-  dim: "#6C665B",
-  accent: "#1A66CC",
-  link: "#1A66CC",
-  danger: "#B93A28",
-  violet: "#6A4BC4",
-  orange: "#A44F1D",
-  blue: "#24688F",
-  green: "#397430",
-  tintAccent: "#FBF0D8",
-  tintLink: "#DCF0E6",
-  tintViolet: "#ECE6FB",
-  tintOrange: "#FCE8DA",
-  tintBlue: "#DDECF6",
-  tintGreen: "#E4F2DE",
-  trafficlight: "#D8D2C6",
-} as const;
-
 export const DARK = {
   bg: "#14130F",
   chrome: "#1C1A16",

@@ -92,8 +92,9 @@ a {
   font-size: 13px;
   pointer-events: none;
   view-transition-name: site-nav;
-  /* Text scrolling under the nav fades out instead of colliding with it. */
-  background: linear-gradient(var(--ground) 55%, transparent);
+  /* Text scrolling under the nav fades out instead of colliding with it:
+     solid through the line of links, fading only below them. */
+  background: linear-gradient(var(--ground) 72%, transparent);
 }
 html.fixed .nav,
 html.over-cover .nav {

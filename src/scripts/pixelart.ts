@@ -340,50 +340,55 @@ const MOTIFS: Record<string, Motif> = {
   },
 
   /**
-   * A lens stopping down and opening up: a barrel ring with its marks, and seven
-   * blades that turn as they close, leaving a seven-sided opening with a little
-   * light coming through.
+   * A lens stopping down and opening up, drawn the way the aperture icon is:
+   * the barrel's ring, and six blade edges running from the opening out to
+   * it, so the blades read as a pinwheel even at a few cells across. The
+   * opening between them lets the light through, in the page's hue.
    */
   aperture({ i, j, rows, cols, t }) {
+    const R = Math.max(6, rows * 0.36);
+    // At the foot of the band, out of the fade under the nav as far as it fits.
     const cx = cols / 2 - 0.5,
-      cy = rows * 0.6;
-    const R = Math.max(7, rows * 0.42);
-    const dx = i - cx,
-      dy = j - cy;
-    const r = Math.hypot(dx, dy);
-    const phi = Math.atan2(dy, dx);
+      cy = rows - R - 1;
+    const x = i - cx,
+      y = j - cy;
+    const r = Math.hypot(x, y);
+    if (r > R + 0.6) return null;
+    if (r > R - 0.6) return { v: 0.6 };
+    const N = 6;
     const TAU = Math.PI * 2;
-    // The barrel's marks, every 30°, just outside it.
-    if (r > R + 0.9 && r < R + 2) {
-      const a = ((phi % (TAU / 12)) + TAU / 12) % (TAU / 12);
-      return a < 0.12 || a > TAU / 12 - 0.12 ? { v: 0.3 } : null;
-    }
-    if (r > R) return null;
-    if (r > R - 1.1) return { v: 0.6 };
-    // How open the iris is: from about f/16 to f/1.4 and back.
+    // How open the iris is, and the blades turning as they close.
     const open = 0.5 + 0.5 * Math.sin(t * 0.55);
-    const a = R * (0.2 + 0.62 * open);
-    const N = 7;
-    const sector = TAU / N;
-    // The blades turn as they close.
+    const apothem = R * (0.2 + 0.5 * open);
     const turn = (1 - open) * 0.9;
-    const local = (((phi - turn) % sector) + sector) % sector;
-    // A regular heptagon: inside when the distance along the sector's middle is under the apothem.
-    const along = r * Math.cos(local - sector / 2);
-    if (along < a - 0.6) {
-      // The opening: dark, with light toward the middle.
-      const glow = Math.max(0, 1 - r / Math.max(1, a));
-      return glow > 0.35 ? { v: 0.12 + glow * 0.4, tone: "hue" } : null;
+    const corner = apothem / Math.cos(Math.PI / N);
+    const vx = (k: number) => corner * Math.cos(turn + (k * TAU) / N);
+    const vy = (k: number) => corner * Math.sin(turn + (k * TAU) / N);
+    // Each blade's edge: one side of the opening, carried on past its far
+    // corner until it meets the ring.
+    for (let k = 0; k < N; k++) {
+      const ax = vx(k),
+        ay = vy(k),
+        bx = vx(k + 1),
+        by = vy(k + 1);
+      const side = Math.hypot(bx - ax, by - ay);
+      const dx = (bx - ax) / side,
+        dy = (by - ay) / side;
+      const along = (x - ax) * dx + (y - ay) * dy;
+      const off = Math.abs((x - ax) * dy - (y - ay) * dx);
+      const b = bx * dx + by * dy;
+      const reach = side - b + Math.sqrt(b * b - corner * corner + R * R);
+      if (off < 0.55 && along > -0.3 && along < reach) return { v: 0.85 };
     }
-    if (along < a + 0.4) return { v: 0.85 };
-    // The blades: curved seams between them, alternating shades.
-    const twist = (r - a) / R;
-    const bladePhi = phi - turn - twist * 1.2;
-    const bladeLocal = (((bladePhi % sector) + sector) % sector) / sector;
-    if (bladeLocal < 0.13) return { v: 0.62 };
-    const blade = Math.floor((((bladePhi % TAU) + TAU) % TAU) / sector);
-    // Each blade lighter toward its leading edge, so they read as overlapping leaves.
-    return { v: (blade % 2 ? 0.14 : 0.24) + bladeLocal * 0.14 };
+    // Inside the opening when within the apothem along every side's normal.
+    let inside = true;
+    for (let k = 0; k < N && inside; k++) {
+      const mid = turn + ((k + 0.5) * TAU) / N;
+      if (x * Math.cos(mid) + y * Math.sin(mid) > apothem) inside = false;
+    }
+    if (inside) return { v: 0.25 + 0.45 * (1 - r / corner), tone: "hue" };
+    // The blades themselves: a faint body behind their edges.
+    return { v: 0.1 };
   },
 
   /** A row of app icons, swelling as the magnification passes along them. */

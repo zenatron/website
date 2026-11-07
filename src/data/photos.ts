@@ -57,6 +57,18 @@ const WRITTEN: Record<string, Written> = {
     place: "UNC Charlotte",
     alt: "A brick clock tower at the end of an empty herringbone brick walkway, bare winter trees and green university banners either side.",
   },
+  IMG_0266: {
+    title: "The Carriage House",
+    place: "Mark Twain House, Hartford",
+    alt: "The Mark Twain House’s brick carriage house in low autumn sun, its timbered gable and upper balcony striped with tree shadow, purple asters and a low stone wall in front, an orange maple beyond the roof.",
+    note: "Built for the family’s horses and carriages, with rooms upstairs for their coachman, Patrick McAleer.",
+  },
+  IMG_0267: {
+    title: "Low Sun on the Twain House",
+    place: "Mark Twain House, Hartford",
+    alt: "The Mark Twain House under a blue sky, its patterned red brick, turrets and long wooden porch lit by low sun, golden leaves overhanging the top of the frame and a flagstone path crossing a leaf-strewn lawn.",
+    note: "Twain lived here from 1874 to 1891, and wrote Tom Sawyer and Huckleberry Finn here.",
+  },
   IMG_0909: {
     title: "Kalanchoe in Bloom",
     alt: "Close up of potted kalanchoe in bloom: clusters of red, white and pink flowers among glossy green leaves, lit from a window.",

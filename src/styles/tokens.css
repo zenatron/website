@@ -47,31 +47,13 @@
   /* Soft tints behind highlighted words and pills */
   --c-tint-accent: #DDEBFB;
   --c-tint-link:   #DDEBFB;
-  --c-tint-violet: #ECE6FB;
   --c-tint-orange: #FCE8DA;
   --c-tint-blue:   #DDECF6;
   --c-tint-green:  #E4F2DE;
-  --c-tint-ember:  #F7E5DA;
-  --c-tint-rose:   #F8E3EE;
-  --c-tint-teal:   #DDEFF1;
 
   --c-tile-dark:    #24211C;
   --c-tile-light:   #FDFCF9;  /* an app icon's plate: the same in both themes */
   --c-trafficlight: #D8D2C6;  /* an unfocused window's lights */
-  --c-wallpaper:    #ECE6DA;  /* the desktop behind the window */
-  /* The wallpaper's four blooms; the palette's tints, in light. */
-  --wp-1: var(--c-tint-accent);
-  --wp-2: var(--c-tint-blue);
-  --wp-3: var(--c-tint-violet);
-  --wp-4: var(--c-tint-green);
-  /* The desk on /about: wall, desktop, felt mat, and whether the lamp is on. */
-  --desk-wall:      #F1ECE3;
-  --desk-top:       #E4DCCD;
-  --desk-edge:      #D5CBB9;
-  --desk-mat:       #CBC3B4;
-  --desk-stitch:    rgba(255, 255, 255, 0.4);
-  --desk-shadow:    rgba(58, 44, 26, 0.3);
-  --lamp:           0;
   --c-scrim:        rgba(53, 49, 42, 0.46);
 
   color-scheme: light;
@@ -104,32 +86,13 @@
 
   --c-tint-accent: #16263A;
   --c-tint-link:   #16263A;
-  --c-tint-violet: #2A2340;
   --c-tint-orange: #3A2418;
   --c-tint-blue:   #162A38;
   --c-tint-green:  #1E2E18;
-  --c-tint-ember:  #34221A;
-  --c-tint-rose:   #35202F;
-  --c-tint-teal:   #142A2D;
 
   --c-tile-dark:    #24211C;
   --c-tile-light:   #FDFCF9;
   --c-trafficlight: #454036;
-  /* Lifted off black, with real color in its blooms: a dark desktop is
-     a mid-dark wallpaper, not a void, or the glass and the window's
-     shadow have nothing to show against. */
-  --c-wallpaper:    #1D1A16;
-  --wp-1: rgba(108, 180, 255, 0.22);
-  --wp-2: rgba(127, 189, 232, 0.24);
-  --wp-3: rgba(188, 164, 255, 0.26);
-  --wp-4: rgba(155, 214, 138, 0.16);
-  --desk-wall:      #181612;
-  --desk-top:       #23201B;
-  --desk-edge:      #2E2A23;
-  --desk-mat:       #36322B;
-  --desk-stitch:    rgba(255, 255, 255, 0.09);
-  --desk-shadow:    rgba(0, 0, 0, 0.55);
-  --lamp:           1;
   --c-scrim:        rgba(10, 9, 7, 0.62);
 
   color-scheme: dark;
@@ -164,32 +127,13 @@
 
     --c-tint-accent: #16263A;
     --c-tint-link:   #16263A;
-    --c-tint-violet: #2A2340;
     --c-tint-orange: #3A2418;
     --c-tint-blue:   #162A38;
     --c-tint-green:  #1E2E18;
-    --c-tint-ember:  #34221A;
-    --c-tint-rose:   #35202F;
-    --c-tint-teal:   #142A2D;
 
     --c-tile-dark:    #24211C;
     --c-tile-light:   #FDFCF9;
     --c-trafficlight: #454036;
-    /* Lifted off black, with real color in its blooms: a dark desktop is
-       a mid-dark wallpaper, not a void, or the glass and the window's
-       shadow have nothing to show against. */
-    --c-wallpaper:    #1D1A16;
-    --wp-1: rgba(108, 180, 255, 0.22);
-    --wp-2: rgba(127, 189, 232, 0.24);
-    --wp-3: rgba(188, 164, 255, 0.26);
-    --wp-4: rgba(155, 214, 138, 0.16);
-    --desk-wall:      #181612;
-    --desk-top:       #23201B;
-    --desk-edge:      #2E2A23;
-    --desk-mat:       #36322B;
-    --desk-stitch:    rgba(255, 255, 255, 0.09);
-    --desk-shadow:    rgba(0, 0, 0, 0.55);
-    --lamp:           1;
     --c-scrim:        rgba(10, 9, 7, 0.62);
 
     color-scheme: dark;
@@ -213,119 +157,9 @@
   --glass-glint:     rgba(255, 255, 255, 0.55);
 }
 
-/*
-   A page's app icon: a saturated plate, lighter at the top where the
-   light falls, under a white glyph — the way System Settings, Photos and
-   Messages are drawn. Objects, not page, so the same in both themes; the
-   hues are the palette's, turned up to icon strength. Graphite is for
-   the places that have no hue of their own (home, the indexes).
-*/
+/* The edge around a window's traffic lights: the same in both themes. */
 :root {
-  --icon-violet-hi:   #A68CFF;  --icon-violet-lo:   #6142D6;
-  --icon-orange-hi:   #FFB15C;  --icon-orange-lo:   #EA6A16;
-  --icon-blue-hi:     #5CC2FF;  --icon-blue-lo:     #1F78E0;
-  --icon-green-hi:    #6EDC85;  --icon-green-lo:    #229A48;
-  --icon-yellow-hi:   #FFE07A;  --icon-yellow-lo:   #F0A800;
-  --icon-graphite-hi: #8E8A84;  --icon-graphite-lo: #4A4741;
-  --icon-glyph:        #FFFFFF;
-  --icon-glyph-shadow: rgba(0, 0, 0, 0.22);
-}
-
-/*
-   The desktop behind the window: the base, with the palette's tints
-   blooming in from the corners. The tints swap with the theme, so the
-   wallpaper does too.
-*/
-:root {
-  --wallpaper:
-    var(--sky),
-    radial-gradient(55% 60% at 0% 0%, var(--wp-1), transparent 70%),
-    radial-gradient(45% 55% at 100% 12%, var(--wp-2), transparent 70%),
-    radial-gradient(60% 60% at 85% 100%, var(--wp-3), transparent 70%),
-    radial-gradient(45% 50% at 8% 100%, var(--wp-4), transparent 70%),
-    var(--c-wallpaper);
-}
-
-/*
-   A dynamic desktop: the light over the wallpaper follows the hour in
-   Hartford, as a macOS dynamic wallpaper follows the sun — a low pink
-   glow at dawn, a pale sun high on the right by day, a burnt-orange
-   horizon under a violet sky at dusk, and a deep blue night settling
-   from the top. Set on <html> before first paint by Shell, and kept
-   current by the menu bar clock. Layered over the tints, so it works in
-   either theme.
-*/
-:root { --sky: linear-gradient(transparent, transparent); }
-html[data-daypart="dawn"] {
-  --sky:
-    radial-gradient(90% 55% at 30% 105%, rgba(255, 150, 125, 0.32), transparent 70%),
-    radial-gradient(70% 50% at 80% 0%, rgba(180, 170, 255, 0.16), transparent 70%);
-}
-html[data-daypart="day"] {
-  --sky: radial-gradient(55% 45% at 88% -5%, rgba(255, 238, 190, 0.38), transparent 70%);
-}
-html[data-daypart="dusk"] {
-  --sky:
-    radial-gradient(110% 55% at 65% 108%, rgba(255, 120, 60, 0.34), transparent 70%),
-    radial-gradient(80% 60% at 10% -5%, rgba(120, 80, 220, 0.22), transparent 70%);
-}
-html[data-daypart="night"] {
-  --sky:
-    radial-gradient(130% 80% at 50% -10%, rgba(25, 35, 95, 0.4), transparent 75%),
-    radial-gradient(40% 30% at 85% 8%, rgba(200, 210, 255, 0.1), transparent 70%);
-}
-
-/*
-   The focused window's traffic lights. Objects, so the same in both
-   themes — macOS doesn't recolor them for dark mode either.
-*/
-:root {
-  --light-close:  #FF5F57;
-  --light-min:    #FEBC2E;
-  --light-zoom:   #28C840;
   --light-edge:   rgba(0, 0, 0, 0.14);
-  --light-glyph:  rgba(0, 0, 0, 0.55);
-}
-
-/*
-   The desk lamp's light: the LED strip, and the warm pool it throws.
-   The same in both themes; --lamp decides whether it's on.
-*/
-:root {
-  --lamp-led:   #FFE2B0;
-  --lamp-glow:  rgba(255, 210, 150, 0.34);
-  --lamp-body:  #1E1C19;
-  --steam:      rgba(255, 255, 255, 0.4);
-  /* the 3D printer's filament tube, redrawn over its photo */
-  --printer-tube: #2F2F2F;
-  /* the dark under a pressed key */
-  --key-well:     rgba(8, 12, 20, 0.85);
-}
-
-/*
-   The laptop lid on /about, and the stickers on it. Objects, not page, so
-   they're the same in both themes. Sticker inks are dark enough to carry
-   white type; paper is the die-cut edge and the inverse stickers' ground.
-*/
-:root {
-  --lid:            #2A2825;
-  --lid-hi:         #3B3834;
-  --lid-logo:       rgba(255, 255, 255, 0.14);
-  --sticker-paper:  #FDFCF9;
-  --sticker-ink:    #24211C;
-  /* a Finder folder, on the dock */
-  --folder-back:     #3E9BE0;
-  --folder-front-hi: #7CC6F7;
-  --folder-front-lo: #56AEEE;
-  --folder-lip:      rgba(255, 255, 255, 0.55);
-  --folder-emboss:   #2F86C9;
-  --sticker-violet: #6A4BC4;
-  --sticker-blue:   #24688F;
-  --sticker-teal:   #1A66CC;
-  --sticker-green:  #397430;
-  --sticker-orange: #B6531B;
-  --sticker-amber:  #93600F;
-  --sticker-red:    #B93A28;
 }
 
 /*
@@ -350,21 +184,16 @@ html[data-daypart="night"] {
   --t-sans-md:  17px;
   --t-sans-lg:  21px;
   --t-sans-xl:  30px;
-  --t-sans-2xl: 40px;
-  --t-sans-3xl: 56px;
 
   /*
      Tracking tightens as type grows, and opens up only for the small mono
      labels that head a group. Leading is the same idea in reverse.
-     Drawings — a cover's big lead, a sticker — set their own inline.
+     Drawings set their own inline.
   */
-  --track-display: -0.03em;  /* page titles */
   --track-head:    -0.02em;  /* section heads, card titles */
   --track-snug:    -0.01em;  /* titles at body size */
 
-  --lh-display: 1.1;   /* page titles */
   --lh-head:    1.2;   /* headings, card titles */
-  --lh-snug:    1.35;  /* list titles, short UI lines */
   --lh-ui:      1.5;   /* descriptions, secondary text */
   --lh-body:    1.6;   /* body */
   --lh-prose:   1.7;   /* long-form */
@@ -373,30 +202,19 @@ html[data-daypart="night"] {
 /* Space and structure */
 :root {
   --s-1: 4px;   --s-2: 8px;   --s-3: 12px;  --s-4: 16px;
-  --s-5: 24px;  --s-6: 32px;  --s-7: 48px;  --s-8: 64px;
+  --s-5: 24px;  --s-6: 32px;
 
   /*
-     Four radii, all rectangles. Nothing on this site is a capsule: a
+     Three radii, all rectangles. Nothing on this site is a capsule: a
      capsule has no corner to align to anything else, and a window
-     manager is built out of aligned corners. Depicted objects — a vinyl
-     sticker, an LED strip — set their own curve inline, because those
-     are drawings, not chrome.
+     manager is built out of aligned corners. Depicted objects set their
+     own curve inline, because those are drawings, not chrome.
   */
   --radius-window: 16px;
   --radius-card:   12px;
   --radius-sm:      8px;
-  --radius-chip:    5px;
-  /* A page's tile — about, dock, photos, say hi — at whatever size it's
-     drawn: 16px in a tab, 22px in the explorer, 32px at a page's foot.
-     A percentage, so the corner scales with the tile like an app icon's. */
-  --radius-tile:    27%;
 
   --h-titlebar:  40px;
-  --h-menubar:   28px;
-  --dock-icon:   44px;
-  --h-dock:      58px;
-  --w-sidebar:   300px;  /* a Finder sidebar: titles past ~36 characters ellipsize, and the tooltip has the rest */
-  --w-content:  1280px;
 }
 
 /*
@@ -437,16 +255,6 @@ html[data-daypart="night"] {
 }
 
 /*
-   Vibrancy: the window's chrome — titlebar, tabs, sidebar, status bar —
-   lets the wallpaper's tint through, the way a macOS sidebar takes on the
-   color of whatever is behind the window. The content pane stays opaque
-   paper. Derived from --c-chrome, so it follows the theme on its own.
-*/
-:root {
-  --c-chrome-glass: color-mix(in srgb, var(--c-chrome) 76%, transparent);
-}
-
-/*
    Motion — two kinds, and nothing in between.
 
    State: a hover, a press, a color change. Quick and even.
@@ -456,7 +264,7 @@ html[data-daypart="night"] {
    fades up from a touch smaller (or, for the pane, a touch lower).
 
    --dur-pane is the slow step a few decorative moments are paced from
-   (the glint, the steam off the mug); it isn't for things arriving.
+   (the glint); it isn't for things arriving.
 */
 :root {
   --dur-state:  120ms;

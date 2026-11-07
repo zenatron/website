@@ -7,6 +7,8 @@
 export interface TimelineEntry {
   year: string;
   title: string;
+  /** The name where space is tight, as on the home page: "CEM". Defaults to `title`. */
+  short?: string;
   role?: string;
   description: string;
   kind: "work" | "founder" | "internship" | "education" | "milestone";
@@ -43,6 +45,7 @@ export const TIMELINE: TimelineEntry[] = [
   {
     year: "2025",
     title: "CEM Corporation",
+    short: "CEM",
     role: "Software Engineer Intern",
     description:
       "A Rust TCP server that automates device testing across Windows, Linux and ARM, used by 30+ engineers. JSON test sequences that run 10× faster, and C++ Modbus control for stepper motors that cut manual calibration time by 95%.",
@@ -77,12 +80,26 @@ export const TIMELINE: TimelineEntry[] = [
   },
 ];
 
+/**
+ * The jobs in the timeline, newest first: no school, milestones or the
+ * studio. The home page introduces Phil by the first and the two before it,
+ * so a new job only has to be added above.
+ */
+const JOBS = TIMELINE.filter((e) => e.kind === "work" || e.kind === "internship");
+export const CURRENT_JOB = JOBS[0];
+export const PAST_JOBS = JOBS.slice(1, 3);
+
+/** A job's role in a few letters: "Software Engineer · remote" is "SWE". */
+export const shortRole = (role = "") =>
+  role
+    .split(" · ")[0]
+    .replace(/^Software Engineer\b/, "SWE");
+
 /** When NOW was last true. Bump it whenever the lists below change. */
 export const NOW_UPDATED = "2026-10-11";
 
 export interface NowItem {
   name: string;
-  status: string;
   /** Where the thing lives on this site, when it does. */
   href?: string;
 }
@@ -91,24 +108,24 @@ export const NOW: { heading: string; items: NowItem[] }[] = [
   {
     heading: "Building",
     items: [
-      { name: "preamble, a FLAC library organizer", status: "in progress", href: "/projects/preamble/" },
-      { name: "Tools for card games", status: "planning" },
-      { name: "This portfolio (always)", status: "deployed" },
+      { name: "preamble, a FLAC library organizer", href: "/projects/preamble/" },
+      { name: "Tools for card games" },
+      { name: "This portfolio (always)" },
     ],
   },
   {
     heading: "Learning",
     items: [
-      { name: "Embedded systems & RTOS", status: "exploring" },
-      { name: "Game design patterns", status: "exploring" },
-      { name: "Rust", status: "exploring" },
+      { name: "Embedded systems & RTOS" },
+      { name: "Game design patterns" },
+      { name: "Rust" },
     ],
   },
   {
     heading: "Reading",
     items: [
-      { name: "Designing Data-Intensive Applications", status: "reference" },
-      { name: "Game Programming Patterns", status: "reference" },
+      { name: "Designing Data-Intensive Applications" },
+      { name: "Game Programming Patterns" },
     ],
   },
 ];
@@ -160,7 +177,7 @@ export const MACHINES = [
       ["OS", "Unraid Pro"],
       ["Kernel", "x86_64 Linux"],
       ["CPU", "AMD Ryzen 5 7600X (6-core)"],
-      ["GPU", "RTX 3060: transcoding, local AI"],
+      ["GPU", "RTX 3060 (12GB): transcoding, local AI"],
       ["Memory", "64GB DDR5"],
       ["Storage", "4x 12TB in ZFS, 36TB usable"],
       ["Parity", "1 drive"],

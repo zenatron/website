@@ -7,7 +7,7 @@
 import "@/styles/plain.css";
 import Nav from "@/components/plain/Nav.astro";
 import JsonLd from "@/components/JsonLd.astro";
-import { SITE } from "@/data/site";
+import { LOCATION, SITE } from "@/data/site";
 
 interface Props {
   title?: string;
@@ -28,7 +28,7 @@ interface Props {
 
 const {
   title = "Phil Vishnevsky",
-  description = "Phil Vishnevsky is a software engineer in Hartford, CT building servers, web apps and games. Writing on Tailscale, VPNs and self-hosting, plus the projects behind them.",
+  description = `Phil Vishnevsky is a software engineer in ${LOCATION} building servers, web apps and games. Writing on Tailscale, VPNs and self-hosting, plus the projects behind them.`,
   ogSlug = "home",
   fixed = false,
   noindex = false,

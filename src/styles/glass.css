@@ -12,9 +12,7 @@
      .glass[data-glint-only]  for artwork that brings its own gloss and
                            rim (the site's mark): just the glint
 
-   The glint crosses on hover — of the icon, or of anything marked
-   `glint-host`, a card or a row whose whole area is the target, where the
-   pointer is rarely on the icon itself.
+   The glint crosses on hover.
 */
 
 .glass {
@@ -59,8 +57,7 @@
 .glass[data-glint-only]::after { content: none; }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .glass:hover::before,
-  .glint-host:hover .glass::before {
+  .glass:hover::before {
     animation: glass-glint calc(var(--dur-pane) * 2) var(--ease);
   }
 }

@@ -2,8 +2,8 @@
 /**
  * Photos: three columns sized so they all end at the same height, each
  * shot captioned on hover. Clicking one opens it full-screen; arrows,
- * swipes and Escape work there. Phones get one column with captions
- * underneath.
+ * swipes and Escape work there. Phones get one column, each caption
+ * always showing on its photo.
  */
 import Plain from "@/layouts/Plain.astro";
 import PageCover from "@/components/plain/PageCover.astro";
@@ -125,6 +125,14 @@ const data = hang.map((i) => {
   </dialog>
 </Plain>
 
+<script>
+  // Wide screens show each pill on hover; phones show them all, so each gets
+  // its glass as its photo scrolls near the screen.
+  import { glassInView, glassOnHover } from "@/scripts/glass";
+  if (matchMedia("(min-width: 1024px)").matches) glassOnHover(".wall figure", "figcaption");
+  else glassInView(".wall figcaption");
+</script>
+
 <script define:vars={{ data, widths: [...PHOTO_WIDTHS] }}>
   const dialog = document.querySelector("[data-viewer]");
   const img = dialog.querySelector("[data-v-img]");
@@ -227,10 +235,15 @@ const data = hang.map((i) => {
     display: flex;
     gap: 0.75rem;
     padding: 0.4rem 0.75rem;
-    background: rgb(0 0 0 / 0.55);
+    background: rgb(0 0 0 / 0.32);
     color: #f6f3ed;
+    /* Clear glass lets a bright photo through; a soft shadow keeps the words on it. */
+    text-shadow: 0 1px 2px rgb(0 0 0 / 0.55);
     font-size: 12px;
-    backdrop-filter: blur(12px);
+    /* Liquid glass where the browser can refract (see scripts/glass.ts), else frost. */
+    -webkit-backdrop-filter: var(--hyalite, blur(12px));
+    backdrop-filter: var(--hyalite, blur(12px));
+    box-shadow: var(--hyalite-edge, none);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
@@ -239,8 +252,9 @@ const data = hang.map((i) => {
   figure:focus-within figcaption {
     opacity: 1;
   }
-  /* The title wins the room; the place and date give way, then drop
-     to a second line when even the title needs the whole pill. */
+  /* The title wins the room. The place and date sit beside it when both
+     fit, and otherwise drop whole to a second line; they're cut short only
+     when even that line is too narrow for them. */
   figcaption {
     flex-wrap: wrap;
     row-gap: 0.1rem;
@@ -254,17 +268,17 @@ const data = hang.map((i) => {
     white-space: nowrap;
   }
   figcaption .m {
-    flex: 1 1 0;
-    min-width: 8ch;
+    flex: 0 1 auto;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    opacity: 0.6;
+    opacity: 0.75;
   }
   @media (max-width: 1023px) {
     .wall {
       flex-direction: column;
-      gap: 3rem;
+      gap: 1.25rem;
     }
     .col {
       display: contents;
@@ -278,15 +292,9 @@ const data = hang.map((i) => {
       height: 100%;
       object-fit: cover;
     }
+    /* No hover on a phone: the glass pill sits on every photo. */
     figcaption {
-      position: static;
-      max-width: none;
-      justify-content: space-between;
-      padding: 0.75rem 0 0;
-      background: none;
-      color: inherit;
       opacity: 1;
-      backdrop-filter: none;
     }
   }
 

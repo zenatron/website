@@ -5,8 +5,12 @@
  */
 import Plain from "@/layouts/Plain.astro";
 import Tailnet from "@/components/plain/Tailnet.astro";
-import { SITE, STATUS } from "@/data/site";
+import { LOCATION, SITE, STATUS } from "@/data/site";
+import { CURRENT_JOB, PAST_JOBS, shortRole } from "@/data/about";
 import { personSchema, websiteSchema } from "@/lib/schema";
+
+/** The jobs before this one each wear a colour, as the other mentions do. */
+const PAST_HUES = ["violet", "green"];
 
 const SOCIALS = [
   { label: "github", href: SITE.github },
@@ -31,10 +35,20 @@ const SOCIALS = [
           <span>{SITE.user}@{SITE.host} ~ % whoami</span>
         </p>
         <h1>Hi, I’m <span class="name">Phil</span>.</h1>
-        <p>Software engineer @ RTX, out of {SITE.city}, CT.</p>
+        {/* The current job and the two before it come from the timeline on /about. */}
+        <p>{shortRole(CURRENT_JOB.role)} @ {CURRENT_JOB.short ?? CURRENT_JOB.title}, out of {LOCATION}.</p>
         {/* Each mention wears its own colour, the project's where it has one. */}
         <p class="past">
-          Before that, <a class="ink tag" style="--h: var(--c-hue-violet)" href="/about/">CEM</a> (intern), Shortlist, and co-founding
+          Before that,{" "}
+          {
+            PAST_JOBS.map((job, i) => (
+              <>
+                {/* One line: a break between the link and its comma would print as a space. */}
+                <a class="ink tag" style={`--h: var(--c-hue-${PAST_HUES[i % PAST_HUES.length]})`} href="/about/">{job.short ?? job.title}</a>{job.kind === "internship" && " (intern)"},{" "}
+              </>
+            ))
+          }
+          and co-founding
           <a class="ink tag" style="--h: var(--c-hue-ember)" href="https://underscore.games" target="_blank" rel="noopener">Underscore Games</a>.
         </p>
         <p>
@@ -44,7 +58,7 @@ const SOCIALS = [
         <p class="status"><i aria-hidden="true"></i>{STATUS}</p>
         <p class="socials">
           {
-            SOCIALS.map(({ label, href }, i) => (
+            SOCIALS.filter((s) => !s.href.startsWith("mailto:")).map(({ label, href }, i) => (
               <>
                 {i > 0 && <span class="sep"> / </span>}
                 {/* The label hugs its tags: whitespace inside a link would be underlined too. */}
@@ -57,6 +71,21 @@ const SOCIALS = [
     </header>
   </main>
 </Plain>
+
+<script>
+  /*
+   * The hero card as a slab of glass: its edge bends the mesh behind it, the
+   * middle stays a light frost so the text reads. Hyalite only writes CSS
+   * variables, so where it can't refract (Safari, Firefox) the card keeps its
+   * plain frost. Skipped for anyone who asked for less transparency.
+   */
+  import "@/vendor/hyalite/hyalite.js";
+
+  const bio = document.querySelector<HTMLElement>(".bio");
+  if (bio && !matchMedia("(prefers-reduced-transparency: reduce)").matches) {
+    window.Hyalite.attach(bio, { bevel: 34, thickness: 64, slope: 1.8, blur: 0.8, dispersion: 2.2, sat: 1.2, edge: 0.5 });
+  }
+</script>
 
 <style>
   .home {
@@ -87,9 +116,12 @@ const SOCIALS = [
     line-height: max(22px, 3vh);
     border-radius: 14px;
     border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
-    background: color-mix(in srgb, var(--ground) 52%, transparent);
-    -webkit-backdrop-filter: blur(3px) saturate(1.4);
-    backdrop-filter: blur(3px) saturate(1.4);
+    background: color-mix(in srgb, var(--ground) 30%, transparent);
+    /* Liquid glass where the browser can bend what's behind it (Hyalite, in
+       the script below); everywhere else, the same frost as before. */
+    -webkit-backdrop-filter: var(--hyalite, blur(3px) saturate(1.4));
+    backdrop-filter: var(--hyalite, blur(3px) saturate(1.4));
+    box-shadow: var(--hyalite-edge, none);
   }
   .bio h1,
   .bio p {
