@@ -1,8 +1,7 @@
 /**
  * Liquid glass (Hyalite) for the small pills that sit over a photo: the
- * photos' captions and the projects' "view project". A pill gets its glass
- * when it's first needed (its host hovered or focused, or, where pills are
- * always shown, its photo scrolling near the screen), so a page of photos
+ * photos' captions and the projects' "view project". Each pill gets its
+ * glass the first time its host is hovered or focused, so a page of photos
  * isn't running a filter per pill before anyone looks at one.
  * Where the browser can't refract, Hyalite writes nothing and the pill's
  * own frost stays.
@@ -16,22 +15,6 @@ const PILL: HyaliteOptions = { bevel: 16, thickness: 30, slope: 1.6, blur: 0.5, 
 /** Whether to bother: a browser that can refract, for someone who hasn't asked for less transparency. */
 const wanted = () =>
   !!window.Hyalite?.supported() && !matchMedia("(prefers-reduced-transparency: reduce)").matches;
-
-/** For pills that are always shown: each gets its glass as it comes within a screen of view. */
-export function glassInView(pills: string, opts: HyaliteOptions = PILL) {
-  if (!wanted()) return;
-  const io = new IntersectionObserver(
-    (entries) => {
-      for (const e of entries) {
-        if (!e.isIntersecting) continue;
-        window.Hyalite.attach(e.target as HTMLElement, opts);
-        io.unobserve(e.target);
-      }
-    },
-    { rootMargin: "100% 0px" },
-  );
-  for (const el of document.querySelectorAll<HTMLElement>(pills)) io.observe(el);
-}
 
 export function glassOnHover(hosts: string, pill: string, opts: HyaliteOptions = PILL) {
   if (!wanted()) return;

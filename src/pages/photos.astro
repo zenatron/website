@@ -2,8 +2,8 @@
 /**
  * Photos: three columns sized so they all end at the same height, each
  * shot captioned on hover. Clicking one opens it full-screen; arrows,
- * swipes and Escape work there. Phones get one column, each caption
- * always showing on its photo.
+ * swipes and Escape work there. Phones get one column with captions
+ * underneath.
  */
 import Plain from "@/layouts/Plain.astro";
 import PageCover from "@/components/plain/PageCover.astro";
@@ -126,11 +126,9 @@ const data = hang.map((i) => {
 </Plain>
 
 <script>
-  // Wide screens show each pill on hover; phones show them all, so each gets
-  // its glass as its photo scrolls near the screen.
-  import { glassInView, glassOnHover } from "@/scripts/glass";
+  // The hover pills only exist on wide screens; phones show captions under the photo.
+  import { glassOnHover } from "@/scripts/glass";
   if (matchMedia("(min-width: 1024px)").matches) glassOnHover(".wall figure", "figcaption");
-  else glassInView(".wall figcaption");
 </script>
 
 <script define:vars={{ data, widths: [...PHOTO_WIDTHS] }}>
@@ -278,7 +276,7 @@ const data = hang.map((i) => {
   @media (max-width: 1023px) {
     .wall {
       flex-direction: column;
-      gap: 1.25rem;
+      gap: 3rem;
     }
     .col {
       display: contents;
@@ -292,9 +290,22 @@ const data = hang.map((i) => {
       height: 100%;
       object-fit: cover;
     }
-    /* No hover on a phone: the glass pill sits on every photo. */
+    /* No hover on a phone: each caption sits under its photo, as plain text. */
     figcaption {
+      position: static;
+      max-width: none;
+      justify-content: space-between;
+      padding: 0.75rem 0 0;
+      background: none;
+      color: inherit;
+      text-shadow: none;
+      box-shadow: none;
       opacity: 1;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+    figcaption .m {
+      opacity: 0.6;
     }
   }
 
