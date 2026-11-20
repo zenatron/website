@@ -1,43 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs>
-    <linearGradient id="plate" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#3B3F47"/>
-      <stop offset="1" stop-color="#17191D"/>
-    </linearGradient>
-    <radialGradient id="screen" cx="0.3" cy="0.25" r="0.9">
-      <stop offset="0" stop-color="#7FD1B9" stop-opacity="0.16"/>
-      <stop offset="0.6" stop-color="#7FD1B9" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.2"/>
-      <stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0"/>
-      <stop offset="0.7" stop-color="#000000" stop-opacity="0"/>
-      <stop offset="1" stop-color="#000000" stop-opacity="0.16"/>
-    </linearGradient>
-    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.6"/>
-      <stop offset="0.35" stop-color="#FFFFFF" stop-opacity="0.08"/>
-      <stop offset="0.7" stop-color="#FFFFFF" stop-opacity="0.04"/>
-      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.2"/>
-    </linearGradient>
-    <linearGradient id="chev" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#C3EC9C"/>
-      <stop offset="1" stop-color="#7DC25A"/>
-    </linearGradient>
-    <linearGradient id="cursor" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#EBB2FA"/>
-      <stop offset="1" stop-color="#B566DC"/>
-    </linearGradient>
-    <filter id="lift" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="1.2" stdDeviation="1.1" flood-color="#000000" flood-opacity="0.45"/>
-    </filter>
-  </defs>
-  <rect width="64" height="64" rx="14.4" fill="url(#plate)"/>
-  <rect width="64" height="64" rx="14.4" fill="url(#screen)"/>
-  <g transform="translate(32 32) scale(1) translate(-32 -32)" filter="url(#lift)">
-    <path d="M18.5 21.5 L30 32 L18.5 42.5" fill="none" stroke="url(#chev)" stroke-width="5.6" stroke-linecap="round" stroke-linejoin="round"/>
-    <rect x="34.5" y="38.2" width="16" height="5.8" rx="2.2" fill="url(#cursor)"/>
-  </g>
-  <rect width="64" height="64" rx="14.4" fill="url(#gloss)"/>
-  <rect x="0.6" y="0.6" width="62.8" height="62.8" rx="13.8" fill="none" stroke="url(#rim)" stroke-width="1.2"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+<style>.g{fill:#FDFCF9;stroke:#E4DFD4}.i{fill:#35312A}.a{fill:#1A66CC}@media (prefers-color-scheme:dark){.g{fill:#14130F;stroke:#332F27}.i{fill:#EDE7DA}.a{fill:#6CB4FF}}</style>
+<rect class="g" x="0.5" y="0.5" width="31" height="31" rx="5" stroke-width="1"/>
+<rect class="i" x="6.799999999999999" y="22.8" width="2.4000000000000004" height="2.4000000000000004" opacity="1"/>
+<rect class="i" x="3.599999999999999" y="22.8" width="2.4000000000000004" height="2.4000000000000004" opacity="0.6"/>
+<rect class="i" x="10" y="22.8" width="2.4000000000000004" height="2.4000000000000004" opacity="0.6"/>
+<rect class="i" x="6.799999999999999" y="19.599999999999998" width="2.4000000000000004" height="2.4000000000000004" opacity="0.6"/>
+<rect class="i" x="6.799999999999999" y="26" width="2.4000000000000004" height="2.4000000000000004" opacity="0.6"/>
+<rect class="i" x="22.8" y="6.799999999999999" width="2.4000000000000004" height="2.4000000000000004" opacity="1"/>
+<rect class="i" x="19.599999999999998" y="6.799999999999999" width="2.4000000000000004" height="2.4000000000000004" opacity="0.6"/>
+<rect class="i" x="26" y="6.799999999999999" width="2.4000000000000004" height="2.4000000000000004" opacity="0.6"/>
+<rect class="i" x="22.8" y="3.599999999999999" width="2.4000000000000004" height="2.4000000000000004" opacity="0.6"/>
+<rect class="i" x="22.8" y="10" width="2.4000000000000004" height="2.4000000000000004" opacity="0.6"/>
+<rect class="a" x="13.200000000000001" y="16.4" width="2.4000000000000004" height="2.4000000000000004" opacity="0.42"/>
+<rect class="a" x="16.4" y="13.200000000000001" width="2.4000000000000004" height="2.4000000000000004" opacity="1"/>
 </svg>

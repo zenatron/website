@@ -244,6 +244,12 @@ html.over-cover .nav {
 @view-transition {
   navigation: auto;
 }
+/* The layer the snapshots are painted on. It's transparent by default, so
+   anywhere the snapshots don't cover, or while they're crossfading, what
+   shows through is the browser's canvas; pin it to the ground instead. */
+::view-transition {
+  background: var(--ground);
+}
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 0.25s;

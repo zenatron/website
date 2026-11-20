@@ -83,7 +83,20 @@ const SOCIALS = [
 
   const bio = document.querySelector<HTMLElement>(".bio");
   if (bio && !matchMedia("(prefers-reduced-transparency: reduce)").matches) {
-    window.Hyalite.attach(bio, { bevel: 34, thickness: 64, slope: 1.8, blur: 0.8, dispersion: 2.2, sat: 1.2, edge: 0.5 });
+    // The page can paint before this script runs, so the card is often already
+    // on screen in its plain frost. Grow the glass in from nothing rather than
+    // swapping it on in one frame, where its rim and edge shading read as the
+    // whole card jumping in contrast.
+    window.Hyalite.attach(bio, {
+      bevel: 34,
+      thickness: 64,
+      slope: 1.8,
+      blur: 0.8,
+      dispersion: 2.2,
+      sat: 1.2,
+      edge: 0.5,
+      materialize: 450,
+    });
   }
 </script>
 
@@ -122,6 +135,8 @@ const SOCIALS = [
     -webkit-backdrop-filter: var(--hyalite, blur(3px) saturate(1.4));
     backdrop-filter: var(--hyalite, blur(3px) saturate(1.4));
     box-shadow: var(--hyalite-edge, none);
+    /* The CSS rim arrives with the glass; ease it in alongside the ramp above. */
+    transition: box-shadow 450ms var(--ease);
   }
   .bio h1,
   .bio p {

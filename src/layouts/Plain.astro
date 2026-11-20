@@ -64,12 +64,29 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:site_name" content={SITE.name} />
     <meta name="twitter:card" content="summary_large_image" />
-    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    {/* Both schemes, so the browser's own canvas (what shows before any CSS
+        has painted) is dark on a dark system rather than white. */}
+    <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#FDFCF9" media="(prefers-color-scheme: light)" data-system="#FDFCF9" />
     <meta name="theme-color" content="#1C1A16" media="(prefers-color-scheme: dark)" data-system="#1C1A16" />
     <link rel="alternate" type="application/rss+xml" title={`${SITE.name} — Writing`} href="/rss.xml" />
     <link rel="preload" href="/fonts/atkinson-hyperlegible-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/atkinson-hyperlegible-next-latin.woff2" as="font" type="font/woff2" crossorigin />
+    {/*
+      The ground, inline, ahead of the stylesheet: a page whose CSS isn't
+      cached yet (the first visit to a section, a cold deploy) otherwise paints
+      one frame of browser white before plain.css lands. Same values and the
+      same three cases as --c-bg in tokens.css; change them together.
+    */}
+    <style is:inline>
+      html { background: #FDFCF9; }
+      html[data-theme="dark"] { background: #14130F; }
+      @media (prefers-color-scheme: dark) { html:not([data-theme="light"]) { background: #14130F; } }
+    </style>
     <script is:inline>
       (function () {
         var r = document.documentElement;
